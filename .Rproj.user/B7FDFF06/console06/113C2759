@@ -1,57 +1,49 @@
-]0;~/MITUS[?1034hNicoles-MacBook-Pro:MITUS nis100$ [KNicoles-MacBook-Pro:MITUS nis100$ git init 
-Initialized empty Git repository in /Users/nis100/MITUS/.git/
-git remote add origin https://github.com/PPML/MITUS.git
-]0;~/MITUSNicoles-MacBook-Pro:MITUS nis100$ git push 
-fatal: The current branch master has no upstream branch.
-To push the current branch and set the remote as upstream, use
 
-    git push --set-upstream origin master
+]0;~/MITUSNicoles-MacBook-Pro:MITUS nis100$ ls
+BetterImisUS_V7.r		ImmigrantInputs_v41.r		Parameter_table_9-7-16.csv
+CalibDat_9-14-16.rData		MainResults_V66.r		ProcessSims_V330int.r
+CalibDataUS_V12.r		MakePriorTabUS_V737.r		ResNam.rData
+CalibFunctionsUS_V23.r		ModelInputs_9-2-16.rData	TimeStepUS_V892int.r
+CreateOptimSimpleUS_V530.r	OptUniv_V3.r			TimeStepUS_V892intExtra21.r
+CreateOptimUS_V10.r		Opt_US5401_r8_1_1-27-16.rData	ToyRcppV1.r
+CreateScenUS_V64.r		ParamInitUS_V738.csv		US_LE_2011.csv
+ForNathan.r			ParamInitUS_V738_final.csv	parAll200_9-14-16.rData
+ForNathan2.r			ParamInitUS_V738tab.rData	read_me_4-26-16.r
+GraphsVsCalibDat_V222.r		ParamUS_V506.r
+IMISfunctionsUS_V2361.r		ParamUS_V5070int.r
+]0;~/MITUSNicoles-MacBook-Pro:MITUS nis100$ git status
+On branch Original-Code
+Your branch is up-to-date with 'origin/Original-Code'.
 
-]0;~/MITUSNicoles-MacBook-Pro:MITUS nis100$ git push --set-upstream origin master 
-To https://github.com/PPML/MITUS.git
- ! [rejected]        master -> master (fetch first)
-error: failed to push some refs to 'https://github.com/PPML/MITUS.git'
-hint: Updates were rejected because the remote contains work that you do
-hint: not have locally. This is usually caused by another repository pushing
-hint: to the same ref. You may want to first integrate the remote changes
-hint: (e.g., 'git pull ...') before pushing again.
-hint: See the 'Note about fast-forwards' in 'git push --help' for details.
-]0;~/MITUSNicoles-MacBook-Pro:MITUS nis100$ git push origin --force 
-fatal: The current branch master has no upstream branch.
-To push the current branch and set the remote as upstream, use
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
 
-    git push --set-upstream origin master
+	[31mdeleted:    .Rproj.user/B7FDFF06/build_options[m
+	[31mmodified:   .Rproj.user/B7FDFF06/console06/113C2759[m
+	[31mdeleted:    .Rproj.user/B7FDFF06/console06/113C2759.env[m
+	[31mdeleted:    .Rproj.user/B7FDFF06/console06/INDEX001[m
+	[31mdeleted:    .Rproj.user/B7FDFF06/cpp-definition-cache[m
+	[31mdeleted:    .Rproj.user/B7FDFF06/pcs/files-pane.pper[m
+	[31mdeleted:    .Rproj.user/B7FDFF06/pcs/source-pane.pper[m
+	[31mdeleted:    .Rproj.user/B7FDFF06/pcs/windowlayoutstate.pper[m
+	[31mdeleted:    .Rproj.user/B7FDFF06/pcs/workbench-pane.pper[m
+	[31mdeleted:    .Rproj.user/B7FDFF06/rmd-outputs[m
+	[31mdeleted:    .Rproj.user/B7FDFF06/saved_source_markers[m
+	[31mdeleted:    .Rproj.user/B7FDFF06/sources/prop/286D00E4[m
+	[31mdeleted:    .Rproj.user/B7FDFF06/sources/prop/2A8A0E35[m
+	[31mdeleted:    .Rproj.user/B7FDFF06/sources/prop/34149F3A[m
+	[31mdeleted:    .Rproj.user/B7FDFF06/sources/prop/4212D840[m
+	[31mdeleted:    .Rproj.user/B7FDFF06/sources/prop/6DAB2189[m
+	[31mdeleted:    .Rproj.user/B7FDFF06/sources/prop/6E5F0131[m
+	[31mdeleted:    .Rproj.user/B7FDFF06/sources/prop/83D0FCE7[m
+	[31mdeleted:    .Rproj.user/B7FDFF06/sources/prop/9AC5A871[m
+	[31mdeleted:    .Rproj.user/B7FDFF06/sources/prop/C58D27BD[m
+	[31mdeleted:    .Rproj.user/B7FDFF06/sources/prop/INDEX[m
+	[31mdeleted:    .Rproj.user/B7FDFF06/sources/s-8CA880C7/E3628374-contents[m
+	[31mdeleted:    .Rproj.user/B7FDFF06/sources/s-8CA880C7/lock_file[m
+	[31mdeleted:    .Rproj.user/shared/notebooks/patch-chunk-names[m
+	[31mdeleted:    .Rproj.user/shared/notebooks/paths[m
 
-]0;~/MITUSNicoles-MacBook-Pro:MITUS nis100$ s[Kgit push --set-upstream origin master 
-To https://github.com/PPML/MITUS.git
- ! [rejected]        master -> master (fetch first)
-error: failed to push some refs to 'https://github.com/PPML/MITUS.git'
-hint: Updates were rejected because the remote contains work that you do
-hint: not have locally. This is usually caused by another repository pushing
-hint: to the same ref. You may want to first integrate the remote changes
-hint: (e.g., 'git pull ...') before pushing again.
-hint: See the 'Note about fast-forwards' in 'git push --help' for details.
-]0;~/MITUSNicoles-MacBook-Pro:MITUS nis100$ git pu[K[K[K[K[K[Kgit push --set-upstream origin master --force
-Counting objects: 18, done.
-Delta compression using up to 4 threads.
-Compressing objects:   5% (1/18)   Compressing objects:  11% (2/18)   Compressing objects:  16% (3/18)   Compressing objects:  22% (4/18)   Compressing objects:  27% (5/18)   Compressing objects:  33% (6/18)   Compressing objects:  38% (7/18)   Compressing objects:  44% (8/18)   Compressing objects:  50% (9/18)   Compressing objects:  55% (10/18)   Compressing objects:  61% (11/18)   Compressing objects:  66% (12/18)   Compressing objects:  72% (13/18)   Compressing objects:  77% (14/18)   Compressing objects:  83% (15/18)   Compressing objects:  88% (16/18)   Compressing objects:  94% (17/18)   Compressing objects: 100% (18/18)   Compressing objects: 100% (18/18), done.
-Writing objects:   5% (1/18)   Writing objects:  11% (2/18)   Writing objects:  16% (3/18)   Writing objects:  22% (4/18)   Writing objects:  27% (5/18)   Writing objects:  33% (6/18)   Writing objects:  38% (7/18)   Writing objects:  44% (8/18)   Writing objects:  50% (9/18)   Writing objects:  55% (10/18)   Writing objects:  61% (11/18)   Writing objects:  66% (12/18)   Writing objects:  72% (13/18)   Writing objects:  77% (14/18)   Writing objects:  83% (15/18)   Writing objects:  88% (16/18)   Writing objects:  94% (17/18)   Writing objects: 100% (18/18)   Writing objects: 100% (18/18), 4.44 KiB | 413.00 KiB/s, done.
-Total 18 (delta 1), reused 0 (delta 0)
-remote: Resolving deltas:   0% (0/1)   [Kremote: Resolving deltas: 100% (1/1)   [Kremote: Resolving deltas: 100% (1/1), done.[K
-To https://github.com/PPML/MITUS.git
- + 71ed975...226cc37 master -> master (forced update)
-Branch master set up to track remote branch master from origin.
-]0;~/MITUSNicoles-MacBook-Pro:MITUS nis100$ git checkout ori[K[K[KOriginal-Code
-error: pathspec 'Original-Code' did not match any file(s) known to git.
-]0;~/MITUSNicoles-MacBook-Pro:MITUS nis100$ git pull 
-remote: Counting objects: 37, done.[K
-remote: Compressing objects:   3% (1/29)   [Kremote: Compressing objects:   6% (2/29)   [Kremote: Compressing objects:  10% (3/29)   [Kremote: Compressing objects:  13% (4/29)   [Kremote: Compressing objects:  17% (5/29)   [Kremote: Compressing objects:  20% (6/29)   [Kremote: Compressing objects:  24% (7/29)   [Kremote: Compressing objects:  27% (8/29)   [Kremote: Compressing objects:  31% (9/29)   [Kremote: Compressing objects:  34% (10/29)   [Kremote: Compressing objects:  37% (11/29)   [Kremote: Compressing objects:  41% (12/29)   [Kremote: Compressing objects:  44% (13/29)   [Kremote: Compressing objects:  48% (14/29)   [Kremote: Compressing objects:  51% (15/29)   [Kremote: Compressing objects:  55% (16/29)   [Kremote: Compressing objects:  58% (17/29)   [Kremote: Compressing objects:  62% (18/29)   [Kremote: Compressing objects:  65% (19/29)   [Kremote: Compressing objects:  68% (20/29)   [Kremote: Compressing objects:  72% (21/29)   [Kremote: Compressing objects:  75% (22/29)   [Kremote: Compressing objects:  79% (23/29)   [Kremote: Compressing objects:  82% (24/29)   [Kremote: Compressing objects:  86% (25/29)   [Kremote: Compressing objects:  89% (26/29)   [Kremote: Compressing objects:  93% (27/29)   [Kremote: Compressing objects:  96% (28/29)   [Kremote: Compressing objects: 100% (29/29)   [Kremote: Compressing objects: 100% (29/29), done.[K
-remote: Total 37 (delta 7), reused 7 (delta 0), pack-reused 0[K
-Unpacking objects:   2% (1/37)   Unpacking objects:   5% (2/37)   Unpacking objects:   8% (3/37)   Unpacking objects:  10% (4/37)   Unpacking objects:  13% (5/37)   Unpacking objects:  16% (6/37)   Unpacking objects:  18% (7/37)   Unpacking objects:  21% (8/37)   Unpacking objects:  24% (9/37)   Unpacking objects:  27% (10/37)   Unpacking objects:  29% (11/37)   Unpacking objects:  32% (12/37)   Unpacking objects:  35% (13/37)   Unpacking objects:  37% (14/37)   Unpacking objects:  40% (15/37)   Unpacking objects:  43% (16/37)   Unpacking objects:  45% (17/37)   Unpacking objects:  48% (18/37)   Unpacking objects:  51% (19/37)   Unpacking objects:  54% (20/37)   Unpacking objects:  56% (21/37)   Unpacking objects:  59% (22/37)   Unpacking objects:  62% (23/37)   Unpacking objects:  64% (24/37)   Unpacking objects:  67% (25/37)   Unpacking objects:  70% (26/37)   Unpacking objects:  72% (27/37)   Unpacking objects:  75% (28/37)   Unpacking objects:  78% (29/37)   Unpacking objects:  81% (30/37)   Unpacking objects:  83% (31/37)   Unpacking objects:  86% (32/37)   Unpacking objects:  89% (33/37)   Unpacking objects:  91% (34/37)   Unpacking objects:  94% (35/37)   Unpacking objects:  97% (36/37)   Unpacking objects: 100% (37/37)   Unpacking objects: 100% (37/37), done.
-From https://github.com/PPML/MITUS
- * [new branch]      Original-Code -> origin/Original-Code
-Already up-to-date.
-]0;~/MITUSNicoles-MacBook-Pro:MITUS nis100$ git pull checkout Original-Code
-Branch Original-Code set up to track remote branch Original-Code from origin.
-Switched to a new branch 'Original-Code'
-]0;~/MITUSNicoles-MacBook-Pro:MITUS nis100$ gt[Kit -[Kcomma[Kit - [KA [Kgit add -A 
+no changes added to commit (use "git add" and/or "git commit -a")
+]0;~/MITUSNicoles-MacBook-Pro:MITUS nis100$ git add -A 
