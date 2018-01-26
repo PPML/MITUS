@@ -293,14 +293,14 @@ for(int ag=0; ag<11; ag++) {
     for(int is=0; is<4; is++) {
         for(int nm=0; nm<4; nm++){
             for(int lc=0; lc<3; lc++){
-                ////////////////////        UNINFECTED/SUSCEPTIBLE POP /////////////////////////
+////////////////////        UNINFECTED/SUSCEPTIBLE POP /////////////////////////
                 V0[ag][0][0][0][0][0][0] = InitPopN[ag][0]*0.40*(1-p_HR); //US born
                 V0[ag][0][0][0][0][0][2] = InitPopN[ag][1]*0.40;          //new non-US born
                 /////////////////////////   LATENT SLOW INFECTED POP  //////////////////////////
                 V0[ag][2][0][0][0][0][0] = InitPopN[ag][0]*0.60*(1-p_HR);
                 V0[ag][2][0][0][0][0][2] = InitPopN[ag][1]*0.60;
             }
-            //////create a 2nd array with same dimensions as V0 & populate w/ same values//
+//////create a 2nd array with same dimensions as V0 & populate w/ same values//
             for(int ag=0; ag<11; ag++) {
                 for(int tb=0; tb<11; tb++) {
                     for(int is=0; is<4; is++) {
@@ -309,7 +309,7 @@ for(int ag=0; ag<11; ag++) {
                                 for (int na=0; na<3; na++){
                                     V1[ag][tb][0][is][nm][lc][na]  = V1[ag][tb][0][is][nm][lc][na];
                                 } } } } } }
-            ////////////////////////RUN THE MODEL FOR 3000 MONTHS /////////////////////////
+      ////////////////////////RUN THE MODEL FOR 3000 MONTHS /////////////////////////
             for(int m=0; m<3001; m++) {
                 /////////////////////////////////START BURN IN//////////////////////////////////
                 ////////////////////////////////////BIRTHS//////////////////////////////////////
