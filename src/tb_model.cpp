@@ -11,7 +11,6 @@ List cSim(
           NumericMatrix       Mpfast,
           NumericMatrix       ExogInf,
           NumericMatrix       MpfastPI,
-          double              pimmed,
           NumericMatrix       MpSmPos,
           NumericMatrix       Mrslow,
           std::vector<double> rrSlowFB,
@@ -75,12 +74,8 @@ List cSim(
     double        InitPopN[InitPop.nrow()][InitPop.ncol()];
     double        InitPopZ[InitPop.nrow()][InitPop.ncol()];
     double        MpfastN[Mpfast.nrow()][Mpfast.ncol()];
-    double        MpimmedNp[Mpfast.nrow()][Mpfast.ncol()];
-    double        MpimmedNn[Mpfast.nrow()][Mpfast.ncol()];
     double        MpslowN[Mpfast.nrow()][Mpfast.ncol()];
     double        MpfastPIN[MpfastPI.nrow()][MpfastPI.ncol()];
-    double        MpimmedPINp[MpfastPI.nrow()][MpfastPI.ncol()];
-    double        MpimmedPINn[MpfastPI.nrow()][MpfastPI.ncol()];
     double        MpslowPIN[MpfastPI.nrow()][MpfastPI.ncol()];
     double        MrslowN[Mrslow.nrow()][Mrslow.ncol()];
     double        MpSmPosN[Mpfast.nrow()][Mpfast.ncol()];
@@ -132,12 +127,8 @@ List cSim(
         } }
     for(int i=0; i<Mpfast.nrow(); i++) {
         for(int j=0; j<Mpfast.ncol(); j++) {
-            MpfastN[i][j]   = Mpfast(i,j)*(1-pimmed);
-            MpfastPIN[i][j]   = MpfastPI(i,j)*(1-pimmed);
-            MpimmedNp[i][j] = Mpfast(i,j)*pimmed*MpSmPos(i,j);
-            MpimmedPINp[i][j] = MpfastPI(i,j)*pimmed*MpSmPos(i,j);
-            MpimmedNn[i][j] = Mpfast(i,j)*pimmed*(1-MpSmPos(i,j));
-            MpimmedPINn[i][j] = MpfastPI(i,j)*pimmed*(1-MpSmPos(i,j));
+            MpfastN[i][j]   = Mpfast(i,j);
+            MpfastPIN[i][j]   = MpfastPI(i,j);
             MpslowN[i][j]   = 1-Mpfast(i,j);
             MpslowPIN[i][j]   = 1-MpfastPI(i,j);
             MrslowN[i][j]   = Mrslow(i,j);
@@ -293,10 +284,10 @@ for(int ag=0; ag<11; ag++) {
     for(int is=0; is<4; is++) {
         for(int nm=0; nm<4; nm++){
             for(int lc=0; lc<3; lc++){
-                ////////////////////        UNINFECTED/SUSCEPTIBLE POP /////////////////////////
+////////////////////        UNINFECTED/SUSCEPTIBLE POP /////////////////////////
                 V0[ag][0][0][0][0][0][0] = InitPopN[ag][0]*0.40*(1-p_HR); //US born
                 V0[ag][0][0][0][0][0][2] = InitPopN[ag][1]*0.40;          //new non-US born
-                /////////////////////////   LATENT SLOW INFECTED POP  //////////////////////////
+/////////////////////////   LATENT SLOW INFECTED POP  //////////////////////////
                 V0[ag][2][0][0][0][0][0] = InitPopN[ag][0]*0.60*(1-p_HR);
                 V0[ag][2][0][0][0][0][2] = InitPopN[ag][1]*0.60;
             }
@@ -395,7 +386,8 @@ for(int ag=0; ag<11; ag++) {
                                     VNkl[2][0]  += V0[ag][tb][0][0][0][0][2] + V0[ag][tb][0][0][0][0][3];
                                 } }
                             // Step 2  (active TB)
-                            for(int ag=0; ag<11; ag++) { for(int tb=4; tb<6; tb++) {
+                            for(int ag=0; ag<11; ag++) { 
+                                    for(int tb=4; tb<6; tb++) {
                                 VGjkl[0][0][0]  += V0[ag][tb][0][0][0][0]*RelInfN[tb][0];
                                 VGjkl[0][1][0]  += V0[ag][tb][0][0][0][1]*RelInfN[tb][0];
                                 VGjkl[0][2][0]  += (V0[ag][tb][0][0][0][2] + V0[ag][tb][0][0][0][3])*RelInfN[tb][0];  } }
@@ -427,10 +419,6 @@ for(int ag=0; ag<11; ag++) {
                                     V1[ag][2][0][0][0][0][lc]  += temp*MpslowN[ag][0];
                                     //////////////////////////////// LATENT TB FAST ///////////////////////////////
                                     V1[ag][3][0][0][0][0][lc]  += temp*MpfastN[ag][0];
-                                    ///////////////////////////// ACTIVE TB SMEAR NEGATIVE ////////////////////////
-                                    V1[ag][4][0][0][0][0][lc]  += temp*MpimmedNn[ag][0];
-                                    ///////////////////////////// ACTIVE TB SMEAR POSITIVE ////////////////////////
-                                    V1[ag][5][0][0][0][0][lc]  += temp*MpimmedNp[ag][0];
                                     ///////////////////////////////////////////////////////////////////////////////
                                     
                                     /////////////////////////////// SUPER-INFECTION SP ////////////////////////////
@@ -438,8 +426,6 @@ for(int ag=0; ag<11; ag++) {
                                     V1[ag][1][0][0][0][0][lc]  -= temp;
                                     V1[ag][2][0][0][0][0][lc]  += temp*MpslowPIN[ag][0];
                                     V1[ag][3][0][0][0][0][lc]  += temp*MpfastPIN[ag][0];
-                                    V1[ag][4][0][0][0][0][lc]  += temp*MpimmedPINn[ag][0];
-                                    V1[ag][5][0][0][0][0][lc]  += temp*MpimmedPINp[ag][0];
                                     ///////////////////////////////////////////////////////////////////////////////
                                     
                                     /////////////////////////////// SUPER-INFECTION LS ////////////////////////////
@@ -447,8 +433,6 @@ for(int ag=0; ag<11; ag++) {
                                     V1[ag][2][0][0][0][0][lc]  -= temp;
                                     V1[ag][2][0][0][0][0][lc]  += temp*MpslowPIN[ag][0];
                                     V1[ag][3][0][0][0][0][lc]  += temp*MpfastPIN[ag][0];
-                                    V1[ag][4][0][0][0][0][lc]  += temp*MpimmedPINn[ag][0];
-                                    V1[ag][5][0][0][0][0][lc]  += temp*MpimmedPINp[ag][0];
                                 } }
                             ///////////////////////////////////////////////////////////////////////////////
                             
@@ -723,11 +707,11 @@ for(int ag=0; ag<11; ag++) {
                                     VNkl[i][j] = 0; // set to zero
                                     VGjkl[i][j] = 0; // set to zero //removed dr
                                 } }
-                            ////////////////////////////          Step 1         ////////////////////////////
-                            for(int ag=0; ag<11; ag++) {
-                                for(int tb=0; tb<7; tb++) {
-                                    for(int lt=0; lt<2; tx++) {
-                                        for(int nm=0; nm<4; nm++){
+////////////////////////////          Step 1         ////////////////////////////
+for(int ag=0; ag<11; ag++) {
+ 	for(int tb=0; tb<7; tb++) {
+    	for(int lt=0; lt<2; tx++) {
+            for(int nm=0; nm<4; nm++){
                                             ////////////////////////////    LOW RISK, US BORN    ////////////////////////////
                                             VNkl[0][0]  += V0[ag][tb][lt][0][nm][0][0];
                                             ////////////////////////////   HIGH RISK, US BORN    ////////////////////////////
@@ -816,24 +800,18 @@ for(int ag=0; ag<11; ag++) {
                                                     V1[ag][0][dr][tx][hv][rg]  -= temp;
                                                     V1[ag][2][d2][tx][hv][rg]  += temp*MpslowN[ag][hv];
                                                     V1[ag][3][d2][tx][hv][rg]  += temp*MpfastN[ag][hv];
-                                                    V1[ag][4][d2][tx][hv][rg]  += temp*MpimmedNn[ag][hv];
-                                                    V1[ag][5][d2][tx][hv][rg]  += temp*MpimmedNp[ag][hv];
                                                     ///////////////////////////////   SUCEPTIBLE, PI  /////////////////////////////////
                                                     temp = V0[ag][1][dr][tx][hv][rg]*VLjkl[d2][r2][h2]*NixTrans[s];  // Sp
                                                     V1[ag][1][dr][tx][hv][rg]  -= temp;
                                                     V1[ag][2][d2][tx][hv][rg]  += temp*MpslowPIN[ag][hv];
                                                     V1[ag][3][d2][tx][hv][rg]  += temp*MpfastPIN[ag][hv];
-                                                    V1[ag][4][d2][tx][hv][rg]  += temp*MpimmedPINn[ag][hv];
-                                                    V1[ag][5][d2][tx][hv][rg]  += temp*MpimmedPINp[ag][hv];
                                                     /////////////////SUPER INFECTION LATENT TB SLOW ///////////////////////////////
                                                     temp = V0[ag][2][dr][tx][hv][rg]*VLjkl[d2][r2][h2]*NixTrans[s];  // Ls
                                                     V1[ag][2][dr][tx][hv][rg]  -= temp;
                                                     V1[ag][2][dr][tx][hv][rg]  += temp*MpslowPIN[ag][hv]/2;
                                                     V1[ag][2][d2][tx][hv][rg]  += temp*MpslowPIN[ag][hv]/2;
                                                     V1[ag][3][d2][tx][hv][rg]  += temp*MpfastPIN[ag][hv];
-                                                    V1[ag][4][d2][tx][hv][rg]  += temp*MpimmedPINn[ag][hv];
-                                                    V1[ag][5][d2][tx][hv][rg]  += temp*MpimmedPINp[ag][hv];
-                                                } } } } } }
+} } } } } }
                             ///////////////////////////////////BREAKDOWN///////////////////////////////////
                             ///////////////////////for all age groups, risk groups/////////////////////////
                             for(int ag=0; ag<11; ag++) {
@@ -1266,30 +1244,7 @@ for(int ag=0; ag<11; ag++) {
                                                         
                                                         /// TB INCIDENCE, BY ALL VS RECENT  ///
                                                         // By recency (<2 years) == all immediate, 1-(1-rfast)^24 x all Lf
-                                                        //  INFECTION, IMMEDIATE PROGRESSION
-                                                        for(int hv=0; hv<5 ; hv++) { for(int rg=0; rg<4; rg++) {
-                                                            if(hv>0) { h2 = 1; } else { h2 = 0; }
-                                                            if(rg<3) { r2 = rg; } else { r2 = 2; }
-                                                            for(int ag=0; ag<11; ag++) {  for(int dr=0; dr<5; dr++) {
-                                                                for(int tx=0; tx<3 ; tx++) {
-                                                                    for(int d2=0; d2<5; d2++) {
-                                                                        temp  = V0[ag][0][dr][tx][hv][rg]*VLjkl[d2][r2][h2]*(MpimmedNn[ag][hv]  +MpimmedNp[ag][hv]  ) +  // immediate transition Su
-                                                                        V0[ag][1][dr][tx][hv][rg]*VLjkl[d2][r2][h2]*(MpimmedPINn[ag][hv]+MpimmedPINp[ag][hv]) +  // immediate transition Sp
-                                                                        V0[ag][2][dr][tx][hv][rg]*VLjkl[d2][r2][h2]*(MpimmedPINn[ag][hv]+MpimmedPINp[ag][hv]);   // immediate transition Ls
-                                                                        Outputs[y][180]    += temp;  // all incidence
-                                                                        Outputs[y][181+ag] += temp;  // incidence by age
-                                                                        if(rg<2) {
-                                                                            Outputs[y][192] += temp;      //  incidence, US born
-                                                                        } else {
-                                                                            Outputs[y][193] += temp;      //  incidence, FB
-                                                                            if(rg==3) {
-                                                                                Outputs[y][194] += temp; } }  //  incidence, FB2
-                                                                        if(rg==1) {
-                                                                            Outputs[y][195] += temp; }    //  incidence, HR
-                                                                        if(hv>0) {
-                                                                            Outputs[y][196] += temp; }    //  incidence, HIV pos
-                                                                    } } } } } }
-                                                        for(int i=180; i<197; i++) { Outputs[y][i+17] = Outputs[y][i]; } // copy these over to recent infection lines
+                     
                                                         
                                                         // BREAKDOWN from Ls, Lf
                                                         temp3 = (1-pow(1-rfast,24.0))*rfast;
