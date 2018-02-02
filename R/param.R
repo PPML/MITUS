@@ -394,19 +394,10 @@ h RRmuHR    <- c(1,P["RRmuHR"],1,1)
 
 #########################         RETREATMENT         ##########################
   pReTx   <- LgtCurve(1985,2000,P["pReTx"])   	# Probability Tx failure identified, patient initiated on tx experienced reg (may be same)
+################  THESE RATES WILL DEFAULT TO FIRST LINE VALUES ################
 
-################################################################################
-#######    CREATED COMPLETION RATE THAT IS AN AVERAGE OF ALL TREATMENTS   ######
-#######    RATE SHOULD BE UPDATED TO A WEIGHTED AVERAGE WHEN DATA AVAIL.  ######
-################################################################################
-  TxCompRate  <-(d1st+dInh+dRif+dMdr+dXdr)/5
-
-################################################################################
-#######      CREATED TX QUALITY THAT IS AN AVERAGE OF ALL TREATMENTS      ######
-#######    QUAL SHOULD BE UPDATED TO A WEIGHTED AVERAGE WHEN DATA AVAIL.  ######
-################################################################################
-
-  TxEff       <- [(1+TxE1+TxE2+TxE3)/4]*pCurPs
+  TxCompRate  <- d1st
+  TxEff       <- pCurPs
 
 ################################################################################
 ##### CREATE A LIST TO HOLD THE VECTORS FOR AGE CATEGORIES, TB STATES,     #####
