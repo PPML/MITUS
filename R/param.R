@@ -20,11 +20,9 @@ library(MASS)
 #######################           BIRTHS                 #######################
 ####### INDEXED BY TIME, ABSOLUTE NUMBER OF NEW ADULT ENTRANTS OVER TIME #######
 
-<<<<<<< HEAD
 Birthst   <- SmoCurve(Births)*P["TunBirths"]/12
-=======
+
   Birthst   <- SmoCurve(Births)*P["TunBirths"]/12
->>>>>>> 6a3d0294ae8f4e35c62d8b0a3fb6f50350f3d04f
 
 ##########################      MORTALITY RATES       ##########################
 ########################## BACKGROUND MORTALITY BY TIME ########################
@@ -32,7 +30,6 @@ Birthst   <- SmoCurve(Births)*P["TunBirths"]/12
   for(i in 1:11) {
   	mubt[,i] <- SmoCurve(BgMort[,i+1])*P["TunMubt"]/12
   }
-<<<<<<< HEAD
 ## disease specific
   muIp  	  <- P["muIp"]/12
   RRmuIn	  <- P["RRmuIn"]
@@ -44,7 +41,6 @@ Birthst   <- SmoCurve(Births)*P["TunBirths"]/12
   muH2      <- P["muH2"]/12
   muT2      <- P["muT2"]/12
   RRmuHR    <- c(1,P["RRmuHR"],1,1)
-=======
 #########################     DISEASE SPECIFIC       ###########################
   muIp  	  <- P["muIp"]/12
   RRmuIn	  <- P["RRmuIn"]
@@ -61,7 +57,6 @@ Birthst   <- SmoCurve(Births)*P["TunBirths"]/12
 h RRmuHR    <- c(1,P["RRmuHR"],1,1)
 ############### CREATE A MATRIX OF HIV MORTALITIES BY AGE GROUP ###############
 #ALL THIS NEEDS TO BE UPDATED
->>>>>>> 6a3d0294ae8f4e35c62d8b0a3fb6f50350f3d04f
   vHMort    <- matrix(0,11,5);
   rownames(vHMort) <- c("0_4",paste(0:8*10+5,1:9*10+4,sep="_"),"95p")
   colnames(vHMort) <- c("N0","H1","T1","H2","T2")
