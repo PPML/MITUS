@@ -34,16 +34,15 @@ Birthst   <- SmoCurve(Births)*P["TunBirths"]/12
 #########  REPLACE WITH A COMORBIDITY FACTOR BASED ON USER RR IF INTERESTED
 #  muTbH     <- P["muTbH"]/12
   TunmuTbAg <- P["TunmuTbAg"] # multiplier of mort rate above
-  TunmuHvAg <- P["TunmuTbAg"]
 
-  muH1      <- P["muH1"]/12
-  muH2      <- P["muH2"]/12
-  muT2      <- P["muT2"]/12
+#  muH1      <- P["muH1"]/12
+#  muH2      <- P["muH2"]/12
+# muT2      <- P["muT2"]/12
   RRmuHR    <- c(1,P["RRmuHR"],1,1)
 #########################     DISEASE SPECIFIC       ###########################
   muIp  	  <- P["muIp"]/12
   RRmuIn	  <- P["RRmuIn"]
-  muTbH     <- P["muTbH"]/12
+#  muTbH     <- P["muTbH"]/12
   TunmuTbAg <- P["TunmuTbAg"] # multiplier of mort rate above
 ######################## MULTIPLER OF MORT RATE ABOVE ########################
   TunmuHvAg <- P["TunmuTbAg"] ##is this a bug??
@@ -146,7 +145,7 @@ h RRmuHR    <- c(1,P["RRmuHR"],1,1)
   CR           <- P["CR"]/12
   TrIn         <- P["TrIn"]	# Contact rate for In as a fraction of Ip
   RelInfRg     <- c(1.0,P["RelCrHr"],1.0)*CR
-  RelInfHivt   <- LgtCurve(1990,1996,1) + (1-LgtCurve(1990,1996,1))*P["RelCrHr"]
+#  RelInfHivt   <- LgtCurve(1990,1996,1) + (1-LgtCurve(1990,1996,1))*P["RelCrHr"]
   TunTbTransTx <- P["TunTbTransTx"]  # set to zero?
   Vmix         <- 1-c(P["sigmaHiv"],P["sigmaHr"],P["sigmaFb"])
   RelInf       <- matrix(0,11,5); rownames(RelInf) <- c("Su","Sp","Ls","Lf","In","Ip","Tl","Fn","Fp","Mn","Mp"); colnames(RelInf) <- 1:5
@@ -386,29 +385,13 @@ h RRmuHR    <- c(1,P["RRmuHR"],1,1)
 ## Retreatment
   pReTx   <- LgtCurve(1985,2000,P["pReTx"])   	# Probability Tx failure identified, patient initiated on tx experienced reg (may be same)
 
-  ## Aquired resistance
-  pAR1  	<- P["pAR1"]
-  pAR2		<- P["pAR2"]
-  pAR3		<- P["pAR3"]
-  pAR4		<- P["pAR4"]
-  pAR5  	<- P["pAR5"]
-  fAR  	  <- P["fAR"]
+#####################   NEW TB TREATMENT TABLE ################
 
-## TB treatment table
-  TxMat           <- matrix(NA,7,10)
-  rownames(TxMat) <- c("TxCompRate","TxEff","PanSens","MonoINH","MonoRIF","MDRTB","XDRTB")
-  colnames(TxMat) <- paste(rep(c("FirstLine","Mdr"),5),"_Str",rep(1:5,each=2),sep="")
-# COLS                 1LS1 2LS1 1LS2 2LS2 1LS3 2LS3 1LS4 2LS4 1LS5 2LS5
-  TxMat[1,]       <- c(d1st,d1st,d1st,dInh,d1st,dRif,d1st,dMdr,d1st,dMdr)
-  TxMat[2,]       <- c(1   ,1   ,TxE1,TxE3,TxE1,TxE3,TxE2,TxE3,TxE2,TxE2)*pCurPs
-  TxMat[3,]       <- c(0   ,0   ,0   ,0   ,0   ,0   ,0   ,0   ,0   ,0   )
-  TxMat[4,]       <- c(pAR1,pAR1,0   ,0   ,0   ,0   ,0   ,0   ,0   ,0   )
-  TxMat[5,]       <- c(pAR2,pAR2,0   ,0   ,0   ,0   ,0   ,0   ,0   ,0   )
-  TxMat[6,]       <- c(pAR3,pAR3,pAR4,pAR2,pAR4,pAR1,0   ,0   ,0   ,0   )
-  TxMat[7,]       <- c(0   ,0   ,0   ,0   ,0   ,0   ,0   ,pAR5,0   ,0   )
+  TxMat           <- matrix(NA,2,1)
+  rownames(TxMat) <- c("TxCompRate","TxEff")
+  TxMat[1,]       <- d1st
+  TxMat[2,]       <- pCurPs
 
-######  ART TREATMENT  ######
-## ART initiation
 #########################         RETREATMENT         ##########################
   pReTx   <- LgtCurve(1985,2000,P["pReTx"])   	# Probability Tx failure identified, patient initiated on tx experienced reg (may be same)
 
@@ -424,26 +407,6 @@ h RRmuHR    <- c(1,P["RRmuHR"],1,1)
 ################################################################################
 
   TxEff       <- [(1+TxE1+TxE2+TxE3)/4]*pCurPs
-
-################################################################################
-##########################      ART TREATMENT     ##############################
-################################################################################
-##########################     ART INITIATION     ##############################
-
-  rArtInitH <- LgtCurve(1994,1997,1)*P["rArtInit15"]/12
-  rArtInitL <- rArtInitH*LgtCurve(2005,2015,1)*P["rrArtInitL"]
-  rArtInit  <- cbind(rArtInitL,rArtInitH,rArtInitL*P["rrArtInitHR"],rArtInitH*P["rrArtInitHR"])
-
-## ART default rate
-  rArtDef    <- P["r_ArtLtfu"]/12
-
-StatList <- noquote(list(c("0_4",paste(0:8*10+5,1:9*10+4,sep="_"),"95p"),
-                         c("Su","Sp","Ls","Lf","In","Ip","Tl","Fn","Fp","Mn","Mp"),
-                         1:5,c("NT","TL","TX"),c("N0","H1","T1","H2","T2"),c("LR","HR","F1","F2")))
-
-##########################    ART DEFAULT RATE    ##############################
-
-  rArtDef    <- P["r_ArtLtfu"]/12
 
 ################################################################################
 ##### CREATE A LIST TO HOLD THE VECTORS FOR AGE CATEGORIES, TB STATES,     #####
