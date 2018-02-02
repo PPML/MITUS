@@ -22,8 +22,6 @@ library(MASS)
 
 Birthst   <- SmoCurve(Births)*P["TunBirths"]/12
 
-  Birthst   <- SmoCurve(Births)*P["TunBirths"]/12
-
 ##########################      MORTALITY RATES       ##########################
 ########################## BACKGROUND MORTALITY BY TIME ########################
   mubt      <- matrix(NA,1801,11)
@@ -33,7 +31,8 @@ Birthst   <- SmoCurve(Births)*P["TunBirths"]/12
 ## disease specific
   muIp  	  <- P["muIp"]/12
   RRmuIn	  <- P["RRmuIn"]
-  muTbH     <- P["muTbH"]/12
+#########  REPLACE WITH A COMORBIDITY FACTOR BASED ON USER RR IF INTERESTED
+#  muTbH     <- P["muTbH"]/12
   TunmuTbAg <- P["TunmuTbAg"] # multiplier of mort rate above
   TunmuHvAg <- P["TunmuTbAg"]
 
