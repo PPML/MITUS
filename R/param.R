@@ -180,7 +180,7 @@ h RRmuHR    <- c(1,P["RRmuHR"],1,1)
   EarlyTrend <- c(rep(1+Early0,200*12),seq(1+Early0,1.0,length.out=50*12+2))
 ######################     PROGRESSION TO DISEASE     ##########################
   pfast      <- P["pfast"]
-  pimmed     <- P["pimmed"]
+ # pimmed     <- P["pimmed"]
   ORpfast1   <- P["ORpfast1"]
   ORpfast2   <- P["ORpfast2"]
   ORpfastRF  <- P["ORpfastRF"]
@@ -234,42 +234,17 @@ h RRmuHR    <- c(1,P["RRmuHR"],1,1)
 #by smear status and HIV status
   rRecov     <-  P["rRecov"]/12
 
-######## PROBABILITY OF GOING INTO Ip FOLLOWING BREAKDOWN, by HIV status   #####
-  pSmPos    <- P["pSmPos"]
-  ORpSmPos1 <- P["ORpSmPos1"]
-  ORpSmPosH <- P["ORpSmPosH"]
-
-  MpSmPos      <- matrix(NA,11,5)
-  MpSmPos[,]  <- pSmPos/(1-pSmPos)
-  MpSmPos[1,] <- MpSmPos[1,]*ORpSmPos1
-  MpSmPos[2,] <- MpSmPos[2,]
-  MpSmPos[,4] <- MpSmPos[,4]*ORpSmPosH
-  MpSmPos[,]  <- MpSmPos[,]/(1+MpSmPos[,])
-
-  MpSmPos[,2] <- MpSmPos[,4]*TbHivEarly+MpSmPos[,1]*(1-TbHivEarly)
-  MpSmPos[,3] <- MpSmPos[,2]*(1-ArtTbEff1)+MpSmPos[,1]*ArtTbEff1
-  MpSmPos[,5] <- MpSmPos[,4]*(1-ArtTbEff2)+MpSmPos[,1]*ArtTbEff2
+######REMOVE SMEAR POSITIVE PARAMETERS
 
 ## RATE OF SELF CURE, by smear status and HIV status
 
 #######################       RATE OF SELF CURE         ########################
-# by smear status and HIV status
   rSlfCur      <- P["rSlfCur"]/12
-  VrSlfCur     <- rep(rSlfCur,5)
-  VrSlfCur[4]  <- 0
-  VrSlfCur[2]  <- VrSlfCur[4]*TbHivEarly   +VrSlfCur[1]*(1-TbHivEarly)
-  VrSlfCur[3]  <- VrSlfCur[2]*(1-ArtTbEff1)+VrSlfCur[1]*ArtTbEff1
-  VrSlfCur[5]  <- VrSlfCur[4]*(1-ArtTbEff2)+VrSlfCur[1]*ArtTbEff2
+
+############## REMOVED VECTOR OF RATE OF SELF CURE AS THIS NO LONGER VARIES ####
 
 ## RATE OF CONVERSION FROM In TO Ip
-######################     RATE OF CONVERSION FROM      ########################
-##############       TB SMEAR NEGATIVE TO TB SMEAR POS        ##################
-  rSmConv  	   <- P["rSmConv"]/12
-  VrSmConv     <- rep(rSmConv,5)
-  VrSmConv[4]  <- 0
-  VrSmConv[2]  <- VrSmConv[4]*TbHivEarly   +VrSmConv[1]*(1-TbHivEarly)
-  VrSmConv[3]  <- VrSmConv[2]*(1-ArtTbEff1)+VrSmConv[1]*ArtTbEff1
-  VrSmConv[5]  <- VrSmConv[4]*(1-ArtTbEff2)+VrSmConv[1]*ArtTbEff2
+##################### REMOVED SMEAR CONVERSION PARAMETERS #######################
 
 ### LTBI DIAGNOSIS
 ######################          LTBI DIAGNOSIS           ########################
