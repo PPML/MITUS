@@ -144,6 +144,7 @@ h RRmuHR    <- c(1,P["RRmuHR"],1,1)
 ######################       TB TRANSMISSION           #######################
   CR           <- P["CR"]/12
   TrIn         <- P["TrIn"]	# Contact rate for In as a fraction of Ip
+#########need to update this parameter for new risk groups ###################
   RelInfRg     <- c(1.0,P["RelCrHr"],1.0)*CR
 #  RelInfHivt   <- LgtCurve(1990,1996,1) + (1-LgtCurve(1990,1996,1))*P["RelCrHr"]
   TunTbTransTx <- P["TunTbTransTx"]  # set to zero?
