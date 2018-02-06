@@ -105,7 +105,7 @@ h RRmuHR    <- c(1,P["RRmuHR"],1,1)
   ImmFst         <- outer(PrevTrend25_34a*P["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*(1-P["pImAct"])
   ImmNon         <- TotImmAge-ImmAct-ImmFst-ImmLat
 # tx history, dr
-  TxExpAge       <- ImmigInputs[["Fract_TxE_by_Age"]]
+#  TxExpAge       <- ImmigInputs[["Fract_TxE_by_Age"]]
  ####REMOVED ALL THE DRUG RESISTANCE PARAMETERS #########
 
 # p(smr-pos|active TB)
