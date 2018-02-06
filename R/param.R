@@ -387,10 +387,10 @@ h RRmuHR    <- c(1,P["RRmuHR"],1,1)
 
 #####################   NEW TB TREATMENT TABLE ################
 
-  TxMat           <- matrix(NA,2,1)
-  rownames(TxMat) <- c("TxCompRate","TxEff")
-  TxMat[1,]       <- d1st
-  TxMat[2,]       <- pCurPs
+  TxVec           <- rep(NA,2)
+  names(TxVec) <- c("TxCompRate","TxEff")
+  TxVec[1]       <-  d1st
+  TxVec[2]       <- pCurPs
 
 #########################         RETREATMENT         ##########################
   pReTx   <- LgtCurve(1985,2000,P["pReTx"])   	# Probability Tx failure identified, patient initiated on tx experienced reg (may be same)
