@@ -140,13 +140,10 @@ List cSim(
         for(int j=0; j<vTMort.ncol(); j++) {
             vTMortN[i][j] = vTMort(i,j);
         } }
-    for(int i=0; i<vHMort.nrow(); i++) {
-        for(int j=0; j<vHMort.ncol(); j++) {
-            vHMortN[i][j] = vHMort(i,j);
-        } }
-    for(int i=0; i<vHxtoHy.nrow(); i++) {
-        for(int j=0; j<vHxtoHy.ncol(); j++) {
-            vHxtoHyN[i][j] = vHxtoHy(i,j);
+///this was HIV mortality temporarily replaced with RF of interest
+    for(int i=0; i<vRFMort.nrow(); i++) {
+        for(int j=0; j<vRFMort.ncol(); j++) {
+            vRFMortN[i][j] = vRFMort(i,j);
         } }
     for(int i=0; i<ImmNon.nrow(); i++) {
         for(int j=0; j<ImmNon.ncol(); j++) {
