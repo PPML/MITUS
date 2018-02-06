@@ -35,7 +35,7 @@ List cSim(
           NumericMatrix       rRFt,//rate of risk factor (population) of interest over time
           std::vector<double> rEmmigFB,
           NumericMatrix       rIntvInit,//rate of intervention for RF of interest over time
-          NumericMatrix       TxMat,
+          std::vector<double> TxVec,
           double              TunTxMort,
           std::vector<double> rDeft,
           std::vector<double> rDeftH,
@@ -177,10 +177,10 @@ List cSim(
         for(int j=0; j<rIntvInit.ncol(); j++) {
             rIntvInitN[i][j] = rIntvInit(i,j);
         } }
-    for(int i=0; i<TxMat.nrow(); i++) {
-        for(int j=0; j<TxMat.ncol(); j++) {
-            TxMatN[i][j] = TxMat(i,j);
-        } }
+///////do I need to transform bc of the vector should just straight input in
+    for(int i=0; i<sizeof(TxVec); i++) {
+            TxVecN[i] = TxVec[i];
+        }
     for(int i=0; i<rDxt.nrow(); i++) {
         for(int j=0; j<rDxt.ncol(); j++) {
             rDxtN[i][j] = rDxt(i,j);
@@ -190,10 +190,9 @@ List cSim(
             HrEntExN[i][j][0] = HrEntEx(i,j);
             HrEntExN[i][j][1] = HrEntEx(i,j)*HivHrPar;
         } }
-    for(int i=0; i<22; i++) {
-        for(int j=0; j<2; j++) {
-            TxMatZ[i][j] = 0.0;
-    } }
+    for(int i=0; i<5; i++) {
+            TxVecZ[i] = 0.0;
+    }
 for(int i=0; i<nYrs; i++) {
     for(int j=0; j<nRes; j++) {
         Outputs[i][j] = 0;
@@ -299,7 +298,7 @@ for(int ag=0; ag<11; ag++) {
             V1[ag][tb][0][0][0][rg][0]  -= V0[ag][tb][0][0][rg][0]*(mubtN[0][ag]*RRmuHR[rg]+vTMortN[ag][tb]);
 }
 ////////////////          MORTALITY WITH TB TREATMENT         ////////////////////
-            V1[ag][5 ][0][0][0][rg][0]  -= V0[ag][5 ][0][0][0]rg[0]*(mubtN[0][ag]*RRmuHR[rg]+vTMortN[ag][5 ]*pow(1.0-TxMatZ[1][0][0],TunTxMort)); //check the mortality in param
+            V1[ag][5 ][0][0][0][rg][0]  -= V0[ag][5 ][0][0][0]rg[0]*(mubtN[0][ag]*RRmuHR[rg]+vTMortN[ag][5 ]*pow(1.0-TxVecZ[1],TunTxMort)); //check the mortality in param
 } }
 /////////////////////////////////////AGING///////////////////////////////////////
 for(int ag=0; ag<10; ag++) {
@@ -466,11 +465,11 @@ for(int ag=0; ag<11; ag++) {
          ti2 = 1;
     }
 //////////CURES//////////////////////////////////////////////////////////////////
-            temp  = V0[ag][5][0][0][0][rg][na]*TxMatZ[7][0][ti2];
+            temp  = V0[ag][5][0][0][0][rg][na]*TxVecZ[2];
             V1[ag][5][0][0][0][rg][na]  -= temp;
             V1[ag][2][0][0][0][rg][na]  += temp;
 //////////FAILURES(INCLUDING TREATMENT DEFAULT)//////////////////////////////////
-            temp  = V0[ag][5][0][0][0][rg][na]*TxMatZ[8][0][ti2];
+            temp  = V0[ag][5][0][0][0][rg][na]*TxVecZ[3]; ///check this line
                     V1[ag][5][0][0][0][rg][na]  -= temp;
                     V1[ag][4][0][0][0][rg][na]  += temp;
 } } }
@@ -525,12 +524,9 @@ for(int m=0; m<12; m++) {
 /////////////////////CREATE A COUNTER OF MONTHS SINCE START////////////////////
 s = y*12+m;
 /////////////////////////UPDATING TREATMENT PARAMETERS/////////////////////////
-///// NEED TO UPDATE THE TXMATZ IN THE PARAM FILE /////////////////////////////
-///// TxMatZ: 0=completion rate, 1 = tx success, 2:6 = AR probabilities, //////
-///// 7 = rate of exit to cure 8 = adj factor for AR with tx completion, //////
-///// 9 = adj factor for AR with default, 10:14 = exit rates to active TB;/////
-///// 15:19 = exit rates to retx; 20 = sum of AR for active TB, ///////////////
-///// 21 = sum of AR for retx /////////////////////////////////////////////////
+///// TxMatZ: 0=completion rate, 1 = tx success, 2 = RATE OF EXIT TO CURE /////
+///// 3 = RATE OF EXIT TO ACTIVE TB, 4 = RATE OF EXIT TO RETREATMENT      /////
+///// 5 = PROBABILITY OF TREATMENT COMPLETION                           ///////
 ///////////////////////////////////////////////////////////////////////////////
 //////// TREATMENT EFFICACY UPDATED FOR TREATMENT QUALITY //////////////////////
 TxVecZ[1] = TxVecN[1]*TxQualt[s];
@@ -549,24 +545,24 @@ V1[0][0][0][0][0][0][0]  += Birthst[s]*(1-p_HR);
 /////HIGH RISK GROUP BIRTHS//////////////////////////////////////////////////////
 V1[0][0][0][0][0][1][0]  += Birthst[s]*p_HR;
 ///////////////////////////////// IMMIGRATION ///////////////////////////////////
-                                for(int ag=0; ag<11; ag++) {
-                                    V1[ag][0][0][0 ][0 ][0 ][1]    += ImmNonN[s][ag];      // NO TB
-                                    V1[ag][2][0][0 ][0 ][0 ][1]    += ImmLatN[s][ag];      // LATENT TB
-                                    V1[ag][3][0][im][nm][rg][1]    += TBImm[ag][0][s][1];   // tx naive, LAT FAST
-                                    V1[ag][3][1][im][nm][rg][1]    += TBImm[ag][1][s][1];   // tx exp, LAT FAST
-                                    V1[ag][4][0][im][nm][rg][1]    += TBImm[ag][0][s][0];   // tx naive, active
-                                    V1[ag][4][1][im][nm][rg][1]    += TBImm[ag][1][s][0];   // tx exp, active
-                                    }
-                                /////////////////////////////////  IMMIGRATION ///////////////////////////////////
-                                for(int ag=0; ag<11; ag++) {
-                                    for(int tb=0; tb<6; tb++) {
-                                        for(int lt=0; lt<2; lt++){
-                                            for(int im=0; im<4; im++){
-                                                for(int nm=0; nm<4; nm++){
-                                                    for(int rg=0; rg<2; rg++) {
-                                                        V1[ag][tb][lt][im][nm][rg][1]  -= V0[ag][tb][lt][im][nm][rg][1]*rEmmigFB[0];      // FB1
-                                                        V1[ag][tb][lt][im][nm][rg][2]  -= V0[ag][tb][lt][im][nm][rg][2]*rEmmigFB[1];      // FB2
-                                                    } } } } } } }
+for(int ag=0; ag<11; ag++) {
+    V1[ag][0][0][0 ][0 ][0 ][1]    += ImmNonN[s][ag];      // NO TB
+    V1[ag][2][0][0 ][0 ][0 ][1]    += ImmLatN[s][ag];      // LATENT TB
+    V1[ag][3][0][im][nm][rg][1]    += TBImm[ag][0][s][1];   // tx naive, LAT FAST
+    V1[ag][3][1][im][nm][rg][1]    += TBImm[ag][1][s][1];   // tx exp, LAT FAST
+    V1[ag][4][0][im][nm][rg][1]    += TBImm[ag][0][s][0];   // tx naive, active
+    V1[ag][4][1][im][nm][rg][1]    += TBImm[ag][1][s][0];   // tx exp, active
+}
+/////////////////////////////////  IMMIGRATION ///////////////////////////////////
+for(int ag=0; ag<11; ag++) {
+    for(int tb=0; tb<6; tb++) {
+        for(int lt=0; lt<2; lt++){
+            for(int im=0; im<4; im++){
+                for(int nm=0; nm<4; nm++){
+                    for(int rg=0; rg<2; rg++) {
+                        V1[ag][tb][lt][im][nm][rg][1]  -= V0[ag][tb][lt][im][nm][rg][1]*rEmmigFB[0];      // FB1
+                        V1[ag][tb][lt][im][nm][rg][2]  -= V0[ag][tb][lt][im][nm][rg][2]*rEmmigFB[1];      // FB2
+} } } } } } }
                             
 /////////////////////////////////  EMIGRATION ///////////////////////////////////
 for(int ag=0; ag<11; ag++) {
@@ -595,7 +591,7 @@ for(int na=0; na<3; na++) {
                                                     (mubtN[s][ag]*RRmuHR[rg][na]+vNmMortN[ag][nm]+vTMortN[ag][4 ]+temp );
 ////////////////////////    TB TREATMENT        /////////////////////////////////
                                                     VMort[ag][5 ][lt][im][nm][rg][na]  = V0[ag][5 ][lt][im][nm][rg][na]*
-                                                    (mubtN[s][ag]*RRmuHR[rg][na]+vNmMortN[ag][nm]+(vTMortN[ag][5 ]+temp)*pow(1.0-TxMatZ[1][dr*2+0][0],TunTxMort));
+                                                    (mubtN[s][ag]*RRmuHR[rg][na]+vNmMortN[ag][nm]+(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort));
                                                     
 for(int tb=0; tb<6; tb++) {
     V1[ag][tb][lt][im][nm][rg][na]  -= VMort[ag][tb][lt][im][nm][rg][na];
@@ -974,42 +970,24 @@ for(int ag=0; ag<11; ag++) {
 } } } }
                                     
 //////////////////////// TB TREATMENT OUTCOMES /////////////////////////////
-for(int rg=0; rg<2; rg++) {
-    if(rg!=1) { ti2 = 0; }
-    else { ti2 = 1; }
-    for(int ag=0; ag<11; ag++) {
+for(int ag=0; ag<11; ag++) {
         for(int lt=0; lt<2; lt++) {
             for(int nm=0; nm<4; nm++) {
-                for(int na=0; na<3; na++) {
-// Cures back to Ls state
-                    for(int i=0; i<2; i++) {
-                        ti3 = dr*2+i;
-                        ti4 = 7+i*2;
-                        ti5 = 8+i*2;
-                        if(i==0) { ti = 7; }
-                        else { ti = 9; }
-                        temp  = V0[ag][ti  ][dr][tx][im][rg]*TxMatZ[7][ti3][ti2];
-                        temp2 = V0[ag][ti+1][dr][tx][im][rg]*TxMatZ[7][ti3][ti2];
-                        V1[ag][ti4][dr][tx][im][rg]  -= temp;
-                        V1[ag][ti5][dr][tx][im][rg]  -= temp2;
-                        V1[ag][2  ][dr][2 ][im][rg]  += temp + temp2;
-                                                            // Failures stay in naive (if naive) as will still be one episode of tb
-                                                            for(int d2=0; d2<5; d2++) {  if(idAR[d2][ti3]==1) {
-                                                                // To active disease state, with AR distribution
-                                                                temp  = V0[ag][ti  ][dr][tx][im][rg]*TxMatZ[10+d2][ti3][ti2];  // sm neg
-                                                                temp2 = V0[ag][ti+1][dr][tx][im][rg]*TxMatZ[10+d2][ti3][ti2];  // sm pos
-                                                                V1[ag][ti4][dr][tx][im][rg]  -= temp;
-                                                                V1[ag][4  ][d2][tx][im][rg]  += temp;
-                                                                V1[ag][ti5][dr][tx][im][rg]  -= temp2;
-                                                                V1[ag][5  ][d2][tx][im][rg]  += temp2;
-                                                                // To retreatment, with AR distribution
-                                                                temp  = V0[ag][ti  ][dr][tx][im][rg]*TxMatZ[15+d2][ti3][ti2];   // sm neg
-                                                                temp2 = V0[ag][ti+1][dr][tx][im][rg]*TxMatZ[15+d2][ti3][ti2];   // sm pos
-                                                                V1[ag][ti4][dr][tx][im][rg]  -= temp;
-                                                                V1[ag][9  ][d2][tx][im][rg]  += temp;
-                                                                V1[ag][ti5][dr][tx][im][rg]  -= temp2;
-                                                                V1[ag][10 ][d2][tx][im][rg]  += temp2;    } } }
-                                                    } } } } }
+               for(int rg=0; rg<2; rg++) {
+                   for(int na=0; na<3; na++) {
+                    // Cures back to Ls state
+                    temp=V0[ag][5][lt][im][nm][rg][na]*TxVecZ[2]
+                    V0[ag][5][lt][im][nm][rg][na]  -= temp
+                    V0[ag][2][lt][im][nm][rg][na]  += temp
+                    ///// EXIT TO ACTIVE DISEASE //////
+                    temp=V0[ag][5][lt][im][nm][rg][na]*TxVecZ[3]
+                    V0[ag][5][lt][im][nm][rg][na]  -= temp
+                    V0[ag][4][lt][im][nm][rg][na]  += temp
+                    ///// EXIT TO TB RETREATMENT //////
+                    temp=V0[ag][5][lt][im][nm][rg][na]*TxVecZ[4]
+                    V0[ag][5][lt][im][nm][rg][na]  -= temp
+                    V0[ag][5][lt][im][nm][rg][na]  += temp
+ } } } } }
 ///////////////////////////////////////////////////////////////////////////////
 /////////////////////////    FILL RESULTS TABLE    ////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -1076,7 +1054,7 @@ for(int ag=0; ag<11; ag++) {
                         if(im>0) { ti = 11; } else { ti = 0; }
                         if(im==3) { temp = muTbH; } else { temp = 0; }
                         Outputs[y][88+ag+ti]  += V0[ag][4 ][lt][im][nm][rg][na]*(vTMortN[ag][4 ]+temp);
-                        Outputs[y][88+ag+ti]  += V0[ag][5 ][lt][im][nm][rg][na]*(vTMortN[ag][5 ]+temp)*pow(1.0-TxMatZ[1][dr*2+0][0],TunTxMort); ///check txmatz
+                        Outputs[y][88+ag+ti]  += V0[ag][5 ][lt][im][nm][rg][na]*(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort); ///check txmatz
 } } } } }
 ////////////     CREATE YEARLY VALUES FROM THE MONTH ESTIMATE     ////////////
 for(int i=88; i<110; i++) { Outputs[y][i] = Outputs[y][i]*12; }
@@ -1112,8 +1090,11 @@ Outputs[y][121+ag]  += VMort[ag][tb][lt][im][nm][rg][na];
                                                                     for(int nm=0; nm<4; nm++) {
                                                                         for(int rg=0; rg<2; rg++) {
                                                                             for(int na=0; na<3; na++) {
-                                                                                if(rg!=1) { temp = rDeft[s]; } else { temp = rDeftH[s]; }
-                                                                                Outputs[y][132]  += V0[ag][5 ][lt][im][nm][rg][na]*TxMatZ[22][dr*2+0][0] // tx completion  check this!!!
+
+                        if(rg!=1) { temp = rDeft[s]; } else { temp = rDeftH[s]; }
+                                                                //////updated tx mat z 22 to tx mat z 5
+                                                                                Outputs[y][132]  += V0[ag][5 ][lt][im][nm][rg][na]*TxVecZ[5][dr*2+0][0] // tx completion  check this!!!
+                        
                                                                                 Outputs[y][133]  += V0[ag][5 ][lt][im][nm][rg][na] // tx discontinuation
                                                                                 Outputs[y][134]  += VMort[ag][5 ][lt][im][nm][rg][na]// tx mort
                                                                             } } } } } }
@@ -1346,7 +1327,7 @@ for(int ag=0; ag<11; ag++){
                     if(rg>1) { ti = 1; } else { ti = 0; }
                     if(im==3) { temp = muTbRF; } else { temp = 0; }
                         Outputs[y][307+ti]  += V0[ag][4][lt][im][nm][rg][na]*(vTMortN[ag][4 ]+temp);
-                        Outputs[y][307+ti]  += V0[ag][5][lt][im][nm][rg][na]*(vTMortN[ag][5 ]+temp)*pow(1.0-TxMatZ[1][dr*2+0][0],TunTxMort); //check the TxMatZ portion
+                        Outputs[y][307+ti]  += V0[ag][5][lt][im][nm][rg][na]*(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort); //check the TxMatZ portion
                             } } } } } }
 ////////////     CREATE YEARLY VALUES FROM THE MONTH ESTIMATE     ////////////
 for(int i=307; i<309; i++) { Outputs[y][i] = Outputs[y][i]*12; }
