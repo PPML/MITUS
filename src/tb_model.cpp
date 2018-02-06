@@ -532,29 +532,23 @@ s = y*12+m;
 ///// 15:19 = exit rates to retx; 20 = sum of AR for active TB, ///////////////
 ///// 21 = sum of AR for retx /////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-for(int j=0; j<10; j++) {
 //////// TREATMENT EFFICACY UPDATED FOR TREATMENT QUALITY //////////////////////
-TxMatZ[1][j]          = TxMatN[1][j]*TxQualt[s];
+TxVecZ[1] = TxVecN[1]*TxQualt[s];
 ///////// RATE OF TREATMENT EXIT TO CURE (LS) //////////////////////////////////
-TxMatZ[7][j][k]            = TxMatN[0][j]*TxMatZ[1][j][k] + rDeft[s]*TxMatZ[1][j][k]*RRcurDef;
-///REMOVE TXMATZ[8-9] AS THEY ARE AR PROBABILITIES
-for(int i=0; i<5; i++) {  // Rates of exit to active disease from completion, potentially with AR
-    TxMatZ[10+i][j][k]       = (TxMatN[0][j]*TxMatZ[8][j][k]*(1-pReTx[s]) + rDeft[s]*TxMatZ[9][j][k])*TxMatN[2+i][j];
-    TxMatZ[15+i][j][k]       = TxMatN[0][j]*TxMatN[2+i][j]*TxMatZ[8][j][k] * pReTx[s];
-} // rate_complete * p(AR|complete,fail,0) * Adj_factor * p(retx|complete)
-TxMatZ[20][j][k]           = TxMatZ[10][j][k]+TxMatZ[11][j][k]+TxMatZ[12][j][k]+TxMatZ[13][j][k]+TxMatZ[14][j][k]; // Sum total of AR exit rates to ACTIVE TB
-TxMatZ[21][j][k]           = TxMatZ[15][j][k]+TxMatZ[16][j][k]+TxMatZ[17][j][k]+TxMatZ[18][j][k]+TxMatZ[19][j][k]; // Sum total of AR exit rates to RETX
-TxMatZ[10+extrV[j]][j][k]  = (TxMatN[0][j]*(1.0-TxMatZ[1][j][k])*(1-pReTx[s]) + rDeft[s]*(1.0-TxMatZ[1][j][k]*RRcurDef)) - TxMatZ[20][j][k]; // exit to active TB, no AR
-TxMatZ[15+extrV[j]][j][k]  = TxMatN[0][j]*(1.0-TxMatZ[1][j][k])*pReTx[s] - TxMatZ[21][j][k]; // exit to RETX, no AR
-TxMatZ[22][j][k]           = TxMatN[0][j]*(1-(1.0-TxMatZ[1][j][k])*pReTx[s]); // p(tx completion)
-} }
-                                /////////////////////////////////////BIRTHS//////////////////////////////////////
-                                /////ALL BIRTHS ENTER IN 0-4 AGE, UNINF&SUSC, PANSENSITIVE, TREAT.NAIVE, HIV-NEG
-                                /////LOW RISK GROUP BIRTHS//////////////////////////////////////////////////////
-                                V1[0][0][0][0][0][0][0]  += Birthst[s]*(1-p_HR);
-                                /////HIGH RISK GROUP BIRTHS//////////////////////////////////////////////////////
-                                V1[0][0][0][0][0][1][0]  += Birthst[s]*p_HR;
-                                ///////////////////////////////// IMMIGRATION ///////////////////////////////////
+TxVecZ[2] = TxVecN[0]*TxVecZ[1] + rDeft[s]*TxVecZ[1]*RRcurDef;
+///////// RATE OF TREATMENT EXIT TO ACTIVE TB //////////////////////////////////
+TxVecZ[3] = TxVecN[0]*(1-TxVecZ[1])*(1-pReTx[s]) + rDeft[s]*(1-TxVecZ[1]*RRcurDef)(1-pReTx[s]);
+///////// RATE OF TREATMENT EXIT TO RE TREATMENT////////////////////////////////
+TxVecZ[4] = TxVecN[0]*(1-TxVecZ[1])*(pReTx[s]) + rDeft[s]*(1-TxVecZ[1]*RRcurDef)(pReTx[s]);
+////////////////////// P(TREATMENT COMPLETION) /////////////////////////////////
+TxVecZ[5] = TxVecN[0][j]*(1-(1.0-TxVecZ[1][j][k])*pReTx[s]);
+/////////////////////////////////////BIRTHS//////////////////////////////////////
+/////ALL BIRTHS ENTER IN 0-4 AGE, UNINF&SUSC, PANSENSITIVE, TREAT.NAIVE, HIV-NEG
+/////LOW RISK GROUP BIRTHS//////////////////////////////////////////////////////
+V1[0][0][0][0][0][0][0]  += Birthst[s]*(1-p_HR);
+/////HIGH RISK GROUP BIRTHS//////////////////////////////////////////////////////
+V1[0][0][0][0][0][1][0]  += Birthst[s]*p_HR;
+///////////////////////////////// IMMIGRATION ///////////////////////////////////
                                 for(int ag=0; ag<11; ag++) {
                                     V1[ag][0][0][0 ][0 ][0 ][1]    += ImmNonN[s][ag];      // NO TB
                                     V1[ag][2][0][0 ][0 ][0 ][1]    += ImmLatN[s][ag];      // LATENT TB
