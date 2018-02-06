@@ -3,52 +3,50 @@ using namespace Rcpp;
 //[[Rcpp::export]]
 
 List cSim(
-          int                 nYrs,
-          int                 nRes,
-          NumericMatrix       rDxt,
-          std::vector<double> TxQualt,
-          NumericMatrix       InitPop,
-          NumericMatrix       Mpfast,
-          NumericMatrix       ExogInf,
-          NumericMatrix       MpfastPI,
-          NumericMatrix       Mrslow,
-          std::vector<double> rrSlowFB,
-          double              rfast,
-          double              RRcurDef,
-          std::vector<double> VrSlfCur,
-          NumericMatrix       vTMort,
-          NumericMatrix       vNmMort, //vector of non-TB mortality
-          double              muTbNm   //factor for comorbidity btw TB and non-TB,
-          std::vector<double> Birthst,
+          int                 nYrs,      //number of years to run the model
+          int                 nRes,      // results
+          NumericMatrix       rDxt,      // rate of diagnosis over time
+          std::vector<double> TxQualt,   // treatment quality over time
+          NumericMatrix       InitPop,   // initial population matrix
+          NumericMatrix       Mpfast,    // matrix of probability of fast TB progression
+          NumericMatrix       ExogInf,   // exogenous infection risk
+          NumericMatrix       MpfastPI,  // matrix of probability of fast TB progression in those with partial immunity from prior infection
+          NumericMatrix       Mrslow,    // matrix of the rate of slow TB progression
+          std::vector<double> rrSlowFB,  // rate ratios that are applied to the rate of slow progression for foreign born population
+          double              rfast,     // rate of fast TB progression
+          double              RRcurDef,  // rate ratio of cure given treatment default
+          double              rSlfCur,   // rate of self cure
+          NumericMatrix       vTMort,    // matrix of TB mortality
+          NumericMatrix       vNmMort,   //matrix of non-TB mortality
+          double              muTbNm     //factor for comorbidity btw TB and non-TB,
+          std::vector<double> Birthst,   // vector of absolute births over time
           NumericMatrix       ImmNon,
           NumericMatrix       ImmLat,
           NumericMatrix       ImmAct,
           NumericMatrix       ImmFst,
-          std::vector<double> TxExpAge,
-          NumericMatrix       mubt,
-          NumericMatrix       RelInf,
-          std::vector<double> RelInfRg,
-          std::vector<double> Vmix,
+#         std::vector<double> TxExpAge,   //removed as we no longer have a need for tx exp parameter
+          NumericMatrix       mubt,       //background mortality over time
+          NumericMatrix       RelInf,     //relative infectiousness
+          std::vector<double> RelInfRg,   //relative infectiousness by risk group
+          std::vector<double> Vmix,       // vector of mixing parameters (sigmas)
   //        NumericMatrix       vIsxtoIsy, //matrix for transitions within the Is dimension
   //        NumericMatrix       vNmxtoNmy, //matrix for transitions within the Nm dimension
   //        NumericMatrix       vrgxtorgy, //matrix for transitions within the rg dimension
-          NumericMatrix       rRFt,//rate of risk factor (population) of interest over time
-          std::vector<double> rEmmigFB,
-          NumericMatrix       rIntvInit,//rate of intervention for RF of interest over time
-          std::vector<double> TxVec,
-          double              TunTxMort,
-          std::vector<double> rDeft,
-          std::vector<double> rDeftH,
-          std::vector<double> LtTxPar,
-          NumericMatrix       LtDxPar,
-          std::vector<double> RelInfHivt,
-          std::vector<double> RRdxAge,
-          double              rRecov,
-          double              pImmScen,
-          std::vector<double> EarlyTrend,
+          NumericMatrix       rRFt,        //rate of risk factor (population) of interest over time
+          std::vector<double> rEmmigFB,    // rate of emmigration among the foreign born
+          NumericMatrix       rIntvInit,   //rate of intervention for RF of interest over time
+          std::vector<double> TxVec,       //vector of TB treatment parameters
+          double              TunTxMort,   //tuning for treatment mortality
+          std::vector<double> rDeft,       // rate of treatment default over time
+          std::vector<double> LtTxPar,     // latent treatment parameters
+          NumericMatrix       LtDxPar,     // latent diagnosis parameters
+          std::vector<double> RRdxAge,     // rate ratios for diagnosis with respect to age
+          double              rRecov,      //rate from latent slow to partially immune TB
+          double              pImmScen,    // lack of reactivitiy to IGRA for Sp
+          std::vector<double> EarlyTrend,  // TB natural history parameter
           NumericMatrix       EffLtX,
           double              EffLt,
-          std::vector<double> dLtt,
+          std::vector<double> dLtt,        //latent diagnosis over time
           std::vector<double> NixTrans
           ) {
     
@@ -89,7 +87,7 @@ List cSim(
     double        TxVecN[length(TxVec)];
     double        LtDxParN[LtDxPar.nrow()][LtDxPar.ncol()];
     double        EffLtXN[EffLtX.nrow()][EffLtX.ncol()];
-//    double        TxVecZ[23][10][2];
+    double        TxVecZ[6];
     double        temp;
     double        temp2;
     double        temp3;
@@ -97,10 +95,10 @@ List cSim(
     double        rTbP;
     double        rTbN;
     double        Outputs[nYrs][nRes];
-    double        V0[11][11][5][3][5][4];
-    double        V1[11][11][5][3][5][4];
-    double        VMort[11][11][5][3][5][4];
-    double        Vdx[11][11][5][3][5][4];
+    double        V0[11][6][2][4][4][2][3];
+    double        V1[11][6][2][4][4][2][3];
+    double        VMort[11][6][2][4][4][2][3];
+    double        Vdx[11][6][2][4][4][2][3];
     double        VNkl[3][2];
     double        VGjkl[3][2]; ///removed drug resistance dimension
     double        Vjaf[6];     ///removed drug resistance dimension
