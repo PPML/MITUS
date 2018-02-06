@@ -29,10 +29,9 @@ List cSim(
           NumericMatrix       RelInf,
           std::vector<double> RelInfRg,
           std::vector<double> Vmix,
-          NumericMatrix       vIsxtoIsy, //matrix for transitions within the Is dimension
-          NumericMatrix       vNmxtoNmy, //matrix for transitions within the Nm dimension
-          NumericMatrix       vrgxtorgy, //matrix for transitions within the rg dimension
-          double              rArtDef,
+  //        NumericMatrix       vIsxtoIsy, //matrix for transitions within the Is dimension
+  //        NumericMatrix       vNmxtoNmy, //matrix for transitions within the Nm dimension
+  //        NumericMatrix       vrgxtorgy, //matrix for transitions within the rg dimension
           NumericMatrix       rRFt,//rate of risk factor (population) of interest over time
           std::vector<double> rEmmigFB,
           NumericMatrix       rIntvInit,//rate of intervention for RF of interest over time
@@ -87,17 +86,16 @@ List cSim(
     double        RelInfN[RelInf.nrow()][RelInf.ncol()];
   //  double        rIntvInitN[rIntvInit.nrow()][rIntvInit.ncol()];
     double        rDxtN[rDxt.nrow()][rDxt.ncol()];
-    double        TxMatN[TxMat.nrow()][TxMat.ncol()];
+    double        TxVecN[length(TxVec)];
     double        LtDxParN[LtDxPar.nrow()][LtDxPar.ncol()];
     double        EffLtXN[EffLtX.nrow()][EffLtX.ncol()];
-    double        TxMatZ[23][10][2];
+//    double        TxVecZ[23][10][2];
     double        temp;
     double        temp2;
     double        temp3;
     double        temp4V[11][5];
     double        rTbP;
     double        rTbN;
-    double        p2ndL;
     double        Outputs[nYrs][nRes];
     double        V0[11][11][5][3][5][4];
     double        V1[11][11][5][3][5][4];
@@ -195,7 +193,7 @@ List cSim(
     for(int i=0; i<22; i++) {
         for(int j=0; j<2; j++) {
             TxMatZ[i][j] = 0.0;
-        } } }
+    } }
 for(int i=0; i<nYrs; i++) {
     for(int j=0; j<nRes; j++) {
         Outputs[i][j] = 0;
@@ -237,18 +235,12 @@ for(int ag=0; ag<11; ag++) {
 ///////                  UPDATING TREATMENT METERS                        //////
 ////////     THIS DIFFERENT TO MAIN MODEL DUE TO SIMPLIFIED OUTCOMES      //////
 ////////////////////////////////////////////////////////////////////////////////
-for(int j=0; j<2; j++) {
-    if(j==0) {
-        temp = rDeft[0];
-    } else {
-        temp = rDeftH[0];
-    }
-    //////// TREATMENT EFFICACY UPDATED FOR TREATMENT QUALITY //////////////////////
-    TxMatZ[1][j] = TxMatN[1][j]*TxQualt[0];
-    ///////// RATE OF TREATMENT EXIT TO CURE (LS) //////////////////////////////////
-    TxMatZ[7][j] = TxMatN[0][j]*TxMatZ[1][j] + temp*TxMatZ[1][j]*RRcurDef;
-    //////// RATE OF TREATMENT EXIT TO FAILURE (IN/IP) /////////////////////////////
-    TxMatZ[8][j] = TxMatN[0][j]*(1-TxMatZ[1][j]) + temp*(1-TxMatZ[1][j]*RRcurDef);
+//////// TREATMENT EFFICACY UPDATED FOR TREATMENT QUALITY //////////////////////
+    TxVecZ[1] = TxVecN[1][j]*TxQualt[0];
+///////// RATE OF TREATMENT EXIT TO CURE (LS) //////////////////////////////////
+    TxVecZ[2] = TxVecN[0]*TxVecZ[1] + rDeft[0]*TxVecZ[1]*RRcurDef;
+//////// RATE OF TREATMENT EXIT TO FAILURE (IN/IP) /////////////////////////////
+    TxVecZ[3] = TxVecN[0]*(1-TxVecZ[1]) + rDeft[0]*(1-TxVecZ[1]*RRcurDef);
 } }
 ////////////////////////////////////////////////////////////////////////////////
 //////                             StatList                                /////
@@ -530,34 +522,32 @@ CheckV0(ag+tb*11+lt*66+tx*132+im*528+nm*2112+rg*4928+na*12672) = V1[ag][tb][lt][
 for(int y=0; y<nYrs; y++) {
 /////////////////////////////////MONTH LOOP////////////////////////////////////
 for(int m=0; m<12; m++) {
-                                /////////////////////CREATE A COUNTER OF MONTHS SINCE START////////////////////
-                                s = y*12+m;
-                                /////////////////////////UPDATING TREATMENT PARAMETERS/////////////////////////
-                                ///// NEED TO UPDATE THE TXMATZ IN THE PARAM FILE /////////////////////////////
-                                ///// TxMatZ: 0=completion rate, 1 = tx success, 2:6 = AR probabilities, //////
-                                ///// 7 = rate of exit to cure 8 = adj factor for AR with tx completion, //////
-                                ///// 9 = adj factor for AR with default, 10:14 = exit rates to active TB;/////
-                                ///// 15:19 = exit rates to retx; 20 = sum of AR for active TB, ///////////////
-                                ///// 21 = sum of AR for retx /////////////////////////////////////////////////
-                                ///////////////////////////////////////////////////////////////////////////////
-                                for(int j=0; j<10; j++) {
-                                    for(int k=0; k<2; k++) {
-                                        if(k==0) { temp = rDeft[s];
-                                        } else { temp = rDeftH[s]; } ///UPDATE rDeftH/////////////////////////////
-                                        //////// TREATMENT EFFICACY UPDATED FOR TREATMENT QUALITY //////////////////////
-                                        TxMatZ[1][j][k]            = TxMatN[1][j]*TxQualt[s];
-                                        ///////// RATE OF TREATMENT EXIT TO CURE (LS) //////////////////////////////////
-                                        TxMatZ[7][j][k]            = TxMatN[0][j]*TxMatZ[1][j][k] + temp*TxMatZ[1][j][k]*RRcurDef;
-                                        ///REMOVE TXMATZ[8-9] AS THEY ARE AR PROBABILITIES
-                                        for(int i=0; i<5; i++) {  // Rates of exit to active disease from completion, potentially with AR
-                                            TxMatZ[10+i][j][k]       = (TxMatN[0][j]*TxMatZ[8][j][k]*(1-pReTx[s]) + temp*TxMatZ[9][j][k])*TxMatN[2+i][j];
-                                            TxMatZ[15+i][j][k]       = TxMatN[0][j]*TxMatN[2+i][j]*TxMatZ[8][j][k] * pReTx[s]; } // rate_complete * p(AR|complete,fail,0) * Adj_factor * p(retx|complete)
-                                        TxMatZ[20][j][k]           = TxMatZ[10][j][k]+TxMatZ[11][j][k]+TxMatZ[12][j][k]+TxMatZ[13][j][k]+TxMatZ[14][j][k]; // Sum total of AR exit rates to ACTIVE TB
-                                        TxMatZ[21][j][k]           = TxMatZ[15][j][k]+TxMatZ[16][j][k]+TxMatZ[17][j][k]+TxMatZ[18][j][k]+TxMatZ[19][j][k]; // Sum total of AR exit rates to RETX
-                                        TxMatZ[10+extrV[j]][j][k]  = (TxMatN[0][j]*(1.0-TxMatZ[1][j][k])*(1-pReTx[s]) + temp*(1.0-TxMatZ[1][j][k]*RRcurDef)) - TxMatZ[20][j][k]; // exit to active TB, no AR
-                                        TxMatZ[15+extrV[j]][j][k]  = TxMatN[0][j]*(1.0-TxMatZ[1][j][k])*pReTx[s] - TxMatZ[21][j][k]; // exit to RETX, no AR
-                                        TxMatZ[22][j][k]           = TxMatN[0][j]*(1-(1.0-TxMatZ[1][j][k])*pReTx[s]); // p(tx completion)
-                                    } }
+/////////////////////CREATE A COUNTER OF MONTHS SINCE START////////////////////
+s = y*12+m;
+/////////////////////////UPDATING TREATMENT PARAMETERS/////////////////////////
+///// NEED TO UPDATE THE TXMATZ IN THE PARAM FILE /////////////////////////////
+///// TxMatZ: 0=completion rate, 1 = tx success, 2:6 = AR probabilities, //////
+///// 7 = rate of exit to cure 8 = adj factor for AR with tx completion, //////
+///// 9 = adj factor for AR with default, 10:14 = exit rates to active TB;/////
+///// 15:19 = exit rates to retx; 20 = sum of AR for active TB, ///////////////
+///// 21 = sum of AR for retx /////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+for(int j=0; j<10; j++) {
+//////// TREATMENT EFFICACY UPDATED FOR TREATMENT QUALITY //////////////////////
+TxMatZ[1][j]          = TxMatN[1][j]*TxQualt[s];
+///////// RATE OF TREATMENT EXIT TO CURE (LS) //////////////////////////////////
+TxMatZ[7][j][k]            = TxMatN[0][j]*TxMatZ[1][j][k] + rDeft[s]*TxMatZ[1][j][k]*RRcurDef;
+///REMOVE TXMATZ[8-9] AS THEY ARE AR PROBABILITIES
+for(int i=0; i<5; i++) {  // Rates of exit to active disease from completion, potentially with AR
+    TxMatZ[10+i][j][k]       = (TxMatN[0][j]*TxMatZ[8][j][k]*(1-pReTx[s]) + rDeft[s]*TxMatZ[9][j][k])*TxMatN[2+i][j];
+    TxMatZ[15+i][j][k]       = TxMatN[0][j]*TxMatN[2+i][j]*TxMatZ[8][j][k] * pReTx[s];
+} // rate_complete * p(AR|complete,fail,0) * Adj_factor * p(retx|complete)
+TxMatZ[20][j][k]           = TxMatZ[10][j][k]+TxMatZ[11][j][k]+TxMatZ[12][j][k]+TxMatZ[13][j][k]+TxMatZ[14][j][k]; // Sum total of AR exit rates to ACTIVE TB
+TxMatZ[21][j][k]           = TxMatZ[15][j][k]+TxMatZ[16][j][k]+TxMatZ[17][j][k]+TxMatZ[18][j][k]+TxMatZ[19][j][k]; // Sum total of AR exit rates to RETX
+TxMatZ[10+extrV[j]][j][k]  = (TxMatN[0][j]*(1.0-TxMatZ[1][j][k])*(1-pReTx[s]) + rDeft[s]*(1.0-TxMatZ[1][j][k]*RRcurDef)) - TxMatZ[20][j][k]; // exit to active TB, no AR
+TxMatZ[15+extrV[j]][j][k]  = TxMatN[0][j]*(1.0-TxMatZ[1][j][k])*pReTx[s] - TxMatZ[21][j][k]; // exit to RETX, no AR
+TxMatZ[22][j][k]           = TxMatN[0][j]*(1-(1.0-TxMatZ[1][j][k])*pReTx[s]); // p(tx completion)
+} }
                                 /////////////////////////////////////BIRTHS//////////////////////////////////////
                                 /////ALL BIRTHS ENTER IN 0-4 AGE, UNINF&SUSC, PANSENSITIVE, TREAT.NAIVE, HIV-NEG
                                 /////LOW RISK GROUP BIRTHS//////////////////////////////////////////////////////
