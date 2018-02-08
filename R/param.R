@@ -260,11 +260,11 @@ h RRmuHR    <- c(1,P["RRmuHR"],1,1)
   EffLt         <- P["EffLt"]
   LtTxPar       <- c(dLt,rDefLt,EffLt)
 
-  LtDxPar <- matrix(NA,6,2);  colnames(LtDxPar) <- c("latent","no latent");  rownames(LtDxPar) <- c("LR","HR","FB","LRh","HRh","FBh")
-  LtDxPar[,1] <- c(SensLt               , rrTestHr*SensLt   , SensLt,
-                   rrTestHiv*SensLtHiv, max(rrTestHiv,rrTestHr)*SensLtHiv, rrTestHiv*SensLtHiv)
-  LtDxPar[,2] <- c(rrTestLrNoTb*(1-SpecLt), rrTestHr*(1-SpecLt), (1-SpecLtFb),
-                   rrTestHiv*(1-SpecLt) , max(rrTestHiv,rrTestHr)*(1-SpecLt), rrTestHiv*(1-SpecLtFb))
+  LtDxPar <- matrix(NA,3,2);
+  colnames(LtDxPar) <- c("latent","no latent");
+  rownames(LtDxPar) <- c("LR","HR","FB")
+  LtDxPar[,1] <- c(SensLt               , rrTestHr*SensLt   , SensLt)
+  LtDxPar[,2] <- c(rrTestLrNoTb*(1-SpecLt), rrTestHr*(1-SpecLt), (1-SpecLtFb))
 
   pImmScen    <- P["pImmScen"] # lack of reactivitiy to IGRA for Sp
 
