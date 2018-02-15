@@ -54,3 +54,9 @@ SmoCurve <- function(vec) {
                 x=seq(1,length(vec),1/12))$y;
   jj[jj<0] <- 0 ; jj
 }
+
+#'This function is used to return the diagonal of a matrix.
+#'@param matrix matrix that the user would like to know the diagonal
+#'@return vector that holds the values of the matrix diagonal
+#'@export
+
