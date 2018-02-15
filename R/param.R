@@ -164,7 +164,7 @@ Birthst   <- SmoCurve(Births)*P["TunBirths"]/12
 #  pimmed    <- P["pimmed"]
   ORpfast1  <- P["ORpfast1"]
   ORpfast2  <- P["ORpfast2"]
-  ORpfastH  <- P["ORpfastH"]
+# ORpfastH  <- P["ORpfastH"]
   ORpfastPI <- P["ORpfastPI"]
   rslow     <- P["rslow"]/12
 #  rslowH    <- P["rslowH"]/12
@@ -189,36 +189,39 @@ Birthst   <- SmoCurve(Births)*P["TunBirths"]/12
   rfast      <- P["rfast"]/12
   rrSlowFB0  <- P["rrSlowFB"]
   rrSlowFB   <- c(1,1,rrSlowFB0,rrSlowFB0)
-
-  Mpfast       <- matrix(NA,11,5)
+##############            ORIGINAL Mpfast[ag][hv]             ################
+##############          CREATE NEW Mpfast[ag][im]               ##############
+  Mpfast       <- matrix(NA,11,4)
 ############## CREATE AN ODDS FROM THE PROB OF FAST PROGRESSION ##############
   Mpfast[,]    <- pfast/(1-pfast)
-  Mpfast[1,]   <- Mpfast[1,]*ORpfast1
-  Mpfast[2,]   <- Mpfast[2,]*ORpfast2
-  Mpfast[,4]   <- Mpfast[,4]*ORpfastH
-
-  MpfastPI     <- Mpfast
-  MpfastPI[,1] <- Mpfast[,1]*ORpfastPI
-
+  Mpfast[1,]   <- Mpfast[1,]*ORpfast1 # progression for age group 1
+  Mpfast[2,]   <- Mpfast[2,]*ORpfast2 # progression for age group 2
+  Mpfast[,4]   <- Mpfast[,4]*ORpfastRF #progression for tb reactivation group 4
+###### ADD IN THE INV LOGIT FOR [,2][,3]
 
 #################       CREATE A NEW MATRIX PARTIAL. IMM.     #################
   MpfastPI     <- Mpfast
   MpfastPI[,1] <- Mpfast[,1]*ORpfastPI
-#######NEED TO UPDATE THIS SECTION
-  Mpfast[,]    <- Mpfast[,]  /(1+Mpfast[,]);
-  MpfastPI[,]  <- MpfastPI[,]/(1+MpfastPI[,])
-  Mpfast[,2]   <- Mpfast[,4]  *TbHivEarly   + Mpfast[,1]  *(1-TbHivEarly);
-  MpfastPI[,2] <- MpfastPI[,4]*TbHivEarly   + MpfastPI[,1]*(1-TbHivEarly);
-  Mpfast[,3]   <- Mpfast[,2]  *(1-ArtTbEff1)+ Mpfast[,1]  *ArtTbEff1;
-  MpfastPI[,3] <- MpfastPI[,2]*(1-ArtTbEff1)+ MpfastPI[,1]*ArtTbEff1;
-  Mpfast[,5]   <- Mpfast[,4]  *(1-ArtTbEff2)+ Mpfast[,1]  *ArtTbEff2;
-  MpfastPI[,5] <- MpfastPI[,4]*(1-ArtTbEff2)+ MpfastPI[,1]*ArtTbEff2;
+### ADD IN THE INV LOGIT FOR THE OTHER FACTOR LEVELS
 
-  Vrslow     <- rep(rslow,5)
-  Vrslow[4]  <- rslowH
+############ FILL BOTH MATRICES WITH BASE LEVELS  ############
+  Mpfast[,]    <- Mpfast[,]  /(1+Mpfast[,]);
+  MpfastPI[,]  <- MpfastPI[,]/(1+MpfastPI[,]);
+############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
+  Mpfast[,2]   <- exp(1)*log(Mpfast[,4]/3)
+  MpfastPI[,2] <- exp(1)*log(MpfastPI[,4]/3)
+############ UPDATE PROBS FOR LEVEL 3 OF REACTIVATION ###########
+  Mpfast[,3]   <- exp(2)*log(Mpfast[,4]/3)
+  MpfastPI[,3] <- exp(2)*log(MpfastPI[,4]/3)
+
+############# CREATE A VECTOR FOR RATE OF SLOW PROGRESSION THAT WILL
+############# VARY BASED ON LEVELS OF TB REACTIVATION RATES
+  Vrslow     <- rep(rslow,4)
+############# UPDATE LEVEL FOUR OF THE RATE OF SLOW BASED ON CALCULATED RR FROM
+############# USER INPUTTED RR FOR THE RISK FACTOR
+  Vrslow[4]  <- rslow*RRslowRF
   Vrslow[2]  <- Vrslow[4]*TbHivEarly   +Vrslow[1]*(1-TbHivEarly)
   Vrslow[3]  <- Vrslow[2]*(1-ArtTbEff1)+Vrslow[1]*ArtTbEff1
-  Vrslow[5]  <- Vrslow[4]*(1-ArtTbEff2)+Vrslow[1]*ArtTbEff2
 
   TunrslowAge  <- P["TunrslowAge"]
   rrReactAg       <- exp(c(0,0,0,0,0,0,0.5,1:4)*P["TunrslowAge"])
@@ -229,6 +232,7 @@ Birthst   <- SmoCurve(Births)*P["TunBirths"]/12
   rRecov     <-  P["rRecov"]/12
 
 ## PROBABILITY OF GOING INTO Ip FOLLOWING BREAKDOWN, by HIV status
+
 #######################       RATE OF SELF CURE         ########################
 #by smear status and HIV status
   rRecov     <-  P["rRecov"]/12
@@ -268,22 +272,6 @@ Birthst   <- SmoCurve(Births)*P["TunBirths"]/12
 
   pImmScen    <- P["pImmScen"] # lack of reactivitiy to IGRA for Sp
 
-######  TB DIAGNOSIS  ######
-
-## TEST CHARACTERISTICS
-  SensSn    <- P["SensSn"]
-  SensSp    <- P["SensSp"]
-
-## PROVIDER DELAY
-  DelaySn    <- P["DelaySn"]
-  DelaySp    <- P["DelaySp"]
-
-## RR Delay Elderly
-  TunRRdxAge    <- P["TunRRdxAge"]
-  RRdxAge       <- 1+(c(rep(1,6),cumprod(seq(1.05,1.3,length.out=5)))-1)*TunRRdxAge
-
-## Attendance rate
-
 ################################################################################
 #######################         TB DIAGNOSIS            ########################
 #######################      TEST CHARACTERISTICS       ########################
@@ -297,23 +285,27 @@ Birthst   <- SmoCurve(Births)*P["TunBirths"]/12
 
 #######################     PROVIDER DELAY RR ELDERLY     ########################
 
-
   TunRRdxAge    <- P["TunRRdxAge"]
   RRdxAge       <- 1+(c(rep(1,6),cumprod(seq(1.05,1.3,length.out=5)))-1)*TunRRdxAge
 
 #######################         ATTENDANCE RATE           ########################
 
-#######################     B SPLINE HELPER FUNCTION      ########################
-  bspline <- function(x,k,i,m) {
-      if (m==-1) { res <- as.numeric(x<k[i+1]&x>=k[i])  } else {
-      z0  <- (x-k[i]) / (k[i+m+1]-k[i]);  z1  <- (k[i+m+2]-x) / (k[i+m+2]-k[i+1])
-      z0*bspline(x,k,i,m-1) + z1*bspline(x,k,i+1,m-1) }  }
+####################### SOURCE IN B SPLINE HELPER FUNCTION #######################
+ source("basic_functions.R")
 
-  n_Spln   <- 5; n_Stps   <- 2010-1950+1; dif_pen   <- 1 # quadratic spline
+  n_Spln   <- 5;
+  n_Stps   <- 2010-1950+1;
+  dif_pen   <- 1 # quadratic spline
 # Working...
-  x1    <- seq(1,n_Stps);  k1  <- seq(min(x1),max(x1),length=n_Spln-dif_pen)
-  dk1   <- k1[2]-k1[1] ;   k1  <- c(k1[1]-dk1*((dif_pen+1):1),k1,k1[n_Spln-dif_pen]+dk1*(1:(dif_pen+1)))
-  SpMat <- matrix(NA,nrow=n_Stps,ncol=n_Spln); for(i in 1:n_Spln){ SpMat[,i] <- bspline(x=x1,k=k1,m=dif_pen,i=i)  }
+  x1    <- seq(1,n_Stps);
+  k1  <- seq(min(x1),max(x1),length=n_Spln-dif_pen)
+  dk1   <- k1[2]-k1[1] ;
+  k1  <- c(k1[1]-dk1*((dif_pen+1):1),k1,k1[n_Spln-dif_pen]+dk1*(1:(dif_pen+1)))
+  SpMat <- matrix(NA,nrow=n_Stps,ncol=n_Spln);
+
+  for(i in 1:n_Spln){
+    SpMat[,i] <- bspline(x=x1,k=k1,m=dif_pen,i=i)
+  }
 
   DxPri          <- (seq(0.5,4,length.out=5)-0.75)*3.5/2.626+0.25  # Prior from 0.5 t to 4.0
   rDx            <- c(SpMat%*%(DxPri+c(P["Dx1"],P["Dx2"],P["Dx3"],P["Dx4"],P["Dx5"])),62:151)
@@ -421,7 +413,7 @@ StatList <- noquote(list(
 #####                          NON-TB MORTALITY                            #####
   c("M1","M2","M3","M4"),
 #####                  LIVING CONDITIONS/RISK OF INFECTION                 #####
-  c("L1","L2"),
+  c("LR","HR"),
 #####                              NATIVITY                                #####
   c("US","F1","F2")))
 ################################################################################
