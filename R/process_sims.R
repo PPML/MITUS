@@ -1,6 +1,8 @@
 ################################################################################
-######### THIS CODE TAKES AN INPUT OF A TABLE OF PARAMETERS & RETURNS  #########
-#########  AN ARRAY OF OUTPUTS #########
+######### THIS SCRIPT CODES A FUNCTION THAT TAKES THE FOLLOWING PARAMETERS:
+#########
+######### THIS FUNCTION INPUTS A TABLE OF PARAMETERS AND RUNS THE TB MODEL
+######### AND GENERATES AN ARRAY OF OUTPUTS
 ################################################################################
 
 ################################################################################
