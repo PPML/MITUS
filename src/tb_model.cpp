@@ -607,40 +607,39 @@ for(int ag=0; ag<11; ag++) {
                     for(int rg=0; rg<2; rg++) {
                         V1[ag][tb][lt][im][nm][rg][1]  -= V0[ag][tb][lt][im][nm][rg][1]*rEmmigFB[0];      // FB1
                         V1[ag][tb][lt][im][nm][rg][2]  -= V0[ag][tb][lt][im][nm][rg][2]*rEmmigFB[1];      // FB2
-} } } } } } }
-
+} } } } } }
 /////////////////////////////////  MORTALITY  ///////////////////////////////////
 for(int ag=0; ag<11; ag++) {
     for(int lt=0; lt<2; lt++){
-            for(int im=0; im<5 ; im++) {
+          for(int im=0; im<4 ; im++) {
                 if(im==3) {
                     temp = muTbRF;
                 } else { temp = 0;
                 }
-for(int rg=0; rg<2; rg++) {
-for(int na=0; na<3; na++) {
+              for(int rg=0; rg<2; rg++) {
+                  for(int na=0; na<3; na++) {
 ////////////////////////UNINFECTED, SUSCEPTIBLE//////////////////////////////////
     VMort[ag][0 ][lt][im][nm][rg][na]  = V0[ag][0 ][lt][im][nm][rg][na]*
-    (mubtN[s][ag]*RRmuHR[rg][na]+vNmMortN[ag][nm] );
+                                 (mubtN[s][ag]*RRmuHR[rg][na]+vNmMortN[ag][nm] );
 ////////////////////////UNINFECTED, PART. IMMUNE/////////////////////////////////
-                                                    VMort[ag][1 ][lt][im][nm][rg][na]  = V0[ag][1 ][lt][im][nm][rg][na]*
-                                                    (mubtN[s][ag]*RRmuHR[rg][na]+vNmMortN[ag][nm] );
+    VMort[ag][1 ][lt][im][nm][rg][na]  = V0[ag][1 ][lt][im][nm][rg][na]*
+                                  (mubtN[s][ag]*RRmuHR[rg][na]+vNmMortN[ag][nm] );
 ////////////////////////    LATENT TB SLOW      /////////////////////////////////
-                                                    VMort[ag][2 ][lt][im][nm][rg][na]  = V0[ag][2 ][lt][im][nm][rg][na]*
-                                                    (mubtN[s][ag]*RRmuHR[rg][na]+vNmMortN[ag][nm] );
+    VMort[ag][2 ][lt][im][nm][rg][na]  = V0[ag][2 ][lt][im][nm][rg][na]*
+                                (mubtN[s][ag]*RRmuHR[rg][na]+vNmMortN[ag][nm] );
 ////////////////////////    LATENT TB FAST      /////////////////////////////////
-                                                    VMort[ag][3 ][lt][im][nm][rg][na]  = V0[ag][3 ][lt][im][nm][rg][na]*
-                                                    (mubtN[s][ag]*RRmuHR[rg][na]+vNmMortN[ag][nm] );
+    VMort[ag][3 ][lt][im][nm][rg][na]  = V0[ag][3 ][lt][im][nm][rg][na]*
+                      (mubtN[s][ag]*RRmuHR[rg][na]+vNmMortN[ag][nm] );
 ////////////////////////      ACTIVE TB         /////////////////////////////////
-                                                    VMort[ag][4 ][lt][im][nm][rg][na]  = V0[ag][4 ][lt][im][nm][rg][na]*
-                                                    (mubtN[s][ag]*RRmuHR[rg][na]+vNmMortN[ag][nm]+vTMortN[ag][4 ]+temp );
+    VMort[ag][4 ][lt][im][nm][rg][na]  = V0[ag][4 ][lt][im][nm][rg][na]*
+              (mubtN[s][ag]*RRmuHR[rg][na]+vNmMortN[ag][nm]+vTMortN[ag][4 ]+temp );
 ////////////////////////    TB TREATMENT        /////////////////////////////////
-                                                    VMort[ag][5 ][lt][im][nm][rg][na]  = V0[ag][5 ][lt][im][nm][rg][na]*
-                                                    (mubtN[s][ag]*RRmuHR[rg][na]+vNmMortN[ag][nm]+(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort));
-
-for(int tb=0; tb<6; tb++) {
-    V1[ag][tb][lt][im][nm][rg][na]  -= VMort[ag][tb][lt][im][nm][rg][na];
-}
+    VMort[ag][5 ][lt][im][nm][rg][na]  = V0[ag][5 ][lt][im][nm][rg][na]*
+    (mubtN[s][ag]*RRmuHR[rg][na]+vNmMortN[ag][nm]+(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort));
+/////////////// UPDATE THE PRIMARY VECTOR BY REMOVING MORTALITY /////////////////
+          for(int tb=0; tb<6; tb++) {
+             V1[ag][tb][lt][im][nm][rg][na]  -= VMort[ag][tb][lt][im][nm][rg][na];
+          }
 } } } } }
 /////////////////////////////////////AGING///////////////////////////////////////
 for(int ag=0; ag<10; ag++) {
@@ -657,9 +656,9 @@ for(int tb=0; tb<6; tb++) {
             for (int nm=0; nm<4; nm++){
                 for(int rg=0; rg<2; rg++) {
                     for(int na=0; na<3; na++){
-                            temp = V0[ag][tb][lt][im][nm][rg][na]/temp2;
-                                V1[ag  ][tb][lt][im][nm][rg][na]  -= temp;
-                                    V1[ag+1][tb][lt][im][nm][rg][na]  += temp;
+                            temp = V0[ag  ][tb][lt][im][nm][rg][na]/temp2;
+                                   V1[ag  ][tb][lt][im][nm][rg][na]  -= temp;
+                                   V1[ag+1][tb][lt][im][nm][rg][na]  += temp;
 } } } } } } }
 ///////////////////////// NEW FB -> ESTABLISHED FB ///////////////////////////////
 ///////////////////////// TWO YEARS FOR TRANSITION ///////////////////////////////
