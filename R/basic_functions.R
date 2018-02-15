@@ -55,8 +55,19 @@ SmoCurve <- function(vec) {
   jj[jj<0] <- 0 ; jj
 }
 
-#'This function is used to return the diagonal of a matrix.
-#'@param matrix matrix that the user would like to know the diagonal
-#'@return vector that holds the values of the matrix diagonal
+#'This function is used to return the basis of a spline function.
+#'@param x
+#'@param k
+#'@param i
+#'@param m
+#'@return
 #'@export
-
+#'
+bspline <- function(x,k,i,m) {
+  if (m==-1) {
+    res <- as.numeric(x<k[i+1] & x>=k[i])
+} else {
+    z0  <- (x-k[i]) / (k[i+m+1]-k[i]);
+    z1  <- (k[i+m+2]-x) / (k[i+m+2]-k[i+1])
+    z0*bspline(x,k,i,m-1) + z1*bspline(x,k,i+1,m-1)
+}  }
