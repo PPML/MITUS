@@ -421,7 +421,7 @@ StatList <- noquote(list(
 #####                          NON-TB MORTALITY                            #####
   c("M1","M2","M3","M4"),
 #####                  LIVING CONDITIONS/RISK OF INFECTION                 #####
-  c("L1","L2","L3"),
+  c("L1","L2"),
 #####                              NATIVITY                                #####
   c("US","F1","F2")))
 ################################################################################
