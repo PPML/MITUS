@@ -116,7 +116,7 @@ source("basic_functions.R")
 ######################       TB TRANSMISSION           #######################
 
   CR           <- P["CR"]/12
-  RelInfRg     <- c(1.0,P["RelCrHr"],1.0)*CR
+  RelInfRg     <- c(1.0,P["RelCrHr"])*CR
   TunTbTransTx <- P["TunTbTransTx"]  # set to zero?
   Vmix         <- 1-c(P["sigmaHr"],P["sigmaFb"])
   RelInf       <- rep(0,6)
