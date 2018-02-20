@@ -7,8 +7,9 @@
 
 ################################################################################
 library(parallel)
+library(Rcpp)
 ################################################################################
-#########                       FUNCTION      #########
+#########                      FUNCTION                                #########
 
 OutputsZint <-  function(samp_i=1,ParMatrix,endyr=2100,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0) {
   if(min(dim(as.data.frame(ParMatrix)))==1) { ;
@@ -28,6 +29,7 @@ OutputsZint <-  function(samp_i=1,ParMatrix,endyr=2100,Int1=0,Int2=0,Int3=0,Int4
     P <<- Par
 
     source("param.r")
+    sourceCpp("tb_model.cpp")
 
     M <-       cSim( nYrs     =   2100-1950, nRes     = length(ResNam), rDxt      = rDxt     , TxQualt   = TxQualt    , InitPop   = InitPop,
                      p_HR     = p_HR       , Mpfast   = Mpfast        , ExogInf   = ExogInf  , MpfastPI  = MpfastPI   , RRmuHR    = RRmuHR,
