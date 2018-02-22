@@ -1,18 +1,19 @@
 library(MASS)
-
+source("basic_functions.R")
 if(Int5==1) {
   Int1 = Int2 = Int3 = Int4 = 1
 }
 
-######### INPUTS #########
+################################################################################
+###########################          INPUTS            #########################
+################################################################################
 BgMort           <- Inputs[["BgMort"]]
 InitPop          <- Inputs[["InitPop"]]
 Births           <- Inputs[["Births"]]
 ImmigInputs      <- Inputs[["ImmigInputs"]]
-###### NEED TO INPUT RISK FACTOR OF INTEREST INCIDENCE #####
 TxInputs         <- Inputs[["TxInputs"]]
 
-#########                    PARAMETER DEFINITIONS                     #########
+##########                PARAMETER DEFINITIONS                      ###########
 #######################           BIRTHS                 #######################
 ####### INDEXED BY TIME, ABSOLUTE NUMBER OF NEW ADULT ENTRANTS OVER TIME #######
 
@@ -20,19 +21,19 @@ Birthst   <- SmoCurve(Births)*P["TunBirths"]/12
 
 ##########################      MORTALITY RATES       ##########################
 ########################## BACKGROUND MORTALITY BY TIME ########################
-
 mubt      <- matrix(NA,1801,11)
 for(i in 1:11) {
   mubt[,i] <- SmoCurve(BgMort[,i+1])*P["TunMubt"]/12
-
 }
-##########################    DISEASE SPECIFIC        ##########################
-muIp  	  <- P["muIp"]/12
-RRmuIn	  <- P["RRmuIn"]
-###### NEED TO REPLACE WITH CO MORBIDITY FACTOR FOR RISK FACTOR OF INTEREST
-TunmuTbAg <- P["TunmuTbAg"] # multiplier of mort rate above
+RRmuHR    <- c(1,P["RRmuHR"],1,1)
+#########################     DISEASE SPECIFIC       ###########################
+#############    ACTIVE TB RATES DEFAULT TO THE SMEAR POS LEVELS   #############
 
-#################      GENERIC RISK GROUP MORTALITY       #####################
+muIp  	  <- P["muIp"]/12
+
+######################## MULTIPLER OF MORT RATE ABOVE ########################
+
+TunmuTbAg <- P["TunmuTbAg"]
 
 #################                IMMIGRATION              #####################
 # TotImmig1       <- c(ImmigInputs[[1]][1:65],(ImmigInputs[[1]][66:151]-ImmigInputs[[1]][66])*P["ImmigVolFut"]+ImmigInputs[[1]][66])/12*P["ImmigVol"]
@@ -115,15 +116,13 @@ HrEntEx  <- cbind(HR_entry,HR_exit)/12
 
 CR           <- P["CR"]/12
 TrIn         <- P["TrIn"]	# Contact rate for In as a fraction of Ip
-RelInfRg     <- c(1.0,P["RelCrHr"],1.0)*CR
+RelInfRg     <- c(1.0,P["RelCrHr"],1.0, 1.0)*CR
 TunTbTransTx <- P["TunTbTransTx"]  # set to zero?
 Vmix         <- 1-c(P["sigmaHr"],P["sigmaFb"])
-# is relative infectioness by strain -- think yes, reduce to a vector
-RelInf       <- matrix(0,6,5); rownames(RelInf) <- c("Su","Sp","Ls","Lf","Ac","Tx"); colnames(RelInf) <- 1:5
-RelInf[c(5,8,10),] <- TrIn;
-RelInf[c(6,9,11),] <- 1
-RelInf[8:11,] <- RelInf[8:11,]*TunTbTransTx
-for(i in 1:5) RelInf[,i] <- RelInf[,i]*RelFit[i]
+RelInf       <- rep(0,6)
+names(RelInf) <- c("Su","Sp","Ls","Lf","Ac", "Tx")
+RelInf[5] <- 1;
+RelInf[6] <- RelInf[5]*TunTbTransTx
 
 #########################   TB NATURAL HISTORY  ###############################
 #########################__   EARLY EPIDEMTIC   ###############################
@@ -183,9 +182,15 @@ TunrslowAge  <- P["TunrslowAge"]
 rrReactAg       <- exp(c(0,0,0,0,0,0,0.5,1:4)*P["TunrslowAge"])
 Mrslow <- outer(rrReactAg,Vrslow)
 
-#######################__     RATE OF SELF CURE       ########################
+
+#######################       RATE OF RECOVERY          ########################
+
 rRecov     <-  P["rRecov"]/12
+
+#######################       RATE OF SELF CURE         ########################
+
 rSlfCur      <- P["rSlfCur"]/12
+
 ##################### __         LTBI DIAGNOSIS           #######################
 rLtScrt       <- LgtCurve(1985,2015,P["rLtScr"])/12
 SensLt        <- P["SensLt"]    #  sens of test for latent TB infection (based on IGRA QFT-GIT)
@@ -213,33 +218,30 @@ dLtt       <- (1-LgtCurve(2016,2021,1))*(1/9) + LgtCurve(2016,2021,1)*(1/3)  }
 
 #### #### #### INT 2 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
-LtDxPar <- matrix(NA,6,2);  colnames(LtDxPar) <- c("latent","no latent");  rownames(LtDxPar) <- c("LR","HR","FB","LRh","HRh","FBh")
-LtDxPar[,1] <- c(SensLt               , rrTestHr*SensLt   , SensLt,
-                 rrTestHiv*SensLtHiv, max(rrTestHiv,rrTestHr)*SensLtHiv, rrTestHiv*SensLtHiv)
-LtDxPar[,2] <- c(rrTestLrNoTb*(1-SpecLt), rrTestHr*(1-SpecLt), (1-SpecLtFb),
-                 rrTestHiv*(1-SpecLt) , max(rrTestHiv,rrTestHr)*(1-SpecLt), rrTestHiv*(1-SpecLtFb))
+LtDxPar <- matrix(NA,3,2);
+colnames(LtDxPar) <- c("latent","no latent");
+rownames(LtDxPar) <- c("LR","HR","FB")
+LtDxPar[,1] <- c(SensLt                 , rrTestHr*SensLt    , SensLt)
+LtDxPar[,2] <- c(rrTestLrNoTb*(1-SpecLt), rrTestHr*(1-SpecLt), (1-SpecLtFb))
 
 pImmScen    <- P["pImmScen"] # lack of reactivitiy to IGRA for Sp
 
-######  TB DIAGNOSIS  ######
+################################################################################
+#######################         TB DIAGNOSIS            ########################
+#######################      TEST CHARACTERISTICS       ########################
 
-## TEST CHARACTERISTICS
-SensSn    <- P["SensSn"]
 SensSp    <- P["SensSp"]
 
-## PROVIDER DELAY
-DelaySn    <- P["DelaySn"]
+######################           PROVIDER DELAY         ########################
+
 DelaySp    <- P["DelaySp"]
 
-## RR Delay Elderly
+#######################     PROVIDER DELAY RR ELDERLY     ########################
+
 TunRRdxAge    <- P["TunRRdxAge"]
 RRdxAge       <- 1+(c(rep(1,6),cumprod(seq(1.05,1.3,length.out=5)))-1)*TunRRdxAge
 
-## Attendance rate
-bspline <- function(x,k,i,m) {
-  if (m==-1) { res <- as.numeric(x<k[i+1]&x>=k[i])  } else {
-    z0  <- (x-k[i]) / (k[i+m+1]-k[i]);  z1  <- (k[i+m+2]-x) / (k[i+m+2]-k[i+1])
-    z0*bspline(x,k,i,m-1) + z1*bspline(x,k,i+1,m-1) }  }
+#######################         ATTENDANCE RATE           ########################
 
 n_Spln   <- 5; n_Stps   <- 2010-1950+1; dif_pen   <- 1 # quadratic spline
 # Working...
@@ -278,7 +280,7 @@ if(Int4==1) {  pDstt <- 1-(1-pDstt)*(1-LgtCurve(2016,2021,0.5))      }
 TunTxMort	<- P["TunTxMort"]	# Multiplier to adjust mortality rates while on treatment into reasonable range (based on observed data) 0 = no TB mort on TX
 
 # Regimen duration (no uncertainty?)
-d1st <- 1/9;  dInh <- 1/9;  dRif <- 1/21;  dMdr <- 1/21; dXdr <- 1/21
+d1st <- 1/9
 
 ## Regimen efficacy
 pCurPs  <- P["pCurPs"]    # probability of cure with pansensitive TB, 1st line regimen (Menzies 09)
@@ -347,7 +349,7 @@ StatList <- noquote(list(
 #####					     				    TUBERCULOSIS STATES		              			   #####
 ##### SUSCEPTIBLE; UNINFECTED & PARTIALLY IMMUNE; LATENT SLOW; LATENT FAST;#####
 #####       ACTIVE TB SMEAR NEG.; ACTIVE TB SMEAR POS.; TB TREATMENT       #####
-  c("Su","Sp","Ls","Lf","An", "Ap", "Tx"),
+  c("Su","Sp","Ls","Lf","Ac", "Tx"),
 #####                          TREATMENT HISTORY                           #####
 #####              NO TB TREATMENT HISTORY, PRIOR LTBI TREATMENT           #####
   c("NT","LT"),
