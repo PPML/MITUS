@@ -7,6 +7,7 @@
 ################################################################################
 library(MASS)
 source("R/basic_functions.R")
+source("R/define_P.R")
 load("data/ModelInputs_9-2-16.rData")
 ################################################################################
 ###########################          INPUTS            #########################
@@ -77,9 +78,10 @@ load("data/ModelInputs_9-2-16.rData")
 ######################           LTBI IMM.             ########################
   PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:65]^P["TunLtbiTrend"]*ImmigInputs[["PrevTrend25_34"]][65]^(1-P["TunLtbiTrend"]),
                         ImmigInputs[["PrevTrend25_34"]][66:151]*(P["ImmigPrevFutLat"]/0.99)^(1:86))
-  set.seed( P["rand_seed"]+1)
-  PrevTrend25_341l <-   c(PrevTrend25_340l[1:66],exp(mvrnorm(1, log(PrevTrend25_340l[-(1:66)]), vcv_gp_l10_sd0.1))) # Add gaussian process noise
-  #  PrevTrend25_341l <-   PrevTrend25_340l
+  set.seed(982378)
+  #set.seed( P["rand_seed"]+1)
+  # PrevTrend25_341l <-   c(PrevTrend25_340l[1:66],exp(mvrnorm(1, log(PrevTrend25_340l[-(1:66)]), vcv_gp_l10_sd0.1))) # Add gaussian process noise
+  PrevTrend25_341l <-   PrevTrend25_340l
   PrevTrend25_34l  <- SmoCurve(PrevTrend25_341l)
   PrevTrend25_34_ls <- (PrevTrend25_34l);
   PrevTrend25_34_ls <- PrevTrend25_34_ls/PrevTrend25_34_ls[(2011-1950)*12+6]
@@ -138,10 +140,10 @@ load("data/ModelInputs_9-2-16.rData")
   pfast      <- P["pfast"]
   ORpfast1   <- P["ORpfast1"]
   ORpfast2   <- P["ORpfast2"]
-  ORpfastRF  <- P["ORpfastRF"]
+  ORpfastRF  <- P["ORpfastH"]
   ORpfastPI  <- P["ORpfastPI"]
   rslow      <- P["rslow"]/12
-  rslowRF    <- P["rslowRF"]/12
+  rslowRF    <- P["rslowH"]/12
   rfast      <- P["rfast"]/12
   rrSlowFB0  <- P["rrSlowFB"]
   rrSlowFB   <- c(1,1,rrSlowFB0,rrSlowFB0)
@@ -175,10 +177,9 @@ load("data/ModelInputs_9-2-16.rData")
   Vrslow     <- rep(rslow,4)
 ############# UPDATE LEVEL FOUR OF THE RATE OF SLOW BASED ON CALCULATED RR FROM
 ############# USER INPUTTED RR FOR THE RISK FACTOR
-  Vrslow[4]  <- rslow*RRslowRF
-  Vrslow[2]  <- Vrslow[4]*TbHivEarly   +Vrslow[1]*(1-TbHivEarly)
-  Vrslow[3]  <- Vrslow[2]*(1-ArtTbEff1)+Vrslow[1]*ArtTbEff1
-
+  Vrslow[4]  <- rslow*rrslowRF
+  Vrslow[2]  <- Vrslow[4]
+  Vrslow[3]  <- Vrslow[2]
   TunrslowAge  <- P["TunrslowAge"]
   rrReactAg       <- exp(c(0,0,0,0,0,0,0.5,1:4)*P["TunrslowAge"])
   Mrslow <- outer(rrReactAg,Vrslow)
@@ -194,9 +195,9 @@ load("data/ModelInputs_9-2-16.rData")
 ######################          LTBI DIAGNOSIS           ########################
   rLtScrt       <- LgtCurve(1985,2015,P["rLtScr"])/12
   SensLt        <- P["SensLt"]    #  sens of test for latent TB infection (based on IGRA QFT-GIT)
-  SensLtHiv     <- SensLt*P["rrSensLtHiv"]    #  sens of test for latent TB infection (based on IGRA QFT-GIT) with HIV infection
   SpecLt        <- P["SpecLt"]    #  spec of test for latent TB infection (based on IGRA QFT-GIT)
   SpecLtFb      <- SpecLt         #  spec of test for latent TB infection (based on IGRA QFT-GIT) in foreign-born (assumed BCG exposed)
+###########   WILL THIS PARAMETER NEED TO BE REDUCED?
   rrTestHr      <- P["rrTestHr"] # RR of LTBI screening for HIV and HR as cmpared to general
   rrTestLrNoTb  <- P["rrTestLrNoTb"] # RR of LTBI screening for individuals with no risk factors
   dLt           <- 1/9
@@ -300,8 +301,7 @@ load("data/ModelInputs_9-2-16.rData")
   TxVec[2]       <-  pCurPs
 
 ################################################################################
-##### CREATE A LIST TO HOLD THE VECTORS FOR AGE CATEGORIES, TB STATES,     #####
-##### DRUG RESISTANCE, TREATMENT HISTORY, HIV STATUS, AND RISK CATEGORY.   #####
+##### CREATE A LIST TO HOLD THE VECTORS
 ################################################################################
 ################################################################################
 StatList <- noquote(list(
@@ -376,12 +376,12 @@ ResNam <- c("Year",                                         # year
             paste("NOTIF_MORT",StatList[[6]],sep="_"),      # notif by rg cat, dead at diagnosis
             paste("NOTIF_US",StatList[[1]],sep="_"),        # notif by ag cat, US only
             paste("NOTIF_US_MORT",StatList[[1]],sep="_"),   # notif by ag cat, dead at diagnosis US only
-            paste("NOTIF_MORT_HIV_Neg",StatList[[1]],sep="_"),    # notif by ag cat, dead at diagnosis HIV neg
+#            paste("NOTIF_MORT_HIV_Neg",StatList[[1]],sep="_"),    # notif by ag cat, dead at diagnosis HIV neg
 #            paste("TOTMORT_W_HIV",StatList[[1]],sep="_"),   # total mort, by ag cat, have HIV
             paste("TOTMORT_W_TB",StatList[[1]],sep="_"),     # total mort, by ag cat, have active TB
             c("N_Ls_US","N_Lf_US","N_In_US","N_Ip_US"),
             c("N_Ls_FB","N_Lf_FB","N_In_FB","N_Ip_FB"),
-            c("ARTI_LR","ARTI_HR","ARTI_FB"), # Force of infection (removed ,"ARTI_LR_H","ARTI_HR_H","ARTI_FB_H")
+#            c("ARTI_LR","ARTI_HR","ARTI_FB"), # Force of infection (removed ,"ARTI_LR_H","ARTI_HR_H","ARTI_FB_H")
             c("TB_INF_LR","TB_INF_HR","TB_INF_F1","TB_INF_F2") # NEW TB INFECTIONS
 )
 length(ResNam)
