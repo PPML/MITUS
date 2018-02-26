@@ -108,8 +108,8 @@ if(Scen3==1) {
 
 # NEED TO REMOVE DRUG RESISTANCE
 ExogInf        <- rep(NA,length(PrevTrend25_34a))
-for(i in 1:5) ExogInf[,i] <- P["ExogInf"]*PrevTrend25_34a/PrevTrend25_341a["2013"]*(ImmigInputs[[7]][4]*DrN[,i]+(1-ImmigInputs[[7]][4])*DrE[,i])/12
-
+ExogInf        <- P["ExogInf"]*PrevTrend25_34a/PrevTrend25_341a["2013"]/12
+#removed *(ImmigInputs[[7]][4]*DrN[,i]+(1-ImmigInputs[[7]][4])*DrE[,i])
 ###############################    EMMIGRATION   ##############################
 
 rEmmigFB <- c(P["rEmmigF1"],P["rEmmigF2"])/12
