@@ -28,8 +28,8 @@ OutputsZint <-  function(samp_i=1,ParMatrix,endyr=2100,Int1=0,Int2=0,Int3=0,Int4
 
     P <<- Par
 
-    source("param.r")
-    sourceCpp("tb_model.cpp")
+    source("R/param.R")
+    sourceCpp("src/tb_model.cpp")
 
     M <-       cSim( nYrs     =   2100-1950, nRes     = length(ResNam), rDxt      = rDxt     , TxQualt   = TxQualt    , InitPop   = InitPop,
                      p_HR     = p_HR       , Mpfast   = Mpfast        , ExogInf   = ExogInf  , MpfastPI  = MpfastPI   , RRmuHR    = RRmuHR,
