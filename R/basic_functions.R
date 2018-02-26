@@ -24,7 +24,7 @@ lgt <-  function(x) log(x/(1-x));
 #'@param x value of interest, often an odds
 #'@return inverse logit of input x
 #'@export
-invlgt <- function(x) 1/(1+exp(x))
+invlgt <- function(x) 1/(1+exp(-x))
 
 #'This function is used to simulate a logistic increase between two years of interest
 #'to a user-specified maximum. Useful for simulating slow increase/decrease of a
