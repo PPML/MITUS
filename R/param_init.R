@@ -1,5 +1,16 @@
+################################################################################
+##### THE CODE BELOW WILL GATHER AND FORMAT INPUTS FOR THE TB_MODEL        #####
+##### FUNCTION FILE. ALL VARIABLE NAMES THAT END IN t ARE INDEXED BY TIME; #####
+##### VARIABLE NAMES BEGINNING WITH m ARE MATRICES & V ARE VECTORS.        #####
+################################################################################
+##### THIS FILE USES FUNCTIONS FOUND IN BASIC_FUNCTIONS.R                  #####
+################################################################################
 library(MASS)
-source("basic_functions.R")
+source("R/basic_functions.R")
+load("data/ModelInputs_9-2-16.rData")
+################################################################################
+##### INTERVENTION 
+################################################################################
 if(Int5==1) {
   Int1 = Int2 = Int3 = Int4 = 1
 }
@@ -65,6 +76,7 @@ ImDxChngV      <- SmoCurve(c(rep(1,57),seq(1,P["ImDxChng"],length.out=6)[-1],rep
 ImmAct         <- outer(PrevTrend25_34a*P["RRtbprev"]*ImDxChngV,ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*P["pImAct"]
 ImmFst         <- outer(PrevTrend25_34a*P["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*(1-P["pImAct"])
 ImmNon         <- TotImmAge-ImmAct-ImmFst-ImmLat
+
 #### #### #### INT 1 #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 pctDoc <- (1-0.28)
 if(Int1==1) {
@@ -95,7 +107,7 @@ if(Scen3==1) {
 #######################__EXOGENEOUS INFECTION RISK    #######################
 
 # NEED TO REMOVE DRUG RESISTANCE
-ExogInf        <- matrix(NA,length(PrevTrend25_34a),5)
+ExogInf        <- rep(NA,length(PrevTrend25_34a))
 for(i in 1:5) ExogInf[,i] <- P["ExogInf"]*PrevTrend25_34a/PrevTrend25_341a["2013"]*(ImmigInputs[[7]][4]*DrN[,i]+(1-ImmigInputs[[7]][4])*DrE[,i])/12
 
 ###############################    EMMIGRATION   ##############################
