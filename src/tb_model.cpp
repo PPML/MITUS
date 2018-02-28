@@ -1,5 +1,4 @@
 #include <Rcpp.h>
-
 using namespace Rcpp;
 
 //[[Rcpp::export]]
@@ -29,17 +28,12 @@ List cSim(
           NumericMatrix       ImmLat,
           NumericMatrix       ImmAct,
           NumericMatrix       ImmFst,
-//          std::vector<double> TxExpAge,   //removed as we no longer have a need for tx exp parameter
           NumericMatrix       mubt,       //background mortality over time
           NumericMatrix       RelInf,     //relative infectiousness
           std::vector<double> RelInfRg,   //relative infectiousness by risk group
           std::vector<double> Vmix,       // vector of mixing parameters (sigmas)
-  //        NumericMatrix       vIsxtoIsy, //matrix for transitions within the Is dimension
-  //        NumericMatrix       vNmxtoNmy, //matrix for transitions within the Nm dimension
-  //        NumericMatrix       vrgxtorgy, //matrix for transitions within the rg dimension
           NumericMatrix       rRFt,        //rate of risk factor (population) of interest over time
           std::vector<double> rEmmigFB,    // rate of emmigration among the foreign born
- //         NumericMatrix       rIntvInit,   //rate of intervention for RF of interest over time
           std::vector<double> TxVec,       //vector of TB treatment parameters
           double              TunTxMort,   //tuning for treatment mortality
           std::vector<double> rDeft,       // rate of treatment default over time
@@ -1322,6 +1316,6 @@ return Rcpp::List::create(
 Rcpp::Named("Outputs") = Outputs2,
 Rcpp::Named("V1") = CheckV,
 Rcpp::Named("V0") = CheckV0
-) ;
+);
 
 }
