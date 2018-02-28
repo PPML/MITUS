@@ -1,15 +1,8 @@
-setwd("/Users/nicolasmenzie/Google Drive/Harvard/CDC Large Grant/Analysis Transmission")
 
 ###### GRAPHS COMPARING SIMS VS CALIB DATA ############
 ## Parameter stuff
 load("ParamInitUS_V738tab.rData") # ParamInit
-P  <- ParamInit[,1];
-names(P) <- rownames(ParamInit)
-ii <-  ParamInit[,5]==1
-ParamInitZ <- ParamInit[ParamInit$Calib==1,]
-idZ0 <- ParamInitZ[,4]==0
-idZ1 <- ParamInitZ[,4]==1
-idZ2 <- ParamInitZ[,4]==2
+source("R/define_P.R")
 
 ## Scripts and functions
 load("ModelInputs_4-15-16.rData")
