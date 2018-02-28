@@ -8,6 +8,7 @@
 library(MASS)
 source("R/basic_functions.R")
 source("R/define_P.R")
+source("R/pop_dist.R")
 load("data/ModelInputs_9-2-16.rData")
 ################################################################################
 ###########################          INPUTS            #########################
@@ -17,6 +18,8 @@ load("data/ModelInputs_9-2-16.rData")
   Births           <- Inputs[["Births"]]
   ImmigInputs      <- Inputs[["ImmigInputs"]]
   TxInputs         <- Inputs[["TxInputs"]]
+
+  dist   <- dist
 
 ##########                PARAMETER DEFINITIONS                      ###########
 #######################           BIRTHS                 #######################
@@ -30,7 +33,7 @@ load("data/ModelInputs_9-2-16.rData")
   for(i in 1:11) {
   	mubt[,i] <- SmoCurve(BgMort[,i+1])*P["TunMubt"]/12
   }
-  RRmuHR    <- c(1,P["RRmuHR"],1,1)
+
 #########################     DISEASE SPECIFIC       ###########################
 #############    ACTIVE TB RATES DEFAULT TO THE SMEAR POS LEVELS   #############
 
@@ -177,7 +180,7 @@ load("data/ModelInputs_9-2-16.rData")
   Vrslow     <- rep(rslow,4)
 ############# UPDATE LEVEL FOUR OF THE RATE OF SLOW BASED ON CALCULATED RR FROM
 ############# USER INPUTTED RR FOR THE RISK FACTOR
-  Vrslow[4]  <- rslow*rrslowRF
+  Vrslow[4]  <- rslowRF
   Vrslow[2]  <- Vrslow[4]
   Vrslow[3]  <- Vrslow[2]
   TunrslowAge  <- P["TunrslowAge"]
