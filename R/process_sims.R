@@ -31,9 +31,9 @@ OutputsZint <-  function(samp_i=1,ParMatrix,endyr=2100,Int1=0,Int2=0,Int3=0,Int4
     source("R/param.R")
     sourceCpp("src/tb_model.cpp")
 
-    M <-       cSim( nYrs     =   2100-1950, nRes     = length(ResNam), rDxt      = rDxt     , TxQualt   = TxQualt    , InitPop   = InitPop,
-                     p_HR     = p_HR       , Mpfast   = Mpfast        , ExogInf   = ExogInf  , MpfastPI  = MpfastPI   , RRmuHR    = RRmuHR,
-                     Mrslow    = Mrslow    , rfast    = rfast         , RRcurDef = RRcurDef  , VrSlfCur  = VrSlfCur   , vTMort   = vTMort   ,
+    M <-       cSim( nYrs     =   2100-1950, nRes     = length(ResNam),  TxQualt   = TxQualt , InitPop   = InitPop    , rDxt      = rDxt     ,
+                     p_HR     = p_HR       , dist = dist              , Mpfast   = Mpfast    , ExogInf   = ExogInf    , MpfastPI  = MpfastPI   , RRmuHR    = RRmuHR,
+                     vRFMort = vRFMort     , muTbRF = muTbRF          ,  Mrslow    = Mrslow  , rfast    = rfast       , RRcurDef = RRcurDef  , rSlfCur  = rSlfCur     , vTMort   = vTMort   ,
                      Birthst   = Birthst   , ImmNon    = ImmNon       , ImmLat    = ImmLat   , ImmFst    = ImmFst     , ImmAct   = ImmAct   ,
                      mubt     = mubt       , RelInf   = RelInf        , RelInfRg  = RelInfRg , Vmix      = Vmix       , rEmmigFB  = rEmmigFB  ,
                      TxVec    = TxVec      , TunTxMort = TunTxMort    , rDeft     = rDeft    , pReTx     = pReTx      ,
