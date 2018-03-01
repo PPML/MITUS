@@ -19,7 +19,7 @@ List cSim(
           double              p_HR,
           NumericMatrix       dist,
           NumericMatrix       vTMort,    // matrix of TB mortality
-          NumericMatrix       vRFMort,    // matrix of RF mortality
+          std::vector<double> vRFMort,    // matrix of RF mortality
           std::vector<double> RRmuHR,
           double              muTbRF,    //factor for comorbidity btw TB and non-TB,
           std::vector<double> Birthst,   // vector of absolute births over time
@@ -29,10 +29,9 @@ List cSim(
           NumericMatrix       ImmAct,
           NumericMatrix       ImmFst,
           NumericMatrix       mubt,       //background mortality over time
-          NumericMatrix       RelInf,     //relative infectiousness
+          std::vector<double> RelInf,     //relative infectiousness
           std::vector<double> RelInfRg,   //relative infectiousness by risk group
           std::vector<double> Vmix,       // vector of mixing parameters (sigmas)
-          NumericMatrix       rRFt,        //rate of risk factor (population) of interest over time
           std::vector<double> rEmmigFB,    // rate of emmigration among the foreign born
           std::vector<double> TxVec,       //vector of TB treatment parameters
           double              TunTxMort,   //tuning for treatment mortality
@@ -57,7 +56,6 @@ List cSim(
     int           ti2;
     int           s;
     int           extrV[10];
-    double        ExogInfN[ExogInf.size()];
     double        InitPopN[InitPop.nrow()][InitPop.ncol()];
     double        InitPopZ[InitPop.nrow()][InitPop.ncol()];
     double        MpfastN[Mpfast.nrow()][Mpfast.ncol()];
@@ -66,7 +64,6 @@ List cSim(
     double        MpslowPIN[MpfastPI.nrow()][MpfastPI.ncol()];
     double        MrslowN[Mrslow.nrow()][Mrslow.ncol()];
     double        vTMortN[vTMort.nrow()][vTMort.ncol()];
-    double        vRFMortN[vRFMort.nrow()][vRFMort.ncol()];
    // double        vIsxtoIsyN[vIsxtoIsy.nrow()][vIsxtoIsy.ncol()];
    // double        vNmxtoNmyN[vNmxtoNmy.nrow()][vNmxtoNmy.ncol()];
    // double        vrgxtorgyN[vrgxtorgy.nrow()][vrgxtorgy.ncol()];
@@ -81,9 +78,7 @@ List cSim(
     double        RelInfN[6];
   //  double        rIntvInitN[rIntvInit.nrow()][rIntvInit.ncol()];
     double        rDxtN[rDxt.nrow()][rDxt.ncol()];
-    double        TxVecN[TxVec.size()];
     double        LtDxParN[LtDxPar.nrow()][LtDxPar.ncol()];
-    double        EffLtXN[EffLtX.size()];
     double        TxVecZ[6];
     double        temp;
     double        temp2;
@@ -110,9 +105,6 @@ for(int i=0; i<InitPop.nrow(); i++) {
         for(int j=0; j<InitPop.ncol(); j++) {
             InitPopN[i][j] = InitPop(i,j);
         } }
-for(int i=0; i<ExogInf.size(); i++) {
-            ExogInfN[i] = ExogInf[i];
-        }
 for(int i=0; i<Mpfast.nrow(); i++) {
         for(int j=0; j<Mpfast.ncol(); j++) {
             MpfastN[i][j]     = Mpfast(i,j);
@@ -125,18 +117,9 @@ for(int i=0; i<LtDxPar.nrow(); i++) {
         for(int j=0; j<LtDxPar.ncol(); j++) {
             LtDxParN[i][j] = LtDxPar(i,j);
         } }
-for(int i=0; i<EffLtX.size(); i++) {
-            EffLtXN[i] = EffLtX[i];
-        }
 for(int i=0; i<vTMort.nrow(); i++) {
         for(int j=0; j<vTMort.ncol(); j++) {
             vTMortN[i][j] = vTMort(i,j);
-        } }
-///this was HIV mortality temporarily replaced with RF of interest
-///CHECK PARAM FILE; THIS WILL BECOME A VECTOR
-for(int i=0; i<vRFMort.nrow(); i++) {
-        for(int j=0; j<vRFMort.ncol(); j++) {
-            vRFMortN[i][j] = vRFMort(i,j);
         } }
 for(int i=0; i<ImmNon.nrow(); i++) {
         for(int j=0; j<ImmNon.ncol(); j++) {
@@ -173,9 +156,6 @@ for(int i=0; i<RelInf.size(); i++) {
 //            rRFtN[i][j][0] = rRFt(i,j);
 //            rRFtN[i][j][1] = rRFt(i,j)*RFHrPar;
 //        } }
-for(int i=0; i< TxVec.size(); i++) {
-            TxVecN[i] = TxVec[i];
-        }
 for(int i=0; i<rDxt.nrow(); i++) {
         for(int j=0; j<rDxt.ncol(); j++) {
             rDxtN[i][j] = rDxt(i,j);
@@ -233,11 +213,11 @@ for(int ag=0; ag<11; ag++) {
 ////////     THIS DIFFERENT TO MAIN MODEL DUE TO SIMPLIFIED OUTCOMES      //////
 ////////////////////////////////////////////////////////////////////////////////
 //////// TREATMENT EFFICACY UPDATED FOR TREATMENT QUALITY //////////////////////
-    TxVecZ[1] = TxVecN[1]*TxQualt[0];
+    TxVecZ[1] = TxVec[1]*TxQualt[0];
 ///////// RATE OF TREATMENT EXIT TO CURE (LS) //////////////////////////////////
-    TxVecZ[2] = TxVecN[0]*TxVecZ[1] + rDeft[0]*TxVecZ[1]*RRcurDef;
+    TxVecZ[2] = TxVec[0]*TxVecZ[1] + rDeft[0]*TxVecZ[1]*RRcurDef;
 //////// RATE OF TREATMENT EXIT TO FAILURE (IN/IP) /////////////////////////////
-    TxVecZ[3] = TxVecN[0]*(1-TxVecZ[1]) + rDeft[0]*(1-TxVecZ[1]*RRcurDef);
+    TxVecZ[3] = TxVec[0]*(1-TxVecZ[1]) + rDeft[0]*(1-TxVecZ[1]*RRcurDef);
 
 ////////////////////////////////////////////////////////////////////////////////
 //////                             StatList                                /////
@@ -412,9 +392,9 @@ VLjkl[0 ][0 ]  = RelInfRg[0]*Vjaf[0];
 ///////// HIGH RISK US BORN
 VLjkl[1 ][0 ]  = RelInfRg[1]*((1-Vmix[0])*Vjaf[1]+Vmix[0]*Vjaf[0]);
 ///////// LOW RISK NON US BORN
-VLjkl[0 ][1 ]  = RelInfRg[0]*((1-Vmix[1])*Vjaf[2]+Vmix[1]*Vjaf[0]) + ExogInfN[0];
+VLjkl[0 ][1 ]  = RelInfRg[0]*((1-Vmix[1])*Vjaf[2]+Vmix[1]*Vjaf[0]) + ExogInf[0];
 ///////// HIGH RISK NON US BORN
-VLjkl[1 ][1 ]  = RelInfRg[1]*((1-Vmix[0])*(1-Vmix[1])*Vjaf[2]+Vmix[0]*Vmix[1]*Vjaf[0])+ExogInfN[0];
+VLjkl[1 ][1 ]  = RelInfRg[1]*((1-Vmix[0])*(1-Vmix[1])*Vjaf[2]+Vmix[0]*Vmix[1]*Vjaf[0])+ExogInf[0];
 ///////////////////////////////INFECTION///////////////////////////////////////
 ///////////////////////for all age groups, risk groups/////////////////////////
 ///////INFECTION IS CALCULATED WITH THE FORCE OF INFECTION BY RISK GROUP///////
@@ -572,17 +552,17 @@ s = y*12+m;
 ///// 5 = PROBABILITY OF TREATMENT COMPLETION                           ///////
 ///////////////////////////////////////////////////////////////////////////////
 //////// TREATMENT EFFICACY UPDATED FOR TREATMENT QUALITY //////////////////////
-TxVecZ[1] = TxVecN[1]*TxQualt[s];
+TxVecZ[1] = TxVec[1]*TxQualt[s];
 ///////// RATE OF TREATMENT EXIT TO CURE (LS) //////////////////////////////////
-TxVecZ[2] = TxVecN[0]*TxVecZ[1] + rDeft[s]*TxVecZ[1]*RRcurDef;
+TxVecZ[2] = TxVec[0]*TxVecZ[1] + rDeft[s]*TxVecZ[1]*RRcurDef;
 ///////// RATE OF TREATMENT EXIT TO ACTIVE TB //////////////////////////////////
 ////need to check the pReTx
 
-TxVecZ[3] = TxVecN[0]*(1-TxVecZ[1])*(1-pReTx[s]) + rDeft[s]*(1-TxVecZ[1])*RRcurDef*(1-pReTx[s]);
+TxVecZ[3] = TxVec[0]*(1-TxVecZ[1])*(1-pReTx[s]) + rDeft[s]*(1-TxVecZ[1])*RRcurDef*(1-pReTx[s]);
 ///////// RATE OF TREATMENT EXIT TO RE TREATMENT////////////////////////////////
-TxVecZ[4] = TxVecN[0]*(1-TxVecZ[1])*(pReTx[s]) + rDeft[s]*(1-TxVecZ[1])*RRcurDef*pReTx[s];
+TxVecZ[4] = TxVec[0]*(1-TxVecZ[1])*(pReTx[s]) + rDeft[s]*(1-TxVecZ[1])*RRcurDef*pReTx[s];
 ////////////////////// P(TREATMENT COMPLETION) /////////////////////////////////
-TxVecZ[5] = TxVecN[0]*(1-(1.0-TxVecZ[1])*pReTx[s]);
+TxVecZ[5] = TxVec[0]*(1-(1.0-TxVecZ[1])*pReTx[s]);
 /////////////////////////////////////BIRTHS//////////////////////////////////////
 for (int i=0; i<4; i++){
   for (int j=0; j<4; j++){
@@ -637,22 +617,22 @@ for(int ag=0; ag<11; ag++) {
                   for(int na=0; na<3; na++) {
 ////////////////////////UNINFECTED, SUSCEPTIBLE//////////////////////////////////
     VMort[ag][0 ][lt][im][nm][rg][na]  = V0[ag][0 ][lt][im][nm][rg][na]*
-                                 (mubtN[s][ag]*RRmuHR[rg]+vRFMortN[ag][nm] );
+                                 (mubtN[s][ag]*RRmuHR[rg]+vRFMort[nm] );
 ////////////////////////UNINFECTED, PART. IMMUNE/////////////////////////////////
     VMort[ag][1 ][lt][im][nm][rg][na]  = V0[ag][1 ][lt][im][nm][rg][na]*
-                                  (mubtN[s][ag]*RRmuHR[rg]+vRFMortN[ag][nm] );
+                                  (mubtN[s][ag]*RRmuHR[rg]+vRFMort[nm] );
 ////////////////////////    LATENT TB SLOW      /////////////////////////////////
     VMort[ag][2 ][lt][im][nm][rg][na]  = V0[ag][2 ][lt][im][nm][rg][na]*
-                                (mubtN[s][ag]*RRmuHR[rg]+vRFMortN[ag][nm] );
+                                (mubtN[s][ag]*RRmuHR[rg]+vRFMort[nm] );
 ////////////////////////    LATENT TB FAST      /////////////////////////////////
     VMort[ag][3 ][lt][im][nm][rg][na]  = V0[ag][3 ][lt][im][nm][rg][na]*
-                      (mubtN[s][ag]*RRmuHR[rg]+vRFMortN[ag][nm] );
+                      (mubtN[s][ag]*RRmuHR[rg]+vRFMort[nm] );
 ////////////////////////      ACTIVE TB         /////////////////////////////////
     VMort[ag][4 ][lt][im][nm][rg][na]  = V0[ag][4 ][lt][im][nm][rg][na]*
-              (mubtN[s][ag]*RRmuHR[rg]+vRFMortN[ag][nm]+vTMortN[ag][4 ]+temp );
+              (mubtN[s][ag]*RRmuHR[rg]+vRFMort[nm]+vTMortN[ag][4 ]+temp );
 ////////////////////////    TB TREATMENT        /////////////////////////////////
     VMort[ag][5 ][lt][im][nm][rg][na]  = V0[ag][5 ][lt][im][nm][rg][na]*
-    (mubtN[s][ag]*RRmuHR[rg]+vRFMortN[ag][nm]+(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort));
+    (mubtN[s][ag]*RRmuHR[rg]+vRFMort[nm]+(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort));
 /////////////// UPDATE THE PRIMARY VECTOR BY REMOVING MORTALITY /////////////////
           for(int tb=0; tb<6; tb++) {
              V1[ag][tb][lt][im][nm][rg][na]  -= VMort[ag][tb][lt][im][nm][rg][na];
@@ -762,9 +742,9 @@ VLjkl[0 ][0 ]  = RelInfRg[0]*Vjaf[0];
 ///////// HIGH RISK US BORN
 VLjkl[1 ][0 ]  = RelInfRg[1]*((1-Vmix[0])*Vjaf[1]+Vmix[0]*Vjaf[0]);
 ///////// LOW RISK NON US BORN
-VLjkl[0 ][1 ]  = RelInfRg[0]*((1-Vmix[1])*Vjaf[2]+Vmix[1]*Vjaf[0])+ExogInfN[0];
+VLjkl[0 ][1 ]  = RelInfRg[0]*((1-Vmix[1])*Vjaf[2]+Vmix[1]*Vjaf[0])+ExogInf[0];
 ///////// HIGH RISK NON US BORN
-VLjkl[1 ][1 ]  = RelInfRg[1]*((1-Vmix[0])*(1-Vmix[1])*Vjaf[2]+Vmix[0]*Vmix[1]*Vjaf[0])+ExogInfN[0];
+VLjkl[1 ][1 ]  = RelInfRg[1]*((1-Vmix[0])*(1-Vmix[1])*Vjaf[2]+Vmix[0]*Vmix[1]*Vjaf[0])+ExogInf[0];
 
 ///////////////////////////////    INFECTION   /////////////////////////////////
 for(int ag=0; ag<11; ag++) {
@@ -808,8 +788,8 @@ for(int ag=0; ag<11; ag++) {
 ///if they were in the latent treatment chunk, but the treatment failed bc INH resistant
 ////progress to active disease
 ////NEED TO BRAINSTORM HOW THIS WILL WORK;
- //           temp =  V0[ag][2][dr][tx][im][rg][na]*MrslowN[ag][im]*rrSlowFB[rg]*(1-EffLtXN[s][dr]);
-   //         temp2 = V0[ag][3][dr][tx][im][rg][na]*MrslowN[ag][im]*rrSlowFB[rg]*(1-EffLtXN[s][dr]);
+ //           temp =  V0[ag][2][dr][tx][im][rg][na]*MrslowN[ag][im]*rrSlowFB[rg]*(1-EffLtX[s][dr]);
+   //         temp2 = V0[ag][3][dr][tx][im][rg][na]*MrslowN[ag][im]*rrSlowFB[rg]*(1-EffLtX[s][dr]);
      //               V1[ag][6][dr][tx][im][rg][na]  -= temp;
        //             V1[ag][4][dr][tx][im][rg][na]  += (temp+temp2);
 
@@ -884,8 +864,8 @@ for(int ag=0; ag<11; ag++) {
           temp4 = V0[ag][3][0][im][nm][rg][na]*rTbP*LtTxPar[1]; // default
                   V1[ag][2][0][im][nm][rg][na]  -= temp+temp3; //remove from latent slow
                   V1[ag][3][0][im][nm][rg][na]  -= temp2+temp4;  //remove from latent fast
-                  V1[ag][1][1][im][nm][rg][na]  += (temp+temp2)*EffLtXN[s]*EffLt; //exit to cure
-                  V1[ag][2][1][im][nm][rg][na]  += (temp+temp2)*(1-EffLtXN[s]*EffLt);  //tx comp fail to latent slow
+                  V1[ag][1][1][im][nm][rg][na]  += (temp+temp2)*EffLtX[s]*EffLt; //exit to cure
+                  V1[ag][2][1][im][nm][rg][na]  += (temp+temp2)*(1-EffLtX[s]*EffLt);  //tx comp fail to latent slow
                   V1[ag][2][0][im][nm][rg][na]  += (temp3+temp4); //latent tx default to latent slow
 } } } } }
 ///////////////////// TB DIAGNOSIS AND TX INITIATION  /////////////////////////
@@ -1018,7 +998,7 @@ for(int ag=0; ag<11; ag++) {
                 for(int nm=0; nm<4; nm++) {
                     for(int rg=0; rg<2; rg++) {
                         for(int na=0; na<3; na++) {
-                            Outputs[y][110+ag]  += V0[ag][tb][lt][im][nm][rg][na]*vRFMortN[ag][im];
+                            Outputs[y][110+ag]  += V0[ag][tb][lt][im][nm][rg][na]*vRFMort[nm];
                         } } } } } } }
 ////////////     CREATE YEARLY VALUES FROM THE MONTH ESTIMATE     ////////////
 for(int i=110; i<121; i++) { Outputs[y][i] = Outputs[y][i]*12;  }
