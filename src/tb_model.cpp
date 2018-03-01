@@ -75,7 +75,7 @@ List cSim(
     double        ImmActN[ImmAct.nrow()][ImmAct.ncol()];
     double        TBImm[11][ImmAct.nrow()][2];
     double        mubtN[mubt.nrow()][mubt.ncol()];
-    double        RelInfN[6];
+    double        RelInf[6];
   //  double        rIntvInitN[rIntvInit.nrow()][rIntvInit.ncol()];
     double        rDxtN[rDxt.nrow()][rDxt.ncol()];
     double        LtDxParN[LtDxPar.nrow()][LtDxPar.ncol()];
@@ -147,9 +147,6 @@ for(int i=0; i<mubt.nrow(); i++) {
         for(int j=0; j<mubt.ncol(); j++) {
             mubtN[i][j] = mubt(i,j);
         } }
-for(int i=0; i<RelInf.size(); i++) {
-            RelInfN[i] = RelInf[i];
-        }
 //////was the rate of HIV and has been replaced as rate of risk factor of interest////
 //    for(int i=0; i<rRFt.nrow(); i++) {
 //        for(int j=0; j<rRFt.ncol(); j++) {
@@ -358,13 +355,13 @@ for(int ag=0; ag<11; ag++) {
 // DO WE WANT TO LOOP OVER THE DISTRIBUTION OF RISK FACTORS?
 for(int ag=0; ag<11; ag++) {
 /////////  LOW RISK US BORN
-    VGjkl[0][0]  +=  V0[ag][4][0][0][0][0][0]                            *RelInfN[4];
+    VGjkl[0][0]  +=  V0[ag][4][0][0][0][0][0]                            *RelInf[4];
 ///////// HIGH RISK US BORN
-    VGjkl[1][0]  +=  V0[ag][4][0][0][0][1][1]                            *RelInfN[4];
+    VGjkl[1][0]  +=  V0[ag][4][0][0][0][1][1]                            *RelInf[4];
 ///////// LOW RISK NON US BORN
-    VGjkl[0][1]  += (V0[ag][4][0][0][0][0][1] + V0[ag][4][0][0][0][0][2])*RelInfN[4];
+    VGjkl[0][1]  += (V0[ag][4][0][0][0][0][1] + V0[ag][4][0][0][0][0][2])*RelInf[4];
 /////////  HIGH RISK NON US BORN
-    VGjkl[1][1]  += (V0[ag][4][0][0][0][1][1] + V0[ag][4][0][0][0][1][2])*RelInfN[4];
+    VGjkl[1][1]  += (V0[ag][4][0][0][0][1][1] + V0[ag][4][0][0][0][1][2])*RelInf[4];
 }
 // Step 2 (treated TB)
 // No contribution to force of infection
@@ -707,13 +704,13 @@ for(int ag=0; ag<11; ag++) {
         for(int im=0; im<4 ; im++) {
             for(int nm=0; nm<4; nm++){
 ////////////////////////////    LOW RISK, US BORN    ////////////////////////////
-                VGjkl[0][0]  +=  V0[ag][4][lt][im][nm][0][0]                               *RelInfN[4];
+                VGjkl[0][0]  +=  V0[ag][4][lt][im][nm][0][0]                               *RelInf[4];
 ////////////////////////////   HIGH RISK, US BORN    ////////////////////////////
-                VGjkl[1][0]  +=  V0[ag][4][lt][im][nm][1][0]                               *RelInfN[4];
+                VGjkl[1][0]  +=  V0[ag][4][lt][im][nm][1][0]                               *RelInf[4];
 ////////////////////////////  LOW RISK, NON US BORN  ////////////////////////////
-                VGjkl[0][1]  += (V0[ag][4][lt][im][nm][0][1] + V0[ag][4][lt][im][nm][0][2])*RelInfN[4];
+                VGjkl[0][1]  += (V0[ag][4][lt][im][nm][0][1] + V0[ag][4][lt][im][nm][0][2])*RelInf[4];
 //////////////////////////// HIGH RISK, NON US BORN  ////////////////////////////
-                VGjkl[1][1]  += (V0[ag][4][lt][im][nm][1][1] + V0[ag][4][lt][im][nm][1][2])*RelInfN[4];
+                VGjkl[1][1]  += (V0[ag][4][lt][im][nm][1][1] + V0[ag][4][lt][im][nm][1][2])*RelInf[4];
 } } } }
 ////////////////////////////   Step 2 (TREATED TB)   ////////////////////////////
 ////////////////////  No contribution to force of infection  ////////////////////
