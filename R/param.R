@@ -19,9 +19,11 @@ load("data/ModelInputs_9-2-16.rData")
   ImmigInputs      <- Inputs[["ImmigInputs"]]
   TxInputs         <- Inputs[["TxInputs"]]
 
+##########                PARAMETER DEFINITIONS                      ###########
+##########                RISK FACTOR DISTRIBUTIONS   ##########################
+
   dist   <- dist
 
-##########                PARAMETER DEFINITIONS                      ###########
 #######################           BIRTHS                 #######################
 ####### INDEXED BY TIME, ABSOLUTE NUMBER OF NEW ADULT ENTRANTS OVER TIME #######
 
@@ -45,7 +47,9 @@ load("data/ModelInputs_9-2-16.rData")
 
 ############ CONVERT ANNUAL RATES OF RF MORTALITY TO MONTHLY RATES ##########
 
-   muRF      <- P["muRF"]/12
+############ THESE MUST BE UPDATED
+   muRF      <- P["muH1"]/12
+   muTbRF    <- P["muTbH"]/12
 
 ###############  RATE RATIO OF MORTALITY INCREASE FOR HIGH RISK ###############
 
@@ -125,11 +129,11 @@ load("data/ModelInputs_9-2-16.rData")
 
   CR           <- P["CR"]/12
   RelInfRg     <- c(1.0,P["RelCrHr"])*CR
-  TunTbTransTx <- P["TunTbTransTx"]  # set to zero?
+  TunTbTransTx <- .1#P["TunTbTransTx"]  # set to zero?
   Vmix         <- 1-c(P["sigmaHr"],P["sigmaFb"])
   RelInf       <- rep(0,6)
   names(RelInf) <- c("Su","Sp","Ls","Lf","Ac", "Tx")
-  RelInf[5] <- 1;
+  RelInf[5] <- 1; #set to 1 as what it was in the old model
   RelInf[6] <- RelInf[5]*TunTbTransTx
 
 ######################      TB NATURAL HISTORY       ##########################
@@ -141,15 +145,15 @@ load("data/ModelInputs_9-2-16.rData")
 ######################     PROGRESSION TO DISEASE     ##########################
 
   pfast      <- P["pfast"]
-  ORpfast1   <- P["ORpfast1"]
-  ORpfast2   <- P["ORpfast2"]
-  ORpfastRF  <- P["ORpfastH"]
+  ORpfast1   <- P["ORpfast1"] ## age group 1
+  ORpfast2   <- P["ORpfast2"] ## age group 2
+  ORpfastRF  <- P["ORpfastH"] ##riskfactor
   ORpfastPI  <- P["ORpfastPI"]
   rslow      <- P["rslow"]/12
   rslowRF    <- P["rslowH"]/12
   rfast      <- P["rfast"]/12
   rrSlowFB0  <- P["rrSlowFB"]
-  rrSlowFB   <- c(1,1,rrSlowFB0,rrSlowFB0)
+  rrSlowFB   <- c(1,rrSlowFB0,rrSlowFB0)
 ##############            ORIGINAL Mpfast[ag][hv]             ################
 ##############          CREATE NEW Mpfast[ag][im]               ##############
 ############## MIGHT WRITE A NEW SCRIPT FOR THIS PART
@@ -169,11 +173,11 @@ load("data/ModelInputs_9-2-16.rData")
   Mpfast[,]    <- Mpfast[,]  /(1+Mpfast[,]);
   MpfastPI[,]  <- MpfastPI[,]/(1+MpfastPI[,]);
 ############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
-  Mpfast[,2]   <- exp(1)*log(Mpfast[,4]/3)
-  MpfastPI[,2] <- exp(1)*log(MpfastPI[,4]/3)
+  Mpfast[,2]   <- exp(1)*log(ORpfastRF/3)*Mpfast[,2]
+  MpfastPI[,2] <- exp(1)*log(ORpfastRF/3)*MpfastPI[,2]
 ############ UPDATE PROBS FOR LEVEL 3 OF REACTIVATION ###########
-  Mpfast[,3]   <- exp(2)*log(Mpfast[,4]/3)
-  MpfastPI[,3] <- exp(2)*log(MpfastPI[,4]/3)
+  Mpfast[,3]   <- exp(2)*log(ORpfastRF/3)*Mpfast[,3]
+  MpfastPI[,3] <- exp(2)*log(ORpfastRF/3)*MpfastPI[,3]
 
 ############# CREATE A VECTOR FOR RATE OF SLOW PROGRESSION THAT WILL
 ############# VARY BASED ON LEVELS OF TB REACTIVATION RATES
@@ -181,8 +185,8 @@ load("data/ModelInputs_9-2-16.rData")
 ############# UPDATE LEVEL FOUR OF THE RATE OF SLOW BASED ON CALCULATED RR FROM
 ############# USER INPUTTED RR FOR THE RISK FACTOR
   Vrslow[4]  <- rslowRF
-  Vrslow[2]  <- Vrslow[4]
-  Vrslow[3]  <- Vrslow[2]
+  Vrslow[2]  <- Vrslow[1]*rslowRF*1/3
+  Vrslow[3]  <- Vrslow[1]*rslowRF*2/3
   TunrslowAge  <- P["TunrslowAge"]
   rrReactAg       <- exp(c(0,0,0,0,0,0,0.5,1:4)*P["TunrslowAge"])
   Mrslow <- outer(rrReactAg,Vrslow)
@@ -204,6 +208,7 @@ load("data/ModelInputs_9-2-16.rData")
   rrTestHr      <- P["rrTestHr"] # RR of LTBI screening for HIV and HR as cmpared to general
   rrTestLrNoTb  <- P["rrTestLrNoTb"] # RR of LTBI screening for individuals with no risk factors
   dLt           <- 1/9
+
   rDefLt        <- dLt*P["pDefLt"]/(1-P["pDefLt"])  # based on 50% tx completion with 6 mo INH regimen 2.0 [1.0,3.0] from Menzies Ind J Med Res 2011
   EffLt         <- P["EffLt"]
   LtTxPar       <- c(dLt,rDefLt,EffLt)
