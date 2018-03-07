@@ -5,7 +5,7 @@ source("R/add_params.R")
 sourceCpp("src/tb_model.cpp")
 
 
-cSim( nYrs     =   2100-1950,  nRes     = length(ResNam), rDxt      = rDxt     , TxQualt   = TxQualt    , InitPop   = InitPop    ,
+m<- cSim( nYrs     =   2100-1950,  nRes     = length(ResNam), rDxt      = rDxt     , TxQualt   = TxQualt    , InitPop   = InitPop    ,
       Mpfast   = Mpfast      , ExogInf   = ExogInf      , MpfastPI  = MpfastPI , Mrslow    = Mrslow     , rrSlowFB = rrSlowFB    ,
       rfast    = rfast       , RRcurDef = RRcurDef      , rSlfCur  = rSlfCur   , p_HR     = p_HR        , dist = dist            ,
       vTMort   = vTMort      , vRFMort = vRFMort        , RRmuHR    = RRmuHR   , muTbRF = muTbRF        , Birthst   = Birthst    ,
@@ -13,7 +13,11 @@ cSim( nYrs     =   2100-1950,  nRes     = length(ResNam), rDxt      = rDxt     ,
       mubt     = mubt        , RelInf   = RelInf        , RelInfRg  = RelInfRg , Vmix      = Vmix       , rEmmigFB  = rEmmigFB   ,
       TxVec    = TxVec       , TunTxMort = TunTxMort    , rDeft     = rDeft    , pReTx     = pReTx      , LtTxPar  = LtTxPar     ,
       LtDxPar  = LtDxPar     , rLtScrt   = rLtScrt      , RRdxAge  = RRdxAge   , rRecov   = rRecov      , pImmScen  = pImmScen   ,
-      EarlyTrend = EarlyTrend, EffLt    = EffLt         , EffLtX    = EffLtX   , dLtt     = dLtt        , NixTrans = NixTrans )
+      EarlyTrend = EarlyTrend, EffLt    = EffLt         , EffLtX    = EffLtX   , dLtt     = dLtt        , NixTrans = NixTrans )$V0
+``
+plot(m)
+n <-m[10000:length(m)]
+plot(n)
 
 source("R/process_sims.R")
 
