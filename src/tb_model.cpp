@@ -86,10 +86,10 @@ List cSim(
   double        rTbP;
   double        rTbN;
   double        Outputs[nYrs][nRes];
-  long double        V0[11][6][2][4][4][2][3];
-  long double        V1[11][6][2][4][4][2][3];
-  long double        VMort[11][6][2][4][4][2][3];
- long double        Vdx[11][6][2][4][4][2][3];
+  double        V0[11][6][2][4][4][2][3];
+  double        V1[11][6][2][4][4][2][3];
+  double        VMort[11][6][2][4][4][2][3];
+  double        Vdx[11][6][2][4][4][2][3];
   double        VLdx[11][6][2][4][4][2][3];
   double        VNkl[2][2];  ///HIGH AND LOW RISK, NATIVITY
   double        VGjkl[2][2]; ///HIGH AND LOW RISK, NATIVITY
@@ -345,7 +345,39 @@ for(int ag=0; ag<11; ag++) {
 
   } } } } }
 
-///////BURNIN WORKS UP UNTIL THIS POINT WITH NO NEGATIVE VALUES
+   ///////////////////////////         BREAK DOWN      /////////////////////////////
+   for(int ag=0; ag<11; ag++) {
+     for(int im=0; im<4 ; im++) {
+       for(int nm=0; nm<4; nm++) {
+         for(int rg=0; rg<2; rg++) {
+           for(int na=0; na<3; na++) {
+             temp  =  V0[ag][2][0][im][nm][rg][na]*MrslowN[ag][im]*rrSlowFB[na];  // Ls
+             temp2  = V0[ag][3][0][im][nm][rg][na]*rfast;
+
+             V1[ag][2][0][im][nm][rg][na]  -= temp;
+             V1[ag][3][0][im][nm][rg][na]  -= temp2;
+             V1[ag][4][0][im][nm][rg][na]  += temp+temp2;
+           } } } } }
+   ///////////////////////////   LATENT SLOW TO SAFE   /////////////////////////////
+      for(int ag=0; ag<11; ag++) {
+          for(int im=0; im<4 ; im++) {
+            for(int nm=0; nm<4; nm++) {
+              for(int rg=0; rg<2; rg++) {
+                for(int na=0; na<3; na++) {
+                  temp  = V0[ag][2][0][im][nm][rg][na]*rRecov;  // Ls
+                          V1[ag][2][0][im][nm][rg][na]  -= temp;
+                          V1[ag][1][0][im][nm][rg][na]  += temp;
+                } } } } }
+   ////////////////////////////////// SELF CURE/////////////////////////////////////
+   for(int ag=0; ag<11; ag++) {
+          for(int im=0; im<4 ; im++) {
+            for(int nm=0; nm<4; nm++) {
+              for(int rg=0; rg<2; rg++) {
+                for(int na=0; na<3; na++) {
+                  temp  = V0[ag][4 ][0][im][nm][rg][na]*rSlfCur;
+                          V1[ag][4 ][0][im][nm][rg][na]  -= temp;
+                          V1[ag][2 ][0][im][nm][rg][na]  += temp;
+                } } } } }
    ////////////////////////////  TRANSMISSION RISK  ////////////////////////////////
    for(int i=0; i<2; i++) {
      for(int j=0; j<2; j++) {
