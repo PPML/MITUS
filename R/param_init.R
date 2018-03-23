@@ -8,8 +8,9 @@
 library(MASS)
 source("R/basic_functions.R")
 load("data/ModelInputs_9-2-16.rData")
+
 ################################################################################
-##### INTERVENTION 
+##### INTERVENTION
 ################################################################################
 if(Int5==1) {
   Int1 = Int2 = Int3 = Int4 = 1
@@ -47,10 +48,10 @@ muIp  	  <- P["muIp"]/12
 TunmuTbAg <- P["TunmuTbAg"]
 
 #################                IMMIGRATION              #####################
-# TotImmig1       <- c(ImmigInputs[[1]][1:65],(ImmigInputs[[1]][66:151]-ImmigInputs[[1]][66])*P["ImmigVolFut"]+ImmigInputs[[1]][66])/12*P["ImmigVol"]
+ TotImmig1       <- c(ImmigInputs[[1]][1:65],(ImmigInputs[[1]][66:151]-ImmigInputs[[1]][66])*P["ImmigVolFut"]+ImmigInputs[[1]][66])/12*P["ImmigVol"]
 TotImmig0       <- (c(ImmigInputs[[1]][1:151])+c(rep(0,65),cumsum(rep(P["ImmigVolFut"],86))))/12*P["ImmigVol"]
-set.seed( P["rand_seed"]+0)
-#  TotImmig1       <-   c(TotImmig0[1:66],exp(mvrnorm(1, log(TotImmig0[-(1:66)]), vcv_gp_l10_sd0.1))) # Add gaussian process noise
+#set.seed( rand_seed)
+# TotImmig1       <-   c(TotImmig0[1:66],exp(mvrnorm(1, log(TotImmig0[-(1:66)]), vcv_gp_l10_sd0.1))) # Add gaussian process noise
 TotImmig1       <-   TotImmig0
 TotImmig        <- SmoCurve(TotImmig1)
 TotImmAge       <- outer(TotImmig,ImmigInputs[["AgeDist"]])
@@ -58,7 +59,7 @@ TotImmAge       <- outer(TotImmig,ImmigInputs[["AgeDist"]])
 
 PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:65]^P["TunLtbiTrend"]*ImmigInputs[["PrevTrend25_34"]][65]^(1-P["TunLtbiTrend"]),
                       ImmigInputs[["PrevTrend25_34"]][66:151]*(P["ImmigPrevFutLat"]/0.99)^(1:86))
-set.seed( P["rand_seed"]+1)
+#set.seed(rand_seed+1)
 # PrevTrend25_341l <-   c(PrevTrend25_340l[1:66],exp(mvrnorm(1, log(PrevTrend25_340l[-(1:66)]), vcv_gp_l10_sd0.1))) # Add gaussian process noise
 PrevTrend25_341l <-   PrevTrend25_340l
 PrevTrend25_34l  <- SmoCurve(PrevTrend25_341l)
@@ -68,7 +69,7 @@ for(i in 1:11) ImmLat[,i] <- (1-exp((-(c(2.5,1:9*10,100)/100)[i]*P["LtbiPar1"]-(
 
 #######################   IMMIGRATION WITH ACTIVE TB   #######################
 PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:65],ImmigInputs[["PrevTrend25_34"]][66:151]*(P["ImmigPrevFutAct"]/0.99)^(1:86))
-set.seed( P["rand_seed"]+2)
+#set.seed( rand_seed+2)
 # PrevTrend25_341a <-   c(PrevTrend25_340a[1:66],exp(mvrnorm(1, log(PrevTrend25_340a[-(1:66)]), vcv_gp_l10_sd0.1))) # Add gaussian process noise
 PrevTrend25_341a <-   PrevTrend25_340a
 PrevTrend25_34a  <- SmoCurve(PrevTrend25_341a)
@@ -151,20 +152,18 @@ ORpfast2  <- P["ORpfast2"]
 
 ORpfastPI <- P["ORpfastPI"]
 rslow     <- P["rslow"]/12
-#REPLACE WITH GENERIC RISK FACTOR RR
+rslowRF    <- P["rslowH"]/12
 
 rfast     <- P["rfast"]/12
 rrSlowFB0 <- P["rrSlowFB"]
-rrSlowFB  <- c(1,1,rrSlowFB0,rrSlowFB0) #is this right
-##############            ORIGINAL Mpfast[ag][hv]             ################
-##############          CREATE NEW Mpfast[ag][im]               ##############
+rrSlowFB  <- c(1,rrSlowFB0) #is this right
+############## MIGHT WRITE A NEW SCRIPT FOR THIS PART
 Mpfast       <- matrix(NA,11,4)
 ############## CREATE AN ODDS FROM THE PROB OF FAST PROGRESSION ##############
 Mpfast[,]    <- pfast/(1-pfast)
 Mpfast[1,]   <- Mpfast[1,]*ORpfast1 # progression for age group 1
 Mpfast[2,]   <- Mpfast[2,]*ORpfast2 # progression for age group 2
 Mpfast[,4]   <- Mpfast[,4]*ORpfastRF #progression for tb reactivation group 4
-###### ADD IN THE INV LOGIT FOR [,2][,3]
 
 #################       CREATE A NEW MATRIX PARTIAL. IMM.     #################
 MpfastPI     <- Mpfast
@@ -186,13 +185,13 @@ MpfastPI[,3] <- exp(2)*log(MpfastPI[,4]/3)
 Vrslow     <- rep(rslow,4)
 ############# UPDATE LEVEL FOUR OF THE RATE OF SLOW BASED ON CALCULATED RR FROM
 ############# USER INPUTTED RR FOR THE RISK FACTOR
-Vrslow[4]  <- rslow*RRslowRF
-Vrslow[2]  <- Vrslow[4]*TbHivEarly   +Vrslow[1]*(1-TbHivEarly)
-Vrslow[3]  <- Vrslow[2]*(1-ArtTbEff1)+Vrslow[1]*ArtTbEff1
-
+Vrslow[4]  <- rslowRF
+Vrslow[2]  <- Vrslow[4]
+Vrslow[3]  <- Vrslow[2]
 TunrslowAge  <- P["TunrslowAge"]
 rrReactAg       <- exp(c(0,0,0,0,0,0,0.5,1:4)*P["TunrslowAge"])
 Mrslow <- outer(rrReactAg,Vrslow)
+
 
 
 #######################       RATE OF RECOVERY          ########################
@@ -267,12 +266,9 @@ rDx[62:151]    <- rDx[61] + (rDx[61]-rDx[60])*cumsum((0.75^(1:90)))
 rDxt0          <- SmoCurve(rDx)/12;
 rDxt1          <- cbind(rDxt0,rDxt0)
 
-# Put it all together
-rDxt           <- cbind(1/(1/rDxt1+DelaySn)*SensSn,1/(1/rDxt1+DelaySp)*SensSp)
-rDxt[,2]       <- (rDxt[,1]-min(rDxt[,1]))/P["rrDxH"]+min(rDxt[,1])
-rDxt[,4]       <- (rDxt[,2]-min(rDxt[,2]))/P["rrDxH"]+min(rDxt[,2])
-colnames(rDxt) <- c("Sn","Sn_H","Sp","SP_H")
-
+rDxt           <- 1/(1/rDxt1+DelaySp)*SensSp
+rDxt[,2]       <- (rDxt[,1]-min(rDxt[,1]))/P["rrDxH"]+min(rDxt[,1]) #check this with Nick
+colnames(rDxt) <- c("Active","Active_HighRisk")
 #### #### #### INT 3 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
 if(Int3==1) { for(i in 1:4) { rDxt[,i] <- rDxt[,i]+ rDxt[,i]*LgtCurve(2016,2021,1)     }   }
