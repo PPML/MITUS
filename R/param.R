@@ -57,11 +57,11 @@ load("data/ModelInputs_9-2-16.rData")
 
 ############### CREATE A MATRIX OF RF MORTALITIES BY AGE GROUP ###############
 
-  vRFMort    <- c(1,1,1,1);
+  vRFMort    <- c(0,0,0,0);
   names(vRFMort) <- c("RF1","RF2","RF3","RF4")
-  vRFMort[1] <- (1/3)*muRF
-  vRFMort[2] <- (2/3)*muRF
-  vRFMort[3] <- muRF
+  vRFMort[2] <- (1/3)*muRF
+  vRFMort[3] <- (2/3)*muRF
+  vRFMort[4] <- muRF
 
 ############### CREATE A MATRIX OF TB MORTALITIES BY AGE GROUP ###############
 
@@ -163,22 +163,24 @@ load("data/ModelInputs_9-2-16.rData")
   Mpfast[,]    <- pfast/(1-pfast)
   Mpfast[1,]   <- Mpfast[1,]*ORpfast1 # progression for age group 1
   Mpfast[2,]   <- Mpfast[2,]*ORpfast2 # progression for age group 2
+############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
+  Mpfast[,2]   <- (ORpfastRF*1/3)*Mpfast[,2]
+############ UPDATE PROBS FOR LEVEL 3 OF REACTIVATION ###########
+  Mpfast[,3]   <- (ORpfastRF*2/3)*Mpfast[,3]
+############ UPDATE PROBS FOR LEVEL 4 OF REACTIVATION ###########
   Mpfast[,4]   <- Mpfast[,4]*ORpfastRF #progression for tb reactivation group 4
 
 #################       CREATE A NEW MATRIX PARTIAL. IMM.     #################
   MpfastPI     <- Mpfast
   MpfastPI[,1] <- Mpfast[,1]*ORpfastPI
+  MpfastPI[,2] <- (ORpfastRF*1/3)*MpfastPI[,1]
+  MpfastPI[,3] <- (ORpfastRF*2/3)*MpfastPI[,1]
+
 ### ADD IN THE INV LOGIT FOR THE OTHER FACTOR LEVELS
 
-############ FILL BOTH MATRICES WITH BASE LEVELS  ############
+##### UPDATE BOTH MATRICES WITH PROBABILITIES, NOT RATES
   Mpfast[,]    <- Mpfast[,]  /(1+Mpfast[,]);
   MpfastPI[,]  <- MpfastPI[,]/(1+MpfastPI[,]);
-############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
-  Mpfast[,2]   <- exp(1)*log(ORpfastRF/3)*Mpfast[,2]
-  MpfastPI[,2] <- exp(1)*log(ORpfastRF/3)*MpfastPI[,2]
-############ UPDATE PROBS FOR LEVEL 3 OF REACTIVATION ###########
-  Mpfast[,3]   <- exp(2)*log(ORpfastRF/3)*Mpfast[,3]
-  MpfastPI[,3] <- exp(2)*log(ORpfastRF/3)*MpfastPI[,3]
 
 ############# CREATE A VECTOR FOR RATE OF SLOW PROGRESSION THAT WILL
 ############# VARY BASED ON LEVELS OF TB REACTIVATION RATES
@@ -188,9 +190,7 @@ load("data/ModelInputs_9-2-16.rData")
   for (i in 2:4){
     Vrslow[i]=Vrslow[i]*RRrslowRF*((i-1)/3)
   }
-  # Vrslow[4]  <- rslowRF
-  # Vrslow[2]  <- Vrslow[1]*rslowRF*1/3
-  # Vrslow[3]  <- Vrslow[1]*rslowRF*2/3
+
   TunrslowAge  <- P["TunrslowAge"]
   rrReactAg       <- exp(c(0,0,0,0,0,0,0.5,1:4)*P["TunrslowAge"])
   Mrslow <- outer(rrReactAg,Vrslow)
