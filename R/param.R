@@ -151,6 +151,7 @@ load("data/ModelInputs_9-2-16.rData")
   ORpfastPI  <- P["ORpfastPI"]
   rslow      <- P["rslow"]/12
   rslowRF    <- P["rslowH"]/12
+  RRrslowRF  <- rslowRF/rslow
   rfast      <- P["rfast"]/12
   rrSlowFB0  <- P["rrSlowFB"]
   rrSlowFB   <- c(1,rrSlowFB0,rrSlowFB0)
@@ -184,9 +185,12 @@ load("data/ModelInputs_9-2-16.rData")
   Vrslow     <- rep(rslow,4)
 ############# UPDATE LEVEL FOUR OF THE RATE OF SLOW BASED ON CALCULATED RR FROM
 ############# USER INPUTTED RR FOR THE RISK FACTOR
-  Vrslow[4]  <- rslowRF
-  Vrslow[2]  <- Vrslow[1]*rslowRF*1/3
-  Vrslow[3]  <- Vrslow[1]*rslowRF*2/3
+  for (i in 2:4){
+    Vrslow[i]=Vrslow[i]*RRrslowRF*((i-1)/3)
+  }
+  # Vrslow[4]  <- rslowRF
+  # Vrslow[2]  <- Vrslow[1]*rslowRF*1/3
+  # Vrslow[3]  <- Vrslow[1]*rslowRF*2/3
   TunrslowAge  <- P["TunrslowAge"]
   rrReactAg       <- exp(c(0,0,0,0,0,0,0.5,1:4)*P["TunrslowAge"])
   Mrslow <- outer(rrReactAg,Vrslow)
@@ -200,7 +204,8 @@ load("data/ModelInputs_9-2-16.rData")
   rSlfCur      <- P["rSlfCur"]/12
 
 ######################          LTBI DIAGNOSIS           ########################
-  rLtScrt       <- LgtCurve(1985,2015,P["rLtScr"])/12
+#  rLtScrt       <- LgtCurve(1985,2015,P["rLtScr"])/12
+  rLtScrt       <- c(rep(0,888),LgtCurve(1985,2015,P["rLtScr"])/12)
   SensLt        <- P["SensLt"]    #  sens of test for latent TB infection (based on IGRA QFT-GIT)
   SpecLt        <- P["SpecLt"]    #  spec of test for latent TB infection (based on IGRA QFT-GIT)
   SpecLtFb      <- SpecLt         #  spec of test for latent TB infection (based on IGRA QFT-GIT) in foreign-born (assumed BCG exposed)
@@ -299,7 +304,7 @@ load("data/ModelInputs_9-2-16.rData")
 
 #########################         RETREATMENT         ##########################
 
-   pReTx   <- LgtCurve(1985,2000,P["pReTx"])   	# Probability Tx failure identified, patient initiated on tx experienced reg (may be same)
+   pReTx   <- c(rep(0,888),LgtCurve(1985,2000,P["pReTx"]))   	# Probability Tx failure identified, patient initiated on tx experienced reg (may be same)
 
 #####################         NEW TB TREATMENT VECTOR       ####################
 
