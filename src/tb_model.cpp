@@ -1,34 +1,34 @@
-#include <Rcpp.h>
-using namespace Rcpp;
+#include <RcppArmadillo.h>
+#include <algorithm>
+// [[Rcpp::depends("RcppArmadillo")]]
 
 //[[Rcpp::export]]
-List cSim(
+Rcpp::List cSim(
     int                 nYrs,      //number of years to run the model
     int                 nRes,      // results
-    NumericMatrix       rDxt,      // rate of diagnosis over time
+    Rcpp::NumericMatrix       rDxt,      // rate of diagnosis over time
     std::vector<double> TxQualt,   // treatment quality over time
-    NumericMatrix       InitPop,   // initial population matrix
-    NumericMatrix       Mpfast,    // matrix of probability of fast TB progression
+    Rcpp::NumericMatrix       InitPop,   // initial population matrix
+    Rcpp::NumericMatrix       Mpfast,    // matrix of probability of fast TB progression
     std::vector<double> ExogInf,   // exogenous infection risk
-    NumericMatrix       MpfastPI,  // matrix of probability of fast TB progression in those with partial immunity from prior infection
-    NumericMatrix       Mrslow,    // matrix of the rate of slow TB progression
+    Rcpp::NumericMatrix       MpfastPI,  // matrix of probability of fast TB progression in those with partial immunity from prior infection
+    Rcpp::NumericMatrix       Mrslow,    // matrix of the rate of slow TB progression
     std::vector<double> rrSlowFB,  // rate ratios that are applied to the rate of slow progression for foreign born population
     double              rfast,     // rate of fast TB progression
     double              RRcurDef,  // rate ratio of cure given treatment default
     double              rSlfCur,   // rate of self cure
     double              p_HR,
-    NumericMatrix       dist,
-    NumericMatrix       vTMort,    // matrix of TB mortality
+    Rcpp::NumericMatrix       vTMort,    // matrix of TB mortality
     std::vector<double> vRFMort,    // matrix of RF mortality
     std::vector<double> RRmuHR,
     double              muTbRF,    //factor for comorbidity btw TB and non-TB,
     std::vector<double> Birthst,   // vector of absolute births over time
-    NumericMatrix       HrEntEx,
-    NumericMatrix       ImmNon,
-    NumericMatrix       ImmLat,
-    NumericMatrix       ImmAct,
-    NumericMatrix       ImmFst,
-    NumericMatrix       mubt,       //background mortality over time
+    Rcpp::NumericMatrix       HrEntEx,
+    Rcpp::NumericMatrix       ImmNon,
+    Rcpp::NumericMatrix       ImmLat,
+    Rcpp::NumericMatrix       ImmAct,
+    Rcpp::NumericMatrix       ImmFst,
+    Rcpp::NumericMatrix       mubt,       //background mortality over time
     std::vector<double> RelInf,     //relative infectiousness
     std::vector<double> RelInfRg,   //relative infectiousness by risk group
     std::vector<double> Vmix,       // vector of mixing parameters (sigmas)
@@ -38,7 +38,7 @@ List cSim(
     std::vector<double> rDeft,       // rate of treatment default over time
     std::vector<double> rLtScrt,
     std::vector<double> LtTxPar,     // latent treatment parameters
-    NumericMatrix       LtDxPar,     // latent diagnosis parameters
+    Rcpp::NumericMatrix       LtDxPar,     // latent diagnosis parameters
     std::vector<double> RRdxAge,     // rate ratios for diagnosis with respect to age
     double              rRecov,      //rate from latent slow to partially immune TB
     double              pImmScen,    // lack of reactivitiy to IGRA for Sp
@@ -47,14 +47,21 @@ List cSim(
     std::vector<double> pReTx,
     std::vector<double> EffLt0,
     double              EffLt,
-    std::vector<double> NixTrans
-
+    std::vector<double> NixTrans,
+    Rcpp::NumericMatrix      dist,
+    arma::mat      can_go,
+    arma::mat       did_go,
+    arma::mat       dist_orig,
+    std::vector<double> dist_i_v,
+    std::vector<double> dist_goal_v,
+    std::vector<double> dist_orig_v
 ) {
   ////////////////////////////////////////////////////////////////////////////////
   ////////    BELOW IS A LIST OF THE VARIABLES CREATED INTERNALLY IN MODEL   /////
   ////////////////////////////////////////////////////////////////////////////////
   int           ti;
   int           s;
+  int N; int m; int p; int r; int c; int m2; int p2;
   double        InitPopN[InitPop.nrow()][InitPop.ncol()];
   double        InitPopZ[InitPop.nrow()][InitPop.ncol()];
   double        MpfastN[Mpfast.nrow()][Mpfast.ncol()];
@@ -95,7 +102,12 @@ List cSim(
   double        VGjkl[2][2]; ///HIGH AND LOW RISK, NATIVITY
   double        Vjaf[4];     ///BY NUMBER OF MIXING GROUPS
   double        VLjkl[2][2];  ///HIGH AND LOW RISK, NATIVITY
-  NumericMatrix Outputs2(nYrs,nRes);
+  arma::mat trans_mat;
+  arma::mat trans_mat_tot;
+  arma::mat dist_new;
+  double        frc;
+  double        diff_i_v[16];
+  Rcpp::NumericMatrix Outputs2(nYrs,nRes);
 
   ///////////////////////////////////////////////////////////////////////////////
   ///////                            INITIALIZE                             /////
@@ -202,7 +214,7 @@ List cSim(
     for(int im=0; im<5; im++) {
       temp4V[ag][im] = (1-pow(1-MrslowN[ag][im]-rRecov,24.0))*MrslowN[ag][im];
     } }
-
+  N=30;
   ////////////////////////////////////////////////////////////////////////////////
   ///////                  UPDATING TREATMENT METERS                        //////
   ////////     THIS DIFFERENT TO MAIN MODEL DUE TO SIMPLIFIED OUTCOMES      //////
@@ -565,7 +577,7 @@ for(int ag=0; ag<11; ag++) {
  } ///////////////////////////END BURN IN///////////////////////////////////////
  ///////////////////////////////////////////////////////////////////////////////
  ///////////////////////////////////////////////////////////////////////////////
- NumericVector  CheckV0(12672);
+ Rcpp::NumericVector  CheckV0(12672);
   for(int ag=0; ag<11; ag++) {
     for(int tb=0; tb<6; tb++) {
       for(int lt=0; lt<2; lt++){
@@ -977,6 +989,67 @@ for(int ag=0; ag<11; ag++) {
                   V1[ag][5][lt][im][nm][rg][na]  += temp;
 } } } } } }
 ///////////////////////////////////////////////////////////////////////////////
+////////////////////////// REBALANCE THE POPULATION ///////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+for(int n=0; n<N; n++){
+/////// CALCULATE DISTANCE FROM CURRENT DISTRIBUTION TO GOAL DISTRIBUTION /////
+  for (int i=0; i<sizeof(dist_i_v); i++){
+  diff_i_v[i] = dist_i_v[i] - dist_goal_v[i];
+  }
+//////////                  CREATE TRANSITION MATRIX                    ////////
+  for (int r=0; r<16; r++){
+    for (int c=0; c<16; c++){
+      trans_mat[r,c] = can_go[r,c]*std::max(0.0,(diff_i_v[r]-diff_i_v[c]));
+    }
+  }
+//////////                ADJUST THE TRANSITION MATRIX                  ////////
+//////////   1ST SCALE UP RATES, 2ND MAKE SURE DOES NOT SUM OVER 1    //////////
+  frc = 0.1;  // approach seems quite sensitive to this value, = fraction of change to
+
+  for(int i=0; i<16; i++){
+    trans_mat[i,] =  trans_mat[i,] / dist_i_v[i]*frc;
+    trans_mat[i,] =  trans_mat[i,] / std::max(1.0,sum(trans_mat[i,])); // should be dist0_v?
+  }
+
+//////////                      FINALIZE TRANS_MAT                    //////////
+  arma::diag(trans_mat) = 1-(Rcpp::RowSums(trans_mat));
+
+//////////                RECORD ABSOLUTE TRANSITIONS                 //////////
+  for(int i=0; i<16; i++){
+    did_go[i,] += dist_i_v[i]*trans_mat[i,];
+  }
+  arma::diag(did_go) = 0;
+
+//////////               UPDATE THE DISTRIBUTION VECTOR             ////////////
+  dist_i_v = dist_i_v*trans_mat;
+
+//////////                    NOW UPDATE IN ONE STEP                 ///////////
+  trans_mat_tot = did_go;
+
+  for(int i=0; i<16; i++){
+    trans_mat_tot[i,] = did_go[i,] / dist_orig_v[i,];
+  }
+
+  diag(trans_mat_tot) = 1 - Rcpp::RowSums(trans_mat_tot);
+
+//////////           NOW FINALLY UPDATE THE DISTRIBUTION           ///////////
+  dist_new = dist_orig;
+
+  for (int m=0; m<4; m++){
+    for (int p=0; p<4; p++){
+      for (int m2=0; m2<4; m2++){
+        for (int p2=0; p2<4; p2++){
+          dist_new[m+1,p+1] += dist_orig[m2+1,p2+1]*trans_mat_tot[1+m2+p2*4,1+m+p*4];
+        }
+      }
+    }
+  }
+
+    matrix_sum(pow(dist_goal - dist_new, 2)) /
+    matrix_sum(pow(dist_goal - dist_orig, 2));
+}
+
+///////////////////////////////////////////////////////////////////////////////
 /////////////////////////    FILL RESULTS TABLE    ////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 if(m==6) {
@@ -1130,7 +1203,7 @@ if(m==6) {
                 (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN; } // FB inits
             if(rg==1) {
               Outputs[y][151] +=  (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP +
-                (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN; } // high risk inits
+                                  (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN; } // high risk inits
             // if(im>0) {
             //   Outputs[y][156] += (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP +
             //     (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN; } // RF inits
@@ -1212,9 +1285,8 @@ if(m==6) {
       for (int im=0; im<4; im++){
         for (int nm=0; nm<4; nm++){
           for(int rg=0; rg<2; rg++) {
-            for(int na=0; na<3; na++){
-              Outputs[y][202+ag] += Vdx[ag][4 ][lt][im][nm][rg][na];   // dx by age (11)
-            } } } } } }
+              Outputs[y][202+ag] += Vdx[ag][4 ][lt][im][nm][rg][0];   // dx by age (11)
+            } } } } }
   for(int i=202; i<213; i++) { Outputs[y][i] = Outputs[y][i]*12; }
   // NOTIFICATIONS US, dead at diagnosis
   for(int nm=0; nm<4 ; nm++) {
@@ -1223,10 +1295,9 @@ if(m==6) {
       for(int ag=0; ag<11; ag++) {
         for(int lt=0; lt<2; lt++){
           for(int rg=0; rg<2; rg++) {
-            for(int na=0; na<3; na++){
-              temp2 = V0[ag][4 ][lt][im][nm][rg][na]*(vTMortN[ag][4]+temp); //vTMort[ag][tb]
+              temp2 = V0[ag][4 ][lt][im][nm][rg][0]*(vTMortN[ag][4]+temp); //vTMort[ag][tb]
               Outputs[y][213+ag] += temp2;   // dx by age (11)
-            } } } } } }
+            } } } } }
   for(int i=213; i<224; i++) { Outputs[y][i] = Outputs[y][i]*12; }
 
   // // NOTIFICATIONS, dead at diagnosis  HIV_NEGATIVE
@@ -1279,20 +1350,18 @@ if(m==6) {
                   Outputs[y][235] += V1[ag][2][lt][im][nm][rg][na];
                   Outputs[y][236] += V1[ag][3][lt][im][nm][rg][na];
                   Outputs[y][237] += V1[ag][4][lt][im][nm][rg][na];
-                  Outputs[y][238] += V1[ag][5][lt][im][nm][rg][na];
                 } else {
-                  Outputs[y][239] += V1[ag][2][lt][im][nm][rg][na];
-                  Outputs[y][240] += V1[ag][3][lt][im][nm][rg][na];
-                  Outputs[y][241] += V1[ag][4][lt][im][nm][rg][na];
-                  Outputs[y][242] += V1[ag][5][lt][im][nm][rg][na];
+                  Outputs[y][238] += V1[ag][2][lt][im][nm][rg][na];
+                  Outputs[y][239] += V1[ag][3][lt][im][nm][rg][na];
+                  Outputs[y][240] += V1[ag][4][lt][im][nm][rg][na];
                 } } } } } } } }
   // Force of infection
-  Outputs[y][243] += VLjkl[0][0];
-  Outputs[y][244] += VLjkl[1][0];
-  Outputs[y][245] += VLjkl[0][1];
-  Outputs[y][246] += VLjkl[1][1];
+  Outputs[y][241] += VLjkl[0][0];
+  Outputs[y][242] += VLjkl[1][0];
+  Outputs[y][243] += VLjkl[0][1];
+  Outputs[y][244] += VLjkl[1][1];
   ////////////     CREATE YEARLY VALUES FROM THE MONTH ESTIMATE     ////////////
-  for(int i=243; i<247; i++) { Outputs[y][i] = Outputs[y][i]*12; }
+  for(int i=241; i<245; i++) { Outputs[y][i] = Outputs[y][i]*12; }
 
   ///  NEW INFECTIONS + SUPER INFECTIOPN ///
   for(int ag=0; ag<11; ag++) {
@@ -1300,11 +1369,12 @@ if(m==6) {
       for(int im=0; im<4 ; im++) {
         for(int nm=0; nm<4 ; nm++) {
           for(int rg=0; rg<2; rg++) {
-            for(int na=0; na<3; na++){
-              Outputs[y][247+rg] += (V0[ag][0][lt][im][nm][rg][na]+V0[ag][1][lt][im][nm][rg][na]+V0[ag][2][lt][im][nm][rg][na])*VLjkl[rg][na]*NixTrans[s];
+            for(int na=1; na<3; na++){
+              Outputs[y][245+rg] += (V0[ag][0][lt][im][nm][rg][na]+V0[ag][1][lt][im][nm][rg][na]+V0[ag][2][lt][im][nm][rg][na])*VLjkl[rg][na]*NixTrans[s];
+              Outputs[y][247+na] += (V0[ag][0][lt][im][nm][rg][na]+V0[ag][1][lt][im][nm][rg][na]+V0[ag][2][lt][im][nm][rg][na])*VLjkl[rg][na]*NixTrans[s];
             } } } } } }
   ////////////     CREATE YEARLY VALUES FROM THE MONTH ESTIMATE     ////////////
-  for(int i=247; i<249; i++) { Outputs[y][i] = Outputs[y][i]*12; }
+  for(int i=245; i<249; i++) { Outputs[y][i] = Outputs[y][i]*12; }
 
   ////////////////////// TB MORTALITY BY NATIVITY //////////////////////////////
   for(int ag=0; ag<11; ag++){
@@ -1342,7 +1412,7 @@ for(int ag=0; ag<11; ag++) {
     } //// end of month loop!//////////////////////////////////////////////////////////
   } //// end of year loop!///////////////////////////////////////////////////////////
   ////////////////   RE-CHECK THAT NO STATES HAVE BECOME NEGATIVE    ////////////////
-  NumericVector  CheckV(12672);
+  Rcpp::NumericVector  CheckV(12672);
   for(int ag=0; ag<11; ag++) {
     for(int tb=0; tb<6; tb++) {
       for(int lt=0; lt<2; lt++){
