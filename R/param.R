@@ -364,7 +364,7 @@ ResNam <- c("Year",                                         # year
             "TBTX_COMPLT","TBTX_DISCONT","TBTX_DIED",       # TB treatment outcomes complete, discontinue, death
             "NOTIF_ALL",                                    # total notif
             paste("NOTIF",StatList[[1]],sep="_"),           # notif by ag cat
-            paste("NOTIF",c("N","E"),sep="_"),              # notif by tx cat
+            paste("NOTIF",c("US","NonUS"),sep="_"),              # notif by nat cat
 #            paste("NOTIF_HIV",c("POS","NEG"),sep="_"),      # notif by HIV pos/neg
             paste("NOTIF",StatList[[6]],sep="_"),           # notif by rg cat
 #           paste("NOTIF_US_N",StatList[[3]],sep="_"),      # notif, US, N, by dr cat
@@ -395,7 +395,7 @@ ResNam <- c("Year",                                         # year
 ###########################    NOTIFICATION DEAD      ##############################
             "NOTIF_MORT_ALL",                               # total notif, dead at diagnosis
             paste("NOTIF_MORT",StatList[[1]],sep="_"),      # notif by ag cat, dead at diagnosis
-            paste("NOTIF_MORT",c("N","E"),sep="_"),         # notif by tx cat, dead at diagnosis
+            paste("NOTIF_MORT",c("US","NonUS"),sep="_"),         # notif by nat cat, dead at diagnosis
 #            paste("NOTIF_MORT_HIV",c("POS","NEG"),sep="_"), # notif by HIV pos/neg, dead at diagnosis
             paste("NOTIF_MORT",StatList[[6]],sep="_"),      # notif by rg cat, dead at diagnosis
             paste("NOTIF_US",StatList[[1]],sep="_"),        # notif by ag cat, US only
