@@ -92,11 +92,13 @@ Rcpp::List cSim(
   double        temp4V[11][5];
   arma::mat     temp_mat;
   arma::mat     temp_mat2;
+  arma::vec     temp_vec;
   double        rTbP;
   double        rTbN;
   double        Outputs[nYrs][nRes];
   double        V0[11][6][2][4][4][2][3];
   double        V1[11][6][2][4][4][2][3];
+  double        V4[11][6][2][4][4][2][3];
   double        VMort[11][6][2][4][4][2][3];
   double        Vdx[11][6][2][4][4][2][3];
   double        VLdx[11][6][2][4][4][2][3];
@@ -1117,10 +1119,10 @@ if(m==6) {
             for(int na=0; na<3; na++) {
               Outputs[y][134   ] += Vdx[ag][4 ][lt][im][nm][rg][na];   // All dx (1)
               Outputs[y][135+ag] += Vdx[ag][4 ][lt][im][nm][rg][na];   // dx by age (11)
-              if(lt<0) {
-                Outputs[y][146   ] += Vdx[ag][4 ][lt][im][nm][rg][na];   // dx by tx history - naive (2)
+              if(na>1) {
+                Outputs[y][146   ] += temp2;   // dx by nativity (US)
               } else {
-                Outputs[y][147   ] += Vdx[ag][4 ][lt][im][nm][rg][na]; } // dx by tx history - experienced (2)
+                Outputs[y][147   ] += temp2; } // dx by nativity -(NONUS) (2)
               // if(im>0) {
               //   Outputs[y][148   ] += Vdx[ag][4 ][lt][im][nm][rg][na];   // dx HIV pos (1)
               // } else {
@@ -1210,10 +1212,10 @@ if(m==6) {
               temp2 = V0[ag][4 ][lt][im][nm][rg][na]*(vTMortN[ag][4]+temp);
               Outputs[y][187   ] += temp2;   // All dx (1)
               Outputs[y][188+ag] += temp2;   // dx by age (11)
-              if(lt<1) {
-                Outputs[y][199   ] += temp2;   // dx by tx history - naive (2)
+              if(na>1) {
+                Outputs[y][199   ] += temp2;   // dx by nativity (US)
               } else {
-                Outputs[y][200   ] += temp2; } // dx by tx history - experienced (2)
+                Outputs[y][200   ] += temp2; } // dx by nativity -(NONUS) (2)
               // if(im>0) {
               //   Outputs[y][228   ] += temp2;   // dx HIV pos (1)
               // } else {
@@ -1338,23 +1340,22 @@ if(m==6) {
   for(int i=249; i<251; i++) { Outputs[y][i] = Outputs[y][i]*12; }
 
 } ////end of mid-year results bracket
-///////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////END MIDYEAR RESULTS//////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////
-////////////////////////// REBALANCE THE POPULATION //////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+////////////////////////////END MIDYEAR RESULTS//////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//////////////////////// REBALANCE THE POPULATION //////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 // for(int n=0; n<N; n++){
 //
 //   /////// CALCULATE DISTANCE FROM CURRENT DISTRIBUTION TO GOAL DISTRIBUTION /////
 //   for (int i=0; i<sizeof(dist_i_v); i++){
-//
-//     diff_i_v[i] = dist_i_v[i] - dist_goal_v[i];
+//       diff_i_v[i] = dist_i_v[i] - dist_goal_v[i];
 //   }
 //   //////////                  CREATE TRANSITION MATRIX                    ////////
 //   for (int r=0; r<16; r++){
 //     for (int c=0; c<16; c++){
-//       //  temp=diff_i_v[r]-diff_i_v[c];
-//       trans_mat[r,c] = can_go[r,c]*(std::max(0.0,temp));
+//       temp_vec[r]=diff_i_v[r]-diff_i_v[c];
+//       trans_mat[r,c] = can_go[r,c]*(std::max(0.0,temp_vec[r]));
 //       Rcpp::Rcout << "initial trans_mat is" << trans_mat;
 //     }
 //   }
@@ -1387,7 +1388,7 @@ if(m==6) {
 //       } else {
 //         did_go[i,j] += dist_i_v[i]*trans_mat[i,j];
 //       }
-//       //////////               UPDATE THE DISTRIBUTION VECTOR             ////////////
+// //////////               UPDATE THE DISTRIBUTION VECTOR             ////////////
 //       dist_i_v[i] = dist_i_v[i]*trans_mat[i,j];
 //
 //     }}
@@ -1415,7 +1416,7 @@ if(m==6) {
 //       } else {trans_mat_tot[i,j]=trans_mat_tot[i,j];
 //       } } }
 //
-//   Rcpp::Rcout<< "trans_mat_tot is" << trans_mat_tot;
+//
 //
 //   //////////           NOW FINALLY UPDATE THE DISTRIBUTION           ///////////
 //   dist_new = dist_orig;
@@ -1435,9 +1436,9 @@ if(m==6) {
 //       sse = arma::accu(pow(dist_goal[i,j] - dist_new[i,j], 2)) /
 //         arma::accu(pow(dist_goal[i,j] - dist_orig[i,j], 2));
 //     }}
-//   Rcpp::Rcout << "sse is" << sse;
-// }
 //
+// }
+// Rcpp::Rcout << "sse is" << sse;
 // /////////////APPLY THE NEW DISTRIBUTION TO THE POPULATION /////////////////////
 // for(int ag=0; ag<11; ag++) {
 //   for(int tb=0; tb<6; tb++) {
@@ -1446,8 +1447,10 @@ if(m==6) {
 //         for (int nm=0; nm<4; nm++){
 //           for(int rg=0; rg<2; rg++) {
 //             for(int na=0; na<3; na++){
-//               V1[ag][tb][lt][im][nm][rg][na] = V1[ag][tb][lt][im][nm][rg][na]*dist_new[im][nm];
+//               V4[ag][tb][lt][im][nm][rg][na] = V1[ag][tb][lt][im][nm][rg][na]*dist_new[im][nm];
 //             } } } } } } }
+//
+// Rcpp::Rcout << "v4 at 'm'=" << V4;
 ///////////////////////////////////////////////////////////////////////////////////
 ///////////                       UPDATE V0 as V1                       ///////////
 ///////////////////////////////////////////////////////////////////////////////////
