@@ -52,7 +52,8 @@ tb_graph_specific <- function(start_yr, end_yr, df, output){
 
   #'perform character pattern matching to create a vector of the results to graph
   if(length(i <- grep(output, colnames(df),ignore.case = TRUE)))
-  plot_these <- df[,i]
+
+     plot_these <- df[,i]
 
   pdf(file=paste("MITUS_results/graphs_",output,Sys.time(),".pdf"), width = 11, height = 8.5)
 
@@ -63,7 +64,7 @@ tb_graph_specific <- function(start_yr, end_yr, df, output){
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
 
-  line(start_yr:end_yr, plot_these[(start_yr-1949):(end_yr-1949),j])
+  lines(start_yr:end_yr, plot_these[(start_yr-1949):(end_yr-1949),j])
   print(j)
   j<-j+1
 }
