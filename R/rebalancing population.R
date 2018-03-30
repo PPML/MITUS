@@ -1,14 +1,21 @@
+###### this is the whole code provided by nick
+#should only be used as a reference, not edited.
+####color function ####
 mTrsp <- function(cl,a)  {
   apply(col2rgb(cl), 2, function(x){ rgb(x[1],x[2],x[3],a,maxColorValue=255)})
 }
 
 
 library(mvtnorm)
-lgt <-  function(x) log(x/(1-x));
-invlgt <- function(x) 1/(1+exp(-x))
+source("R/basic_functions.R")
+
 cuts <- lgt(0:4/4)
 
 ## Make 4x4 distribution based on invLogit 2D Normal
+######general population distribution of RFs
+#'Use the pmvnorm function to computer the distribution function of the multivariate normal
+#'distribution.
+#'Define by three parameters which are determined from the User Inputted data.
 pars = c(-1,2,0.6); # parameters defining distribution
 dist <- matrix(NA,4,4)
 for(i in 1:4) {
@@ -19,7 +26,8 @@ for(i in 1:4) {
                          sigma = matrix(pars[2]*c(1,pars[3],pars[3],1),2,2) )[[1]]
   }
 }
-dist <- dist/sum(dist)
+
+dist <- dist/sum(dist) #average
 
 ####  CHANGES
 colnames(dist) <- paste0("p",0:3) # progression
@@ -31,6 +39,11 @@ dist1 <- dist0 <- dist
 #  dist1 <- dist1/sum(dist1)
 
 # Example change to distribution no. 2 = "HIV" added as a mixture distribution of two Normals
+#######distribution of target population with unique distribution of risk factors
+####### will need to have these parameters created from a function
+
+
+#        mean,
 pars1 = c(0.5,1,0.8); #  parameters for HIV dist
 dist1 <- matrix(NA,4,4)
 for(i in 1:4) {
@@ -38,7 +51,7 @@ for(i in 1:4) {
     dist1[i,j] <- pmvnorm(lower = cuts[c(i,j)],
                           upper = cuts[c(i,j)+1],
                           mean  = pars1[c(1,1)],
-                          sigma = matrix(pars1[2]*c(1,pars1[3],pars1[3],1),2,2) )[[1]]
+                          sigma = matrix(pars1[2]*c(1,pars1[3],pars1[3],1),2,2) ) [[1]]
   }
 }
 dist1 <- dist1/sum(dist1)
@@ -49,15 +62,18 @@ for(i in 1:4) points(1:4-0.5,rep(i-0.5,4),cex=dist[i,]*20,pch=16,col="grey40") #
 for(i in 1:4) points(1:4-0.5,rep(i-0.5,4),cex=dist1[i,]*20,pch=16,col=mTrsp(2,100)) #HIV
 
 # make the target distribution
+######these percentages will need to change based on user inputted target_pop values
+#'Create a target distribution from the two distributions above.
 dist_new <- 0.95*dist + 0.05*dist1
 
-######### CODE FOR REBALANCEING TO A NEW DISTRIBUTION
+######### CODE FOR REBALANCING TO A NEW DISTRIBUTION
 
 # 1 Set up matrix of allowable transitions (can_go),
 #  and matrix for holding sum of transitions (did_go)
 can_go <- matrix(0,16,16)
 rownames(can_go) <- colnames(can_go) <- paste0(rep(paste0("p",0:3),each=4),"_",rep(paste0("m",0:3),4))
-did_go <- can_go; did_go[,] <- 0
+did_go <- can_go
+did_go[,] <- 0
 
 for(i in 1:nrow(can_go)){ # i=1
   pi <- rep(0:3,each=4)[i];
@@ -67,7 +83,7 @@ for(i in 1:nrow(can_go)){ # i=1
 
 # Set up for changes
 dist_goal <- dist_new # dist_goal = distribution we want, fed in as model input (probably as a 4x1 vector)
-dist_orig <- dist     # dist_orig = starting distribution, inside timestep
+dist_orig <- dist_orig_t     # dist_orig = starting distribution, inside timestep
 
 # Turn 2X2 matrices as 1X4 vectors
 #  dist_i_v is an intermediate distribution, iteratively updated as
@@ -81,14 +97,16 @@ for(m in 0:3) {
     dist_orig_v[1+m+p*4] <- dist_orig[m+1,p+1];
   }
 }
-
+#open N loop to find distribution
+##########################################################
 # Everything below will need to be in timestep (ie C++)
+##########################################################
 trans_mat <- matrix(0,16,16)
 dist_i_v <- dist_orig_v
 
 # code to plot results for each update (just for checking things during development)
-plot(dist_orig_v-dist_goal_v,type="l")
-abline(h=0,col="grey80",lty="11")
+#plot(dist_orig_v-dist_goal_v,type="l")
+#abline(h=0,col="grey80",lty="11")
 
 # Start loop
 N <- 30 # no iterations
@@ -100,11 +118,6 @@ for(n in 1:N){ # n = 1
   # Create transition matrix
   trans_mat[,] <- 0
   colnames(trans_mat) <- rownames(trans_mat) <- rownames(can_go)
-  for(r in 1:16) {
-    for(c in 1:16)  {
-      trans_mat[r,c] <- can_go[r,c]*max(0,(diff_i_v[r]-diff_i_v[c]))
-    }
-  }
 
   # Adjust transition matrix, 1st scale up rates, 2nd make sure does not sum to over 1
   frc <- 0.1  # approach seems quite sensitive to this value, = fraction of change to
