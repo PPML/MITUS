@@ -8,8 +8,6 @@
 library(MASS)
 source("R/basic_functions.R")
 source("R/define_P.R")
-#source("R/pop_dist.R")
-source("R/rebalancing population.R")
 load("data/ModelInputs_9-2-16.rData")
 ################################################################################
 ###########################          INPUTS            #########################
