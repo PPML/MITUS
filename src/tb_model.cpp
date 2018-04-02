@@ -48,13 +48,13 @@ Rcpp::List cSim(
     std::vector<double> EffLt0,
     double              EffLt,
     std::vector<double> NixTrans,
-    Rcpp::NumericMatrix      dist,
-    arma::mat      can_go,
-    arma::mat       did_go,
-    arma::mat       dist_orig,
-    arma::mat       dist_goal,
-    arma::vec      dist_goal_v,
-    arma::vec      dist_orig_v
+    Rcpp::NumericMatrix      dist
+    // arma::mat      can_go,
+    // arma::mat       did_go,
+    // arma::mat       dist_orig,
+    // arma::mat       dist_goal,
+    // arma::vec      dist_goal_v,
+    // arma::vec      dist_orig_v
 ) {
   ////////////////////////////////////////////////////////////////////////////////
   ////////    BELOW IS A LIST OF THE VARIABLES CREATED INTERNALLY IN MODEL   /////
@@ -106,12 +106,12 @@ Rcpp::List cSim(
   double        VGjkl[2][2]; ///HIGH AND LOW RISK, NATIVITY
   double        Vjaf[4];     ///BY NUMBER OF MIXING GROUPS
   double        VLjkl[2][2];  ///HIGH AND LOW RISK, NATIVITY
-  arma::mat     trans_mat;
-  arma::mat     trans_mat_tot;
-  arma::mat     dist_new;
-  double        frc; double sse;
-  arma::vec     diff_i_v[16];
-  arma::vec      dist_i_v;
+  // arma::mat     trans_mat;
+  // arma::mat     trans_mat_tot;
+  // arma::mat     dist_new;
+  // double        frc; double sse;
+  // arma::vec     diff_i_v[16];
+  // arma::vec      dist_i_v;
   Rcpp::NumericMatrix Outputs2(nYrs,nRes);
 
   ///////////////////////////////////////////////////////////////////////////////
@@ -219,7 +219,7 @@ Rcpp::List cSim(
     for(int im=0; im<5; im++) {
       temp4V[ag][im] = (1-pow(1-MrslowN[ag][im]-rRecov,24.0))*MrslowN[ag][im];
     } }
-  N=30;
+//  N=30;
   ////////////////////////////////////////////////////////////////////////////////
   ///////                  UPDATING TREATMENT METERS                        //////
   ////////     THIS DIFFERENT TO MAIN MODEL DUE TO SIMPLIFIED OUTCOMES      //////
