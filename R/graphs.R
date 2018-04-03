@@ -155,20 +155,20 @@ abline(h=axTicks(2),col="grey85")
 lines(start_yr:end_yr,plot_this)
 
 #' LTBI initiations by risk group
-#' this is not right!!! division by zero
-# if (end_yr > 1993){
-# plot_this <- (results[(start_yr-1949):(end_yr-1949),"TLTBI_INITS_TB"]) / (results[(start_yr-1949):(end_yr-1949),"TLTBI_INITS"])
-# plot(0,0,ylim=range(plot_this),xlim=c(start_yr,end_yr),xlab="Year",ylab="IPT Treatment Initiations, High Risk (%)", axes=F)
-# axis(1);axis(2,las=2);box()
-# abline(h=axTicks(2),col="grey85")
-# lines(start_yr:end_yr,plot_this)
-#
-# plot_this <- ((results[(start_yr-1949):(end_yr-1949),"TLTBI_INITS_FB"]) / (results[(start_yr-1949):(end_yr-1949),"TLTBI_INITS"]))*100
-# plot(0,0,ylim=range(plot_this),xlim=c(start_yr,end_yr),xlab="Year",ylab="IPT Treatment Initiations, Foreign Born (%)", axes=F)
-# axis(1);axis(2,las=2);box()
-# abline(h=axTicks(2),col="grey85")
-# lines(start_yr:end_yr,plot_this)
-# }
+# end_yr=1990
+if (end_yr > 1985){
+plot_this <- (results[(1985-1949):(end_yr-1949),"TLTBI_INITS_HR"]) / (results[(1985-1949):(end_yr-1949),"TLTBI_INITS"])
+plot(0,0,ylim=range(plot_this),xlim=c(1985,end_yr),xlab="Year",ylab="IPT Treatment Initiations, High Risk (%)", axes=F)
+axis(1);axis(2,las=2);box()
+abline(h=axTicks(2),col="grey85")
+lines(1985:end_yr,plot_this)
+
+plot_this <- ((results[(1985-1949):(end_yr-1949),"TLTBI_INITS_FB"]) / (results[(1985-1949):(end_yr-1949),"TLTBI_INITS"]))*100
+plot(0,0,ylim=range(plot_this),xlim=c(1985,end_yr),xlab="Year",ylab="IPT Treatment Initiations, Foreign Born (%)", axes=F)
+axis(1);axis(2,las=2);box()
+abline(h=axTicks(2),col="grey85")
+lines(1985:end_yr,plot_this)
+}
 #' LTBI prevalence by age US
 plot_this <-cbind(results[(start_yr-1949):(end_yr-1949),55:65])
 plot_this <-colSums(plot_this)/sum(plot_this)*100
