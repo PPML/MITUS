@@ -9,6 +9,10 @@
 library(parallel)
 library(Rcpp)
 library(RcppArmadillo)
+
+load("~/MITUS/data/parAll200_9-14-16.rData")
+source("R/gen_reblnc_pop.R")
+
 ################################################################################
 #########                      FUNCTION                                #########
 
@@ -30,9 +34,10 @@ OutputsZint <-  function(samp_i=1,ParMatrix,endyr=2100,Int1=0,Int2=0,Int3=0,Int4
     P <<- Par
 
     source("R/param_init.R")
+ #   source("R/param.R")
     sourceCpp("src/tb_model.cpp")
 
-    results <-       cSim( nYrs     =   2050-1950,  nRes     = length(ResNam), rDxt      = rDxt     , TxQualt   = TxQualt    , InitPop   = InitPop    ,
+    m <-       cSim( nYrs     =   2050-1950,  nRes     = length(ResNam), rDxt      = rDxt     , TxQualt   = TxQualt    , InitPop   = InitPop    ,
                            Mpfast   = Mpfast      , ExogInf   = ExogInf      , MpfastPI  = MpfastPI , Mrslow    = Mrslow     , rrSlowFB = rrSlowFB    ,
                            rfast    = rfast       , RRcurDef = RRcurDef      , rSlfCur  = rSlfCur   , p_HR     = p_HR        , dist_gen = dist_gen    ,
                            vTMort   = vTMort      , vRFMort = vRFMort        , RRmuHR    = RRmuHR   , muTbRF = muTbRF        , Birthst   = Birthst    ,
@@ -42,11 +47,14 @@ OutputsZint <-  function(samp_i=1,ParMatrix,endyr=2100,Int1=0,Int2=0,Int3=0,Int4
                            LtDxPar  = LtDxPar     , rLtScrt   = rLtScrt      , RRdxAge  = RRdxAge   , rRecov   = rRecov      , pImmScen  = pImmScen   ,
                            EarlyTrend = EarlyTrend, EffLt    = EffLt         , EffLt0    = EffLt0   , dLtt     = dLtt        , NixTrans = NixTrans    ,
                            can_go   = can_go      , did_go=did_go            , dist_goal=dist_goal, dist_goal_v=dist_goal_v  , diff_i_v = diff_i_v,
-                           dist_orig_v=dist_orig_v, dist_new = dist_new )$Outputs
+                           dist_orig_v=dist_orig_v, dist_new = dist_new
+                           )$Outputs
 
-    colnames(results) <- ResNam;
+    colnames(m) <- ResNam;
+    results<<-data.frame(m)
 
     return(results)
+
 }
 
 ################################################################################
