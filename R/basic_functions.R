@@ -36,14 +36,12 @@ invlgt <- function(x) 1/(1+exp(-x))
 #'@export
 LgtCurve <- function(StYr,Endyr,EndVal) {
   z <- log(1/0.005-1)
-  zz  <- seq(-z*(1+2*(StYr-1975)/(Endyr-StYr)),z*(1+2*(2051-Endyr)/(Endyr-StYr)),
-             by=(2*z)/(Endyr-StYr)/12)
-  zz  <- as.numeric(EndVal)/(1+exp(-zz));
-  if(StYr>1975) {
-    zz[1:((StYr-1975)*12)] <- 0
-  };
-  zz
-}
+  zz  <- seq(-z*(1+2*(StYr-1950)/(Endyr-StYr)),z*(1+2*(2100-Endyr)/(Endyr-StYr)),by=(2*z)/(Endyr-StYr)/12)
+  zz  <- as.numeric(EndVal)/(1+exp(-zz))
+  if(StYr>1950) {
+    zz[1:((StYr-1950)*12)] <- 0
+  }
+  zz  }
 
 #'This function creates a smooth curve from a vector of values.
 #'@param vec vector of values that the user would like to have smoothed into a curve
