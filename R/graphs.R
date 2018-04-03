@@ -71,13 +71,138 @@ tb_graph_specific <- function(start_yr, end_yr, df, output){
   dev.off()
 }
 
+#'Create a function to be run that will graph the most important outputs
+#'often sums for a designated year range.
+#'@param start_yr year to start the graphs
+#'@param end_yr year to end the graphs
+#'@param df dataframe of output for all years
+#'@return .pdf of the graphs
+#'@export
+
+tb_graph_vital <- function(start_yr, end_yr, df){
+  #'results plotted below. The code will produce an error if they are not equal.
+  if (all.equal(colnames(df),ResNam)==FALSE)
+    stop("Column Names of 'df' do not match those defined in ResNam")
+
+#' open pdf file for the graphs
+pdf(file=paste("MITUS_results/graphs_vital",Sys.time(),".pdf"), width = 11, height = 8.5)
+
+#' total diagnosed cases
+plot_this <- results[(start_yr-1949):(end_yr-1949),"NOTIF_MORT_ALL"]+results[(start_yr-1949):(end_yr-1949),"NOTIF_ALL"]
+plot(0,0,ylim=range(plot_this),xlim=c(start_yr,end_yr),xlab="Year",ylab="All TB Cases", axes=F)
+axis(1);axis(2,las=2);box()
+abline(h=axTicks(2),col="grey85")
+lines(start_yr:end_yr,plot_this)
+
+#' cases by nativity
+plot_this <- results[(start_yr-1949):(end_yr-1949),"INCID_ALL_US"]
+plot(0,0,ylim=range(plot_this),xlim=c(start_yr,end_yr),xlab="Year",ylab="US Incident TB Cases", axes=F)
+axis(1);axis(2,las=2);box()
+abline(h=axTicks(2),col="grey85")
+lines(start_yr:end_yr,plot_this)
+
+plot_this<-results[(start_yr-1949):(end_yr-1949),"INCID_ALL_FB"] + results[(start_yr-1949):(end_yr-1949),"INCID_ALL_FB2"]
+plot(0,0,ylim=range(plot_this),xlim=c(start_yr,end_yr),xlab="Year",ylab="All FB Incident TB Cases", axes=F)
+axis(1);axis(2,las=2);box()
+abline(h=axTicks(2),col="grey85")
+lines(start_yr:end_yr,plot_this)
+
+plot_this<- results[(start_yr-1949):(end_yr-1949),"INCID_ALL_FB"]
+plot(0,0,ylim=range(plot_this),xlim=c(start_yr,end_yr),xlab="Year",ylab="All Recent FB Incident TB Cases", axes=F)
+axis(1);axis(2,las=2);box()
+abline(h=axTicks(2),col="grey85")
+lines(start_yr:end_yr,plot_this)
+
+#' incident cases by age distribution in percents
+plot_this <- cbind(results[(start_yr-1949):(end_yr-1949),"INCID_ALL_0_4"]   ,results[(start_yr-1949):(end_yr-1949),"INCID_ALL_5_14"] ,
+                   results[(start_yr-1949):(end_yr-1949),"INCID_ALL_15_24"] ,results[(start_yr-1949):(end_yr-1949),"INCID_ALL_25_34"] ,
+                   results[(start_yr-1949):(end_yr-1949),"INCID_ALL_35_44"] ,results[(start_yr-1949):(end_yr-1949),"INCID_ALL_45_54"] ,
+                   results[(start_yr-1949):(end_yr-1949),"INCID_ALL_55_64"] ,results[(start_yr-1949):(end_yr-1949),"INCID_ALL_65_74"] ,
+                   results[(start_yr-1949):(end_yr-1949),"INCID_ALL_75_84"] ,results[(start_yr-1949):(end_yr-1949),"INCID_ALL_85_94"] ,
+                   results[(start_yr-1949):(end_yr-1949),"INCID_ALL_95p"]   )
+plot_this <- colSums(plot_this)/sum(plot_this)*100
+plot(0,0,ylim=range(plot_this),xlim=c(0.6,11.4),xlab="Age Group",ylab="Total TB Cases by Age Group", axes=F)
+axis(2,las=2);box()
+abline(h=axTicks(2),col="grey85")
+axis(1,1:11,paste(c("0-4","5-14","15-24","25-34","35-44","45-54","55-64","65-74","75-84","85-94", "95+"),"\nyears",sep=""),tick=F,cex.axis=0.75)
+lines(plot_this)
+
+#' cases by HR distribution
+plot_this <- (results[(start_yr-1949):(end_yr-1949), "INCID_ALL_HR"]) / (results[(start_yr-1949):(end_yr-1949), "INCID_ALL"])
+plot_this <- plot_this*100
+plot(0,0,ylim=range(plot_this),xlim=c(start_yr,end_yr),xlab="Year",ylab="Incident High Risk TB Cases (%)", axes=F)
+axis(1);axis(2,las=2);box()
+abline(h=axTicks(2),col="grey85")
+plot(start_yr:end_yr,plot_this)
+
+#' treatment outcomes
+plot_this <- results[(start_yr-1949):(end_yr-1949),"TBTX_COMPLT"]
+plot(0,0,ylim=range(plot_this),xlim=c(start_yr,end_yr),xlab="Year",ylab="TX Completion", axes=F)
+axis(1);axis(2,las=2);box()
+abline(h=axTicks(2),col="grey85")
+lines(start_yr:end_yr,plot_this)
+
+plot_this <- cbind(results[(start_yr-1949):(end_yr-1949),"TBTX_DIED"] +results[(start_yr-1949):(end_yr-1949),"TBTX_DISCONT"])
+plot(0,0,ylim=range(plot_this),xlim=c(start_yr,end_yr),xlab="Year",ylab="Treatment Outcomes: Discontinued and Died", axes=F)
+axis(1);axis(2,las=2);box()
+abline(h=axTicks(2),col="grey85")
+lines(start_yr:end_yr,plot_this)
+#' TLTBI volume (very, very low!!)
+plot_this <- results[(start_yr-1949):(end_yr-1949),"TLTBI_INITS"]
+plot(0,0,ylim=range(plot_this),xlim=c(start_yr,end_yr),xlab="Year",ylab="IPT Treatment Initiations Per Year (000s)", axes=F)
+axis(1);axis(2,las=2);box()
+abline(h=axTicks(2),col="grey85")
+lines(start_yr:end_yr,plot_this)
+
+#' LTBI initiations by risk group
+#' this is not right!!! division by zero
+# plot_this <- (results[(start_yr-1949):(end_yr-1949),"TLTBI_INITS_TB"]) / (results[(start_yr-1949):(end_yr-1949),"TLTBI_INITS"])
+# plot(0,0,ylim=range(plot_this),xlim=c(start_yr,end_yr),xlab="Year",ylab="IPT Treatment Initiations, High Risk (%)", axes=F)
+# axis(1);axis(2,las=2);box()
+# abline(h=axTicks(2),col="grey85")
+# lines(start_yr:end_yr,plot_this)
+#
+# plot_this <- ((results[(start_yr-1949):(end_yr-1949),"TLTBI_INITS_HR"]) / (results[(start_yr-1949):(end_yr-1949),"TLTBI_INITS"]))*100
+# plot(0,0,ylim=range(plot_this),xlim=c(start_yr,end_yr),xlab="Year",ylab="IPT Treatment Initiations, High Risk (%)", axes=F)
+# axis(1);axis(2,las=2);box()
+# abline(h=axTicks(2),col="grey85")
+# lines(start_yr:end_yr,plot_this)
+
+#' LTBI prevalence by age US
+plot_this <-cbind(results[(start_yr-1949):(end_yr-1949),55:65])
+plot_this <-colSums(plot_this)/sum(plot_this)*100
+plot(0,0,ylim=range(plot_this),xlim=c(0.6,11.4),xlab="Age Group",ylab="US-Born LTBI Prevalance by Age", axes=F)
+axis(2,las=2);box()
+abline(h=axTicks(2),col="grey85")
+axis(1,1:11,paste(c("0-4","5-14","15-24","25-34","35-44","45-54","55-64","65-74","75-84","85-94","95+"),"\nyears",sep=""),tick=F,cex.axis=0.75)
+lines(plot_this)
+#' LTBI prevalence by age non-US
+plot_this <-cbind(results[(start_yr-1949):(end_yr-1949),66:76])
+plot_this <-colSums(plot_this)/sum(plot_this)*100
+plot(0,0,ylim=range(plot_this),xlim=c(0.6,11.4),xlab="Age Group",ylab="Non-US-Born LTBI Prevalance by Age", axes=F)
+axis(2,las=2);box()
+abline(h=axTicks(2),col="grey85")
+axis(1,1:11,paste(c("0-4","5-14","15-24","25-34","35-44","45-54","55-64","65-74","75-84","85-94","95+"),"\nyears",sep=""),tick=F,cex.axis=0.75)
+lines(plot_this)
+
+#' TB deaths
+plot_this <- cbind(results[(start_yr-1949):(end_yr-1949),"TBMORT_US"]+results[(start_yr-1949):(end_yr-1949),"TBMORT_NUS"])
+plot(0,0,ylim=range(plot_this),xlim=c(start_yr,end_yr),xlab="Year",ylab="Total TB Deaths by Year", axes=F)
+axis(1);axis(2,las=2);box()
+abline(h=axTicks(2),col="grey85")
+plot(start_yr:end_yr,plot_this)
+
+#' TB deaths by age
+plot_this <-cbind(results[(start_yr-1949):(end_yr-1949),88:98]+results[(start_yr-1949):(end_yr-1949),99:109])
+plot_this <- colSums(plot_this)
+plot(0,0,ylim=range(plot_this),xlim=c(0.6,11.4),xlab="Age Group",ylab="Total TB Deaths by Age Group", axes=F)
+axis(2,las=2);box()
+abline(h=axTicks(2),col="grey85")
+axis(1,1:11,paste(c("0-4","5-14","15-24","25-34","35-44","45-54","55-64","65-74","75-84","85-94","95+"),"\nyears",sep=""),tick=F,cex.axis=0.75)
+lines(plot_this)
 
 
-#' start_yr=1950
-#' end_yr=2050
-#' #'Total diagnosed cases 1953-2013
-#' notif_tot=results$NOTIF_ALL+results$NOTIF_MORT_ALL
-#' lines(start_yr:end_yr, (notif_tot[(start_yr-1949):(end_yr-1949)])*1e1)
-#'
-#' dev.off();
+  dev.off();
+  #system(paste("open", pdfname))
+}
 
