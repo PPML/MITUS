@@ -7,6 +7,7 @@
 ################################################################################
 library(MASS)
 source("R/basic_functions.R")
+#source("R/define_P.R")
 load("data/ModelInputs_9-2-16.rData")
 
 ################################################################################
@@ -49,7 +50,7 @@ TunmuTbAg <- P["TunmuTbAg"]
 
 #################                IMMIGRATION              #####################
  TotImmig1       <- c(ImmigInputs[[1]][1:65],(ImmigInputs[[1]][66:151]-ImmigInputs[[1]][66])*P["ImmigVolFut"]+ImmigInputs[[1]][66])/12*P["ImmigVol"]
-TotImmig0       <- (c(ImmigInputs[[1]][1:151])+c(rep(0,65),cumsum(rep(P["ImmigVolFut"],86))))/12*P["ImmigVol"]
+ TotImmig0       <- (c(ImmigInputs[[1]][1:151])+c(rep(0,65),cumsum(rep(P["ImmigVolFut"],86))))/12*P["ImmigVol"]
 #set.seed( rand_seed)
 # TotImmig1       <-   c(TotImmig0[1:66],exp(mvrnorm(1, log(TotImmig0[-(1:66)]), vcv_gp_l10_sd0.1))) # Add gaussian process noise
 TotImmig1       <-   TotImmig0
@@ -59,6 +60,7 @@ TotImmAge       <- outer(TotImmig,ImmigInputs[["AgeDist"]])
 
 PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:65]^P["TunLtbiTrend"]*ImmigInputs[["PrevTrend25_34"]][65]^(1-P["TunLtbiTrend"]),
                       ImmigInputs[["PrevTrend25_34"]][66:151]*(P["ImmigPrevFutLat"]/0.99)^(1:86))
+
 #set.seed(rand_seed+1)
 # PrevTrend25_341l <-   c(PrevTrend25_340l[1:66],exp(mvrnorm(1, log(PrevTrend25_340l[-(1:66)]), vcv_gp_l10_sd0.1))) # Add gaussian process noise
 PrevTrend25_341l <-   PrevTrend25_340l
@@ -120,7 +122,8 @@ rEmmigFB <- c(P["rEmmigF1"],P["rEmmigF2"])/12
 
 p_HR     <- P["pHR"]
 yr       <- c(2.5,1:10*10)
-r0_5     <- 1/3; r45_55 <- 1/20
+r0_5     <- 1/3;
+r45_55 <- 1/20
 HR_exit  <- r0_5*((r45_55/r0_5)^(1/(50-2.5)))^(yr-2.5)
 HR_entry <- HR_exit*p_HR*1.3
 HrEntEx  <- cbind(HR_entry,HR_exit)/12
@@ -143,55 +146,58 @@ RelInf[6] <- RelInf[5]*TunTbTransTx
 Early0 <- P["Early0"]
 EarlyTrend <- c(rep(1+Early0,200*12),seq(1+Early0,1.0,length.out=50*12+2))
 
-######################__   PROGRESSION TO DISEASE   ###########################
+######################     PROGRESSION TO DISEASE     ##########################
 
-pfast     <- P["pfast"]
-ORpfast1  <- P["ORpfast1"]
-ORpfast2  <- P["ORpfast2"]
-#REPLACE WITH GENERIC RISK FACTOR OR
-
-ORpfastPI <- P["ORpfastPI"]
-rslow     <- P["rslow"]/12
+pfast      <- P["pfast"]
+ORpfast1   <- P["ORpfast1"] ## age group 1
+ORpfast2   <- P["ORpfast2"] ## age group 2
+ORpfastRF  <- P["ORpfastH"] ##riskfactor
+ORpfastPI  <- P["ORpfastPI"]
+rslow      <- P["rslow"]/12
 rslowRF    <- P["rslowH"]/12
-
-rfast     <- P["rfast"]/12
-rrSlowFB0 <- P["rrSlowFB"]
-rrSlowFB  <- c(1,rrSlowFB0) #is this right
+RRrslowRF  <- rslowRF/rslow
+rfast      <- P["rfast"]/12
+rrSlowFB0  <- P["rrSlowFB"]
+rrSlowFB   <- c(1,rrSlowFB0,rrSlowFB0)
+##############            ORIGINAL Mpfast[ag][hv]             ################
+##############          CREATE NEW Mpfast[ag][im]               ##############
 ############## MIGHT WRITE A NEW SCRIPT FOR THIS PART
 Mpfast       <- matrix(NA,11,4)
 ############## CREATE AN ODDS FROM THE PROB OF FAST PROGRESSION ##############
 Mpfast[,]    <- pfast/(1-pfast)
 Mpfast[1,]   <- Mpfast[1,]*ORpfast1 # progression for age group 1
 Mpfast[2,]   <- Mpfast[2,]*ORpfast2 # progression for age group 2
+############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
+Mpfast[,2]   <- (ORpfastRF*1/3)*Mpfast[,2]
+############ UPDATE PROBS FOR LEVEL 3 OF REACTIVATION ###########
+Mpfast[,3]   <- (ORpfastRF*2/3)*Mpfast[,3]
+############ UPDATE PROBS FOR LEVEL 4 OF REACTIVATION ###########
 Mpfast[,4]   <- Mpfast[,4]*ORpfastRF #progression for tb reactivation group 4
 
 #################       CREATE A NEW MATRIX PARTIAL. IMM.     #################
 MpfastPI     <- Mpfast
 MpfastPI[,1] <- Mpfast[,1]*ORpfastPI
+MpfastPI[,2] <- (ORpfastRF*1/3)*MpfastPI[,1]
+MpfastPI[,3] <- (ORpfastRF*2/3)*MpfastPI[,1]
+
 ### ADD IN THE INV LOGIT FOR THE OTHER FACTOR LEVELS
 
-############ FILL BOTH MATRICES WITH BASE LEVELS  ############
+##### UPDATE BOTH MATRICES WITH PROBABILITIES, NOT RATES
 Mpfast[,]    <- Mpfast[,]  /(1+Mpfast[,]);
 MpfastPI[,]  <- MpfastPI[,]/(1+MpfastPI[,]);
-############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
-Mpfast[,2]   <- exp(1)*log(Mpfast[,4]/3)
-MpfastPI[,2] <- exp(1)*log(MpfastPI[,4]/3)
-############ UPDATE PROBS FOR LEVEL 3 OF REACTIVATION ###########
-Mpfast[,3]   <- exp(2)*log(Mpfast[,4]/3)
-MpfastPI[,3] <- exp(2)*log(MpfastPI[,4]/3)
 
 ############# CREATE A VECTOR FOR RATE OF SLOW PROGRESSION THAT WILL
 ############# VARY BASED ON LEVELS OF TB REACTIVATION RATES
 Vrslow     <- rep(rslow,4)
 ############# UPDATE LEVEL FOUR OF THE RATE OF SLOW BASED ON CALCULATED RR FROM
 ############# USER INPUTTED RR FOR THE RISK FACTOR
-Vrslow[4]  <- rslowRF
-Vrslow[2]  <- Vrslow[4]
-Vrslow[3]  <- Vrslow[2]
+for (i in 2:4){
+  Vrslow[i]=Vrslow[i]*RRrslowRF*((i-1)/3)
+}
+
 TunrslowAge  <- P["TunrslowAge"]
 rrReactAg       <- exp(c(0,0,0,0,0,0,0.5,1:4)*P["TunrslowAge"])
 Mrslow <- outer(rrReactAg,Vrslow)
-
 
 
 #######################       RATE OF RECOVERY          ########################
@@ -350,87 +356,103 @@ TxVec[2]       <- pCurPs
 ##### DRUG RESISTANCE, TREATMENT HISTORY, HIV STATUS, AND RISK CATEGORY.   #####
 ################################################################################
 ################################################################################
+
+################################################################################
 StatList <- noquote(list(
-#####					                  AGE CATEGORIES                             #####
-#####           AGE GROUPS 0-4, 5-14, 15-24, ... , 95-94, 95+              #####
+  #####					                  AGE CATEGORIES                             #####
+  #####           AGE GROUPS 0-4, 5-14, 15-24, ... , 95-94, 95+              #####
   c("0_4",paste(0:8*10+5,1:9*10+4,sep="_"),"95p"),
-#####					     				    TUBERCULOSIS STATES		              			   #####
-##### SUSCEPTIBLE; UNINFECTED & PARTIALLY IMMUNE; LATENT SLOW; LATENT FAST;#####
-#####       ACTIVE TB SMEAR NEG.; ACTIVE TB SMEAR POS.; TB TREATMENT       #####
-  c("Su","Sp","Ls","Lf","Ac", "Tx"),
-#####                          TREATMENT HISTORY                           #####
-#####              NO TB TREATMENT HISTORY, PRIOR LTBI TREATMENT           #####
+  #####					     				    TUBERCULOSIS STATES		              			   #####
+  ##### SUSCEPTIBLE; UNINFECTED & PARTIALLY IMMUNE; LATENT SLOW; LATENT FAST;#####
+  #####       ACTIVE TB SMEAR NEG.; ACTIVE TB SMEAR POS.; TB TREATMENT       #####
+  c("Su","Sp","Ls","Lf", "Ac", "Tx"),
+  #####                          TREATMENT HISTORY                           #####
+  #####              NO TB TREATMENT HISTORY, PRIOR LTBI TREATMENT           #####
   c("NT","LT"),
-#####                        TB REACTIVATION RISK                          #####
+  #####                        TB REACTIVATION RISK                          #####
   c("I1","I2","I3","I4"),
-#####                          NON-TB MORTALITY                            #####
+  #####                          NON-TB MORTALITY                            #####
   c("M1","M2","M3","M4"),
-#####                  LIVING CONDITIONS/RISK OF INFECTION                 #####
+  #####                  LIVING CONDITIONS/RISK OF INFECTION                 #####
   c("LR","HR"),
-#####                              NATIVITY                                #####
+  #####                              NATIVITY                                #####
   c("US","F1","F2")))
 ################################################################################
-
+################################################################################
 ResNam <- c("Year",                                         # year
+            ##############################    POPULATION    ################################
             "N_ALL",                                        # total pop
             paste("N",StatList[[1]],sep="_"),               # pop by ag cat
             paste("N",StatList[[2]],sep="_"),               # pop by tb cat
-#            paste("N",StatList[[5]],sep="_"),               # pop by hv cat
+            paste("N",StatList[[4]],sep="_"),               # pop by im cat
+            paste("N",StatList[[5]],sep="_"),               # pop by nm cat
             paste("N",StatList[[6]],sep="_"),               # pop by rg cat
+            paste("N",StatList[[7]],sep="_"),               # pop by na cat
+            ###################    POPULATION W/ NATIVITY  ################################
             paste("N_US",StatList[[1]],sep="_"),            # US pop by ag cat
             paste("N_FB",StatList[[1]],sep="_"),            # FB pop by ag cat
             paste("N_US_LTBI",StatList[[1]],sep="_"),       # US LTBI pop by ag cat
             paste("N_FB_LTBI",StatList[[1]],sep="_"),       # FB LTBI pop by ag cat
-#            paste("N_HIV",StatList[[1]],sep="_"),           # HIV pop by ag cat
-            paste("TBMORT_HIVNEG",StatList[[1]],sep="_"),   # TB mort, HIV neg, by ag cat
-            paste("TBMORT_HIVPOS",StatList[[1]],sep="_"),   # TB mort, HIV pos, by ag cat
-#            paste("HIVMORT",StatList[[1]],sep="_"),         # HIV mort, by ag cat
+            paste("N_RF",StatList[[1]],sep="_"),            # RF pop by ag cat
+            #############################    MORTALITY    ################################
+            paste("TBMORT_RFNEG",StatList[[1]],sep="_"),   # TB mort, HIV neg, by ag cat
+            paste("TBMORT_RFPOS",StatList[[1]],sep="_"),   # TB mort, HIV pos, by ag cat
+            paste("RFMORT",StatList[[1]],sep="_"),         # RF mort, by ag cat
             paste("TOTMORT",StatList[[1]],sep="_"),         # total mort, by ag cat
+            #### @object 131
+            #############################   TX OUTCOMES   ################################
+
             "TBTX_COMPLT","TBTX_DISCONT","TBTX_DIED",       # TB treatment outcomes complete, discontinue, death
             "NOTIF_ALL",                                    # total notif
             paste("NOTIF",StatList[[1]],sep="_"),           # notif by ag cat
-#            paste("NOTIF",c("N","E"),sep="_"),              # notif by tx cat
-#            paste("NOTIF_HIV",c("POS","NEG"),sep="_"),      # notif by HIV pos/neg
+            paste("NOTIF",c("US","NonUS"),sep="_"),         # notif by nat cat
+            #            paste("NOTIF_HIV",c("POS","NEG"),sep="_"),      # notif by HIV pos/neg
             paste("NOTIF",StatList[[6]],sep="_"),           # notif by rg cat
-#            paste("NOTIF_US_N",StatList[[3]],sep="_"),      # notif, US, N, by dr cat
-#            paste("NOTIF_US_E",StatList[[3]],sep="_"),      # notif, US, E, by dr cat
-#            paste("NOTIF_FB_N",StatList[[3]],sep="_"),      # notif, FB, N, by dr cat
-#            paste("NOTIF_FB_E",StatList[[3]],sep="_"),      # notif, FB, E, by dr cat
+            #           paste("NOTIF_US_N",StatList[[3]],sep="_"),      # notif, US, N, by dr cat
+            #            paste("NOTIF_US_E",StatList[[3]],sep="_"),      # notif, US, E, by dr cat
+            #           paste("NOTIF_FB_N",StatList[[3]],sep="_"),      # notif, FB, N, by dr cat
+            #           paste("NOTIF_FB_E",StatList[[3]],sep="_"),      # notif, FB, E, by dr cat
+            ###########################   TLTBI INITIATION   ##############################
             "TLTBI_INITS",                                  # Initiations on LTBI tx
             "TLTBI_INITS_FB",                               # Initiations on LTBI tx FB
             "TLTBI_INITS_HR",                               # Initiations on LTBI tx HR
-#            "TLTBI_INITS_HV",                               # Initiations on LTBI tx HV
+            #            "TLTBI_INITS_HV",                               # Initiations on LTBI tx HV
             "TLTBI_INITS_TP",                               # Initiations on LTBI tx, with LTBI
+            ###########################     TB INCIDENCE     ##############################
             "INCID_ALL",                                    # Total incidence
             paste("INCID_ALL",StatList[[1]],sep="_"),       # Total incidence by ag cat
             "INCID_ALL_US",                                 # Total incidence, US born
             "INCID_ALL_FB",                                 # Total incidence, foreign born
             "INCID_ALL_FB2",                                # Total incidence, foreign born
             "INCID_ALL_HR",                                 # Total incidence, high risk
-#            "INCID_ALL_HV",                                 # Total incidence, HIV pos
+            #            "INCID_ALL_HV",                                 # Total incidence, HIV pos
             "INCID_REC",                                    # Total incidence, recent infection
             paste("INCID_REC",StatList[[1]],sep="_"),       # Total incidence by ag cat, recent infection
             "INCID_REC_US",                                 # Total incidence, US born, recent infection
             "INCID_REC_FB",                                 # Total incidence, foreign born, recent infection
             "INCID_REC_FB2",                                # Total incidence, foreign born, recent infection
             "INCID_REC_HR",                                 # Total incidence, high risk, recent infection
-#            "INCID_REC_HV",                                 # Total incidence, HIV pos, recent infection
+            #            "INCID_REC_HV",                                 # Total incidence, HIV pos, recent infection
+            ###########################    NOTIFICATION DEAD      ##############################
             "NOTIF_MORT_ALL",                               # total notif, dead at diagnosis
             paste("NOTIF_MORT",StatList[[1]],sep="_"),      # notif by ag cat, dead at diagnosis
-            paste("NOTIF_MORT",c("N","E"),sep="_"),         # notif by tx cat, dead at diagnosis
-#            paste("NOTIF_MORT_HIV",c("POS","NEG"),sep="_"), # notif by HIV pos/neg, dead at diagnosis
+            paste("NOTIF_MORT",c("US","NonUS"),sep="_"),         # notif by nat cat, dead at diagnosis
+            #            paste("NOTIF_MORT_HIV",c("POS","NEG"),sep="_"), # notif by HIV pos/neg, dead at diagnosis
             paste("NOTIF_MORT",StatList[[6]],sep="_"),      # notif by rg cat, dead at diagnosis
             paste("NOTIF_US",StatList[[1]],sep="_"),        # notif by ag cat, US only
             paste("NOTIF_US_MORT",StatList[[1]],sep="_"),   # notif by ag cat, dead at diagnosis US only
-#            paste("NOTIF_MORT_HIV_Neg",StatList[[1]],sep="_"),    # notif by ag cat, dead at diagnosis HIV neg
-#            paste("TOTMORT_W_HIV",StatList[[1]],sep="_"),   # total mort, by ag cat, have HIV
+            #            paste("NOTIF_MORT_HIV_Neg",StatList[[1]],sep="_"),    # notif by ag cat, dead at diagnosis HIV neg
+            #            paste("TOTMORT_W_HIV",StatList[[1]],sep="_"),   # total mort, by ag cat, have HIV
             paste("TOTMORT_W_TB",StatList[[1]],sep="_"),     # total mort, by ag cat, have active TB
-            c("N_Ls_US","N_Lf_US","N_In_US","N_Ip_US"),
-            c("N_Ls_FB","N_Lf_FB","N_In_FB","N_Ip_FB"),
-            c("ARTI_LR","ARTI_HR","ARTI_FB"), # Force of infection removed ,"ARTI_LR_H","ARTI_HR_H","ARTI_FB_H"
-            c("TB_INF_LR","TB_INF_HR","TB_INF_F1","TB_INF_F2"), # NEW TB INFECTIONS
-            paste("TBMORT",c("US","FB"),sep="_") )
+            c("N_Ls_US","N_Lf_US","N_Act_US"),
+            c("N_Ls_FB","N_Lf_FB","N_Act_FB"),
+            c("FOI_LR_US","FOI_HR_US","FOI_LR_FB","FOI_HR_FB" ), #force of infection
+            c("TB_INF_LR","TB_INF_HR","TB_INF_US","TB_INF_F1","TB_INF_F2"), # NEW TB INFECTIONS
+            c("TBMORT_US","TBMORT_NUS")           # tbmortality by nativity
+
+)
 length(ResNam)
+
 
 ###################################################
 
