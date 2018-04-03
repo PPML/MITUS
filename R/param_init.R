@@ -43,6 +43,35 @@ RRmuHR    <- c(1,P["RRmuHR"],1,1)
 #############    ACTIVE TB RATES DEFAULT TO THE SMEAR POS LEVELS   #############
 
 muIp  	  <- P["muIp"]/12
+############ CONVERT ANNUAL RATES OF RF MORTALITY TO MONTHLY RATES ##########
+
+############ THESE MUST BE UPDATED
+muRF      <- P["muH1"]/12
+muTbRF    <- P["muTbH"]/12
+
+###############  RATE RATIO OF MORTALITY INCREASE FOR HIGH RISK ###############
+
+RRmuHR    <- c(1,P["RRmuHR"])
+
+############### CREATE A MATRIX OF RF MORTALITIES BY AGE GROUP ###############
+
+vRFMort    <- c(0,0,0,0);
+names(vRFMort) <- c("RF1","RF2","RF3","RF4")
+vRFMort[2] <- (1/3)*muRF
+vRFMort[3] <- (2/3)*muRF
+vRFMort[4] <- muRF
+
+############### CREATE A MATRIX OF TB MORTALITIES BY AGE GROUP ###############
+
+vTMort   <- matrix(0,11,6);
+rownames(vTMort) <- c("0_4",paste(0:8*10+5,1:9*10+4,sep="_"),"95p")
+colnames(vTMort) <- c("Su","Sp","Ls","Lf","Ac","Tx")
+vTMort[,5] <- muIp #active disease rates default to smear positive
+RRmuTbAg <- exp(c(0,0,1:9)*TunmuTbAg)
+for(i in 1:ncol(vTMort)) {
+  vTMort[,i] <- vTMort[,i] * RRmuTbAg
+}
+
 
 ######################## MULTIPLER OF MORT RATE ABOVE ########################
 
