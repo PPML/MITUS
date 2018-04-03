@@ -60,6 +60,9 @@ names(vRFMort) <- c("RF1","RF2","RF3","RF4")
 vRFMort[2] <- (1/3)*muRF
 vRFMort[3] <- (2/3)*muRF
 vRFMort[4] <- muRF
+######################## MULTIPLER OF MORT RATE ABOVE ########################
+
+TunmuTbAg <- P["TunmuTbAg"]
 
 ############### CREATE A MATRIX OF TB MORTALITIES BY AGE GROUP ###############
 
