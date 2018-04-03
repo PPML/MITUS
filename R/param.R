@@ -357,12 +357,13 @@ ResNam <- c("Year",                                         # year
             paste("TBMORT_RFPOS",StatList[[1]],sep="_"),   # TB mort, HIV pos, by ag cat
             paste("RFMORT",StatList[[1]],sep="_"),         # RF mort, by ag cat
             paste("TOTMORT",StatList[[1]],sep="_"),         # total mort, by ag cat
+#### @object 131
 #############################   TX OUTCOMES   ################################
 
             "TBTX_COMPLT","TBTX_DISCONT","TBTX_DIED",       # TB treatment outcomes complete, discontinue, death
             "NOTIF_ALL",                                    # total notif
             paste("NOTIF",StatList[[1]],sep="_"),           # notif by ag cat
-            paste("NOTIF",c("US","NonUS"),sep="_"),              # notif by nat cat
+            paste("NOTIF",c("US","NonUS"),sep="_"),         # notif by nat cat
 #            paste("NOTIF_HIV",c("POS","NEG"),sep="_"),      # notif by HIV pos/neg
             paste("NOTIF",StatList[[6]],sep="_"),           # notif by rg cat
 #           paste("NOTIF_US_N",StatList[[3]],sep="_"),      # notif, US, N, by dr cat
@@ -404,7 +405,7 @@ ResNam <- c("Year",                                         # year
             c("N_Ls_US","N_Lf_US","N_Act_US"),
             c("N_Ls_FB","N_Lf_FB","N_Act_FB"),
             c("FOI_LR_US","FOI_HR_US","FOI_LR_FB","FOI_HR_FB" ), #force of infection
-            c("TB_INF_LR","TB_INF_HR","TB_INF_F1","TB_INF_F2"), # NEW TB INFECTIONS
+            c("TB_INF_LR","TB_INF_HR","TB_INF_US","TB_INF_F1","TB_INF_F2"), # NEW TB INFECTIONS
             c("TBMORT_US","TBMORT_NUS")           # tbmortality by nativity
 
 )
