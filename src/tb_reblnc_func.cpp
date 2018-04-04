@@ -20,8 +20,7 @@ Rcpp::List cRebal(
   ////////////////////////////////////////////////////////////////////////////////
   ////////    BELOW IS A LIST OF THE VARIABLES CREATED INTERNALLY IN MODEL   /////
   ////////////////////////////////////////////////////////////////////////////////
-  int N; int m; int p; int r; int c; int m2; int p2;
-  double        temp;
+  int N;
 //  double   dist_genN[dist_gen.nrow()][dist_gen.ncol()];
   double   dist_newN[dist_new.nrow()][dist_new.ncol()];
   double   can_goN[can_go.nrow()][can_go.ncol()];
@@ -39,7 +38,7 @@ Rcpp::List cRebal(
   double    V1N[4][4];
   double        frc;
   double        pop_t;
-  double        sse;
+  // double        sse;
   double colsum[16];
   double rowsum[16];
 
@@ -128,15 +127,15 @@ Rcpp::List cRebal(
 
 for(int n=0; n<N; n++){
 
-  /////// CALCULATE DISTANCE FROM CURRENT DISTRIBUTION TO GOAL DISTRIBUTION /////
+/////// CALCULATE DISTANCE FROM CURRENT DISTRIBUTION TO GOAL DISTRIBUTION /////
     for (int i=0; i<sizeof(dist_i_v); i++){
       diff_i_v[i] = dist_i_v[i] - dist_goal_v[i];
     }
   //////////                  CREATE TRANSITION MATRIX                    ////////
     for (int r=0; r<16; r++){
       for (int c=0; c<16; c++){
-        temp=diff_i_v[r]-diff_i_v[c];
-        trans_mat[r][c] = can_goN[r][c]*(std::max(0.0,temp));
+        temp_vec[r]=diff_i_v[r]-diff_i_v[c];
+        trans_mat[r][c] = can_goN[r][c]*(std::max(0.0,temp_vec[r]));
         Rcpp::Rcout << "initial trans_mat is" << trans_mat;
       }
     }
@@ -188,7 +187,6 @@ for(int n=0; n<N; n++){
         temp_mat[i][j] = did_goN[i][j];
         temp_mat[i][j] = did_goN[i][j] / dist_orig_v[i];
       } }
-    Rcpp::Rcout<< "temp_mat is" << temp;
 
     ///Use the diagmat functin of RcppArmadillo to create a diagonal matrix
     ///with the vector of values defined below.
