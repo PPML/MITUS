@@ -49,7 +49,7 @@ Rcpp::List cSim(
     std::vector<double> EffLt0,
     double              EffLt,
     std::vector<double> NixTrans,
-    Rcpp::NumericMatrix       V1,
+    Rcpp::NumericMatrix       dist_gen,
     Rcpp::NumericMatrix       dist_new,
     Rcpp::NumericMatrix       can_go,
     Rcpp::NumericMatrix       did_go,
@@ -74,7 +74,6 @@ Rcpp::List cSim(
   // double        vIsxtoIsyN[vIsxtoIsy.nrow()][vIsxtoIsy.ncol()];
   // double        vNmxtoNmyN[vNmxtoNmy.nrow()][vNmxtoNmy.ncol()];
   // double        vrgxtorgyN[vrgxtorgy.nrow()][vrgxtorgy.ncol()];
-  double        dist_genN[dist_gen.nrow()][dist_gen.ncol()];
   double        HrEntExN[HrEntEx.nrow()][HrEntEx.ncol()];
   double        ImmNonN[ImmNon.nrow()][ImmNon.ncol()];
   double        ImmLatN[ImmLat.nrow()][ImmLat.ncol()];
@@ -91,8 +90,6 @@ Rcpp::List cSim(
   double        temp3;
   double        temp4;
   double        temp4V[11][5];
-  arma::mat     temp_mat;
-  arma::mat     temp_mat2;
   double        rTbP;
   double        rTbN;
   double        Outputs[nYrs][nRes];
@@ -120,7 +117,7 @@ Rcpp::List cSim(
   double    dist_orig[4][4];
   Rcpp::NumericMatrix    dist_new_fin(4,4);
   Rcpp::NumericMatrix V1_fin(4,4);
-  double    V1N[4][4];
+  // double    V1N[4][4];
   double        frc;
   double        pop_t;
   // double        sse;
@@ -256,10 +253,10 @@ Rcpp::List cSim(
       did_goN[i][j] = did_go(i,j);
     } }
 
-  for(int i=0; i<V1.nrow(); i++) {
-    for(int j=0; j<V1.ncol(); j++) {
-      V1N[i][j] = V1(i,j);
-    } }
+  // for(int i=0; i<V1.nrow(); i++) {
+  //   for(int j=0; j<V1.ncol(); j++) {
+  //     V1N[i][j] = V1(i,j);
+  //   } }
 
   for(int i=0; i<4; i++) {
     for(int j=0; j<4; j++) {
@@ -1411,23 +1408,23 @@ Rcpp::List cSim(
       ////// first calculate the total population at this time step
 
       ////// second calculate the distribution of population across the two risk factors
-      // for(int ag=0; ag<11; ag++) {
-      //   for(int tb=0; tb<6; tb++) {
-      //     for(int lt=0; lt<2; lt++) {
+      for(int ag=0; ag<11; ag++) {
+        for(int tb=0; tb<6; tb++) {
+          for(int lt=0; lt<2; lt++) {
       for(int im=0; im<4; im++) {
         for(int nm=0; nm<4; nm++) {
-          // for(int rg=0; rg<2; rg++) {
-          //   for(int na=0; na<3; na++) {
-          pop_t += V1N[im][nm];
-          dist_orig[nm][im] = V1N[im][nm];
-          // pop_t             += V1[ag][tb][lt][im][nm][rg][na];
-          // dist_orig[nm][im] += V1[ag][tb][lt][im][nm][rg][na]; //sum across risk factors
+          for(int rg=0; rg<2; rg++) {
+            for(int na=0; na<3; na++) {
+          // pop_t += V1N[im][nm];
+          // dist_orig[nm][im] = V1N[im][nm];
+          pop_t             += V1[ag][tb][lt][im][nm][rg][na];
+          dist_orig[nm][im] += V1[ag][tb][lt][im][nm][rg][na]; //sum across risk factors
           dist_orig[nm][im]  = dist_orig[nm][im]/pop_t; // determine the proportions
 
           ///insert error that distribution does not sum to one and then go from there;
           //Rcpp::Rcout <<"dist_orig at"<< im << "and"<< nm << "is" << dist_orig[nm][im]<< "\n";
         } }
-      // } } } } }
+       } } } } }
 
 
       for(int n=0; n<N; n++){
@@ -1441,9 +1438,10 @@ Rcpp::List cSim(
           for (int c=0; c<16; c++){
             temp_vec[r]=diff_i_v[r]-diff_i_v[c];
             trans_mat[r][c] = can_goN[r][c]*(std::max(0.0,temp_vec[r]));
-            Rcpp::Rcout << "initial trans_mat is" << trans_mat;
+            // Rcpp::Rcout << "initial trans_mat is" << trans_mat;
           }
         }
+
         //////////                ADJUST THE TRANSITION MATRIX                  ////////
         //////////   1ST SCALE UP RATES, 2ND MAKE SURE DOES NOT SUM OVER 1    //////////
         frc = 0.1;  // approach seems quite sensitive to this value, = fraction of change to
@@ -1456,7 +1454,7 @@ Rcpp::List cSim(
             temp_mat[i][j] =  trans_mat[i][j] / dist_i_v[i]*frc;
             temp_mat[i][j] =  temp_mat [i][j] / (std::max(1.0, colsum[j]));
           }}
-        Rcpp::Rcout << "temp trans_mat is" << trans_mat;
+ //        Rcpp::Rcout << "temp trans_mat is" << trans_mat;
 
         //////////                      FINALIZE TRANS_MAT                    //////////
         for(int i=0; i<16; i++){
@@ -1474,7 +1472,7 @@ Rcpp::List cSim(
               trans_mat[i][j] = temp_mat[i][j];
             } else {trans_mat_tot[i][j]=temp_mat2[i][j];
             } } }
-        //////////                RECORD ABSOLUTE TRANSITIONS                 //////////
+ //        //////////                RECORD ABSOLUTE TRANSITIONS                 //////////
         for(int i=0; i<16; i++){
           for(int j=0; j<16; j++){
             if (i==j){
@@ -1486,7 +1484,7 @@ Rcpp::List cSim(
             dist_i_v[i] = dist_i_v[i]*trans_mat[i][j];
           }}
       } //end of N loop
-      //////////                    NOW UPDATE IN ONE STEP                 ///////////
+ //      //////////                    NOW UPDATE IN ONE STEP                 ///////////
       for(int i=0; i<16; i++){
         for(int j=0; j<16; j++){
           temp_mat[i][j] = did_goN[i][j];
@@ -1505,7 +1503,7 @@ Rcpp::List cSim(
             trans_mat_tot[i][j]=0;
           }
         } }
-      ///Replace non-diagonal values with the values from temp above
+ //      ///Replace non-diagonal values with the values from temp above
 
       for(int i=0; i<16; i++){
         for(int j=0; j<16; j++){
@@ -1514,7 +1512,7 @@ Rcpp::List cSim(
           } else {trans_mat_tot[i][j]=trans_mat_tot[i][j];
           } } }
 
-      Rcpp::Rcout<< "trans_mat_tot is" << trans_mat_tot;
+ //      Rcpp::Rcout<< "trans_mat_tot is" << trans_mat_tot;
 
       //////////           NOW FINALLY UPDATE THE DISTRIBUTION           ///////////
       for(int i=0; i<4; i++){
@@ -1536,29 +1534,25 @@ Rcpp::List cSim(
       //       arma::accu(pow(dist_goal[i][j] - dist_orig[i][j], 2));
       //   }}
       // Rcpp::Rcout << "sse is" << sse;
-
-
+ //
+ //
       /////////////APPLY THE NEW DISTRIBUTION TO THE POPULATION /////////////////////
       /////////////revert the arma::vec to a double;
       for (int im=0; im<4; im++){
         for (int nm=0; nm<4; nm++){
           dist_new_fin(nm,im) = dist_newN[nm][im];
         } }
-
-      // for(int ag=0; ag<11; ag++) {
-      //   for(int tb=0; tb<6; tb++) {
-      //     for(int lt=0; lt<2; lt++){
+ //
+      for(int ag=0; ag<11; ag++) {
+        for(int tb=0; tb<6; tb++) {
+          for(int lt=0; lt<2; lt++){
       for (int im=0; im<4; im++){
         for (int nm=0; nm<4; nm++){
-          // for(int rg=0; rg<2; rg++) {
-          //   for(int na=0; na<3; na++){
-          V1N[im][nm] = V1N[im][nm]*dist_newN[nm][im];
-        } }
+          for(int rg=0; rg<2; rg++) {
+            for(int na=0; na<3; na++){
+              V1[ag][tb][lt][im][nm][rg][na] = V0[ag][tb][lt][im][nm][rg][na]*dist_newN[nm][im];
+            } } } } } } }
 
-      for (int im=0; im<4; im++){
-        for (int nm=0; nm<4; nm++){
-          V1_fin(nm,im) = V1N[nm][im];
-        } }
  ///////////////////////////////////////////////////////////////////////////////////
       ///////////                       UPDATE V0 as V1                       ///////////
       ///////////////////////////////////////////////////////////////////////////////////
