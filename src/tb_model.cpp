@@ -279,9 +279,10 @@ Rcpp::List cSim(
     rowsum[i]=0;
   }
   N=30;
-
-
-  ////////////////////////////////////////////////////////////////////////////////
+//   for(int i=0; i<16; i++) {
+//     for(int j=0; j<16; j++) {
+// Rcpp::Rcout << "at time one size" << can_goN[i][j] << "\n"; }}
+////////////////////////////////////////////////////////////////////////////////
   ///////                  UPDATING TREATMENT METERS                        //////
   ////////     THIS DIFFERENT TO MAIN MODEL DUE TO SIMPLIFIED OUTCOMES      //////
   ////////////////////////////////////////////////////////////////////////////////
@@ -1433,7 +1434,7 @@ Rcpp::List cSim(
           dist_goal_v[(1+m)+(p*4)] = dist_goalN[m+1][p+1];
           // for (int i=0; i<16; i++){
             // Rcpp::Rcout <<"at step: "<< i << "is"<< dist_goal_v[i]<<"\n";}
-      //    dist_orig_v[1+m+(p*4)] = dist_orig[m+1][p+1];
+         dist_orig_v[(1+m)+(p*4)] = dist_orig[m+1][p+1];
      //     Rcpp::Rcout << sizeof(dist_orig_v);
         } }
 
@@ -1441,107 +1442,117 @@ Rcpp::List cSim(
         dist_i_v[i] = dist_orig_v[i];
       }
 
-      // for(int n=0; n<N; n++){
+      for(int n=0; n<N; n++){
 
         /////// CALCULATE DISTANCE FROM CURRENT DISTRIBUTION TO GOAL DISTRIBUTION /////
         ///////this small code chunk causes R to crash -- find out why
 
-        // for (int i=0; i<16; i++){
-        //   diff_i_v[i] = dist_i_v[i] - dist_goal_v[i];
-        // } }
+        for (int i=0; i<16; i++){
+          diff_i_v[i] = dist_i_v[i] - dist_goal_v[i];
+        }
         //////////                  CREATE TRANSITION MATRIX                    ////////
-        // for (int r=0; r<16; r++){
-        //   for (int c=0; c<16; c++){
-        //     temp_vec[r]=diff_i_v[r]-diff_i_v[c];
-        //     trans_mat[r][c] = can_goN[r][c]*(std::max(0.0,temp_vec[r]));
-        //     // Rcpp::Rcout << "initial trans_mat is" << trans_mat;
-        //   }
-        // }
+        for (int r=0; r<16; r++){
+          for (int c=0; c<16; c++){
+         //   temp_vec[r]=diff_i_v[r]-diff_i_v[c];
+
+            // for (int i=0; i<16; i++){
+            // Rcpp::Rcout <<"at step: "<< i << "is"<< temp_vec[i]<<"\n";}
+
+            if ((diff_i_v[r]-diff_i_v[c]) > 0) {
+              trans_mat[r][c] = can_goN[r][c]*(diff_i_v[r]-diff_i_v[c]);
+            } else {
+              trans_mat[r][c] = 0;
+            }
+            // Rcpp::Rcout << "initial trans_mat is" << trans_mat;
+          }
+        }
 
         //////////                ADJUST THE TRANSITION MATRIX                  ////////
  //        //////////   1ST SCALE UP RATES, 2ND MAKE SURE DOES NOT SUM OVER 1    //////////
- //        frc = 0.1;  // approach seems quite sensitive to this value, = fraction of change to
- //
- //        for(int j=0; j<16; j++){
- //          colsum[j]=0;
- //          for(int i=0; i<16; i++){
- //            colsum[j] += trans_mat[i][j];
- //            ///needs to be the column sums
- //            temp_mat[i][j] =  trans_mat[i][j] / dist_i_v[i]*frc;
- //            temp_mat[i][j] =  temp_mat [i][j] / (std::max(1.0, colsum[j]));
- //          }}
+        frc = 0.1;  // approach seems quite sensitive to this value, = fraction of change to
+
+        for(int j=0; j<16; j++){
+          colsum[j]=0;
+          for(int i=0; i<16; i++){
+            colsum[j] += trans_mat[i][j];
+            ///needs to be the column sums
+            temp_mat[i][j] =  trans_mat[i][j] / (dist_i_v[i]*frc);
+            if (colsum[j] > 1.0){
+              temp_mat[i][j] =  temp_mat [i][j] / colsum[j];
+            } else {temp_mat[i][j]=temp_mat[i][j];
+            }
+          }}
+
  // //        Rcpp::Rcout << "temp trans_mat is" << trans_mat;
  //
  //        //////////                      FINALIZE TRANS_MAT                    //////////
- //        for(int i=0; i<16; i++){
- //          rowsum[i]=0;
- //          for(int j=0; j<16; j++){
- //            rowsum[i]+=temp_mat[i][j];
- //
- //            if (i==j){
- //              temp_mat2[i][j]=rowsum[i];
- //            } else {
- //              temp_mat2[i][j]=0;
- //            }
- //
- //            if (i != j) {
- //              trans_mat[i][j] = temp_mat[i][j];
- //            } else {trans_mat_tot[i][j]=temp_mat2[i][j];
- //            } } }
- // //        //////////                RECORD ABSOLUTE TRANSITIONS                 //////////
- //        for(int i=0; i<16; i++){
- //          for(int j=0; j<16; j++){
- //            if (i==j){
- //              did_goN[i][j]=0;
- //            } else {
- //              did_goN[i][j] += dist_i_v[i]*trans_mat[i][j];
- //            }
- //            //////////               UPDATE THE DISTRIBUTION VECTOR             ////////////
- //            dist_i_v[i] = dist_i_v[i]*trans_mat[i][j];
- //          }}
- //      } //end of N loop
- // //      //////////                    NOW UPDATE IN ONE STEP                 ///////////
- //      for(int i=0; i<16; i++){
- //        for(int j=0; j<16; j++){
- //          temp_mat[i][j] = did_goN[i][j];
- //          temp_mat[i][j] = did_goN[i][j] / dist_orig_v[i];
- //        } }
- //
- //      ///Use the diagmat functin of RcppArmadillo to create a diagonal matrix
- //      ///with the vector of values defined below.
- //      for(int i=0; i<16; i++){
- //        rowsum[i]=0;
- //        for(int j=0; j<16; j++){
- //          rowsum[i] +=trans_mat_tot[i][j]; //rowsum
- //          if (i==j){
- //            trans_mat_tot[i][j]=1-rowsum[i];
- //          } else {
- //            trans_mat_tot[i][j]=0;
- //          }
- //        } }
- // //      ///Replace non-diagonal values with the values from temp above
- //
- //      for(int i=0; i<16; i++){
- //        for(int j=0; j<16; j++){
- //          if (i != j) {
- //            trans_mat_tot[i][j] = temp_mat[i][j];
- //          } else {trans_mat_tot[i][j]=trans_mat_tot[i][j];
- //          } } }
+        for(int i=0; i<16; i++){
+          rowsum[i]=0;
+          for(int j=0; j<16; j++){
+            rowsum[i]+=temp_mat[i][j];
+
+            if (i==j){
+              temp_mat2[i][j]=rowsum[i];
+            } else {
+              temp_mat2[i][j]=0;
+            }
+
+            if (i != j) {
+              trans_mat[i][j] = temp_mat[i][j];
+            } else {trans_mat_tot[i][j]=temp_mat2[i][j];
+            } } }
+ //        //////////                RECORD ABSOLUTE TRANSITIONS                 //////////
+        for(int i=0; i<16; i++){
+          for(int j=0; j<16; j++){
+            if (i==j){
+              did_goN[i][j]=0;
+            } else {
+              did_goN[i][j] += dist_i_v[i]*trans_mat[i][j];
+            }
+            //////////               UPDATE THE DISTRIBUTION VECTOR             ////////////
+            dist_i_v[i] = dist_i_v[i]*trans_mat[i][j];
+          }}
+      } //end of N loop
+      //////////                    NOW UPDATE IN ONE STEP                 ///////////
+      for(int i=0; i<16; i++){
+        for(int j=0; j<16; j++){
+          temp_mat[i][j] = did_goN[i][j];
+          temp_mat[i][j] = did_goN[i][j] / dist_orig_v[i];
+        } }
+
+      for(int i=0; i<16; i++){
+        rowsum[i]=0;
+        for(int j=0; j<16; j++){
+          rowsum[i] +=trans_mat_tot[i][j]; //rowsum
+          if (i==j){
+            trans_mat_tot[i][j]=1-rowsum[i];
+          } else {
+            trans_mat_tot[i][j]=0;
+          }
+        } }
+
+      for(int i=0; i<16; i++){
+        for(int j=0; j<16; j++){
+          if (i != j) {
+            trans_mat_tot[i][j] = temp_mat[i][j];
+          } else {trans_mat_tot[i][j]=trans_mat_tot[i][j];
+          } } }
  //
  // //      Rcpp::Rcout<< "trans_mat_tot is" << trans_mat_tot;
  //
- //      //////////           NOW FINALLY UPDATE THE DISTRIBUTION           ///////////
- //      for(int i=0; i<4; i++){
- //        for(int j=0; j<4; j++){
- //          dist_newN[i][j] = dist_orig[i][j];
- //        } }
- //      for (int m=0; m<4; m++){
- //        for (int p=0; p<4; p++){
- //          for (int m2=0; m2<4; m2++){
- //            for (int p2=0; p2<4; p2++){
- //              ////scalar multiplication (not matrix multiplication)
- //              dist_newN[m+1][p+1] += dist_orig[m2+1][p2+1] * trans_mat_tot[1+m2+p2*4][1+m+p*4];
- //            } } } }
+      //////////           NOW FINALLY UPDATE THE DISTRIBUTION           ///////////
+      for(int i=0; i<4; i++){
+        for(int j=0; j<4; j++){
+          dist_newN[i][j] = dist_orig[i][j];
+        } }
+      for (int m=0; m<4; m++){
+        for (int p=0; p<4; p++){
+          for (int m2=0; m2<4; m2++){
+            for (int p2=0; p2<4; p2++){
+              ////scalar multiplication (not matrix multiplication)
+              ////removed +1 index
+              dist_newN[m][p] += dist_orig[m2][p2] * trans_mat_tot[(1+m2)+(p2*4)][(1+m)+(p*4)];
+            } } } }
       // for(int i=0; i<16; i++){
       //   for(int j=0; j<16; j++){
       //     temp_mat[i][j] = dist_goal[i][j];
@@ -1554,20 +1565,20 @@ Rcpp::List cSim(
  //
       /////////////APPLY THE NEW DISTRIBUTION TO THE POPULATION /////////////////////
       /////////////revert the arma::vec to a double;
-      // for (int im=0; im<4; im++){
-      //   for (int nm=0; nm<4; nm++){
-      //     dist_new_fin(nm,im) = dist_newN[nm][im];
-      //   } }
+      for (int im=0; im<4; im++){
+        for (int nm=0; nm<4; nm++){
+          dist_new_fin(nm,im) = dist_newN[nm][im];
+        } }
  //
-      // for(int ag=0; ag<11; ag++) {
-      //   for(int tb=0; tb<6; tb++) {
-      //     for(int lt=0; lt<2; lt++){
-      // for (int im=0; im<4; im++){
-      //   for (int nm=0; nm<4; nm++){
-      //     for(int rg=0; rg<2; rg++) {
-      //       for(int na=0; na<3; na++){
-      //         V1[ag][tb][lt][im][nm][rg][na] = V0[ag][tb][lt][im][nm][rg][na]*dist_newN[nm][im];
-      //       } } } } } } }
+      for(int ag=0; ag<11; ag++) {
+        for(int tb=0; tb<6; tb++) {
+          for(int lt=0; lt<2; lt++){
+      for (int im=0; im<4; im++){
+        for (int nm=0; nm<4; nm++){
+          for(int rg=0; rg<2; rg++) {
+            for(int na=0; na<3; na++){
+              V1[ag][tb][lt][im][nm][rg][na] = V0[ag][tb][lt][im][nm][rg][na]*dist_newN[nm][im];
+            } } } } } } }
 
  ///////////////////////////////////////////////////////////////////////////////////
       ///////////                       UPDATE V0 as V1                       ///////////
