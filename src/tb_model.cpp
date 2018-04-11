@@ -110,8 +110,8 @@ Rcpp::List cSim(
   double   temp_vec[16];
   double     temp_mat[16][16];
   double    temp_mat2[16][16];
-  double     trans_mat[16][16];
-  double    trans_mat_tot[16][16];
+  long double     trans_mat[16][16];
+  long double    trans_mat_tot[16][16];
   double    dist_i_v[16];
   double    dist_goal_v[16];
   double    dist_orig[4][4];
@@ -123,7 +123,7 @@ Rcpp::List cSim(
   double        frc;
   double        pop_t;
   // double        sse;
-  double rowsum[16];
+long  double rowsum[16];
   double mat_sum;
   Rcpp::NumericMatrix Outputs2(nYrs,nRes);
 
@@ -1079,29 +1079,29 @@ Rcpp::List cSim(
 ////// first calculate the total population at this time step
 
 ////// second calculate the distribution of population across the two risk factors
-// for(int ag=0; ag<11; ag++) {
-//   for(int tb=0; tb<6; tb++) {
-//     for(int lt=0; lt<2; lt++) {
-//       for(int im=0; im<4; im++) {
-//         for(int nm=0; nm<4; nm++) {
-//           for(int rg=0; rg<2; rg++) {
-//             for(int na=0; na<3; na++) {
-//              // pop_t             += V1[ag][tb][lt][im][nm][rg][na];
-//               dist_orig[nm][im]  += V1[ag][tb][lt][im][nm][rg][na];
-//             }}}}}}}
-//     for(int im=0; im<4; im++) {
-//       for(int nm=0; nm<4; nm++) {
-//         mat_sum+=dist_orig[nm][im] ; } }
+for(int ag=0; ag<11; ag++) {
+  for(int tb=0; tb<6; tb++) {
+    for(int lt=0; lt<2; lt++) {
+      for(int im=0; im<4; im++) {
+        for(int nm=0; nm<4; nm++) {
+          for(int rg=0; rg<2; rg++) {
+            for(int na=0; na<3; na++) {
+             // pop_t             += V1[ag][tb][lt][im][nm][rg][na];
+              dist_orig[nm][im]  += V1[ag][tb][lt][im][nm][rg][na];
+            }}}}}}}
+    for(int im=0; im<4; im++) {
+      for(int nm=0; nm<4; nm++) {
+        mat_sum+=dist_orig[nm][im] ; } }
 // ///insert error that distribution does not sum to one and then go from there;
-// for(int im=0; im<4; im++) {
-//   for(int nm=0; nm<4; nm++) {
-//               dist_orig[nm][im]  = dist_orig[nm][im]/mat_sum; // determine the proportions
-//               dist_orig_v[(nm)+(im*4)] = dist_orig[nm][im]; //removed +1 //still nan's
+for(int im=0; im<4; im++) {
+  for(int nm=0; nm<4; nm++) {
+              dist_orig[nm][im]  = dist_orig[nm][im]/mat_sum; // determine the proportions
+              dist_orig_v[(nm)+(im*4)] = dist_orig[nm][im]; //removed +1 //still nan's
 //               // if (std::isnan(dist_orig[nm][im]) > 0  ){
 //              // Rcpp::Rcout << "@ nm " << nm <<"& im "<< im << "orig is nan @" << s << "\n";}
 //              //  if (std::isnan(dist_orig_v[(nm)+(im*4)]) > 0){
 //              // Rcpp::Rcout << "@ nm " << nm <<"& im "<< im << "orig is " << dist_orig_v[(nm)+(im*4)]<< "\n";}
-// } }
+} }
 /////check that the distributions sum to 1;
 // for (int i=0; i<4; i++){
 //   for (int j=0; j<4; j++){
@@ -1123,8 +1123,7 @@ for(int ag=0; ag<11; ag++) {
           for(int rg=0; rg<2; rg++) {
             for(int na=0; na<3; na++) {
     dist_goal_v[(nm)+(im*4)] = dist_goalN[nm][im];
-    dist_orig_v[(nm)+(im*4)] = V1[ag][tb][lt][im][nm][rg][na];
-    //removed +1
+  //  dist_orig_v[(nm)+(im*4)] = V1[ag][tb][lt][im][nm][rg][na]; //should sum to 1;
 } } } } } } }
 
 
@@ -1629,7 +1628,7 @@ for (int i=0; i<16; i++){
   } }
 
 for (int i=0; i<16; i++){
-  dist_i_v_fin(i) = dist_i_v[i];
+  dist_i_v_fin(i) = dist_orig_v[i];
 }
  ///////////////////////////////////////////////////////////////////////////////////
 ///////////                       UPDATE V0 as V1                       ///////////
@@ -1641,7 +1640,7 @@ for(int ag=0; ag<11; ag++) {
               for (int nm=0; nm<4; nm++){
                 for(int rg=0; rg<2; rg++) {
                   for(int na=0; na<3; na++){
-                    V0[ag][tb][lt][im][nm][rg][na] = V1[ag][tb][lt][im][nm][rg][na];
+                    V0[ag][tb][lt][im][nm][rg][na] = V2[ag][tb][lt][im][nm][rg][na];
                   } } } } } } }
     } //// end of month loop!//////////////////////////////////////////////////////////
   } //// end of year loop!///////////////////////////////////////////////////////////
