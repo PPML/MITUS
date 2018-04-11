@@ -14,9 +14,15 @@
 ########### WILL ACCEPT AND RUN PROPERLY.
 max_risk_factor <- 40
 min_risk_factor <- 1
+
+##########   EXAMPLE SCALES TAKEN PROPORTIONALLY FROM HIV PARAMS ###############
+fast_scale <-4
+PI_scale <- 0.0005
+slow_scale <-0.001
+
 ################################################################################
 ###########   ASK THE USER TO INPUT A RISK RATIO FOR THE MODEL RUN   ###########
-start<-function(risk_factor=0) {
+start<-function(risk_factor=1) {
   assign_RR <- function(risk_factor){
     if (risk_factor < max_risk_factor)
       risk_factor <- risk_factor
@@ -30,8 +36,7 @@ start<-function(risk_factor=0) {
     }
 }
 ########### AS IT IS CURRENTLY CODED THE MODEL CANNOT HANDLE A       ###########
-########### NEGATIVE OR PROTECTIVE RR. ALSO THE ERROR MESSAGE
-########### IS ALSO CURRENTLY BROKEN FOR
+########### NEGATIVE OR PROTECTIVE RR.
 risk_factor <- risk_factor
 
 ################################################################################
@@ -47,15 +52,15 @@ risk_factor <- risk_factor
 ################################################################################
 ###########   ODDS RATIO FOR PROBABILITY OF FAST PROGRESSION FOR RF  ###########
 ################################################################################
-ORpfastRF   <-risk_factor
+ORpfastRF   <-risk_factor*fast_scale
 ################################################################################
 ###########    ODDS RATIO FOR PROB OF FAST PROGRESSION W/PI FOR RF   ###########
 ################################################################################
-ORpfastPIRF <-risk_factor
+ORpfastPIRF <-risk_factor*PI_scale
 ################################################################################
 ###########      RATE RATIO FOR RATE OF SLOW PROGRESSION FOR RF      ###########
 ################################################################################
-RRslowRF    <- risk_factor
+RRslowRF    <-risk_factor*slow_scale
 
 ################################################################################
 ###########  CREATE A VECTOR FOR ALL FOUR LEVELS OF THE RISK FACTOR  ###########
@@ -70,6 +75,11 @@ cut2 <- 5
 
   if (risk_factor > cut4){
     m <- log(risk_factor)/3
+    vORpfastRF   <-c(1,m,2*m,3*m)
+
+    vORpfastPIRF <-c(1,)
+
+    vRRslowRF    <-c(1, )
 } else if (risk_factor < cut4 & risk_factor > cut3){
     m <- log(risk_factor)/2
 } else if (risk_factor < cut3 & risk_factor > cut2){
