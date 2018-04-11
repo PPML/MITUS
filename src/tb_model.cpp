@@ -1066,7 +1066,6 @@ long  double rowsum[16];
 ////// need to define the current distribution of persons across the RG at this timestep
 ////// RESET ALL THE VARIABLES
 
-      pop_t=0;
       mat_sum=0;
       for (int i=0; i<4; i++){
         for (int j=0; j<4; j++){
@@ -1076,8 +1075,6 @@ long  double rowsum[16];
       // dist_orig_v=0;
       // dist_i_v=0;
 
-////// first calculate the total population at this time step
-
 ////// second calculate the distribution of population across the two risk factors
 for(int ag=0; ag<11; ag++) {
   for(int tb=0; tb<6; tb++) {
@@ -1086,7 +1083,6 @@ for(int ag=0; ag<11; ag++) {
         for(int nm=0; nm<4; nm++) {
           for(int rg=0; rg<2; rg++) {
             for(int na=0; na<3; na++) {
-             // pop_t             += V1[ag][tb][lt][im][nm][rg][na];
               dist_orig[nm][im]  += V1[ag][tb][lt][im][nm][rg][na];
             }}}}}}}
     for(int im=0; im<4; im++) {
