@@ -406,7 +406,9 @@ ResNam <- c("Year",                                         # year
             c("N_Ls_FB","N_Lf_FB","N_Act_FB"),
             c("FOI_LR_US","FOI_HR_US","FOI_LR_FB","FOI_HR_FB" ), #force of infection
             c("TB_INF_LR","TB_INF_HR","TB_INF_US","TB_INF_F1","TB_INF_F2"), # NEW TB INFECTIONS
-            c("TBMORT_US","TBMORT_NUS")           # tbmortality by nativity
+            c("TBMORT_US","TBMORT_NUS"),           # tbmortality by nativit
+            paste("TOTMORT",c("US","NonUS"),sep="_")       # mortality by nat cat, dead at diagnosis
+
 
 )
 length(ResNam)
