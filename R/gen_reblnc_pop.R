@@ -92,11 +92,11 @@ dist_goal <- dist_new
 
 #'Create several vectors populated with NA to input into the model;
 
-diff_i_v <- rep(0,num_mRF*num_pRF)
-names(diff_i_v) <- colnames(can_go)
-dist_orig_v <- dist_goal_v <- diff_i_v
+diff_i_v <- rep(0,num_mRF*num_pRF*33)
+names(diff_i_v) <- rep(colnames(can_go),33)
+dist_orig_v <- diff_i_v
 
-
+dist_goal_v <- rep(0,16)
 #'Create a vector from dist_goal, in order to account for age & nativity, we will repeat this 33 times
 #'because we haven't a separate distribution yet
 for (m in 0:(num_mRF-1)){
@@ -104,7 +104,7 @@ for (m in 0:(num_mRF-1)){
     dist_goal_v[1+m+p*4] <- dist_goal[m+1,p+1]
 } }
 
-dist_goal_v <- rep(dist_goal_v, 33)
+dist_goal_v <- rep(dist_goal_v/33, 33)
 
 # moved to time step
 # for(m in 0:num_pRF-1) {
