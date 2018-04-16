@@ -46,8 +46,7 @@ OutputsZint <-  function(samp_i=1,ParMatrix,endyr=2100,Int1=0,Int2=0,Int3=0,Int4
                            TxVec    = TxVec       , TunTxMort = TunTxMort    , rDeft     = rDeft    , pReTx     = pReTx      , LtTxPar  = LtTxPar     ,
                            LtDxPar  = LtDxPar     , rLtScrt   = rLtScrt      , RRdxAge  = RRdxAge   , rRecov   = rRecov      , pImmScen  = pImmScen   ,
                            EarlyTrend = EarlyTrend, EffLt    = EffLt         , EffLt0    = EffLt0   , dLtt     = dLtt        , NixTrans = NixTrans    ,
-                           can_go   = can_go      ,  dist_goal=dist_goal,  diff_i_v = diff_i_v,
-                           dist_orig_v=dist_orig_v, dist_new = dist_new
+                           can_go   = can_go      ,  dist_goal=dist_goal,  diff_i_v = diff_i_v, dist_orig_v=dist_orig_v
                            )$Outputs
 
     # n <-       cSim( nYrs     =   2050-1950,  nRes     = length(ResNam), rDxt      = rDxt     , TxQualt   = TxQualt    , InitPop   = InitPop    ,
@@ -59,8 +58,7 @@ OutputsZint <-  function(samp_i=1,ParMatrix,endyr=2100,Int1=0,Int2=0,Int3=0,Int4
     #                  TxVec    = TxVec       , TunTxMort = TunTxMort    , rDeft     = rDeft    , pReTx     = pReTx      , LtTxPar  = LtTxPar     ,
     #                  LtDxPar  = LtDxPar     , rLtScrt   = rLtScrt      , RRdxAge  = RRdxAge   , rRecov   = rRecov      , pImmScen  = pImmScen   ,
     #                  EarlyTrend = EarlyTrend, EffLt    = EffLt         , EffLt0    = EffLt0   , dLtt     = dLtt        , NixTrans = NixTrans    ,
-    #                  can_go   = can_go      , did_go=did_go            , dist_goal=dist_goal,  diff_i_v = diff_i_v,
-    #                  dist_orig_v=dist_orig_v, dist_new = dist_new
+    #                  can_go   = can_go      , did_go=did_go            , dist_goal=dist_goal,  diff_i_v = diff_i_v,  dist_orig_v=dist_orig_v,
     # )$dist_new
 
    colnames(m) <- ResNam;
