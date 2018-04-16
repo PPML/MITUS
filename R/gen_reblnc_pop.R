@@ -96,6 +96,16 @@ diff_i_v <- rep(0,num_mRF*num_pRF)
 names(diff_i_v) <- colnames(can_go)
 dist_orig_v <- dist_goal_v <- diff_i_v
 
+
+#'Create a vector from dist_goal, in order to account for age & nativity, we will repeat this 33 times
+#'because we haven't a separate distribution yet
+for (m in 0:(num_mRF-1)){
+  for(p in 0:(num_pRF-1)){
+    dist_goal_v[1+m+p*4] <- dist_goal[m+1,p+1]
+} }
+
+dist_goal_v <- rep(dist_goal_v, 33)
+
 # moved to time step
 # for(m in 0:num_pRF-1) {
 #   for(p in 0:num_pRF-1) {
