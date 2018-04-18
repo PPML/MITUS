@@ -1044,6 +1044,7 @@ for(int i=0; i<16; i++) {
 //////////////////////////////////////////////////////////////////////////////////
 ////only create the distirbution; do not apply until after the outputs are//////
 //////created for this timestep.
+if (reblnc==1){
 ////// need to define the current distribution of persons across the RG at this timestep
 ////// RESET ALL THE VARIABLES
 for(int ag=0; ag<11; ag++) {
@@ -1206,6 +1207,7 @@ for(int ag=0; ag<11; ag++) {
                 V2[ag][tb][lt][im][nm][rg][na] += V1[ag][tb][lt][im][nm][rg][na] * trans_mat_tot[m2+p2*4][nm+im*4];
               } } } } } } }
   } } //end of age & nativity loops
+    } //end of rebalancing loop
     ///////////////////////////////////////////////////////////////////////////////
     /////////////////////////    FILL RESULTS TABLE    ////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////
@@ -1597,11 +1599,11 @@ for(int ag=0; ag<11; ag++) {
             for (int nm=0; nm<4; nm++){
               for(int rg=0; rg<2; rg++) {
                 for(int na=0; na<3; na++){
-                  // if (reblnc==1){
+                  if (reblnc==1){
                     V0[ag][tb][lt][im][nm][rg][na] = V2[ag][tb][lt][im][nm][rg][na];
-                  // } else {
-                  //   V0[ag][tb][lt][im][nm][rg][na] = V1[ag][tb][lt][im][nm][rg][na];
-                  // }
+                  } else {
+                    V0[ag][tb][lt][im][nm][rg][na] = V1[ag][tb][lt][im][nm][rg][na];
+                  }
                 } } } } } } }
 
     } //// end of month loop!//////////////////////////////////////////////////////////
