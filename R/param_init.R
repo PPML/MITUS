@@ -482,8 +482,10 @@ ResNam <- c("Year",                                         # year
             c("TB_INF_LR","TB_INF_HR","TB_INF_US","TB_INF_F1","TB_INF_F2"), # NEW TB INFECTIONS
             c("TBMORT_US","TBMORT_NUS") ,          # tbmortality by nativity
             paste("TOTMORT_US",StatList[[1]],sep="_"),       # mortality by nat cat
-            paste("TOTMORT_NUS",StatList[[1]],sep="_")       # mortality by nat cat
-
+            paste("TOTMORT_NUS",StatList[[1]],sep="_"),       # mortality by nat cat
+            paste("TOTMORT_US",StatList[[4]],sep="_"),       # mortality by nat & im cat
+            paste("TOTMORT_NUS",StatList[[4]],sep="_"),       # mortality by nat & im cat
+            paste("TOTMORT",StatList[[4]],sep="_")
 
 )
 length(ResNam)

@@ -338,7 +338,7 @@ StatList <- noquote(list(
 ################################################################################
 ################################################################################
 ResNam <- c("Year",                                         # year
-##############################    POPULATION    ################################
+            ##############################    POPULATION    ################################
             "N_ALL",                                        # total pop
             paste("N",StatList[[1]],sep="_"),               # pop by ag cat
             paste("N",StatList[[2]],sep="_"),               # pop by tb cat
@@ -346,70 +346,72 @@ ResNam <- c("Year",                                         # year
             paste("N",StatList[[5]],sep="_"),               # pop by nm cat
             paste("N",StatList[[6]],sep="_"),               # pop by rg cat
             paste("N",StatList[[7]],sep="_"),               # pop by na cat
-###################    POPULATION W/ NATIVITY  ################################
+            ###################    POPULATION W/ NATIVITY  ################################
             paste("N_US",StatList[[1]],sep="_"),            # US pop by ag cat
             paste("N_FB",StatList[[1]],sep="_"),            # FB pop by ag cat
             paste("N_US_LTBI",StatList[[1]],sep="_"),       # US LTBI pop by ag cat
             paste("N_FB_LTBI",StatList[[1]],sep="_"),       # FB LTBI pop by ag cat
             paste("N_RF",StatList[[1]],sep="_"),            # RF pop by ag cat
-#############################    MORTALITY    ################################
+            #############################    MORTALITY    ################################
             paste("TBMORT_RFNEG",StatList[[1]],sep="_"),   # TB mort, HIV neg, by ag cat
             paste("TBMORT_RFPOS",StatList[[1]],sep="_"),   # TB mort, HIV pos, by ag cat
             paste("RFMORT",StatList[[1]],sep="_"),         # RF mort, by ag cat
             paste("TOTMORT",StatList[[1]],sep="_"),         # total mort, by ag cat
-#### @object 131
-#############################   TX OUTCOMES   ################################
+            #### @object 131
+            #############################   TX OUTCOMES   ################################
 
             "TBTX_COMPLT","TBTX_DISCONT","TBTX_DIED",       # TB treatment outcomes complete, discontinue, death
             "NOTIF_ALL",                                    # total notif
             paste("NOTIF",StatList[[1]],sep="_"),           # notif by ag cat
-            paste("NOTIF",c("US","NonUS"),sep="_"),         # notif by nat cat
-#            paste("NOTIF_HIV",c("POS","NEG"),sep="_"),      # notif by HIV pos/neg
+            paste("NOTIF",StatList[[7]],sep="_"),         # notif by nat cat
+            #            paste("NOTIF_HIV",c("POS","NEG"),sep="_"),      # notif by HIV pos/neg
             paste("NOTIF",StatList[[6]],sep="_"),           # notif by rg cat
-#           paste("NOTIF_US_N",StatList[[3]],sep="_"),      # notif, US, N, by dr cat
-#            paste("NOTIF_US_E",StatList[[3]],sep="_"),      # notif, US, E, by dr cat
-#           paste("NOTIF_FB_N",StatList[[3]],sep="_"),      # notif, FB, N, by dr cat
-#           paste("NOTIF_FB_E",StatList[[3]],sep="_"),      # notif, FB, E, by dr cat
-###########################   TLTBI INITIATION   ##############################
+            #           paste("NOTIF_US_N",StatList[[3]],sep="_"),      # notif, US, N, by dr cat
+            #            paste("NOTIF_US_E",StatList[[3]],sep="_"),      # notif, US, E, by dr cat
+            #           paste("NOTIF_FB_N",StatList[[3]],sep="_"),      # notif, FB, N, by dr cat
+            #           paste("NOTIF_FB_E",StatList[[3]],sep="_"),      # notif, FB, E, by dr cat
+            ###########################   TLTBI INITIATION   ##############################
             "TLTBI_INITS",                                  # Initiations on LTBI tx
             "TLTBI_INITS_FB",                               # Initiations on LTBI tx FB
             "TLTBI_INITS_HR",                               # Initiations on LTBI tx HR
-#            "TLTBI_INITS_HV",                               # Initiations on LTBI tx HV
+            #            "TLTBI_INITS_HV",                               # Initiations on LTBI tx HV
             "TLTBI_INITS_TP",                               # Initiations on LTBI tx, with LTBI
-###########################     TB INCIDENCE     ##############################
+            ###########################     TB INCIDENCE     ##############################
             "INCID_ALL",                                    # Total incidence
             paste("INCID_ALL",StatList[[1]],sep="_"),       # Total incidence by ag cat
             "INCID_ALL_US",                                 # Total incidence, US born
             "INCID_ALL_FB",                                 # Total incidence, foreign born
             "INCID_ALL_FB2",                                # Total incidence, foreign born
             "INCID_ALL_HR",                                 # Total incidence, high risk
-#            "INCID_ALL_HV",                                 # Total incidence, HIV pos
+            #            "INCID_ALL_HV",                                 # Total incidence, HIV pos
             "INCID_REC",                                    # Total incidence, recent infection
             paste("INCID_REC",StatList[[1]],sep="_"),       # Total incidence by ag cat, recent infection
             "INCID_REC_US",                                 # Total incidence, US born, recent infection
             "INCID_REC_FB",                                 # Total incidence, foreign born, recent infection
             "INCID_REC_FB2",                                # Total incidence, foreign born, recent infection
             "INCID_REC_HR",                                 # Total incidence, high risk, recent infection
-#            "INCID_REC_HV",                                 # Total incidence, HIV pos, recent infection
-###########################    NOTIFICATION DEAD      ##############################
+            #            "INCID_REC_HV",                                 # Total incidence, HIV pos, recent infection
+            ###########################    NOTIFICATION DEAD      ##############################
             "NOTIF_MORT_ALL",                               # total notif, dead at diagnosis
             paste("NOTIF_MORT",StatList[[1]],sep="_"),      # notif by ag cat, dead at diagnosis
-            paste("NOTIF_MORT",c("US","NonUS"),sep="_"),         # notif by nat cat, dead at diagnosis
-#            paste("NOTIF_MORT_HIV",c("POS","NEG"),sep="_"), # notif by HIV pos/neg, dead at diagnosis
+            paste("NOTIF_MORT",StatList[[7]],sep="_"),      # notif by nat cat, dead at diagnosis
+            #            paste("NOTIF_MORT_HIV",c("POS","NEG"),sep="_"), # notif by HIV pos/neg, dead at diagnosis
             paste("NOTIF_MORT",StatList[[6]],sep="_"),      # notif by rg cat, dead at diagnosis
             paste("NOTIF_US",StatList[[1]],sep="_"),        # notif by ag cat, US only
             paste("NOTIF_US_MORT",StatList[[1]],sep="_"),   # notif by ag cat, dead at diagnosis US only
-#            paste("NOTIF_MORT_HIV_Neg",StatList[[1]],sep="_"),    # notif by ag cat, dead at diagnosis HIV neg
-#            paste("TOTMORT_W_HIV",StatList[[1]],sep="_"),   # total mort, by ag cat, have HIV
+            #            paste("NOTIF_MORT_HIV_Neg",StatList[[1]],sep="_"),    # notif by ag cat, dead at diagnosis HIV neg
+            #            paste("TOTMORT_W_HIV",StatList[[1]],sep="_"),   # total mort, by ag cat, have HIV
             paste("TOTMORT_W_TB",StatList[[1]],sep="_"),     # total mort, by ag cat, have active TB
             c("N_Ls_US","N_Lf_US","N_Act_US"),
             c("N_Ls_FB","N_Lf_FB","N_Act_FB"),
             c("FOI_LR_US","FOI_HR_US","FOI_LR_FB","FOI_HR_FB" ), #force of infection
             c("TB_INF_LR","TB_INF_HR","TB_INF_US","TB_INF_F1","TB_INF_F2"), # NEW TB INFECTIONS
-            c("TBMORT_US","TBMORT_NUS"),           # tbmortality by nativit
-paste("TOTMORT_US",StatList[[1]],sep="_"),       # mortality by nat cat
-paste("TOTMORT_NUS",StatList[[1]],sep="_")       # mortality by nat cat
-
+            c("TBMORT_US","TBMORT_NUS") ,          # tbmortality by nativity
+            paste("TOTMORT_US",StatList[[1]],sep="_"),       # mortality by nat cat
+            paste("TOTMORT_NUS",StatList[[1]],sep="_"),       # mortality by nat cat
+            paste("TOTMORT_US",StatList[[4]],sep="_"),       # mortality by nat & im cat
+            paste("TOTMORT_NUS",StatList[[4]],sep="_"),       # mortality by nat & im cat
+            paste("TOTMORT",StatList[[4]],sep="_")
 )
 length(ResNam)
 
