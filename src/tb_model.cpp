@@ -264,6 +264,11 @@ for(int i=0; i<16; i++) {
   N=30;
   reblnc=1;
   tb_dyn=0;
+  if (tb_dyn != 1){
+    for(int ag=0; ag<11; ag++) {
+      for(int tb=0; tb<6; tb++) {
+        vTMortN[ag][tb] =0;
+      } } }
 //   for(int i=0; i<16; i++) {
 //     for(int j=0; j<16; j++) {
 // Rcpp::Rcout << "at time one size" << can_goN[i][j] << "\n"; }}
@@ -1560,12 +1565,15 @@ for(int ag=0; ag<11; ag++) {
                   for(int na=0; na<3; na++) {
                     if (na==0){
                       Outputs[y][254+ag]  += VMort[ag][tb][lt][im][nm][rg][na];
+                      Outputs[y][276+im]  += VMort[ag][tb][lt][im][nm][rg][na];
                     } else {
                       Outputs[y][265+ag]  += VMort[ag][tb][lt][im][nm][rg][na];
+                      Outputs[y][280+im]  += VMort[ag][tb][lt][im][nm][rg][na];
                     }
+                      Outputs[y][284+im]  += VMort[ag][tb][lt][im][nm][rg][na];
                   } } } } } } }
       ////////////     CREATE YEARLY VALUES FROM THE MONTH ESTIMATE     ////////////
-      for(int i=254; i<276; i++) { Outputs[y][i] = Outputs[y][i]*12; }
+      for(int i=254; i<288; i++) { Outputs[y][i] = Outputs[y][i]*12; }
     } ////end of mid-year results bracket
     ///////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////END MIDYEAR RESULTS//////////////////////////////////
