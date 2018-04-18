@@ -1,16 +1,15 @@
+tb_graph_orig <- function(df){
 
-load("data/results 2018-04-12 09:17:22 .rData")
-M <- results
 pdf(file=paste("MITUS_results/orig_graphs",Sys.time(),".pdf"), width = 11, height = 8.5)
 
 ### ### ### ### ### ### TOTAL DIAGNOSED CASES 1953-2013  ### ### ### ### ### ###
-V0   <- M[4:66,"NOTIF_ALL"]+M[4:66,"NOTIF_MORT_ALL"]
+V0   <- df[4:66,"NOTIF_ALL"]+df[4:66,"NOTIF_MORT_ALL"]
 ### ### ### ### ### US notif by age + US dead @ diag by age ### ### ### ### ###
-V1   <- rowSums(M[44:66,205:215]+M[44:66,216:226])
+V1   <- rowSums(df[44:66,205:215]+df[44:66,216:226])
 ### ### ### ### ### ### notif by age + dead @ diag by age    ### ### ### ### ###
-V2   <- rowSums((M[44:66,136:146]+M[44:66,189:199]) - (M[44:66,205:215]+M[44:66,216:226]))
+V2   <- rowSums((df[44:66,136:146]+df[44:66,189:199]) - (df[44:66,205:215]+df[44:66,216:226]))
 
-plot(0,0,ylim=c(0,max(range(V0)))*1e3,xlim=c(1954,2015),xlab="",ylab="",axes=F)
+plot(0,0,ylim=c(0,max(range(V0)))*1e3,xlim=c(1953,2015),xlab="",ylab="",axes=F)
 axis(1);axis(2,las=2);box()
 abline(h=axTicks(2),col="grey85")
 
@@ -26,7 +25,7 @@ legend("topright",c("Fitted model (all)","Fitted model (US born)","Fitted model 
 
 ### ### ### ### ### ###  CASES FB DISTRIBUTION 1993-2013  ### ### ### ### ### ###
 ### ### ### dx FB +  dead @ dx  FB, dx US + dx dead @ dx US
-V   <- cbind(M[44:66,148]+M[44:66,149]+M[44:66,201]+M[44:66,202], M[44:66,147]+M[44:66,200])
+V   <- cbind(df[44:66,148]+df[44:66,149]+df[44:66,201]+df[44:66,202], df[44:66,147]+df[44:66,200])
 V <- V[,1]/rowSums(V )
 plot(0,0,ylim=c(2.5,97.5),xlim=c(2000,2015),xlab="",ylab="",axes=F)
 axis(1);axis(2,las=2);box()
@@ -37,7 +36,7 @@ mtext("Percent of TB Cases Foreign-Born, 2000-14",3,.8,font=2,cex=0.8)
 legend("topleft","Fitted model",pch=NA,lwd=2,col=4,lty=1,bg="white",pt.cex=0.6)
 
 ### ### ### CASES FB RECENT ENTRY DISTRIBUTION 1993-2013  ### ### ### ### ### ###
-V   <- cbind(M[44:65,148]+M[44:65,201],M[44:65,149]+M[44:65,202])
+V   <- cbind(df[44:65,148]+df[44:65,201],df[44:65,149]+df[44:65,202])
 V <- V[,1]/rowSums(V)
 
 plot(0,0,ylim=c(0,60),xlim=c(1993,2014),xlab="",ylab="",axes=F)
@@ -51,7 +50,7 @@ mtext("Percent of FB Cases Arrived in Past 2 Yrs",3,.8,font=2,cex=0.8)
 legend("topright","Fitted model",pch=19,lwd=2,col=4,lty=1,bg="white",pt.cex=0.6)
 
 ### ### ### ### ### ### CASES AGE DISTRIBUTION 2000-2014  ### ### ### ### ### ###
-V   <- (M[51:65,136:146]+M[51:65,189:199])
+V   <- (df[51:65,136:146]+df[51:65,189:199])
 V2  <- V[,-11]
 V2[,10] <- V2[,10]+V[,11]
 cls <- colorRampPalette(c("blue", "red"))( 4 )
@@ -72,7 +71,7 @@ legend("topright",c("0-24 years","25-44 years","45-64 years","65+ years"),
        pt.cex=c(1.8,1.8,1.8,1.8),pch=c(15,15,15,15))
 
 ### ### ### ### ### ### CASES AGE DISTRIBUTION 2000-2014  ### ### ### ### ### ###
-V   <- (M[51:65,136:146]+M[51:65,189:199])
+V   <- (df[51:65,136:146]+df[51:65,189:199])
 V2  <- V[,-11]
 V2[,10] <- V2[,10]+V[,11]
 V2  <- colSums(V2)/sum(V2)*100
@@ -91,7 +90,7 @@ legend("topright",c("Reported data","Fitted model"),pch=c(19,15),lwd=NA,
        pt.cex=c(1,2),col=c("black","lightblue"),bg="white")
 
 ### ### ### ### ### ### CASES HR DISTRIBUTION 1993-2013  ### ### ### ### ### ###
-V   <- cbind(M[44:65,"NOTIF_HR"],M[44:65,"NOTIF_LR"]) + cbind(M[44:65,"NOTIF_MORT_HR"],M[44:65,"NOTIF_MORT_LR"])
+V   <- cbind(df[44:65,"NOTIF_HR"],df[44:65,"NOTIF_LR"]) + cbind(df[44:65,"NOTIF_MORT_HR"],df[44:65,"NOTIF_MORT_LR"])
 V <- V[,1]/rowSums(V)
 plot(0,0,ylim=c(0,15),xlim=c(1993,2014),xlab="",ylab="",axes=F)
 axis(1);axis(2,las=2);box()
@@ -104,7 +103,7 @@ mtext("Percent of TB Cases Homeless in Past Yr",3,.8,font=2,cex=0.8)
 legend("topright",c("Reported data","Fitted model"),pch=c(19,NA),lwd=c(1,2),col=c(1,4),lty=c(3,1),bg="white",pt.cex=0.6)
 
 ### ### ### ### ### ### TREATMENT OUTCOMES 1993-2011  ### ### ### ### ### ###
-V   <- M[44:63,132:134]
+V   <- df[44:63,132:134]
 Vdisc <- V[,2]/rowSums(V)
 Vdead <- V[,3]/rowSums(V)
 
@@ -123,7 +122,7 @@ legend("topright",c("Discontinued","Died","Reported data","Fitted model"),pch=c(
        col=c("red3",4,1,1),lty=c(NA,NA,3,1),bg="white",pt.cex=c(1.8,1.8,0.6,NA))
 
 ### ### ### ### ### ### TLTBI VOL 1993-2011  ### ### ### ### ### ###
-v12  <- M[43:65,152]
+v12  <- df[43:65,152]
 
 plot(0,0,ylim=c(0,500),xlim=c(1992,2015),xlab="",ylab="",axes=F)
 axis(1);axis(2,las=2);box()
@@ -137,23 +136,23 @@ mtext("IPT Treatment Initiations Per Year (000s)",3,.8,font=2,cex=0.8)
 legend("bottomright",c("Reported data","Fitted model"),pch=c(19,NA),lwd=c(2,2),col=c(1,"blue"),bg="white",pt.cex=0.8)
 
 ### ### ### ### ### ### LTBI INITIATIONS 1993-2011 Distribution ### ### ### ### ### ###
-v13  <- cbind(M[43:65,"TLTBI_INITS_FB"],M[43:65,"TLTBI_INITS_HR"])
-v13  <-   v13/M[43:65,"TLTBI_INITS"]
-plot(1,1,ylim=c(0.001,.5)*100,xlim=c(1992,2015),xlab="",ylab="",axes=F,log="y")
-axis(1);axis(2,las=2);box()
-abline(h=axTicks(2),col="grey85")
-# points(rep(2002,3),TLTBI_dist*100,pch=19,cex=0.8,col=c("red3",4,6))
-for(i in 1:3) lines(1992:2014,v13[,i]*100,lwd=2,col=c("red3",4,6)[i])
-# lines(rep(2002,2),tltbi_vol[2:3]/1e3,lwd=2,col="black")
-
-mtext("Year",1,2.5,cex=0.9)
-mtext("IPT Treatment Initiations By Risk Group (%)",3,.8,font=2,cex=0.8)
-legend("bottomleft",c("Foreign-born","Homeless","Reported data","Fitted model"),
-       pch=c(15,15,19,NA),lwd=c(NA,NA,NA,2),col=c("red3",4,1,1),bg="white",pt.cex=c(1.8,1.8,0.8,NA))
+# v13  <- cbind(df[43:65,"TLTBI_INITS_FB"],df[43:65,"TLTBI_INITS_HR"])
+# v13  <-   v13/df[43:65,"TLTBI_INITS"]
+# plot(1,1,ylim=c(0.001,.5)*100,xlim=c(1992,2015),xlab="",ylab="",axes=F,log="y")
+# axis(1);axis(2,las=2);box()
+# abline(h=axTicks(2),col="grey85")
+# # points(rep(2002,3),TLTBI_dist*100,pch=19,cex=0.8,col=c("red3",4,6))
+# for(i in 1:3) lines(1992:2014,v13[,i]*100,lwd=2,col=c("red3",4,6)[i])
+# # lines(rep(2002,2),tltbi_vol[2:3]/1e3,lwd=2,col="black")
+#
+# mtext("Year",1,2.5,cex=0.9)
+# mtext("IPT Treatment Initiations By Risk Group (%)",3,.8,font=2,cex=0.8)
+# legend("bottomleft",c("Foreign-born","Homeless","Reported data","Fitted model"),
+#        pch=c(15,15,19,NA),lwd=c(NA,NA,NA,2),col=c("red3",4,1,1),bg="white",pt.cex=c(1.8,1.8,0.8,NA))
 
 ## ### ### LTBI PREVALENCE BY AGE 2011, US  ### ### ### ### ### ###
 ## plot not functioning
-V  <- cbind(M[62,55:65], M[62,33:43]-M[62,55:65])
+V  <- cbind(df[62,55:65], df[62,33:43]-df[62,55:65])
 V[9,] <- colSums(V[9:11,])
 V <- V[2:9,1]/rowSums(V[2:9,])*100
 plot(0,0,ylim=c(0,100),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA)
@@ -171,7 +170,7 @@ legend("topleft",c("Reported data","Fitted model"),pch=c(19,15),lwd=c(0,NA),
 
 ### ### ### LTBI PREVALENCE BY AGE 2011, FB  ### ### ### ### ### ###
 ### plot not functioning NaN with division line
-# V  <- cbind(M[62,65:75],M[62,43:53]-M[62,65:75])
+# V  <- cbind(df[62,65:75],df[62,43:53]-df[62,65:75])
 # V
 # V[9,] <- colSums(V[9:11,])
 # V <- V[2:9,1]/rowSums(V[2:9,])*100
@@ -190,7 +189,7 @@ legend("topleft",c("Reported data","Fitted model"),pch=c(19,15),lwd=c(0,NA),
 #        pt.cex=c(1,2),col=c("black","lightblue"),bg="white")
 
 ### ### ### ### ### ### TOTAL POP EACH DECADE, BY US/FB  ### ### ### ### ### ###
-V  <- cbind(M[1:66,30], M[1:66,31]+M[1:66,32])
+V  <- cbind(df[1:66,30], df[1:66,31]+df[1:66,32])
 plot(1,1,ylim=c(2,500),xlim=c(1950,2015),xlab="",ylab="",axes=F,log="y")
 axis(1);axis(2,las=2);box()
 abline(h=axTicks(2),col="grey85")
@@ -211,7 +210,7 @@ legend("bottomright",c("Total","US born","Foreign born","Reported data","Fitted 
 
 ### ### ### ### ### ### TOTAL POP AGE DISTRIBUTION 2014  ### ### ### ### ### ###
 ### need to update
-V  <- cbind(t(M[65,33:43]), t(M[65,44:54]))
+V  <- cbind(t(df[65,33:43]), t(df[65,44:54]))
 
 plot(0,1,ylim=c(0.05,135),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA,log="y")
 axis(1,1:8,paste(c("0-4","5-24","25-44","45-54","55-64","65-74","75-84","85+"),"\nyears",sep=""),tick=F,cex.axis=0.75)
@@ -230,7 +229,7 @@ legend("topright",c("Reported data","Fitted model"),pch=c(19,15),pt.cex=c(1,2),
 
 ### ### ### TB DEATHS 1999-2013 ### ### ### ### ### ###
 ###   This is a logically invlaid value
-V  <- M[50:65,88:98]+M[50:65,99:109]
+V  <- df[50:65,88:98]+df[50:65,99:109]
 V2 <- V[,-11];
 V2[,10] <- V[,10]+V[,11]
 
@@ -247,7 +246,7 @@ legend("bottomleft",c("Reported data","Fitted model"),pch=c(19,NA),lwd=c(1,2),co
 
 ### ### ### ### ### ### AGE DISTRIBUTION, TB DEATHS 1999-2013 ### ### ### ### ### ###
 ### ### ### values are off by two orders of magnitude
-V  <- M[50:65,88:98]+M[50:65,99:109]
+V  <- df[50:65,88:98]+df[50:65,99:109]
 V2 <- V[,-11]; V2[,10] <- V[,10]+V[,11]
 V3 <- colSums(V2)*1e6
 
@@ -280,3 +279,4 @@ legend("topleft",c("Reported data","Fitted model"),pch=c(19,15),lwd=NA,
 # mtext("Total US Cases, Age Groups Plotted By Year, MODEL",3,0.8,font=2,cex=0.8)
 
 dev.off()
+}
