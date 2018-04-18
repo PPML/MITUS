@@ -118,7 +118,7 @@ Rcpp::List cSim(
   // double        sse;
   double rowsum[16];
   double mat_sum;
-  double reblnc;
+  int reblnc; int tb_dyn;
   Rcpp::NumericMatrix Outputs2(nYrs,nRes);
 
   ///////////////////////////////////////////////////////////////////////////////
@@ -263,6 +263,7 @@ for(int i=0; i<16; i++) {
   }
   N=30;
   reblnc=1;
+  tb_dyn=0;
 //   for(int i=0; i<16; i++) {
 //     for(int j=0; j<16; j++) {
 // Rcpp::Rcout << "at time one size" << can_goN[i][j] << "\n"; }}
@@ -362,7 +363,7 @@ for(int i=0; i<16; i++) {
               for(int tb=0; tb<5; tb++) {
                 V1[ag][tb][0][im][nm][rg][na]  -= V0[ag][tb][0][im][nm][rg][na]*(mubtN[0][ag]*RRmuHR[rg]+vTMortN[ag][tb]);
               }
-              ////////////////          MORTALITY WITH TB TREATMENT         ////////////////////
+  ////////////////          MORTALITY WITH TB TREATMENT         ////////////////////
               V1[ag][5 ][0][im][nm][rg][na]  -= V0[ag][5 ][0][im][nm][rg][na]*(mubtN[0][ag]*RRmuHR[rg]+vTMortN[ag][5 ]*pow(1.0-TxVecZ[1],TunTxMort)); //check the mortality in param
             } } } } }
     /////////////////////////////////////AGING///////////////////////////////////////
@@ -407,7 +408,7 @@ for(int i=0; i<16; i++) {
               V1[ag][tb][0][im][nm][1][na]  += temp-temp2;
 
             } } } } }
-
+if (tb_dyn==1){
     ///////////////////////////         BREAK DOWN      /////////////////////////////
     for(int ag=0; ag<11; ag++) {
       for(int im=0; im<4 ; im++) {
@@ -588,6 +589,7 @@ for(int i=0; i<16; i++) {
               V1[ag][5][0][im][nm][rg][na]  -= temp;
               V1[ag][4][0][im][nm][rg][na]  += temp;
             } } } } }
+    } //end of TB loop
 
     /////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////RESET POPULATION SIZE/////////////////////////////
@@ -780,7 +782,8 @@ for(int i=0; i<16; i++) {
                   V1[ag][tb][lt][im][nm][0][na]  += temp2-temp;
                   V1[ag][tb][lt][im][nm][1][na]  += temp-temp2;
                 } } } } } }
-      ////////////////////////////  TRANSMISSION RISK  ////////////////////////////////
+if (tb_dyn==1){
+                  ////////////////////////////  TRANSMISSION RISK  ////////////////////////////////
       for(int i=0; i<2; i++) {
         for(int j=0; j<2; j++) {
           VNkl [i][j] = 0;
@@ -1039,6 +1042,7 @@ for(int i=0; i<16; i++) {
                   V1[ag][5][lt][im][nm][rg][na]  -= temp;
                   V1[ag][5][lt][im][nm][rg][na]  += temp;
                 } } } } } }
+      }//end of TB loop
 //////////////////////////////////////////////////////////////////////////////////
 ////////////////////////// REBALANCE THE POPULATION //////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
