@@ -304,17 +304,17 @@ for(int i=0; i<16; i++) {
     for(int im=0; im<4; im++) {
       for(int nm=0; nm<4; nm++) {
         ////////////////////        UNINFECTED/SUSCEPTIBLE POP /////////////////////////
-        V0[ag][0][0][im][nm][0][0] = InitPopN[ag][0]*0.40*(1-p_HR)*dist_genN[im][nm]; //low risk US born
-        V0[ag][0][0][im][nm][1][0] = InitPopN[ag][0]*0.40*(p_HR)*dist_genN[im][nm]; //high risk US born
+        V0[ag][0][0][im][nm][0][0] = InitPopN[ag][0]*0.40*(1-p_HR)*dist_genN[nm][im]; //low risk US born
+        V0[ag][0][0][im][nm][1][0] = InitPopN[ag][0]*0.40*(p_HR)*dist_genN[nm][im]; //high risk US born
 
-        V0[ag][0][0][im][nm][0][2] = InitPopN[ag][1]*0.40*(1-p_HR)*dist_genN[im][nm]; //low risk non-US born
-        V0[ag][0][0][im][nm][1][2] = InitPopN[ag][1]*0.40*(p_HR)*dist_genN[im][nm];  //high risk non-US born
+        V0[ag][0][0][im][nm][0][2] = InitPopN[ag][1]*0.40*(1-p_HR)*dist_genN[nm][im]; //low risk non-US born
+        V0[ag][0][0][im][nm][1][2] = InitPopN[ag][1]*0.40*(p_HR)*dist_genN[nm][im];  //high risk non-US born
         /////////////////////////   LATENT SLOW INFECTED POP  //////////////////////////
-        V0[ag][2][0][im][nm][0][0] = InitPopN[ag][0]*0.60*(1-p_HR)*dist_genN[im][nm];
-        V0[ag][2][0][im][nm][1][0] = InitPopN[ag][0]*0.60*(p_HR)*dist_genN[im][nm];
+        V0[ag][2][0][im][nm][0][0] = InitPopN[ag][0]*0.60*(1-p_HR)*dist_genN[nm][im];
+        V0[ag][2][0][im][nm][1][0] = InitPopN[ag][0]*0.60*(p_HR)*dist_genN[nm][im];
 
-        V0[ag][2][0][im][nm][0][2] = InitPopN[ag][1]*0.60*(1-p_HR)*dist_genN[im][nm];
-        V0[ag][2][0][im][nm][1][2] = InitPopN[ag][1]*0.60*(p_HR)*dist_genN[im][nm];
+        V0[ag][2][0][im][nm][0][2] = InitPopN[ag][1]*0.60*(1-p_HR)*dist_genN[nm][im];
+        V0[ag][2][0][im][nm][1][2] = InitPopN[ag][1]*0.60*(p_HR)*dist_genN[nm][im];
       } } }
 
   //////create a 2nd array with same dimensions as V0 & populate w/ same values//
@@ -334,9 +334,9 @@ for(int i=0; i<16; i++) {
     ///////////USE DISTRIBUTION TO POPULATE THE MODEL ACROSS RISK GROUPS////////////
     for(int im=0; im<4; im++) {
       for(int nm=0; nm<4; nm++){
-        V1[0][0][0][im][nm][0][0]  += Birthst[0]*dist_genN[im][nm]*(1-p_HR);
+        V1[0][0][0][im][nm][0][0]  += Birthst[0]*dist_genN[nm][im]*(1-p_HR);
 
-        V1[0][0][0][im][nm][1][0]  += Birthst[0]*dist_genN[im][nm]*(p_HR);
+        V1[0][0][0][im][nm][1][0]  += Birthst[0]*dist_genN[nm][im]*(p_HR);
       } }
     //////////////////////////////////IMMIGRATION///////////////////////////////////
     /////////////SINCE WE NO LONGER HAVE PREVIOUS TREATMENT AS A STATE SHOULD WE
@@ -346,17 +346,17 @@ for(int i=0; i<16; i++) {
       for(int im=0; im<4; im++) {
         for(int nm=0; nm<4; nm++){
 
-            V1[ag][0][0][im][nm][0][1]   += ImmNonN[0][ag]*dist_genN[im][nm]*(1-p_HR);  // NO TB, low risk
-            V1[ag][0][0][im][nm][1][1]   += ImmNonN[0][ag]*dist_genN[im][nm]*(p_HR);    // NO TB, high risk
+            V1[ag][0][0][im][nm][0][1]   += ImmNonN[0][ag]*dist_genN[nm][im]*(1-p_HR);  // NO TB, low risk
+            V1[ag][0][0][im][nm][1][1]   += ImmNonN[0][ag]*dist_genN[nm][im]*(p_HR);    // NO TB, high risk
 
-            V1[ag][2][0][im][nm][0][1]   += ImmLatN[0][ag]*dist_genN[im][nm]*(1-p_HR); // LATENT SLOW TB, low risk
-            V1[ag][2][0][im][nm][1][1]   += ImmLatN[0][ag]*dist_genN[im][nm]*(p_HR);   // LATENT SLOW TB, high risk
+            V1[ag][2][0][im][nm][0][1]   += ImmLatN[0][ag]*dist_genN[nm][im]*(1-p_HR); // LATENT SLOW TB, low risk
+            V1[ag][2][0][im][nm][1][1]   += ImmLatN[0][ag]*dist_genN[nm][im]*(p_HR);   // LATENT SLOW TB, high risk
 
-            V1[ag][3][0][im][nm][0][1]   += (TBImm[ag][0][1])*dist_genN[im][nm]*(1-p_HR);   // LATENT FAST, low risk
-            V1[ag][3][0][im][nm][1][1]   += (TBImm[ag][0][1])*dist_genN[im][nm]*(p_HR);   // LATENT FAST, high risk
+            V1[ag][3][0][im][nm][0][1]   += (TBImm[ag][0][1])*dist_genN[nm][im]*(1-p_HR);   // LATENT FAST, low risk
+            V1[ag][3][0][im][nm][1][1]   += (TBImm[ag][0][1])*dist_genN[nm][im]*(p_HR);   // LATENT FAST, high risk
 
-            V1[ag][4][0][im][nm][0][1]   += (TBImm[ag][0][0])*dist_genN[im][nm]*(1-p_HR);   //ACTIVE TB, low risk
-            V1[ag][4][0][im][nm][1][1]   += (TBImm[ag][0][0])*dist_genN[im][nm]*(p_HR);   //ACTIVE TB, high risk
+            V1[ag][4][0][im][nm][0][1]   += (TBImm[ag][0][0])*dist_genN[nm][im]*(1-p_HR);   //ACTIVE TB, low risk
+            V1[ag][4][0][im][nm][1][1]   += (TBImm[ag][0][0])*dist_genN[nm][im]*(p_HR);   //ACTIVE TB, high risk
           } } }
     ///////////////////////////////EMMIGRATION//////////////////////////////////////
     for(int ag=0; ag<11; ag++) {
@@ -550,9 +550,6 @@ if (tb_dyn==1){
 
               ///////////////////////////////   SUCEPTIBLE  /////////////////////////////////
               temp = V0[ag][0][0][im][nm][rg][na]*EarlyTrend[m]*VLjkl[rg][na];
-
-
-
               //////////////////////////// REMOVE FROM SUSCEPTIBLE //////////////////////////
               V1[ag][0][0][im][nm][rg][na]  -= temp;
               //////////////////////////////// LATENT TB SLOW ///////////////////////////////
@@ -685,9 +682,9 @@ if (tb_dyn==1){
       for (int im=0; im<4; im++) {
         for (int nm=0; nm<4; nm++) {
           /////LOW RISK GROUP BIRTHS//////////////////////////////////////////////////////
-          V1[0][0][0][im][nm][0][0]  += Birthst[s]*dist_genN[im][nm]*(1-p_HR);
+          V1[0][0][0][im][nm][0][0]  += Birthst[s]*dist_genN[nm][im]*(1-p_HR);
           /////HIGH RISK GROUP BIRTHS//////////////////////////////////////////////////////
-          V1[0][0][0][im][nm][1][0]  += Birthst[s]*dist_genN[im][nm]*(p_HR);
+          V1[0][0][0][im][nm][1][0]  += Birthst[s]*dist_genN[nm][im]*(p_HR);
         } }
       ///////////////////////////////// IMMIGRATION ///////////////////////////////////
       for(int ag=0; ag<11; ag++) {
@@ -695,17 +692,17 @@ if (tb_dyn==1){
           for(int im=0; im<4; im++) {
             for(int nm=0; nm<4; nm++) {
 
-              V1[ag][0][0][im][nm][0][1]   += ImmNonN[s][ag]*dist_genN[im][nm]*(1-p_HR);  // NO TB, low risk
-               V1[ag][0][0][im][nm][1][1]   += ImmNonN[s][ag]*dist_genN[im][nm]*(p_HR);    // NO TB, high risk
+              V1[ag][0][0][im][nm][0][1]   += ImmNonN[s][ag]*dist_genN[nm][im]*(1-p_HR);  // NO TB, low risk
+               V1[ag][0][0][im][nm][1][1]   += ImmNonN[s][ag]*dist_genN[nm][im]*(p_HR);    // NO TB, high risk
 
-              V1[ag][2][0][im][nm][0][1]   += ImmLatN[s][ag]*dist_genN[im][nm]*(1-p_HR); // LATENT SLOW TB, low risk
-               V1[ag][2][0][im][nm][1][1]   += ImmLatN[s][ag]*dist_genN[im][nm]*(p_HR);   // LATENT SLOW TB, high risk
+              V1[ag][2][0][im][nm][0][1]   += ImmLatN[s][ag]*dist_genN[nm][im]*(1-p_HR); // LATENT SLOW TB, low risk
+               V1[ag][2][0][im][nm][1][1]   += ImmLatN[s][ag]*dist_genN[nm][im]*(p_HR);   // LATENT SLOW TB, high risk
 
-              V1[ag][3][0][im][nm][0][1]   += (TBImm[ag][s][1])*dist_genN[im][nm]*(1-p_HR);   // LATENT FAST, low risk
-               V1[ag][3][0][im][nm][1][1]   += (TBImm[ag][s][1])*dist_genN[im][nm]*(p_HR);   // LATENT FAST, high risk
+              V1[ag][3][0][im][nm][0][1]   += (TBImm[ag][s][1])*dist_genN[nm][im]*(1-p_HR);   // LATENT FAST, low risk
+               V1[ag][3][0][im][nm][1][1]   += (TBImm[ag][s][1])*dist_genN[nm][im]*(p_HR);   // LATENT FAST, high risk
 
-              V1[ag][4][0][im][nm][0][1]   += (TBImm[ag][s][0])*dist_genN[im][nm]*(1-p_HR);   //ACTIVE TB, low risk
-              V1[ag][4][0][im][nm][1][1]   += (TBImm[ag][s][0])*dist_genN[im][nm]*(p_HR);   //ACTIVE TB, high risk
+              V1[ag][4][0][im][nm][0][1]   += (TBImm[ag][s][0])*dist_genN[nm][im]*(1-p_HR);   //ACTIVE TB, low risk
+              V1[ag][4][0][im][nm][1][1]   += (TBImm[ag][s][0])*dist_genN[nm][im]*(p_HR);   //ACTIVE TB, high risk
               } } }
       /////////////////////////////////  EMMIGRATION ///////////////////////////////////
       for(int ag=0; ag<11; ag++) {
@@ -1401,7 +1398,7 @@ if (reblnc==2){
                     //      dist_newN[m][p] +=  dist_orig[m2][p2] * trans_mat_tot[m2+p2*4][m+p*4];////removed +1 index
                     V2[ag][tb][lt][im][nm][rg][na] += V1[ag][tb][lt][im][nm][rg][na] * trans_mat_tot[m2+p2*4][nm+im*4];
                   } } } } } } } } }
-}
+} //end of rebalancing loop w/o ag or nativity
     ///////////////////////////////////////////////////////////////////////////////
     /////////////////////////    FILL RESULTS TABLE    ////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////
