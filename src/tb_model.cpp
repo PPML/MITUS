@@ -352,11 +352,11 @@ for(int i=0; i<16; i++) {
             V1[ag][2][0][im][nm][0][1]   += ImmLatN[0][ag]*dist_genN[nm][im]*(1-p_HR); // LATENT SLOW TB, low risk
             V1[ag][2][0][im][nm][1][1]   += ImmLatN[0][ag]*dist_genN[nm][im]*(p_HR);   // LATENT SLOW TB, high risk
 
-            V1[ag][3][0][im][nm][0][1]   += (TBImm[ag][0][1])*dist_genN[nm][im]*(1-p_HR);   // LATENT FAST, low risk
-            V1[ag][3][0][im][nm][1][1]   += (TBImm[ag][0][1])*dist_genN[nm][im]*(p_HR);   // LATENT FAST, high risk
+            V1[ag][3][0][im][nm][0][1]   += TBImm[ag][0][1]*dist_genN[nm][im]*(1-p_HR);   // LATENT FAST, low risk
+            V1[ag][3][0][im][nm][1][1]   += TBImm[ag][0][1]*dist_genN[nm][im]*(p_HR);   // LATENT FAST, high risk
 
-            V1[ag][4][0][im][nm][0][1]   += (TBImm[ag][0][0])*dist_genN[nm][im]*(1-p_HR);   //ACTIVE TB, low risk
-            V1[ag][4][0][im][nm][1][1]   += (TBImm[ag][0][0])*dist_genN[nm][im]*(p_HR);   //ACTIVE TB, high risk
+            V1[ag][4][0][im][nm][0][1]   += TBImm[ag][0][0]*dist_genN[nm][im]*(1-p_HR);   //ACTIVE TB, low risk
+            V1[ag][4][0][im][nm][1][1]   += TBImm[ag][0][0]*dist_genN[nm][im]*(p_HR);   //ACTIVE TB, high risk
           } } }
     ///////////////////////////////EMMIGRATION//////////////////////////////////////
     for(int ag=0; ag<11; ag++) {
@@ -613,7 +613,6 @@ if (tb_dyn==1){
         for(int im=0; im<4; im++) {
           for(int nm=0; nm<4; nm++) {
             for(int rg=0; rg<2; rg++) {
-              ////////////////NEED TO UPDATE THESE FOR NEW RISK GROUPS ///////////////////////
               InitPopZ[ag][0]  += V1[ag][tb][0][im][nm][rg][0];
 
               InitPopZ[ag][1]  += V1[ag][tb][0][im][nm][rg][1]+V1[ag][tb][0][im][nm][rg][2];
@@ -693,16 +692,16 @@ if (tb_dyn==1){
             for(int nm=0; nm<4; nm++) {
 
               V1[ag][0][0][im][nm][0][1]   += ImmNonN[s][ag]*dist_genN[nm][im]*(1-p_HR);  // NO TB, low risk
-               V1[ag][0][0][im][nm][1][1]   += ImmNonN[s][ag]*dist_genN[nm][im]*(p_HR);    // NO TB, high risk
+              V1[ag][0][0][im][nm][1][1]   += ImmNonN[s][ag]*dist_genN[nm][im]*(p_HR);    // NO TB, high risk
 
               V1[ag][2][0][im][nm][0][1]   += ImmLatN[s][ag]*dist_genN[nm][im]*(1-p_HR); // LATENT SLOW TB, low risk
                V1[ag][2][0][im][nm][1][1]   += ImmLatN[s][ag]*dist_genN[nm][im]*(p_HR);   // LATENT SLOW TB, high risk
 
-              V1[ag][3][0][im][nm][0][1]   += (TBImm[ag][s][1])*dist_genN[nm][im]*(1-p_HR);   // LATENT FAST, low risk
-               V1[ag][3][0][im][nm][1][1]   += (TBImm[ag][s][1])*dist_genN[nm][im]*(p_HR);   // LATENT FAST, high risk
+              V1[ag][3][0][im][nm][0][1]   += TBImm[ag][s][1]*dist_genN[nm][im]*(1-p_HR);   // LATENT FAST, low risk
+               V1[ag][3][0][im][nm][1][1]   += TBImm[ag][s][1]*dist_genN[nm][im]*(p_HR);   // LATENT FAST, high risk
 
-              V1[ag][4][0][im][nm][0][1]   += (TBImm[ag][s][0])*dist_genN[nm][im]*(1-p_HR);   //ACTIVE TB, low risk
-              V1[ag][4][0][im][nm][1][1]   += (TBImm[ag][s][0])*dist_genN[nm][im]*(p_HR);   //ACTIVE TB, high risk
+              V1[ag][4][0][im][nm][0][1]   += TBImm[ag][s][0]*dist_genN[nm][im]*(1-p_HR);   //ACTIVE TB, low risk
+              V1[ag][4][0][im][nm][1][1]   += TBImm[ag][s][0]*dist_genN[nm][im]*(p_HR);   //ACTIVE TB, high risk
               } } }
       /////////////////////////////////  EMMIGRATION ///////////////////////////////////
       for(int ag=0; ag<11; ag++) {
@@ -1751,14 +1750,14 @@ if (reblnc==2){
                       Outputs[y][254+ag]  += VMort[ag][tb][lt][im][nm][rg][na];
                       Outputs[y][276+im]  += VMort[ag][tb][lt][im][nm][rg][na];
                       Outputs[y][284+nm]  += VMort[ag][tb][lt][im][nm][rg][na];
+                      Outputs[y][292+rg] += VMort[ag][tb][lt][im][nm][rg][na];
 
                     } else {
                       Outputs[y][265+ag]  += VMort[ag][tb][lt][im][nm][rg][na];
                       Outputs[y][280+im]  += VMort[ag][tb][lt][im][nm][rg][na];
                       Outputs[y][288+nm]  += VMort[ag][tb][lt][im][nm][rg][na];
-
+                      Outputs[y][294+rg]  += VMort[ag][tb][lt][im][nm][rg][na];
                     }
-                      Outputs[y][292+im]  += VMort[ag][tb][lt][im][nm][rg][na];
                   } } } } } } }
       ////////////     CREATE YEARLY VALUES FROM THE MONTH ESTIMATE     ////////////
       for(int i=254; i<296; i++) { Outputs[y][i] = Outputs[y][i]*12; }
