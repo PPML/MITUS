@@ -278,6 +278,8 @@ for(int i=0; i<16; i++) {
     // for(int nm=0; nm<4; nm++) {
     //   vRFMortN[ag][nm] = 0;
     // } }
+    // for(int rg=0; rg<2; rg++){RRmuHR[rg]=1; }
+
     muTbRF =0;
     }
 //   for(int i=0; i<16; i++) {
@@ -715,10 +717,11 @@ if (tb_dyn==1){
                   V1[ag][tb][lt][im][nm][rg][2]  -= V0[ag][tb][lt][im][nm][rg][2]*rEmmigFB[1];      // FB2
                 } } } } } }
       /////////////////////////////////  MORTALITY  ///////////////////////////////////
+
       for(int ag=0; ag<11; ag++) {
         for(int lt=0; lt<2; lt++){
           for(int im=0; im<4 ; im++) {
-            for(int nm=0; nm<4 ; nm++) {
+            for(int nm=0; nm<4; nm++) {
               ////we need to decide about TB co-mortality factor
               if(im == 3) {
                 temp = muTbRF;
@@ -744,10 +747,17 @@ if (tb_dyn==1){
                   VMort[ag][5 ][lt][im][nm][rg][na]  = V0[ag][5 ][lt][im][nm][rg][na]*
                     (mubtN[s][ag]*RRmuHR[rg]+vRFMortN[ag][nm]+(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort));
                   /////////////// UPDATE THE PRIMARY VECTOR BY REMOVING MORTALITY /////////////////
+
                   for(int tb=0; tb<6; tb++) {
                     V1[ag][tb][lt][im][nm][rg][na]  -= VMort[ag][tb][lt][im][nm][rg][na];
+                    temp += VMort[ag][tb][lt][im][nm][rg][na];
+                    // Rcpp::Rcout << "total mortality at time" << s << "is" << temp << "\n";
+
                   }
+
                 } } } } } }
+
+
       /////////////////////////////////////AGING///////////////////////////////////////
       for(int ag=0; ag<10; ag++) {
         /////          IF AGE > 4, IT TAKES 120 MONTHS TO LEAVE AGE GROUP          /////
@@ -1746,12 +1756,11 @@ if (reblnc==2){
               for(int nm=0; nm<4; nm++) {
                 for(int rg=0; rg<2; rg++) {
                   for(int na=0; na<3; na++) {
-                    if (na==0){
+                    if (na<1){
                       Outputs[y][254+ag]  += VMort[ag][tb][lt][im][nm][rg][na];
                       Outputs[y][276+im]  += VMort[ag][tb][lt][im][nm][rg][na];
                       Outputs[y][284+nm]  += VMort[ag][tb][lt][im][nm][rg][na];
-                      Outputs[y][292+rg] += VMort[ag][tb][lt][im][nm][rg][na];
-
+                      Outputs[y][292+rg]  += VMort[ag][tb][lt][im][nm][rg][na];
                     } else {
                       Outputs[y][265+ag]  += VMort[ag][tb][lt][im][nm][rg][na];
                       Outputs[y][280+im]  += VMort[ag][tb][lt][im][nm][rg][na];
@@ -1761,7 +1770,7 @@ if (reblnc==2){
                   } } } } } } }
       ////////////     CREATE YEARLY VALUES FROM THE MONTH ESTIMATE     ////////////
       for(int i=254; i<296; i++) { Outputs[y][i] = Outputs[y][i]*12; }
-///////////////////////  HIGH/LOW RISK GROUP    /////////////////////////
+///////////////////////  POPULATION  /////////////////////////
 
       for(int ag=0; ag<11; ag++) {
         for(int tb=0; tb<6; tb++) {
@@ -1770,12 +1779,11 @@ if (reblnc==2){
               for(int nm=0; nm<4; nm++) {
                 for(int rg=0; rg<2; rg++) {
                   for(int na=0; na<3; na++) {
-                    if (na==0){
+                    if (na<1){
                       Outputs[y][296+im]  += V1[ag][tb][lt][im][nm][rg][na];
                       Outputs[y][304+rg]  += V1[ag][tb][lt][im][nm][rg][na];
                       Outputs[y][308+nm]  += V1[ag][tb][lt][im][nm][rg][na];
                     } else {
-
                       Outputs[y][300+im]  += V1[ag][tb][lt][im][nm][rg][na];
                       Outputs[y][306+rg]  += V1[ag][tb][lt][im][nm][rg][na];
                       Outputs[y][312+nm]  += V1[ag][tb][lt][im][nm][rg][na];
@@ -1784,7 +1792,20 @@ if (reblnc==2){
 
                   } } } } } } }
 
-      for(int i=288; i<316; i++) { Outputs[y][i] = Outputs[y][i]*12; }
+      for(int i=296; i<316; i++) { Outputs[y][i] = Outputs[y][i]*12; }
+
+
+      for(int ag=0; ag<11; ag++) {
+        for(int tb=0; tb<6; tb++) {
+          for(int lt=0; lt<2; lt++) {
+            for(int im=0; im<4; im++) {
+              for(int nm=0; nm<4; nm++) {
+                for(int rg=0; rg<2; rg++) {
+                  for(int na=0; na<3; na++) {
+                    Outputs[y][316]  += VMort[ag][tb][lt][im][nm][rg][na];
+                  } } } } } } }
+
+      for(int i=316; i<317; i++) { Outputs[y][i] = Outputs[y][i]*12; }
 
     } ////end of mid-year results bracket
     ///////////////////////////////////////////////////////////////////////////////////
