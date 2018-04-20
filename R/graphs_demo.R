@@ -92,10 +92,10 @@ tb_graph_demo <- function(df){
 
   V  <- cbind(t(df[65,305:308]), t(df[65,309:312]))
 
-  plot(0,1,ylim=c(0.05,135),xlim=c(0.6,4.4),xlab="",ylab="",axes=F,col=NA,log="y")
+  plot(0,1,ylim=c(0.05,1e4),xlim=c(0.6,4.4),xlab="",ylab="",axes=F,col=NA,log="y")
   axis(1,1:4,paste(c("1st","2nd","3rd","4th"),"\ngroup",sep=""),tick=F,cex.axis=0.75)
   axis(1,1:5-0.5,rep("",5))
-  axis(2,c(0.1,1,10,100),las=2);box()
+  axis(2,c(0.1,1,10,100,1000,10,000),las=2);box()
   abline(h=axTicks(2),col="grey85")
   for(i in 1:4) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V[i,1],V[i,1]),border=NA,col="lightblue")
   mtext("Risk Group",1,2.5,cex=0.9)
@@ -180,7 +180,7 @@ tb_graph_demo <- function(df){
 
   V  <- cbind(t(df[65,277:280]),t(df[65,281:284]))
 
-  plot(0,0,ylim=c(0.05,max(rangeV)),xlim=c(0.6,4.4),xlab="",ylab="",axes=F,col=NA)
+  plot(0,0,ylim=c(0.05,max(range(V))*1.001),xlim=c(0.6,4.4),xlab="",ylab="",axes=F,col=NA)
   axis(1,1:4,paste(c("1st","2nd","3rd","4th"),"\ngroup",sep=""),tick=F,cex.axis=0.75)
   axis(1,1:5-0.5,rep("",5))
   axis(2,c(0.1,1,10,100),las=2);box()
@@ -200,7 +200,7 @@ tb_graph_demo <- function(df){
 
   V  <- cbind(t(df[65,285:288]),t(df[65,289:292]))
 
-  plot(0,0,ylim=c(0.05,max(rangeV)),xlim=c(0.6,4.4),xlab="",ylab="",axes=F,col=NA)
+  plot(0,0,ylim=c(0.05,max(range(V))*1.001),xlim=c(0.6,4.4),xlab="",ylab="",axes=F,col=NA)
   axis(1,1:4,paste(c("1st","2nd","3rd","4th"),"\ngroup",sep=""),tick=F,cex.axis=0.75)
   axis(1,1:5-0.5,rep("",5))
   axis(2,c(0.1,1,10,100),las=2);box()
