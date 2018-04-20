@@ -46,20 +46,24 @@ muIp  	  <- P["muIp"]/12
 ############ CONVERT ANNUAL RATES OF RF MORTALITY TO MONTHLY RATES ##########
 
 ############ THESE MUST BE UPDATED
-muRF      <- P["muH1"]/12
+muRF1      <- P["muH1"]/12*.01
+muRF2      <- (P["muH2"]+P["muH1"])/24*.01
+muRF3      <- P["muH2"]/12*.01
 muTbRF    <- P["muTbH"]/12
+TunmuHvAg <- P["TunmuTbAg"] # ffs.
 
 ###############  RATE RATIO OF MORTALITY INCREASE FOR HIGH RISK ###############
 
 RRmuHR    <- c(1,P["RRmuHR"])
 
 ############### CREATE A MATRIX OF RF MORTALITIES BY AGE GROUP ###############
-
-vRFMort    <- c(0,0,0,0);
-names(vRFMort) <- c("RF1","RF2","RF3","RF4")
-vRFMort[2] <- (1/3)*muRF
-vRFMort[3] <- (2/3)*muRF
-vRFMort[4] <- muRF
+vRFMort    <- matrix(0,11,4);
+rownames(vRFMort) <- c("0_4",paste(0:8*10+5,1:9*10+4,sep="_"),"95p")
+colnames(vRFMort) <- c("RF1","RF2","RF3","RF4")
+vRFMort[,1] <- 0;
+vRFMort[,2] <- muRF1*exp(c(0,0,1:6,6,6,6)*TunmuHvAg)
+vRFMort[,3] <- muRF2*exp(c(0,0,1:6,6,6,6)*TunmuHvAg)
+vRFMort[,4] <- muRF3*exp(c(0,0,1:6,6,6,6)*TunmuHvAg)
 ######################## MULTIPLER OF MORT RATE ABOVE ########################
 
 TunmuTbAg <- P["TunmuTbAg"]
@@ -483,9 +487,21 @@ ResNam <- c("Year",                                         # year
             c("TBMORT_US","TBMORT_NUS") ,          # tbmortality by nativity
             paste("TOTMORT_US",StatList[[1]],sep="_"),       # mortality by nat cat
             paste("TOTMORT_NUS",StatList[[1]],sep="_"),       # mortality by nat cat
+
             paste("TOTMORT_US",StatList[[4]],sep="_"),       # mortality by nat & im cat
             paste("TOTMORT_NUS",StatList[[4]],sep="_"),       # mortality by nat & im cat
-            paste("TOTMORT",StatList[[4]],sep="_")
+
+            paste("TOTMORT_US",StatList[[5]],sep="_"),       # mortality by nat & nm cat
+            paste("TOTMORT_NUS",StatList[[5]],sep="_"),       # mortality by nat & nm cat
+            paste("TOTMORT",StatList[[4]],sep="_"),
+            paste("N_US",StatList[[4]],sep="_"),               # pop by nat and im cat
+            paste("N_NUS",StatList[[4]],sep="_"),               # pop by nat and im cat
+
+            paste("N_US",StatList[[5]],sep="_"),               # pop by nat and nm cat
+            paste("N_NUS",StatList[[5]],sep="_"),               # pop by nat and nm cat
+
+            paste("N_US",StatList[[6]],sep="_"),               # pop by nat and hr cat
+            paste("N_NUS",StatList[[6]],sep="_")              # pop by nat and hr cat
 
 )
 length(ResNam)
