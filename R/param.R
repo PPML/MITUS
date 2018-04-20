@@ -427,7 +427,11 @@ ResNam <- c("Year",                                         # year
 
             paste("TOTMORT_US",StatList[[5]],sep="_"),       # mortality by nat & nm cat
             paste("TOTMORT_NUS",StatList[[5]],sep="_"),       # mortality by nat & nm cat
-            paste("TOTMORT",StatList[[4]],sep="_"),
+
+            paste("TOTMORT_US",StatList[[6]],sep="_"),
+            paste("TOTMORT_NUS",StatList[[6]],sep="_"),
+
+
             paste("N_US",StatList[[4]],sep="_"),               # pop by nat and im cat
             paste("N_NUS",StatList[[4]],sep="_"),               # pop by nat and im cat
 
