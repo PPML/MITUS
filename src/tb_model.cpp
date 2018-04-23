@@ -268,7 +268,7 @@ for(int i=0; i<16; i++) {
   }
   N=30;
   reblnc=1;
-  tb_dyn=1;
+  tb_dyn=0;
   if (tb_dyn != 1){
     for(int ag=0; ag<11; ag++) {
       for(int tb=0; tb<6; tb++) {
@@ -330,7 +330,7 @@ for(int i=0; i<16; i++) {
             } } } } } }
 
   ////////////////////////RUN THE MODEL FOR 3000 MONTHS /////////////////////////
-  for(int m=0; m<3001; m++) {
+  for(int m=0; m<1501; m++) {
     /////////////////////////////////START BURN IN//////////////////////////////////
     ////////////////////////////////////BIRTHS//////////////////////////////////////
     ///////////USE DISTRIBUTION TO POPULATE THE MODEL ACROSS RISK GROUPS////////////
@@ -1983,6 +1983,19 @@ if (reblnc==2 & m==12){
                   } } } } } } }
 
       for(int i=316; i<317; i++) { Outputs[y][i] = Outputs[y][i]*12; }
+
+      for(int ag=0; ag<11; ag++) {
+        for(int tb=0; tb<6; tb++) {
+          for(int lt=0; lt<2; lt++) {
+            for(int nm=0; nm<4; nm++) {
+            for(int im=0; im<4; im++) {
+                for(int rg=0; rg<2; rg++) {
+                  for(int na=0; na<3; na++) {
+                    Outputs[y][317+nm+(im*4)] += V1[ag][tb][lt][im][nm][rg][na];
+                  } } } } } } }
+
+      for(int i=317; i<332; i++) { Outputs[y][i] = Outputs[y][i]*12; }
+
 
     } ////end of mid-year results bracket
     ///////////////////////////////////////////////////////////////////////////////////
