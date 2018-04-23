@@ -3,6 +3,7 @@
 #' Use to check both with and without tb in the model
 
 US_tot_mort <- read.csv(file="data/US_total_mort.csv", header = FALSE)
+US_mort_age <- read.csv(file="data/US_mort_age.csv", header = TRUE)
 
 #'Create a function to be run on a specific model run output to
 #'create simple graphs of all the output for a selected year range
@@ -152,6 +153,36 @@ tb_graph_demo <- function(df){
          pch=c(15,15,15,19,NA),lwd=c(NA,NA,NA,1,2),lty=c(NA,NA,NA,3,1),col=c("grey50",4,"red3",1,1),bg="white",pt.cex=c(1.8,1.8,1.8,0.3,NA))
 
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+  ### ### ### ### ### ###   TOTAL MORT AGE DISTRIBUTION 2014  ### ### ### ### ### ###
+  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+
+  V  <- cbind((df[65,255:265])+(df[65,266:276]))
+  V1  <- V[,-3]
+  V1[,2] <- V1[,2]+V[,3]
+  V2 <- V1[,-4]
+  V2[,3] <- V2[,3]+V1[,4]
+  V3 <- V2[,-9]
+  V3[,8] <- V3[,8]+V2[,9]
+
+
+  plot(0,0,ylim=c(0.05,max(range(V3))),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA)
+  axis(1,1:8,paste(c("0-4","5-24","25-44","45-54","55-64","65-74","75-84","85+"),"\nyears",sep=""),tick=F,cex.axis=0.75)
+  axis(1,1:9-0.5,rep("",9))
+  axis(2,c(0.1,1,10,100),las=2);box()
+  abline(h=axTicks(2),col="grey85")
+
+  for(i in 1:8) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V3[1,i],V3[1,i]),border=NA,col="gray")
+  for(i in 1:8) points(i+.2,(US_mort_age[16,i+1])/1e6,pch=19,cex=1.2,col="black")
+
+
+  mtext("Age Group",1,2.5,cex=0.9)
+  box()
+  mtext("Mortality by Age, 2014 (mil)",3,.8,font=2,cex=0.8)
+  legend("topright",c("Reported data","Fitted model"),pch=c(19,15),pt.cex=c(1,2),
+         lwd=NA,col=c("black","gray"),bg="white")
+
+
+   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   ### ### ### ### ### ###   TOTAL MORT AGE DISTRIBUTION 2014  ### ### ### ### ### ###
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
