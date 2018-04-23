@@ -80,12 +80,12 @@ tb_graph_demo <- function(df){
   axis(1,1:5-0.5,rep("",5))
   axis(2,c(0.1,1,10,100),las=2);box()
   abline(h=axTicks(2),col="grey85")
-  for(i in 1:4) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V[i,1],V[i,1]),border=NA,col="lightblue")
+  for(i in 1:4) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V[i,1],V[i,1]),border=NA,col="gray")
   mtext("Risk Group",1,2.5,cex=0.9)
   box()
   mtext("Population by TB Progression Group, 2014 (mil, log-scale)",3,.8,font=2,cex=0.8)
-  legend("topright",c("Reported data","Fitted model"),pch=c(19,15),pt.cex=c(1,2),
-         lwd=NA,col=c("grey30","grey80"),bg="white")
+  legend("topright",c("Fitted model"),pch=15,pt.cex=2,,
+         lwd=NA,col="gray",bg="white")
 
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   ### ### ### ### ### ### TOTAL POP, MORT RG DISTRIBUTION 2014 ### ### ### ### ### ###
@@ -98,12 +98,12 @@ tb_graph_demo <- function(df){
   axis(1,1:5-0.5,rep("",5))
   axis(2,c(0.1,1,10,100,1000,10,000),las=2);box()
   abline(h=axTicks(2),col="grey85")
-  for(i in 1:4) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V[i,1],V[i,1]),border=NA,col="lightblue")
+  for(i in 1:4) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V[i,1],V[i,1]),border=NA,col="gray")
   mtext("Risk Group",1,2.5,cex=0.9)
   box()
   mtext("Population by Mortality Group, 2014 (mil, log-scale)",3,.8,font=2,cex=0.8)
-  legend("topright",c("Reported data","Fitted model"),pch=c(19,15),pt.cex=c(1,2),
-         lwd=NA,col=c("grey30","grey80"),bg="white")
+  legend("topright",c("Fitted model"),pch=15,pt.cex=2,,
+         lwd=NA,col="gray",bg="white")
 
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   ### ### ### ### ### ### TOTAL POP HR DISTRIBUTION 1993-2013 ### ### ### ### ### ###
@@ -178,7 +178,7 @@ tb_graph_demo <- function(df){
   mtext("Age Group",1,2.5,cex=0.9)
   box()
   mtext("Mortality by Age, 2014 (mil)",3,.8,font=2,cex=0.8)
-  legend("topright",c("Reported data","Fitted model"),pch=c(19,15),pt.cex=c(1,2),
+  legend("topleft",c("Reported data","Fitted model"),pch=c(19,15),pt.cex=c(1,2),
          lwd=NA,col=c("black","gray"),bg="white")
 
 
@@ -206,39 +206,39 @@ tb_graph_demo <- function(df){
   mtext("Age Group",1,2.5,cex=0.9)
   box()
   mtext("Mortality by Age for FB (red) and US (blue), 2014 (mil)",3,.8,font=2,cex=0.8)
-  legend("topright",c("Reported data","Fitted model"),pch=c(19,15),pt.cex=c(1,2),
-         lwd=NA,col=c("grey30","grey80"),bg="white")
+  legend("topleft",c("Fitted model"),pch=15,pt.cex=2,,
+         lwd=NA,col="gray",bg="white")
 
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   ### ### ### ### ### ###   TOTAL MORT AGE DISTRIBUTION % 2014  ### ### ### ### ### ###
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-
-  V  <- cbind(t(df[65,255:265]), t(df[65,266:276]))
-  V1  <- V[-3,]
-  V1[2,] <- V1[2,]+V[3,]
-  V2 <- V1[-4,]
-  V2[3,] <- V2[3,]+V1[4,]
-  V3 <- V2[-9,]
-  V3[8,] <- V3[8,]+V2[9,]
-
-  V4 <- sum(V3)
-
-  V3<- V3/V4*100
-
-  plot(0,0,ylim=c(0.05,max(range(V3))),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA)
-  axis(1,1:8,paste(c("0-4","5-24","25-44","45-54","55-64","65-74","75-84","85+"),"\nyears",sep=""),tick=F,cex.axis=0.75)
-  axis(1,1:9-0.5,rep("",9))
-  axis(2,c(0.1,1,5,10,25,32),las=2);box()
-  abline(h=axTicks(2),col="grey85")
-
-  for(i in 1:8) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V3[i,1],V3[i,1]),border=NA,col="lightblue")
-  for(i in 1:8) polygon(i+c(-.4,0,0,-.4),c(0.0001,0.0001,V3[i,2],V3[i,2]),border=NA,col="pink")
-
-  mtext("Age Group",1,2.5,cex=0.9)
-  box()
-  mtext("Percent Mortality by Age for FB (red) and US (blue), 2014",3,.8,font=2,cex=0.8)
-  legend("topleft",c("Reported data","Fitted model"),pch=c(19,15),pt.cex=c(1,2),
-         lwd=NA,col=c("grey30","grey80"),bg="white")
+#
+#   V  <- cbind(t(df[65,255:265]), t(df[65,266:276]))
+#   V1  <- V[-3,]
+#   V1[2,] <- V1[2,]+V[3,]
+#   V2 <- V1[-4,]
+#   V2[3,] <- V2[3,]+V1[4,]
+#   V3 <- V2[-9,]
+#   V3[8,] <- V3[8,]+V2[9,]
+#
+#   V4 <- sum(V3)
+#
+#   V3<- V3/V4*100
+#
+#   plot(0,0,ylim=c(0.05,max(range(V3))),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA)
+#   axis(1,1:8,paste(c("0-4","5-24","25-44","45-54","55-64","65-74","75-84","85+"),"\nyears",sep=""),tick=F,cex.axis=0.75)
+#   axis(1,1:9-0.5,rep("",9))
+#   axis(2,c(0.1,1,5,10,25,32),las=2);box()
+#   abline(h=axTicks(2),col="grey85")
+#
+#   for(i in 1:8) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V3[i,1],V3[i,1]),border=NA,col="lightblue")
+#   for(i in 1:8) polygon(i+c(-.4,0,0,-.4),c(0.0001,0.0001,V3[i,2],V3[i,2]),border=NA,col="pink")
+#
+#   mtext("Age Group",1,2.5,cex=0.9)
+#   box()
+#   mtext("Percent Mortality by Age for FB (red) and US (blue), 2014",3,.8,font=2,cex=0.8)
+#   legend("topleft",c("Reported data","Fitted model"),pch=c(19,15),pt.cex=c(1,2),
+#          lwd=NA,col=c("grey30","grey80"),bg="white")
 
    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   ### ### ### ### ### ### TOTAL MORT PROG DISTRIBUTION 2014 ### ### ### ### ### ### ###
@@ -257,9 +257,8 @@ tb_graph_demo <- function(df){
   mtext("Risk Group",1,2.5,cex=0.9)
   box()
   mtext("Mortality by TB Progression Group for FB (red) and US (blue), 2014 (mil)",3,.8,font=2,cex=0.8)
-  legend("topright",c("Reported data","Fitted model"),pch=c(19,15),pt.cex=c(1,2),
-         lwd=NA,col=c("grey30","grey80"),bg="white")
-
+  legend("topright",c("Fitted model"),pch=15,pt.cex=2,,
+         lwd=NA,col="gray",bg="white")
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   ### ### ### ### ### ### TOTAL MORT MORT GROUP DISTRIBUTION 2014 ### ### ### ### ### ### ###
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -278,8 +277,8 @@ tb_graph_demo <- function(df){
   mtext("Risk Group",1,2.5,cex=0.9)
   box()
   mtext("Mortality % by Mortality Group for FB (red) and US (blue), 2014 (mil)",3,.8,font=2,cex=0.8)
-  legend("topright",c("Reported data","Fitted model"),pch=c(19,15),pt.cex=c(1,2),
-         lwd=NA,col=c("grey30","grey80"),bg="white")
+  legend("topright",c("Fitted model"),pch=15,pt.cex=2,,
+         lwd=NA,col="gray",bg="white")
 
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   ### ### ### ### ### ### TOTAL MORT % HR DISTRIBUTION 1993-2013 ### ### ### ### ### ###
