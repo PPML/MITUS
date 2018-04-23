@@ -603,7 +603,7 @@ if (tb_dyn==1){
               V1[ag][4][0][im][nm][rg][na]  += temp;
             } } } } }
     } //end of TB loop
-if (reblnc==1 & m % 6==0){
+if (reblnc==1 & m%12==0){
   ////// need to define the current distribution of persons across the RG at this timestep
   ////// RESET ALL THE VARIABLES
   for(int ag=0; ag<11; ag++) {
@@ -776,9 +776,13 @@ if (reblnc==1 & m % 6==0){
         for(int im=0; im<4; im++) {
           for(int nm=0; nm<4; nm++) {
             for(int rg=0; rg<2; rg++) {
+              if (reblnc==1 & m%12==0) {
               InitPopZ[ag][0]  += V2[ag][tb][0][im][nm][rg][0];
-
               InitPopZ[ag][1]  += V2[ag][tb][0][im][nm][rg][1]+V2[ag][tb][0][im][nm][rg][2];
+              } else {
+              InitPopZ[ag][0]  += V1[ag][tb][0][im][nm][rg][0];
+              InitPopZ[ag][1]  += V1[ag][tb][0][im][nm][rg][1]+V1[ag][tb][0][im][nm][rg][2];
+              }
 
             } } } } }
     for(int ag=0; ag<11; ag++) {
@@ -791,9 +795,17 @@ if (reblnc==1 & m % 6==0){
         for(int im=0; im<4; im++) {
           for(int nm=0; nm<4; nm++) {
             for(int rg=0; rg<2; rg++) {  // reset pop to InitPop
+              if (reblnc==1 & m%12==0) {
+
               V1[ag][tb][0][im][nm][rg][0]  = V2[ag][tb][0][im][nm][rg][0]*InitPopZ[ag][0];
               V1[ag][tb][0][im][nm][rg][1]  = V2[ag][tb][0][im][nm][rg][1]*InitPopZ[ag][1];
               V1[ag][tb][0][im][nm][rg][2]  = V2[ag][tb][0][im][nm][rg][2]*InitPopZ[ag][1];
+              } else {
+
+              V1[ag][tb][0][im][nm][rg][0]  = V1[ag][tb][0][im][nm][rg][0]*InitPopZ[ag][0];
+              V1[ag][tb][0][im][nm][rg][1]  = V1[ag][tb][0][im][nm][rg][1]*InitPopZ[ag][1];
+              V1[ag][tb][0][im][nm][rg][2]  = V1[ag][tb][0][im][nm][rg][2]*InitPopZ[ag][1];
+              }
 
               for (int na=0; na<3; na++){
                 V0[ag][tb][0][im][nm][rg][na]  = V1[ag][tb][0][im][nm][rg][na];
@@ -1380,19 +1392,23 @@ for(int ag=0; ag<11; ag++) {
                 V2[ag][tb][lt][im][nm][rg][na]=0;
               } } } } }
 
+// for(int ag=0; ag<11; ag++) {
   for(int tb=0; tb<6; tb++) {
     for(int lt=0; lt<2; lt++){
       for (int im=0; im<4; im++){
         for (int nm=0; nm<4; nm++){
           for(int rg=0; rg<2; rg++) {
+            // for(int na=0; na<3; na++) {
             for (int m2=0; m2<4; m2++){
               for (int p2=0; p2<4; p2++){
                 //         ////scalar multiplication (not matrix multiplication)
                 //      dist_newN[m][p] +=  dist_orig[m2][p2] * trans_mat_tot[m2+p2*4][m+p*4];////removed +1 index
                 V2[ag][tb][lt][im][nm][rg][na] += V1[ag][tb][lt][im][nm][rg][na] * trans_mat_tot[m2+p2*4][nm+im*4];
               } } } } } } }
-  } } //end of age & nativity loops
-    } //end of rebalancing loop
+
+} } //end of age & nativity loops
+} //end of rebalancing loop
+
 
 if (reblnc==2 & m==12){
   mat_sum=0;
@@ -2005,7 +2021,7 @@ if (reblnc==2 & m==12){
             for (int nm=0; nm<4; nm++){
               for(int rg=0; rg<2; rg++) {
                 for(int na=0; na<3; na++){
-                  if (reblnc > 0){
+                  if (reblnc > 0 & m==12){
                     V0[ag][tb][lt][im][nm][rg][na] = V2[ag][tb][lt][im][nm][rg][na];
                   } else {
                     V0[ag][tb][lt][im][nm][rg][na] = V1[ag][tb][lt][im][nm][rg][na];
