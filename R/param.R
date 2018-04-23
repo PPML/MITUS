@@ -440,7 +440,11 @@ ResNam <- c("Year",                                         # year
 
             paste("N_US",StatList[[6]],sep="_"),               # pop by nat and hr cat
             paste("N_NUS",StatList[[6]],sep="_"),              # pop by nat and hr cat
-            paste("TOTMORT")
+            paste("TOTMORT"),
+            paste("N_NM1",StatList[[4]],sep="_"),
+            paste("N_NM2",StatList[[4]],sep="_"),
+            paste("N_NM3",StatList[[4]],sep="_"),
+            paste("N_NM4",StatList[[4]],sep="_")
 
 )
 length(ResNam)
