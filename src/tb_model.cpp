@@ -268,7 +268,7 @@ for(int i=0; i<16; i++) {
   }
   N=30;
   reblnc=1;
-  tb_dyn=0;
+  tb_dyn=1;
   if (tb_dyn != 1){
     for(int ag=0; ag<11; ag++) {
       for(int tb=0; tb<6; tb++) {
@@ -603,7 +603,168 @@ if (tb_dyn==1){
               V1[ag][4][0][im][nm][rg][na]  += temp;
             } } } } }
     } //end of TB loop
+if (reblnc==1 & m % 6==0){
+  ////// need to define the current distribution of persons across the RG at this timestep
+  ////// RESET ALL THE VARIABLES
+  for(int ag=0; ag<11; ag++) {
+    for(int na=0; na<3; na++) {
+      mat_sum=0;
+      for (int i=0; i<4; i++){
+        for (int j=0; j<4; j++){
+          dist_orig[i][j]=0;
+          temp_mat[i][j]=0;
+          dist_orig_v[i]=0;
+        } }
+      for(int im=0; im<4; im++) {
+        for(int nm=0; nm<4; nm++) {
+          for(int tb=0; tb<6; tb++) {
+              for(int rg=0; rg<2; rg++) {
+                temp_mat[nm][im]  += V1[ag][tb][0][im][nm][rg][na];
+              } }
+          mat_sum +=  temp_mat[nm][im];
+        } }
+      //////insert error that distribution does not sum to one and then go from there;
+      for(int im=0; im<4; im++) {
+        for(int nm=0; nm<4; nm++) {
+          dist_orig[nm][im]  = temp_mat[nm][im]/mat_sum; // determine the proportions
+          dist_orig_v[(nm)+(im*4)] = dist_orig[nm][im];
+          // if (std::isnan(dist_orig[nm][im]) > 0  ){
+          // Rcpp::Rcout << "@ nm " << nm <<"& im "<< im << "orig is nan @" << s << "\n";}
+          //  if (std::isnan(dist_orig_v[(nm)+(im*4)]) > 0){
+          // Rcpp::Rcout << "@ nm " << nm <<"& im "<< im << "orig is " << dist_orig_v[(nm)+(im*4)]<< "\n";}
+        } }
+      // temp=0;
+      // // // // /////check that the distributions sum to 1;
+      // for (int i=0; i<4; i++){
+      //   for (int j=0; j<4; j++){
+      //     temp += dist_orig[i][j];
+      // // Rcpp::Rcout <<"dist_orig is" << dist_orig[i][j] <<"at i "<< i << "& j " << j << "\n";
+      // } }
+      //  Rcpp::Rcout <<"sum of dist_orig is" << temp << "at s= "<< s<<"\n";
 
+
+      //dist_orig[nm][im]+= V1[ag][tb][lt][im][nm][rg][na];
+
+      for (int i=0; i<16; i++){
+        dist_i_v[i] = dist_orig_v[i];
+      }
+
+      for(int n=0; n<30; n++){
+        //   // /////// CALCULATE DISTANCE FROM CURRENT DISTRIBUTION TO GOAL DISTRIBUTION /////
+        for (int i=0; i<16; i++){
+          diff_i_v[i] = dist_i_v[i] - dist_goal_v[i];
+        }
+        //
+        //   // for (int i=0; i<16; i++){
+        //   //   Rcpp::Rcout <<"at s=" << s << "diff_i_v is" <<  diff_i_v[i] << "\n";
+        //   // }
+        //   // //////////                  CREATE TRANSITION MATRIX                    ////////
+        for (int r=0; r<16; r++){
+          for (int c=0; c<16; c++){
+            trans_mat[r][c] = 0;
+          } }
+        for (int r=0; r<16; r++){
+          for (int c=0; c<16; c++){
+            /////max of 0 or (diff_i_v[r]-diff_i_v[c])
+            if ((diff_i_v[r]-diff_i_v[c]) > 0) {
+              trans_mat[r][c] = can_goN[r][c]*(diff_i_v[r]-diff_i_v[c]);
+            } else {
+              trans_mat[r][c] = 0; //looks good all 0 & numbers under .001;
+            }
+            // //             // Rcpp::Rcout << "initial trans_mat is" << trans_mat;
+          } }
+        // //
+        // // //////////                ADJUST THE TRANSITION MATRIX                  ////////
+        // // //////////   1ST SCALE UP RATES, 2ND MAKE SURE DOES NOT SUM OVER 1    //////////
+        frc = 0.1;  // approach seems quite sensitive to this value, = fraction of change to
+        mat_sum=0;
+        ////is this correct, idk
+        for(int i=0; i<16; i++){
+          for(int j=0; j<16; j++){
+            trans_mat[i][j] =  trans_mat[i][j] / dist_i_v[i]*frc;
+            mat_sum += trans_mat[i][j]; //should this be calculated in separate loop?
+            if (mat_sum > 1.0){ //max of 1 and sum(trans_mat)
+              trans_mat[i][j] =  trans_mat [i][j] / mat_sum;
+            }
+          } }
+        // // //       Rcpp::Rcout << "temp trans_mat is" << trans_mat;
+        // // // //////////                      FINALIZE TRANS_MAT                    //////////
+        for(int i=0; i<16; i++){
+          rowsum[i]=0; //reset row sum
+          for(int j=0; j<16; j++){
+            rowsum[i]+=trans_mat[i][j]; //calculate the row sum of temp mat above
+            if (i==j){
+              trans_mat[i][j]=(1-rowsum[i]); //rowsum is equal to zero?
+            }  } }
+        // // // //////////                RECORD ABSOLUTE TRANSITIONS                 //////////
+        for(int i=0; i<16; i++){
+          for(int j=0; j<16; j++){
+            did_goN[i][j]=0;
+          } }
+        for(int i=0; i<16; i++){
+          for(int j=0; j<16; j++){
+            did_goN[i][j] += dist_i_v[i]* trans_mat[i][j]; } }
+        for(int i=0; i<16; i++){
+          for(int j=0; j<16; j++){
+            if (i==j){
+              did_goN[i][j]=0;
+            }
+          } }
+        //       // //////////               UPDATE THE DISTRIBUTION VECTOR             ////////////
+        //       // //////////           This is supposed to be matrix multiplication   ////////////
+        for(int c=0; c<16; c++){
+          temp_vec[c] = 0;
+        }
+        for(int r=0; r<16; r++){
+          for(int c=0; c<16; c++){
+            temp_vec[c] += dist_i_v[r]*trans_mat[r][c];
+          } } //looks good after one iteration; explodes after 30
+        for(int c=0; c<16; c++){
+          dist_i_v[c] = temp_vec[c];
+        }
+      } //end of N loop
+      //     // //////////                    NOW UPDATE IN ONE STEP                 ///////////
+      for(int i=0; i<16; i++){
+        for(int j=0; j<16; j++){
+          trans_mat_tot[i][j] = did_goN[i][j]; }}
+      for(int i=0; i<16; i++){
+        for(int j=0; j<16; j++){
+          trans_mat_tot[i][j] = did_goN[i][j] / dist_orig_v[i];
+        } }
+      //     //
+      for(int i=0; i<16; i++){
+        rowsum[i]=0;
+        for(int j=0; j<16; j++){
+          rowsum[i] +=trans_mat_tot[i][j]; //rowsum
+          if (i==j){
+            trans_mat_tot[i][j]=(1-rowsum[i]);
+          } else {
+            trans_mat_tot[i][j]=trans_mat_tot[i][j];
+          }
+        } }
+      //     //
+      //     // //      Rcpp::Rcout<< "trans_mat_tot is" << trans_mat_tot;
+      //     // //////////           NOW FINALLY UPDATE THE DISTRIBUTION           ///////////
+      for(int tb=0; tb<6; tb++) {
+        for(int lt=0; lt<2; lt++){
+          for (int im=0; im<4; im++){
+            for (int nm=0; nm<4; nm++){
+              for(int rg=0; rg<2; rg++) {
+                V2[ag][tb][lt][im][nm][rg][na]=0;
+              } } } } }
+
+      for(int tb=0; tb<6; tb++) {
+          for (int im=0; im<4; im++){
+            for (int nm=0; nm<4; nm++){
+              for(int rg=0; rg<2; rg++) {
+                for (int m2=0; m2<4; m2++){
+                  for (int p2=0; p2<4; p2++){
+                    //         ////scalar multiplication (not matrix multiplication)
+                    //      dist_newN[m][p] +=  dist_orig[m2][p2] * trans_mat_tot[m2+p2*4][m+p*4];////removed +1 index
+                    V2[ag][tb][0][im][nm][rg][na] += V1[ag][tb][0][im][nm][rg][na] * trans_mat_tot[m2+p2*4][nm+im*4];
+                  } } } } } }
+    } } //end of age & nativity loops
+} //end of rebalancing loop
     /////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////RESET POPULATION SIZE/////////////////////////////
     for(int ag=0; ag<11; ag++) {
@@ -615,9 +776,9 @@ if (tb_dyn==1){
         for(int im=0; im<4; im++) {
           for(int nm=0; nm<4; nm++) {
             for(int rg=0; rg<2; rg++) {
-              InitPopZ[ag][0]  += V1[ag][tb][0][im][nm][rg][0];
+              InitPopZ[ag][0]  += V2[ag][tb][0][im][nm][rg][0];
 
-              InitPopZ[ag][1]  += V1[ag][tb][0][im][nm][rg][1]+V1[ag][tb][0][im][nm][rg][2];
+              InitPopZ[ag][1]  += V2[ag][tb][0][im][nm][rg][1]+V2[ag][tb][0][im][nm][rg][2];
 
             } } } } }
     for(int ag=0; ag<11; ag++) {
@@ -630,9 +791,9 @@ if (tb_dyn==1){
         for(int im=0; im<4; im++) {
           for(int nm=0; nm<4; nm++) {
             for(int rg=0; rg<2; rg++) {  // reset pop to InitPop
-              V1[ag][tb][0][im][nm][rg][0]  = V1[ag][tb][0][im][nm][rg][0]*InitPopZ[ag][0];
-              V1[ag][tb][0][im][nm][rg][1]  = V1[ag][tb][0][im][nm][rg][1]*InitPopZ[ag][1];
-              V1[ag][tb][0][im][nm][rg][2]  = V1[ag][tb][0][im][nm][rg][2]*InitPopZ[ag][1];
+              V1[ag][tb][0][im][nm][rg][0]  = V2[ag][tb][0][im][nm][rg][0]*InitPopZ[ag][0];
+              V1[ag][tb][0][im][nm][rg][1]  = V2[ag][tb][0][im][nm][rg][1]*InitPopZ[ag][1];
+              V1[ag][tb][0][im][nm][rg][2]  = V2[ag][tb][0][im][nm][rg][2]*InitPopZ[ag][1];
 
               for (int na=0; na<3; na++){
                 V0[ag][tb][0][im][nm][rg][na]  = V1[ag][tb][0][im][nm][rg][na];
@@ -1068,7 +1229,7 @@ if (tb_dyn==1){
 //////////////////////////////////////////////////////////////////////////////////
 ////only create the distirbution; do not apply until after the outputs are//////
 //////created for this timestep.
-if (reblnc==1){
+if (reblnc==1 & m==12){
 ////// need to define the current distribution of persons across the RG at this timestep
 ////// RESET ALL THE VARIABLES
 for(int ag=0; ag<11; ag++) {
@@ -1233,7 +1394,7 @@ for(int ag=0; ag<11; ag++) {
   } } //end of age & nativity loops
     } //end of rebalancing loop
 
-if (reblnc==2){
+if (reblnc==2 & m==12){
   mat_sum=0;
   for (int i=0; i<4; i++){
     for (int j=0; j<4; j++){
