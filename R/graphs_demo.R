@@ -84,7 +84,7 @@ tb_graph_demo <- function(df){
   mtext("Risk Group",1,2.5,cex=0.9)
   box()
   mtext("Population by TB Progression Group, 2014 (mil, log-scale)",3,.8,font=2,cex=0.8)
-  legend("topright",c("Fitted model"),pch=15,pt.cex=2,,
+  legend("topright",c("Fitted model"),pch=15,pt.cex=2,
          lwd=NA,col="gray",bg="white")
 
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -102,8 +102,34 @@ tb_graph_demo <- function(df){
   mtext("Risk Group",1,2.5,cex=0.9)
   box()
   mtext("Population by Mortality Group, 2014 (mil, log-scale)",3,.8,font=2,cex=0.8)
-  legend("topright",c("Fitted model"),pch=15,pt.cex=2,,
+  legend("topright",c("Fitted model"),pch=15,pt.cex=2,
          lwd=NA,col="gray",bg="white")
+
+  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+  ### ### ### ### ### ### TOTAL POP JOINT DISTRIBUTION 2014 ### ### ### ### ### ###
+  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+
+  mTrsp <- function(cl,a)  { apply(col2rgb(cl), 2, function(x){ rgb(x[1],x[2],x[3],a,maxColorValue=255)}) }
+
+
+  V<-cbind(t(df[65,318:333]))
+  dist_mat <-matrix(V,4,4)
+  rownames(dist_mat) <-c("M1","M2","M3","M4")
+  colnames(dist_mat) <-c("P1","P2","P3","P4")
+  dist_mat <- dist_mat/sum(dist_mat)
+
+  plot(0:4,0:4,xlab="",ylab="",col=NA)
+  for(i in 1:4) points(1:4-0.5,rep(i-0.5,4),cex=dist_mat[i,]*50,pch=16,col="grey40")
+  for(i in 1:4) points(1:4-0.5,rep(i-0.5,4),cex=dist_goal[i,]*50,pch=16,col=mTrsp(2,100))
+
+
+  mtext("TB Progression",1,2.5,cex=0.9)
+  mtext("Mortality",2,2.5,cex=0.9)
+
+  box()
+  mtext("Population by Joint Risk Factor Distribution, 2014 (mil)",3,.8,font=2,cex=0.8)
+  legend("topright",c("Fitted model", "Goal Distribution"),pch=19,pt.cex=1,
+         lwd=NA,col=c("grey40","darkred"),bg="white")
 
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   ### ### ### ### ### ### TOTAL POP HR DISTRIBUTION 1993-2013 ### ### ### ### ### ###
@@ -131,6 +157,10 @@ tb_graph_demo <- function(df){
   mtext("Percent Homeless Population for FB (red) and US (blue) 1993-2014 ",3,.8,font=2,cex=0.8)
   legend("bottomright",c("Total","US born","Foreign born","Reported data","Fitted model"),cex=0.9,
          pch=c(15,15,15,19,NA),lwd=c(NA,NA,NA,1,2),lty=c(NA,NA,NA,3,1),col=c("grey50",4,"red3",1,1),bg="white",pt.cex=c(1.8,1.8,1.8,0.3,NA))
+
+  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+
+  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   ### ### ### ### ### ###   TOTAL MORT EACH DECADE, BY US/FB  ### ### ### ### ### ###
