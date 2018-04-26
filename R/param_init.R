@@ -57,13 +57,32 @@ TunmuHvAg <- P["TunmuTbAg"] # ffs.
 RRmuHR    <- c(1,P["RRmuHR"])
 
 ############### CREATE A MATRIX OF RF MORTALITIES BY AGE GROUP ###############
-vRFMort    <- matrix(0,11,4);
-rownames(vRFMort) <- c("0_4",paste(0:8*10+5,1:9*10+4,sep="_"),"95p")
-colnames(vRFMort) <- c("RF1","RF2","RF3","RF4")
-vRFMort[,1] <- 0;
-vRFMort[,2] <- muRF1*exp(c(0,0,1:6,6,6,6)*TunmuHvAg)
-vRFMort[,3] <- muRF2*exp(c(0,0,1:6,6,6,6)*TunmuHvAg)
-vRFMort[,4] <- muRF3*exp(c(0,0,1:6,6,6,6)*TunmuHvAg)
+mort_dist<-rowSums(dist_goal)
+
+RF_fact=20
+
+RRmuRF    <- rep(NA,4);
+names(RRmuRF) <- c("RF1","RF2","RF3","RF4")
+
+RRmuRF<-exp((0:3)/3*log(RF_fact))
+RRmuRF<-RRmuRF/sum(RRmuRF*mort_dist)
+
+#check =1
+#RRmuRF%*%mort_dist
+
+# vRFMort    <- matrix(0,11,4);
+# rownames(vRFMort) <- c("0_4",paste(0:8*10+5,1:9*10+4,sep="_"),"95p")
+# colnames(vRFMort) <- c("RF1","RF2","RF3","RF4")
+# vRFMort[,1] <- 0;
+# vRFMort[,2] <- muRF1*exp(c(0,0,1:6,6,6,6)*TunmuHvAg)
+# vRFMort[,3] <- muRF2*exp(c(0,0,1:6,6,6,6)*TunmuHvAg)
+# vRFMort[,4] <- muRF3*exp(c(0,0,1:6,6,6,6)*TunmuHvAg)
+
+##### combine the two RRs to a single factor
+RRs_mu <-matrix(NA,2,4)
+RRs_mu[1,] <-RRmuRF
+RRs_mu[2,] <-RRmuRF*RRmuHR[2]
+
 ######################## MULTIPLER OF MORT RATE ABOVE ########################
 
 TunmuTbAg <- P["TunmuTbAg"]
@@ -506,10 +525,66 @@ ResNam <- c("Year",                                         # year
             paste("N_US",StatList[[6]],sep="_"),               # pop by nat and hr cat
             paste("N_NUS",StatList[[6]],sep="_"),              # pop by nat and hr cat
             paste("TOTMORT"),
+
             paste("N_NM1",StatList[[4]],sep="_"),
             paste("N_NM2",StatList[[4]],sep="_"),
             paste("N_NM3",StatList[[4]],sep="_"),
-            paste("N_NM4",StatList[[4]],sep="_")
+            paste("N_NM4",StatList[[4]],sep="_"),
+
+            paste("%_0-4","NM1",StatList[[4]],sep="_"),
+            paste("%_0-4","NM2",StatList[[4]],sep="_"),
+            paste("0-4","NM3",StatList[[4]],sep="_"),
+            paste("0-4","NM4",StatList[[4]],sep="_"),
+
+            paste("5-14","NM1",StatList[[4]],sep="_"),
+            paste("5-14","NM2",StatList[[4]],sep="_"),
+            paste("5-14","NM3",StatList[[4]],sep="_"),
+            paste("5-14","NM4",StatList[[4]],sep="_"),
+
+            paste("15-24","NM1",StatList[[4]],sep="_"),
+            paste("15-24","NM2",StatList[[4]],sep="_"),
+            paste("15-24","NM3",StatList[[4]],sep="_"),
+            paste("15-24","NM4",StatList[[4]],sep="_"),
+
+            paste("25-34","NM1",StatList[[4]],sep="_"),
+            paste("25-34","NM2",StatList[[4]],sep="_"),
+            paste("25-34","NM3",StatList[[4]],sep="_"),
+            paste("25-34","NM4",StatList[[4]],sep="_"),
+
+            paste("35-44","NM1",StatList[[4]],sep="_"),
+            paste("35-44","NM2",StatList[[4]],sep="_"),
+            paste("35-44","NM3",StatList[[4]],sep="_"),
+            paste("35-44","NM4",StatList[[4]],sep="_"),
+
+            paste("45-54","NM1",StatList[[4]],sep="_"),
+            paste("45-54","NM2",StatList[[4]],sep="_"),
+            paste("45-54","NM3",StatList[[4]],sep="_"),
+            paste("45-54","NM4",StatList[[4]],sep="_"),
+
+            paste("55-64","NM1",StatList[[4]],sep="_"),
+            paste("55-64","NM2",StatList[[4]],sep="_"),
+            paste("55-64","NM3",StatList[[4]],sep="_"),
+            paste("55-64","NM4",StatList[[4]],sep="_"),
+
+            paste("65-74","NM1",StatList[[4]],sep="_"),
+            paste("65-74","NM2",StatList[[4]],sep="_"),
+            paste("65-74","NM3",StatList[[4]],sep="_"),
+            paste("65-74","NM4",StatList[[4]],sep="_"),
+
+            paste("75-84","NM1",StatList[[4]],sep="_"),
+            paste("75-84","NM2",StatList[[4]],sep="_"),
+            paste("75-84","NM3",StatList[[4]],sep="_"),
+            paste("75-84","NM4",StatList[[4]],sep="_"),
+
+            paste("85-94","NM1",StatList[[4]],sep="_"),
+            paste("85-94","NM2",StatList[[4]],sep="_"),
+            paste("85-94","NM3",StatList[[4]],sep="_"),
+            paste("85-94","NM4",StatList[[4]],sep="_"),
+
+            paste("95p","NM1",StatList[[4]],sep="_"),
+            paste("95p","NM2",StatList[[4]],sep="_"),
+            paste("95p","NM3",StatList[[4]],sep="_"),
+            paste("95p","NM4",StatList[[4]],sep="_")
 )
 length(ResNam)
 
