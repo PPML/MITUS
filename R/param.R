@@ -35,6 +35,7 @@ load("data/ModelInputs_9-2-16.rData")
   	mubt[,i] <- SmoCurve(BgMort[,i+1])*P["TunMubt"]/12
   }
 
+
 #########################     DISEASE SPECIFIC       ###########################
 #############    ACTIVE TB RATES DEFAULT TO THE SMEAR POS LEVELS   #############
 
@@ -60,7 +61,7 @@ load("data/ModelInputs_9-2-16.rData")
 ############### CREATE A MATRIX OF RF MORTALITIES BY AGE GROUP ###############
   mort_dist<-rowSums(dist_goal)
 
-  RF_fact=20
+  RF_fact=2
 
   RRmuRF    <- c(1,1,1,1);
   names(RRmuRF) <- c("RF1","RF2","RF3","RF4")
@@ -506,7 +507,9 @@ ResNam <- c("Year",                                         # year
             paste("95p","NM1",StatList[[4]],sep="_"),
             paste("95p","NM2",StatList[[4]],sep="_"),
             paste("95p","NM3",StatList[[4]],sep="_"),
-            paste("95p","NM4",StatList[[4]],sep="_")
+            paste("95p","NM4",StatList[[4]],sep="_"),
+            paste("mort_rate",StatList[[1]],sep="_" )
+
 
 )
 length(ResNam)

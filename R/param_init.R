@@ -59,7 +59,7 @@ RRmuHR    <- c(1,P["RRmuHR"])
 ############### CREATE A MATRIX OF RF MORTALITIES BY AGE GROUP ###############
 mort_dist<-rowSums(dist_goal)
 
-RF_fact=20
+RF_fact=2
 
 RRmuRF    <- rep(NA,4);
 names(RRmuRF) <- c("RF1","RF2","RF3","RF4")
@@ -584,7 +584,8 @@ ResNam <- c("Year",                                         # year
             paste("95p","NM1",StatList[[4]],sep="_"),
             paste("95p","NM2",StatList[[4]],sep="_"),
             paste("95p","NM3",StatList[[4]],sep="_"),
-            paste("95p","NM4",StatList[[4]],sep="_")
+            paste("95p","NM4",StatList[[4]],sep="_"),
+            paste("mort_rate",StatList[[1]],sep="_" )
 )
 length(ResNam)
 
