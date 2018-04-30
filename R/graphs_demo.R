@@ -459,7 +459,7 @@ tb_graph_demo <- function(df){
   x<-seq(6,781,12)
   V2  <-mubt[x,]
 
-  col<-rainbow(11?ra)
+  col<-rainbow(11)
 
   plot(0,0,ylim=c(0,max(range(V), range(V2))),xlim=c(1950,2014),xlab="",ylab="",axes=F)
   axis(1);axis(2,las=2);box()
