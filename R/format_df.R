@@ -42,10 +42,10 @@ Intervention <- 5
 
 
 #' Input the Output Name from ResNam
-  Output <- rep(NA,(length(ResNam)-1)*nrow(results))
-# for (i in 1:length(ResNam)*nrow(results)){
-  Output <-rep(ResNam[2:length(ResNam)],nrow(results))
-# }
+Output <- rep(NA,(length(ResNam)-1)*nrow(results))
+  for (i in 1:(length(ResNam)-1)){
+      Output[(((i-1)*100)+1):(i*100)] <-ResNam[i+1]
+ }
 
 #' Input the values from results dataframe
 Value <- rep(NA,(nrow(results)*(ncol(results)-1)))
