@@ -238,18 +238,17 @@ tb_graph_demo <- function(df){
   ### ### ### ### ### ###   TOTAL MORT RATE BY AGE DISTRIBUTION 1993-2014  ### ### ### ### ### ###
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
-  V  <- cbind((df[44:65,255:265])+(df[44:65,266:276]))
+  V  <- cbind((df[44:100,255:265])+(df[44:100,266:276]))
 
-  V1  <- cbind(t(df[44:65,33:43])+t(df[44:65,44:54]))
-  V2  <-  V/V1
+  V1  <- df[44:100,3:13]
+  V2  <-  V/(V1+V)
 
-  plot(0,0,ylim=c(0,1),xlim=c(1993,2014),xlab="",ylab="",axes=F)
+  plot(0,0,ylim=c(0,.2),xlim=c(1993,2049),xlab="",ylab="",axes=F)
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
   color=c("red", "orange", "gold", "green", "blue", "purple", "darkred", "light blue", "pink", "darkblue", "light green")
-  for(i in 1:11) lines(1993:2014,V[,i],lwd=2,col=color[i])
-  for(i in 1:11) lines(mubt[528])
-  # for(i in 1:8) points(i+.2,(US_mort_age[16,i+1])/1e6,pch=19,cex=1.2,col="black")
+  for(i in 1:11) lines(1993:2049,V2[,i],lwd=2,col=color[i])
+  # for(i in 1:8) points(i+.2,(US_mort_age"[16,i+1])/1e6,pch=19,cex=1.2,col="black")
 
 
   mtext("Year",1,2.5,cex=0.9)
@@ -264,10 +263,13 @@ tb_graph_demo <- function(df){
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
   V  <- cbind(t(df[65,255:265]), t(df[65,266:276]))
+
   V1  <- V[-3,]
   V1[2,] <- V1[2,]+V[3,]
+
   V2 <- V1[-4,]
   V2[3,] <- V2[3,]+V1[4,]
+
   V3 <- V2[-9,]
   V3[8,] <- V3[8,]+V2[9,]
 
@@ -364,6 +366,50 @@ tb_graph_demo <- function(df){
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   ### ### ### ### ### ### TOTAL MORT MORT GROUP DISTRIBUTION 2014 ### ### ### ### ### ### ###
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+
+  V  <- cbind(t(df[65,285:288]),t(df[65,289:292]))
+  V1  <- colSums(V)
+
+  plot(0,0,ylim=c(0.05,50),xlim=c(0.6,4.4),xlab="",ylab="",axes=F,col=NA)
+  axis(1,1:4,paste(c("1st","2nd","3rd","4th"),"\ngroup",sep=""),tick=F,cex.axis=0.75)
+  axis(1,1:5-0.5,rep("",5))
+  axis(2,c(0,10,20,30,40,50),las=2);box()
+  abline(h=axTicks(2),col="grey85")
+  for(i in 1:4) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,(V[i,1]/V1[1])*100,(V[i,1]/V1[1])*100),border=NA,col="lightblue")
+  for(i in 1:4) polygon(i+c(-.4,0,0,-.4),c(0.0001,0.0001,(V[i,2]/V1[2])*100,(V[i,2]/V1[2])*100),border=NA,col="pink")
+
+  mtext("Risk Group",1,2.5,cex=0.9)
+  box()
+  mtext("Percent of Mortality by Mortality Group for FB (red) and US (blue), 2014 (mil)",3,.8,font=2,cex=0.8)
+  legend("topright",c("model"),pch=15,pt.cex=2,lwd=NA,col="gray",bg="white")
+#
+#   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+#   ### ### ### ### ### ### PERCENT OF EACH MORT GROUP KILLED IN 2014 ### ### ### ### ### ### ###
+#   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+#                   #US
+  V  <- cbind(t(df[2:66,285:288])+t(df[2:66,289:292])) #mortality by mortality group
+  V1  <- cbind(t(df[1:65,24:27])) #total population of each mortality group
+  V2 <- V[,]/V1[,] #fraction of each mortality group dies
+  plot(0,0,ylim=c(0,max(range(V2))*100),xlim=c(1950,2014),xlab="",ylab="",axes=F)
+  axis(1);axis(2,las=2);box()
+  abline(h=axTicks(2),col="grey85")
+
+  lines(1950:2014,V2[4,]*100,lwd=2,col="red3")
+  lines(1950:2014,V2[3,]*100,lwd=2,col="orange")
+  lines(1950:2014,V2[2,]*100,lwd=2,col="gold")
+  lines(1950:2014,V2[1,]*100,lwd=2,col="green")
+
+  mtext("Year",1,2.5,cex=0.9)
+  mtext("Percent",2,2.5,cex=0.9)
+
+  box()
+  mtext("Percent of Each Mortality Group Killed, 1950-2014",3,.8,font=2,cex=0.8)
+  legend("bottomright",c("MG1","MG2","MG3","MG4","Model"),pch=c(15,15,15,15,NA),lwd=c(NA,NA,NA,NA,2),lty=c(NA,NA,NA,NA,1), col=c("green","gold","orange","red3","black"),bg="white")
+
+
+  # ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+  # ### ### ### ### ### ### Percent of each mort group killed by Age Group ### ### ### ### ### ### ###
+  # ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 #
 #   V  <- cbind(t(df[65,285:288]),t(df[65,289:292]))
 #   V1  <- colSums(V)
@@ -380,50 +426,6 @@ tb_graph_demo <- function(df){
 #   box()
 #   mtext("Percent of Mortality by Mortality Group for FB (red) and US (blue), 2014 (mil)",3,.8,font=2,cex=0.8)
 #   legend("topright",c("model"),pch=15,pt.cex=2,lwd=NA,col="gray",bg="white")
-#
-#   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-#   ### ### ### ### ### ### PERCENT OF EACH MORT GROUP KILLED IN 2014 ### ### ### ### ### ### ###
-#   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-#                   #US
-  V  <- cbind(t(df[2:66,285:288])+t(df[2:66,289:292])) #mortality by mortality group
-  V1  <- cbind(t(df[1:65,24:27])) #total population of each mortality group
-  V2 <- V[,]/V1[,] #fraction of each mortality group dies
-  plot(0,0,ylim=c(0,max(range(V2))*100),xlim=c(1950,2014),xlab="",ylab="",axes=F)
-  axis(1);axis(2,las=2);box()
-  abline(h=axTicks(2),col="grey85")
-
-  lines(1950:2014,V2[4,]*100,lwd=2,col="red3")
-  lines(1950:2014,V2[3,]*100,lwd=2,col="orange")
-  lines(1950:2014,V2[2,]*100,lwd=2,col="gold")
-  # lines(1950:2014,V2[1,]*100,lwd=2,col="green")
-
-  mtext("Year",1,2.5,cex=0.9)
-  mtext("Percent",2,2.5,cex=0.9)
-
-  box()
-  mtext("Percent of Each Mortality Group Killed, 1950-2014",3,.8,font=2,cex=0.8)
-  legend("bottomright",c("MG1","MG2","MG3","MG4","Model"),pch=c(15,15,15,15,NA),lwd=c(NA,NA,NA,NA,2),lty=c(NA,NA,NA,NA,1), col=c("green","gold","orange","red3","black"),bg="white")
-
-
-  # ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-  # ### ### ### ### ### ### Percent of each mort group killed by Age Group ### ### ### ### ### ### ###
-  # ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-  #
-  # V  <- cbind(t(df[65,285:288]),t(df[65,289:292]))
-  # V1  <- colSums(V)
-  #
-  # plot(0,0,ylim=c(0.05,50),xlim=c(0.6,4.4),xlab="",ylab="",axes=F,col=NA)
-  # axis(1,1:4,paste(c("1st","2nd","3rd","4th"),"\ngroup",sep=""),tick=F,cex.axis=0.75)
-  # axis(1,1:5-0.5,rep("",5))
-  # axis(2,c(0,10,20,30,40,50),las=2);box()
-  # abline(h=axTicks(2),col="grey85")
-  # for(i in 1:4) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,(V[i,1]/V1[1])*100,(V[i,1]/V1[1])*100),border=NA,col="lightblue")
-  # for(i in 1:4) polygon(i+c(-.4,0,0,-.4),c(0.0001,0.0001,(V[i,2]/V1[2])*100,(V[i,2]/V1[2])*100),border=NA,col="pink")
-  #
-  # mtext("Risk Group",1,2.5,cex=0.9)
-  # box()
-  # mtext("Percent of Mortality by Mortality Group for FB (red) and US (blue), 2014 (mil)",3,.8,font=2,cex=0.8)
-  # legend("topright",c("model"),pch=15,pt.cex=2,lwd=NA,col="gray",bg="white")
 
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   ### ### ### ### ### ### TOTAL MORT % HR DISTRIBUTION 1993-2013 ### ### ### ### ### ###
