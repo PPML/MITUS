@@ -1,5 +1,6 @@
 #include <Rcpp.h>
 #include <algorithm>
+#include "dist_orig_func.h"
 
 using namespace Rcpp;
 
@@ -118,6 +119,7 @@ Rcpp::List cSim(
   Rcpp::NumericMatrix    trans_mat_fin(16,16);
   Rcpp::NumericVector   dist(16);
   double        frc;
+  double burnvec[12672];
   // double        pop_t;
   // double        sse;
   double        rowsum[16];
@@ -303,6 +305,8 @@ Rcpp::List cSim(
     // } }
     // for(int rg=0; rg<2; rg++){RRmuHR[rg]=1; }
     muTbRF =0;
+    for(int i=0; i < 12672; i++)
+    {  burnvec[i]=0;}
   }
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -700,53 +704,78 @@ Rcpp::List cSim(
     // Rcpp::Rcout << "popbefore reblnc @ time m= " << m << "is "<< temp <<"\n";
     //
     // Rcpp::Rcout << " at begin reblnc mort 3 % at time= " << m << "is" << temp3 << "\n";
+//     for(int ag=0; ag<11; ag++) {
+//
+// for (int i=0; i<4; i++){
+//       temp_vec2[i]=0;
+// }
+//     mat_sum=0;
+//     for(int nm=0; nm<4; nm++){
+//         for(int tb=0; tb<6; tb++) {
+//           for(int im=0; im<4; im++) {
+//             for(int rg=0; rg<2; rg++){
+//               for(int na=0; na<3; na++){
+//                 temp_vec2[nm] += V1[ag][tb][0][im][nm][rg][na];
+//
+//               } } } } }
+//
+//     for(int nm=0; nm<4; nm++){
+//       mat_sum+=temp_vec2[nm];
+//     }
+//     for(int nm=0; nm<4; nm++){
+//       mort_dist[nm] = temp_vec2[nm]/mat_sum;
+//       Rcpp::Rcout << "mort dist before reblnc is" << mort_dist[nm] << "@m= "<< m <<"and ag" <<ag<< "\n";}
+//     }
 
-for (int i=0; i<4; i++){
-      temp_vec2[i]=0;
-}
-    mat_sum=0;
-    for(int nm=0; nm<4; nm++){
-      // for(int ag=0; ag<11; ag++) {
-        for(int tb=0; tb<6; tb++) {
-          for(int im=0; im<4; im++) {
-            for(int rg=0; rg<2; rg++){
-              for(int na=0; na<3; na++){
-                temp_vec2[nm] += V1[0][tb][0][im][nm][rg][na];
-              } } } } }
-    // }
-    for(int nm=0; nm<4; nm++){
-      mat_sum+=temp_vec2[nm];
-    }
-    for(int nm=0; nm<4; nm++){
-      mort_dist[nm] = temp_vec2[nm]/mat_sum;
-      Rcpp::Rcout << "mort dist before reblnc is" << mort_dist[nm] << "@m= "<< m<< "\n";}
+// for(int ag=0; ag<11; ag++) {
+//   for(int tb=0; tb<6; tb++) {
+//     for(int lt=0; lt<2; lt++){
+//       for(int im=0; im<4; im++){
+//         for(int nm=0; nm<4; nm++){
+//           for(int rg=0; rg<2; rg++) {
+//             for(int na=0; na<3; na++) {
+//               burnvec[ag+tb*11+lt*66+im*132+nm*528+rg*2112+na*4224] = V1[ag][tb][lt][im][nm][rg][na];
+//             } } } } } } }
+// // for (int i=0; i<12672; i++){
+// double * burnvec2;
+//   burnvec2= burnvec;
+// // }
+//     dist_orig_func(burnvec2,11,6,1,4,4,2,3);
+
+      // for (int i=0; i<16; i++){
+
+    // Rcpp::Rcout <<  "for i " << i << "dist is "<< dist_i_v_f[i] << "\n"; }
 
     /////reblance the population
     if (reblnc==1){
       ////// need to define the current distribution of persons across the RG at this timestep
-      ////// RESET ALL THE VARIABLES
       for(int ag=0; ag<11; ag++) {
         for(int na=0; na<3; na++) {
-
-          mat_sum=0;
           for (int i=0; i<4; i++){
             for (int j=0; j<4; j++){
-              did_goN[i][j]=0;
               dist_orig[i][j]=0;
               temp_mat[i][j]=0;
-              dist_orig_v[i]=0;
-              dist_i_v[i]=0;
-              diff_i_v[i]=0;
+            } }
+          for (int i=0; i<16; i++){
+            dist_orig_v[i]=0;
+            dist_i_v[i]=0;
+            diff_i_v[i]=0;
+            for (int j=0; j<16; j++){
+              did_goN[i][j]=0;
             } }
           for(int nm=0; nm<4; nm++) {
            for(int im=0; im<4; im++) {
            for(int tb=0; tb<6; tb++) {
               for(int rg=0; rg<2; rg++) {
                     temp_mat[nm][im]  += V1[ag][tb][0][im][nm][rg][na];
-                  } }
+              } } } }
+
+          mat_sum=0;
+
+          for(int nm=0; nm<4; nm++) {
+            for(int im=0; im<4; im++) {
               mat_sum +=  temp_mat[nm][im];
             } }
-          //////insert error that distribution does not sum to one and then go from there;
           for(int nm=0; nm<4; nm++) {
           for(int im=0; im<4; im++) {
               dist_orig[nm][im]  = temp_mat[nm][im]/mat_sum; // determine the proportions
@@ -771,10 +800,11 @@ for (int i=0; i<4; i++){
           for (int i=0; i<16; i++){
             dist_i_v[i] = dist_orig_v[i]; // non zero cells for all ag and nat
           }
-///////////////////////////
-///////////BEGIN THE N LOOP
-///////////////////////////
-          for(int n=0; n<10; n++){
+//////////////////THIS DISTRIBUTION IS CORRECT!! //////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////BEGIN THE N LOOP//////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+          for(int n=0; n<30; n++){
             //   // /////// CALCULATE DISTANCE FROM CURRENT DISTRIBUTION TO GOAL DISTRIBUTION /////
             for (int i=0; i<16; i++){
               diff_i_v[i] = dist_i_v[i] - dist_goal_v[i];
@@ -787,14 +817,19 @@ for (int i=0; i<4; i++){
               } }
             for (int r=0; r<16; r++){
               for (int c=0; c<16; c++){
-                  // Rcpp::Rcout <<"at n=" << n << "diff is" << diff_i_v[r]-diff_i_v[c] << "\n";
+                  // Rcpp::Rcout <<"at n=" << n << "diff is" << diff_i_v[r]-diff_i_v[c] << "ag = "<<ag << "na =" <<na<< "\n";
+                // Rcpp::Rcout <<"cango"<< can_goN[r][c] << "\n";
 
                 /////max of 0 or (diff_i_v[r]-diff_i_v[c])
                 if ((diff_i_v[r]-diff_i_v[c]) > 0) {
                   trans_mat[r][c] = can_goN[r][c]*(diff_i_v[r]-diff_i_v[c]);
-                } else {
-                  trans_mat[r][c] = 0; //looks good all 0 & numbers under .001;
                 }
+                // for (int r=0; r<16; r++){
+                //   for (int c=0; c<16; c++){
+                //     if(isnan(trans_mat[r][c])){
+                //   Rcpp::Rcout <<"for ag=" << ag << "and na= " <<na<< "trans_mat is" << trans_mat[r][c]<< "for i="<< r<< "& j="<< c << "\n";
+                //     }}
+                // }
               } }
             // //
             // // //////////                ADJUST THE TRANSITION MATRIX                  ////////
@@ -804,30 +839,43 @@ for (int i=0; i<4; i++){
             ////is this correct, idk
             for(int i=0; i<16; i++){
               for(int j=0; j<16; j++){
-                trans_mat[i][j] =  trans_mat[i][j] /dist_i_v[i]*frc;
-                // Rcpp::Rcout << "trans_mat is" << trans_mat[i][j]<< "\n";
-              } }
+                // if (dist_i_v[i] != 0){
+                trans_mat[i][j] =  (trans_mat[i][j] /(dist_i_v[i])+1e-30)*frc;
+                // }
+              }}
+
+            // for (int r=0; r<16; r++){
+            //   for (int c=0; c<16; c++){
+            //     if(isnan(trans_mat[r][c])){
+            //   Rcpp::Rcout <<"for ag=" << ag << "and na= " <<na<< "trans_mat is" << trans_mat[r][c]<< "for i="<< r<< "& j="<< c << "\n";
+            //     }}
+            // }
+
+            // for(int i=0; i<16; i++){
+            //   for(int j=0; j<16; j++){
+            // Rcpp::Rcout <<"for ag=" << ag << "and na= " <<na<< "trans_mat is" << trans_mat[i][j]<< "for i="<< i<< "& j="<< j << "\n";
+            //   }}
             for(int i=0; i<16; i++){
               rowsum[i]=0; //reset row sum
               for(int j=0; j<16; j++){
                 rowsum[i]+=trans_mat[i][j];
-                // Rcpp::Rcout << "rowsum" << rowsum[i] << "for ag"<< ag << "and na "<< na<<"for i" <<i<<"\n";
-              } }
+                 //    if(isnan(rowsum[i])){
+                 //
+                 // Rcpp::Rcout << "rowsum" << rowsum[i] << "for ag"<< ag << "and na "<< na<<"for i" <<i<<"\n";
+                 //    }
+                 }}
             for(int i=0; i<16; i++){
               if (rowsum[i] > 1.0){ //max of 1 and sum(trans_mat)
               for(int j=0; j<16; j++){
-                  trans_mat[i][j] =  trans_mat [i][j] / rowsum[i];
+                  trans_mat[i][j] =  trans_mat [i][j] / (rowsum[i]+1e-30);
                 }
                 } }
-
-            // for(int i=0; i<16; i++){
-            //   for(int j=0; j<16; j++){
-            //     rowsum[i]+=trans_mat[i][j];
-            //     if (rowsum[i] > 1.0){ //max of 1 and sum(trans_mat)
-            //       trans_mat[i][j] =  trans_mat [i][j] / rowsum[i];
-            //     }
-            //   } }
-            // // //       Rcpp::Rcout << "temp trans_mat is" << trans_mat;
+            // for (int r=0; r<16; r++){
+            //   for (int c=0; c<16; c++){
+            //     if(isnan(trans_mat[r][c])){
+            //       Rcpp::Rcout <<"for ag=" << ag << "and na= " <<na<< "trans_mat is" << trans_mat[r][c]<< "for i="<< r<< "& j="<< c << "\n";
+            //     }}
+            // }
             // // // //////////                      FINALIZE TRANS_MAT                    //////////
 
             for(int i=0; i<16; i++){
@@ -836,7 +884,7 @@ for (int i=0; i<4; i++){
                 rowsum[i]+=trans_mat[i][j]; //calculate the row sum of temp mat above
                 //these are all outputting as 1 or zero which is not what we want --why?
               }
-                Rcpp::Rcout << "rowsum" << rowsum[i] << "for ag"<< ag << "and na "<< na<<"for i" <<i<<"\n";
+                // Rcpp::Rcout << "rowsum" << rowsum[i] << "for ag"<< ag << "and na "<< na<<"for i" <<i<<"\n";
               }
             for(int i=0; i<16; i++){
               for(int j=0; j<16; j++){
@@ -849,19 +897,30 @@ for (int i=0; i<4; i++){
                 // }
                  } }
 
-
+            // for (int r=0; r<16; r++){
+            //   for (int c=0; c<16; c++){
+            //     Rcpp::Rcout <<"for ag=" << ag << "and na= " <<na<< "trans_mat is" << trans_mat[r][c]<< "for i="<< r<< "& j="<< c << "\n";
+            //   }
+            // }
 
 
 //////////                RECORD ABSOLUTE TRANSITIONS                 //////////
         for(int i=0; i<16; i++){
               for(int j=0; j<16; j++){
                 did_goN[i][j] += dist_i_v[i]* trans_mat[i][j]; } }
+
             for(int i=0; i<16; i++){
               for(int j=0; j<16; j++){
                 if (i==j){
                   did_goN[i][j]=0;
                 }
               } }
+
+            // for(int i=0; i<16; i++){
+            //   for(int j=0; j<16; j++){
+            //     Rcpp::Rcout <<"for ag=" << ag << "and na= " <<na<< "did_go is" << did_goN[i][j]<< "for i="<< i<< "& j="<< j << "\n";
+            //   }}
+
             //       // //////////               UPDATE THE DISTRIBUTION VECTOR             ////////////
             //       // //////////           This is supposed to be matrix multiplication   ////////////
             for(int c=0; c<16; c++){
@@ -873,39 +932,38 @@ for (int i=0; i<4; i++){
               } } //looks good after one iteration; explodes after 30
             for(int c=0; c<16; c++){
               dist_i_v[c] = temp_vec[c];
-              // if (dist_i_v[c] == 0 ){
-              //   Rcpp::Rcout << "dist_i_v is 0 for " << ag << "and na " << na << "@ i= " <<c <<  "& m =" << m <<"\n";
-              // }
+              if (dist_i_v[c] == 0 ){
+                // Rcpp::Rcout << "dist_i_v is 0 for " << ag << "and na " << na << "@ i= " <<c <<  "& m =" << m <<"\n";
+              }
             }
-
+            // for (int i=0; i<16; i++){
+            //   Rcpp::Rcout << "dist_i_v is"<< dist_i_v[i]<< " for ag " << ag << "and na " << na << "@ i= " <<i <<  "& m =" << m <<"\n";
+            //
+            // }
           } //end of N loop
-
-          // for (int i=0; i<16; i++){
-          //   diff_i_v[i] = dist_i_v[i] - dist_goal_v[i];
-          //   Rcpp::Rcout << "diff_i_v is"<< diff_i_v[i]<< " for ag " << ag << "and na " << na << "@ i= " <<i <<  "& m =" << m <<"\n";
-          //
-          // }
-
-
 //////////                    NOW UPDATE IN ONE STEP                 ///////////
-
+////////// TRANS_MAT_TOT IS CALCULATED
           for(int i=0; i<16; i++){
             for(int j=0; j<16; j++){
-              trans_mat_tot[i][j] = did_goN[i][j] / dist_orig_v[i];
+              trans_mat_tot[i][j] = did_goN[i][j] / (dist_orig_v[i]+1e-30);
             } }
           //     //
           for(int i=0; i<16; i++){
             rowsum[i]=0;
             for(int j=0; j<16; j++){
-              rowsum[i] +=trans_mat_tot[i][j]; } }  //rowsum
+              rowsum[i] +=trans_mat_tot[i][j]; ///calculate the number of total transitions from a state
+            } }
           for(int i=0; i<16; i++){
             for(int j=0; j<16; j++){
               if (i==j){
-                trans_mat_tot[i][j]=(1-rowsum[i]);
+                trans_mat_tot[i][j]=(1-rowsum[i]); //the remainder of those that did not transition to another state
               }
             } }
-          //     //
-          //     // //      Rcpp::Rcout<< "trans_mat_tot is" << trans_mat_tot;
+              //
+          for(int i=0; i<16; i++){
+            for(int j=0; j<16; j++){
+          // Rcpp::Rcout <<"for ag=" << ag << "and na= " <<na<< "trans_mat_tot is" << trans_mat_tot[i][j]<< "for i="<< i<< "& j="<< j << "\n";
+            }}
           //     // //////////           NOW FINALLY UPDATE THE DISTRIBUTION           ///////////
           for(int tb=0; tb<6; tb++) {
               for (int im=0; im<4; im++){
@@ -924,13 +982,20 @@ for (int i=0; i<4; i++){
                         //      dist_newN[m][p] +=  dist_orig[m2][p2] * trans_mat_tot[m2+p2*4][m+p*4];////removed +1 index
                         V2[ag][tb][0][im][nm][rg][na] += V1[ag][tb][0][p2][m2][rg][na] * trans_mat_tot[m2+p2*4][nm+im*4];
                       } } } } } }
-          for(int tb=0; tb<6; tb++) {
-            for (int im=0; im<4; im++){
-              for (int nm=0; nm<4; nm++){
-                for(int rg=0; rg<2; rg++) {
-                  V1[ag][tb][0][im][nm][rg][na] = V2[ag][tb][0][im][nm][rg][na];
-                  V0[ag][tb][0][im][nm][rg][na] = V2[ag][tb][0][im][nm][rg][na];
-                } } } }
+          // for(int tb=0; tb<6; tb++) {
+          //   for (int im=0; im<4; im++){
+          //     for (int nm=0; nm<4; nm++){
+          //       for(int rg=0; rg<2; rg++) {
+          // if (V2[ag][tb][0][im][nm][rg][na] < 0){
+          //   Rcpp::Rcout << "pop negative at ag= " <<  ag << "nm=" << nm<< "im "<< im<< "rg =" << rg << "& na =" << na << "\n";
+          // } } } } }
+          // for(int tb=0; tb<6; tb++) {
+          //   for (int im=0; im<4; im++){
+          //     for (int nm=0; nm<4; nm++){
+          //       for(int rg=0; rg<2; rg++) {
+          //         V1[ag][tb][0][im][nm][rg][na] = V2[ag][tb][0][im][nm][rg][na];
+          //         V0[ag][tb][0][im][nm][rg][na] = V2[ag][tb][0][im][nm][rg][na];
+          //       } } } }
 
           // for(int tb=0; tb<6; tb++) {
           //   for (int im=0; im<4; im++){
@@ -943,6 +1008,8 @@ for (int i=0; i<4; i++){
         } } //end of age & nativity loops
 
     } //end of rebalancing loop
+
+
     ///////////////////////
     ///////////////////////////////////////////////////////////////////////////////////
     ///////////                       UPDATE V0 as V1                       ///////////
@@ -961,14 +1028,14 @@ for (int i=0; i<4; i++){
   temp_vec2[i]=0; }
 mat_sum=0;
     for(int nm=0; nm<4; nm++){
-      // for(int ag=0; ag<11; ag++) {
+      for(int ag=0; ag<11; ag++) {
         for(int tb=0; tb<6; tb++) {
           for(int im=0; im<4; im++) {
             for(int rg=0; rg<2; rg++){
               for(int na=0; na<3; na++){
-                temp_vec2[nm] += V1[0][tb][0][im][nm][rg][na];
+                temp_vec2[nm]  += V2[ag][tb][0][im][nm][rg][na];
               } } } } }
-    // }
+    }
     for(int nm=0; nm<4; nm++){
       mat_sum+=temp_vec2[nm];
     }
