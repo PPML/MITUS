@@ -22,6 +22,7 @@ Rcpp::List cSim(
     double              p_HR,
     Rcpp::NumericMatrix       vTMort,    // matrix of TB mortality
     std::vector<double> RRmuRF,
+    std::vector<double> RRmuHR,
     double              muTbRF,    //factor for comorbidity btw TB and non-TB,
     std::vector<double> Birthst,   // vector of absolute births over time
     Rcpp::NumericMatrix       HrEntEx,
@@ -56,7 +57,6 @@ Rcpp::List cSim(
     std::vector<double>       diff_i_v
 
 ) {
-  // std::vector<double> RRmuHR,
   ////////////////////////////////////////////////////////////////////////////////
   ////////    BELOW IS A LIST OF THE VARIABLES CREATED INTERNALLY IN MODEL   /////
   ////////////////////////////////////////////////////////////////////////////////
@@ -119,7 +119,7 @@ Rcpp::List cSim(
   Rcpp::NumericMatrix    trans_mat_fin(16,16);
   Rcpp::NumericVector   dist(16);
   double        frc;
-  // double burnvec[12672];
+  // std::vector<double> burnvec(12672);
   // double        pop_t;
   // double        sse;
   double        rowsum[16];
@@ -312,12 +312,19 @@ Rcpp::List cSim(
     // } }
     // for(int rg=0; rg<2; rg++){RRmuHR[rg]=1; }
     muTbRF =0;
-    for(int i=0; i < 11; i++)
-    {  temp_vec3[i]=0;
-      temp_vec4[i]=0;
-      temp_vec5[i]=0;
-      }
+
   }
+
+  for(int i=0; i < 11; i++)
+  {  temp_vec3[i]=0;
+    temp_vec4[i]=0;
+    temp_vec5[i]=0;
+  }
+
+  // for(int i=0; i < 12672; i++)
+  // {  burnvec(i)=0;
+  // }
+
 
   ////////////////////////////////////////////////////////////////////////////////
   ///////                  UPDATING TREATMENT METERS                        //////
@@ -440,10 +447,10 @@ Rcpp::List cSim(
           for(int rg=0; rg<2; rg++) {
             for(int na=0; na<3; na++){
               for(int tb=0; tb<5; tb++) {
-                V1[ag][tb][0][im][nm][rg][na]  -= V0[ag][tb][0][im][nm][rg][na]*(mubtN[0][ag]*RRmuRFN[nm]+vTMortN[ag][tb]);
+                V1[ag][tb][0][im][nm][rg][na]  -= V0[ag][tb][0][im][nm][rg][na]*(mubtN[0][ag]*RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][tb]);
               }
               ////////////////          MORTALITY WITH TB TREATMENT         ////////////////////
-                V1[ag][5 ][0][im][nm][rg][na]  -= V0[ag][5 ][0][im][nm][rg][na]*(mubtN[0][ag]*RRmuRFN[nm]+vTMortN[ag][5 ]*pow(1.0-TxVecZ[1],TunTxMort)); //check the mortality in param
+                V1[ag][5 ][0][im][nm][rg][na]  -= V0[ag][5 ][0][im][nm][rg][na]*(mubtN[0][ag]*RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][5 ]*pow(1.0-TxVecZ[1],TunTxMort)); //check the mortality in param
             } } } } }
     /////////////////////////////////////AGING///////////////////////////////////////
     for(int ag=0; ag<10; ag++) {
@@ -1169,22 +1176,22 @@ Rcpp::List cSim(
                     for(int na=0; na<3; na++) {
     ////////////////////////UNINFECTED, SUSCEPTIBLE//////////////////////////////////
                         VMort[ag][0 ][lt][im][nm][rg][na]  = V0[ag][0][lt][im][nm][rg][na]*
-                          (mubtN[s][ag]*RRmuRFN[nm] );
+                          (mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg] );
     // ////////////////////////UNINFECTED, PART. IMMUNE/////////////////////////////////
                         VMort[ag][1 ][lt][im][nm][rg][na]  = V0[ag][1 ][lt][im][nm][rg][na]*
-                          (mubtN[s][ag]*RRmuRFN[nm] );
+                          (mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg] );
     ////////////////////////    LATENT TB SLOW      /////////////////////////////////
                         VMort[ag][2 ][lt][im][nm][rg][na]  = V0[ag][2 ][lt][im][nm][rg][na]*
-                          (mubtN[s][ag]*RRmuRFN[nm]);
+                          (mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]);
     ////////////////////////    LATENT TB FAST      /////////////////////////////////
                         VMort[ag][3 ][lt][im][nm][rg][na]  = V0[ag][3 ][lt][im][nm][rg][na]*
-                          (mubtN[s][ag]*RRmuRFN[nm]);
+                          (mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]);
     ////////////////////////      ACTIVE TB         /////////////////////////////////
                         VMort[ag][4 ][lt][im][nm][rg][na]  = V0[ag][4 ][lt][im][nm][rg][na]*
-                          (mubtN[s][ag]*RRmuRFN[nm]+vTMortN[ag][4 ]+temp );
+                          (mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][4 ]+temp );
     ////////////////////////    TB TREATMENT        /////////////////////////////////
                         VMort[ag][5 ][lt][im][nm][rg][na]  = V0[ag][5 ][lt][im][nm][rg][na]*
-                          (mubtN[s][ag]*RRmuRFN[nm]+(vTMortN[ag][5 ]+temp));//*pow(1.0-TxVecZ[1],TunTxMort));
+                          (mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]+(vTMortN[ag][5 ]+temp));//*pow(1.0-TxVecZ[1],TunTxMort));
                     } } } } } }
     ///////////// UPDATE THE PRIMARY VECTOR BY REMOVING MORTALITY /////////////////
     for(int ag=0; ag<11; ag++){
