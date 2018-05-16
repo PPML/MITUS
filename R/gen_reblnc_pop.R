@@ -13,14 +13,14 @@ num_pRF=4
 # targ_pop=7.61; #set to approximately 5% of initialpop
 # total_pop=sum(InitPop)
 #' Define the distribution of the targeted population
-params= c(0.5,1,0.8);
+params= c(0,1,0.8);
 #'Define the number of cut points in the model; standard is 4
 
 cuts <- lgt(0:num_pRF/num_pRF)
 
 #'Use the pmvnorm function to computer the distribution function of the multivariate normal
 #'distribution.
-pars = c(-1,2,0.6); # parameters defining distribution
+pars = c(-2.5,2,0.6); # parameters defining distribution
 dist_gen <- matrix(NA,num_mRF,num_pRF)
 for(i in 1:num_mRF) {
   for(j in 1:num_pRF) {
@@ -100,10 +100,8 @@ dist_goal_v <- rep(0,16)
 #'because we haven't a separate distribution yet
 for (m in 0:(num_mRF-1)){
   for(p in 0:(num_pRF-1)){
-    dist_goal_v[1+m+p*4] <- dist_goal[m+1,p+1]
+    dist_goal_v[1+m+p*4] <- dist_gen[m+1,p+1]
 } }
-
-
 
 # moved to time step
 # for(m in 0:num_pRF-1) {
@@ -113,3 +111,5 @@ for (m in 0:(num_mRF-1)){
 #   }
 # }
 
+# dist_gen[,]<-.0625
+# dist_goal_v[]<-.0625
