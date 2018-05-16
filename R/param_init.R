@@ -59,16 +59,16 @@ RRmuHR    <- c(1,P["RRmuHR"])
 ############### CREATE A MATRIX OF RF MORTALITIES BY AGE GROUP ###############
 mort_dist<-rowSums(dist_goal)
 
-RF_fact=2
+RF_fact=20
 
 RRmuRF    <- rep(NA,4);
 names(RRmuRF) <- c("RF1","RF2","RF3","RF4")
 
 RRmuRF<-exp((0:3)/3*log(RF_fact))
-RRmuRF<-RRmuRF/sum(RRmuRF*mort_dist)
+# RRmuRF<-RRmuRF/sum(RRmuRF*mort_dist)
 
 #check =1
-#RRmuRF%*%mort_dist
+# RRmuRF%*%mort_dist
 
 # vRFMort    <- matrix(0,11,4);
 # rownames(vRFMort) <- c("0_4",paste(0:8*10+5,1:9*10+4,sep="_"),"95p")
@@ -585,7 +585,19 @@ ResNam <- c("Year",                                         # year
             paste("95p","NM2",StatList[[4]],sep="_"),
             paste("95p","NM3",StatList[[4]],sep="_"),
             paste("95p","NM4",StatList[[4]],sep="_"),
-            paste("mort_rate",StatList[[1]],sep="_" )
+            paste("mort_rate",StatList[[1]],sep="_" ),
+
+            paste("mort_rate ag 1",StatList[[5]],sep="_" ),
+            paste("mort_rate ag 2",StatList[[5]],sep="_" ),
+            paste("mort_rate ag 3",StatList[[5]],sep="_" ),
+            paste("mort_rate ag 4",StatList[[5]],sep="_" ),
+            paste("mort_rate ag 5",StatList[[5]],sep="_" ),
+            paste("mort_rate ag 6",StatList[[5]],sep="_" ),
+            paste("mort_rate ag 7",StatList[[5]],sep="_" ),
+            paste("mort_rate ag 8",StatList[[5]],sep="_" ),
+            paste("mort_rate ag 9",StatList[[5]],sep="_" ),
+            paste("mort_rate ag 10",StatList[[5]],sep="_" ),
+            paste("mort_rate ag 11",StatList[[5]],sep="_" )
 )
 length(ResNam)
 
