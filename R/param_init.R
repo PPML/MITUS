@@ -203,7 +203,7 @@ EarlyTrend <- c(rep(1+Early0,200*12),seq(1+Early0,1.0,length.out=50*12+2))
 
 ######################     PROGRESSION TO DISEASE     ##########################
 
-pfast      <- P["pfast"]
+pfast      <- P["pfast"]+P["pimmed"]
 ORpfast1   <- P["ORpfast1"] ## age group 1
 ORpfast2   <- P["ORpfast2"] ## age group 2
 ORpfastRF  <- P["ORpfastH"] ##riskfactor
@@ -222,12 +222,15 @@ Mpfast       <- matrix(NA,11,4)
 Mpfast[,]    <- pfast/(1-pfast)
 Mpfast[1,]   <- Mpfast[1,]*ORpfast1 # progression for age group 1
 Mpfast[2,]   <- Mpfast[2,]*ORpfast2 # progression for age group 2
+#vector of ORpfastRF
+vORpfastRF  <-c(1,1,1,1)
+vORpfastRF  <-pfast*(exp((0:3)/3*log(ORpfastRF)))
 ############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
-Mpfast[,2]   <- (ORpfastRF*1/3)*Mpfast[,2]
+Mpfast[,2]   <- vORpfastRF[2]*Mpfast[,2]
 ############ UPDATE PROBS FOR LEVEL 3 OF REACTIVATION ###########
-Mpfast[,3]   <- (ORpfastRF*2/3)*Mpfast[,3]
+Mpfast[,2]   <- vORpfastRF[3]*Mpfast[,3]
 ############ UPDATE PROBS FOR LEVEL 4 OF REACTIVATION ###########
-Mpfast[,4]   <- Mpfast[,4]*ORpfastRF #progression for tb reactivation group 4
+Mpfast[,2]   <- vORpfastRF[4]*Mpfast[,4]
 
 #################       CREATE A NEW MATRIX PARTIAL. IMM.     #################
 MpfastPI     <- Mpfast
@@ -243,12 +246,10 @@ MpfastPI[,]  <- MpfastPI[,]/(1+MpfastPI[,]);
 
 ############# CREATE A VECTOR FOR RATE OF SLOW PROGRESSION THAT WILL
 ############# VARY BASED ON LEVELS OF TB REACTIVATION RATES
-Vrslow     <- rep(rslow,4)
+Vrslow     <- rep(NA,4)
 ############# UPDATE LEVEL FOUR OF THE RATE OF SLOW BASED ON CALCULATED RR FROM
 ############# USER INPUTTED RR FOR THE RISK FACTOR
-for (i in 2:4){
-  Vrslow[i]=Vrslow[i]*RRrslowRF*((i-1)/3)
-}
+Vrslow=rslow*exp((0:3)/3*log(RRrslowRF))
 
 TunrslowAge  <- P["TunrslowAge"]
 rrReactAg       <- exp(c(0,0,0,0,0,0,0.5,1:4)*P["TunrslowAge"])

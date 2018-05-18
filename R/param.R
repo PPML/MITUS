@@ -184,12 +184,15 @@ load("data/ModelInputs_9-2-16.rData")
   Mpfast[,]    <- pfast/(1-pfast)
   Mpfast[1,]   <- Mpfast[1,]*ORpfast1 # progression for age group 1
   Mpfast[2,]   <- Mpfast[2,]*ORpfast2 # progression for age group 2
-############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
-  Mpfast[,2]   <- (ORpfastRF*1/3)*Mpfast[,2]
-############ UPDATE PROBS FOR LEVEL 3 OF REACTIVATION ###########
-  Mpfast[,3]   <- (ORpfastRF*2/3)*Mpfast[,3]
-############ UPDATE PROBS FOR LEVEL 4 OF REACTIVATION ###########
-  Mpfast[,4]   <- Mpfast[,4]*ORpfastRF #progression for tb reactivation group 4
+  #vector of ORpfastRF
+  vORpfastRF  <-c(1,1,1,1)
+  vORpfastRF  <-pfast*(exp((0:3)/3*log(ORpfastRF)))
+  ############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
+  Mpfast[,2]   <- vORpfastRF[2]*Mpfast[,2]
+  ############ UPDATE PROBS FOR LEVEL 3 OF REACTIVATION ###########
+  Mpfast[,2]   <- vORpfastRF[3]*Mpfast[,3]
+  ############ UPDATE PROBS FOR LEVEL 4 OF REACTIVATION ###########
+  Mpfast[,2]   <- vORpfastRF[4]*Mpfast[,4]
 
 #################       CREATE A NEW MATRIX PARTIAL. IMM.     #################
   MpfastPI     <- Mpfast
