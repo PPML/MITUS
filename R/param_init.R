@@ -222,23 +222,25 @@ Mpfast       <- matrix(NA,11,4)
 Mpfast[,]    <- pfast/(1-pfast)
 Mpfast[1,]   <- Mpfast[1,]*ORpfast1 # progression for age group 1
 Mpfast[2,]   <- Mpfast[2,]*ORpfast2 # progression for age group 2
-#vector of ORpfastRF
-vORpfastRF  <-c(1,1,1,1)
-vORpfastRF  <-pfast*(exp((0:3)/3*log(ORpfastRF)))
-############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
-Mpfast[,2]   <- vORpfastRF[2]*Mpfast[,2]
-############ UPDATE PROBS FOR LEVEL 3 OF REACTIVATION ###########
-Mpfast[,2]   <- vORpfastRF[3]*Mpfast[,3]
-############ UPDATE PROBS FOR LEVEL 4 OF REACTIVATION ###########
-Mpfast[,2]   <- vORpfastRF[4]*Mpfast[,4]
+
 
 #################       CREATE A NEW MATRIX PARTIAL. IMM.     #################
 MpfastPI     <- Mpfast
-MpfastPI[,1] <- Mpfast[,1]*ORpfastPI
-MpfastPI[,2] <- (ORpfastRF*1/3)*MpfastPI[,1]
-MpfastPI[,3] <- (ORpfastRF*2/3)*MpfastPI[,1]
 
-### ADD IN THE INV LOGIT FOR THE OTHER FACTOR LEVELS
+#vector of ORpfastRF
+vORpfastPIRF<-vORpfastRF  <-c(1,1,1,1)
+vORpfastRF  <-pfast*(exp((0:3)/3*log(ORpfastRF)))
+vORpfastPIRF  <- vORpfastRF*ORpfastPI
+
+############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
+Mpfast[,2]   <- vORpfastRF[2]*Mpfast[,2]
+MpfastPI[,2]   <- vORpfastPIRF[2]*Mpfast[,2]
+############ UPDATE PROBS FOR LEVEL 3 OF REACTIVATION ###########
+Mpfast[,3]   <- vORpfastRF[3]*Mpfast[,3]
+MpfastPI[,3]   <- vORpfastPIRF[3]*Mpfast[,3]
+############ UPDATE PROBS FOR LEVEL 4 OF REACTIVATION ###########
+Mpfast[,4]   <- vORpfastRF[4]*Mpfast[,4]
+MpfastPI[,4]   <- vORpfastPIRF[4]*Mpfast[,4]
 
 ##### UPDATE BOTH MATRICES WITH PROBABILITIES, NOT RATES
 Mpfast[,]    <- Mpfast[,]  /(1+Mpfast[,]);

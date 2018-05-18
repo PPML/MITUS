@@ -165,7 +165,7 @@ load("data/ModelInputs_9-2-16.rData")
 
 ######################     PROGRESSION TO DISEASE     ##########################
 
-  pfast      <- P["pfast"]
+  pfast      <- P["pfast"]+P["pimmed"]
   ORpfast1   <- P["ORpfast1"] ## age group 1
   ORpfast2   <- P["ORpfast2"] ## age group 2
   ORpfastRF  <- P["ORpfastH"] ##riskfactor
@@ -180,32 +180,33 @@ load("data/ModelInputs_9-2-16.rData")
 ##############          CREATE NEW Mpfast[ag][im]               ##############
 ############## MIGHT WRITE A NEW SCRIPT FOR THIS PART
   Mpfast       <- matrix(NA,11,4)
-############## CREATE AN ODDS FROM THE PROB OF FAST PROGRESSION ##############
+  ############## CREATE AN ODDS FROM THE PROB OF FAST PROGRESSION ##############
   Mpfast[,]    <- pfast/(1-pfast)
   Mpfast[1,]   <- Mpfast[1,]*ORpfast1 # progression for age group 1
   Mpfast[2,]   <- Mpfast[2,]*ORpfast2 # progression for age group 2
+
+
+  #################       CREATE A NEW MATRIX PARTIAL. IMM.     #################
+  MpfastPI     <- Mpfast
+
   #vector of ORpfastRF
-  vORpfastRF  <-c(1,1,1,1)
+  vORpfastPIRF<-vORpfastRF  <-c(1,1,1,1)
   vORpfastRF  <-pfast*(exp((0:3)/3*log(ORpfastRF)))
+  vORpfastPIRF  <- vORpfastRF*ORpfastPI
+
   ############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
   Mpfast[,2]   <- vORpfastRF[2]*Mpfast[,2]
+  MpfastPI[,2]   <- vORpfastPIRF[2]*Mpfast[,2]
   ############ UPDATE PROBS FOR LEVEL 3 OF REACTIVATION ###########
-  Mpfast[,2]   <- vORpfastRF[3]*Mpfast[,3]
+  Mpfast[,3]   <- vORpfastRF[3]*Mpfast[,3]
+  MpfastPI[,3]   <- vORpfastPIRF[3]*Mpfast[,3]
   ############ UPDATE PROBS FOR LEVEL 4 OF REACTIVATION ###########
-  Mpfast[,2]   <- vORpfastRF[4]*Mpfast[,4]
+  Mpfast[,4]   <- vORpfastRF[4]*Mpfast[,4]
+  MpfastPI[,4]   <- vORpfastPIRF[4]*Mpfast[,4]
 
-#################       CREATE A NEW MATRIX PARTIAL. IMM.     #################
-  MpfastPI     <- Mpfast
-  MpfastPI[,1] <- Mpfast[,1]*ORpfastPI
-  MpfastPI[,2] <- (ORpfastRF*1/3)*MpfastPI[,1]
-  MpfastPI[,3] <- (ORpfastRF*2/3)*MpfastPI[,1]
-
-### ADD IN THE INV LOGIT FOR THE OTHER FACTOR LEVELS
-
-##### UPDATE BOTH MATRICES WITH PROBABILITIES, NOT RATES
+  ##### UPDATE BOTH MATRICES WITH PROBABILITIES, NOT RATES
   Mpfast[,]    <- Mpfast[,]  /(1+Mpfast[,]);
   MpfastPI[,]  <- MpfastPI[,]/(1+MpfastPI[,]);
-
 ############# CREATE A VECTOR FOR RATE OF SLOW PROGRESSION THAT WILL
 ############# VARY BASED ON LEVELS OF TB REACTIVATION RATES
   Vrslow     <- rep(rslow,4)
