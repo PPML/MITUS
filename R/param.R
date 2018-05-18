@@ -165,7 +165,7 @@ load("data/ModelInputs_9-2-16.rData")
 
 ######################     PROGRESSION TO DISEASE     ##########################
 
-  pfast      <- P["pfast"]+P["pimmed"]
+  pfast      <- P["pfast"]
   ORpfast1   <- P["ORpfast1"] ## age group 1
   ORpfast2   <- P["ORpfast2"] ## age group 2
   ORpfastRF  <- P["ORpfastH"] ##riskfactor

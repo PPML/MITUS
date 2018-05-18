@@ -203,7 +203,7 @@ EarlyTrend <- c(rep(1+Early0,200*12),seq(1+Early0,1.0,length.out=50*12+2))
 
 ######################     PROGRESSION TO DISEASE     ##########################
 
-pfast      <- P["pfast"]+P["pimmed"]
+pfast      <- P["pfast"]
 ORpfast1   <- P["ORpfast1"] ## age group 1
 ORpfast2   <- P["ORpfast2"] ## age group 2
 ORpfastRF  <- P["ORpfastH"] ##riskfactor
