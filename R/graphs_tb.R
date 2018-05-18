@@ -246,5 +246,7 @@ tbdyn_graphs <-function(df){
   legend("topleft",c("Reported data","Model"),pch=c(19,15),lwd=c(0,NA),
          pt.cex=c(1,2),col=c("black","lightblue"),bg="white")
 
+  dev.off()
+
 }
 
