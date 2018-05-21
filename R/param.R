@@ -89,7 +89,7 @@ load("data/ModelInputs_9-2-16.rData")
   vTMort   <- matrix(0,11,6);
   rownames(vTMort) <- c("0_4",paste(0:8*10+5,1:9*10+4,sep="_"),"95p")
   colnames(vTMort) <- c("Su","Sp","Ls","Lf","Ac","Tx")
-  vTMort[,5] <- muIp #active disease rates default to smear positive
+  vTMort[,5:6] <- muIp #active disease rates default to smear positive
   RRmuTbAg <- exp(c(0,0,1:9)*TunmuTbAg)
   for(i in 1:ncol(vTMort)) {
     vTMort[,i] <- vTMort[,i] * RRmuTbAg
