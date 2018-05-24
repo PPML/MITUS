@@ -22,6 +22,8 @@ Rcpp::List cSim(
     double              p_HR,
     Rcpp::NumericMatrix       vTMort,    // matrix of TB mortality
     std::vector<double> RRmuRF,
+    std::vector<double> RRmuHR,
+
     double              muTbRF,    //factor for comorbidity btw TB and non-TB,
     std::vector<double> Birthst,   // vector of absolute births over time
     Rcpp::NumericMatrix       HrEntEx,
@@ -440,14 +442,14 @@ Rcpp::List cSim(
           for(int rg=0; rg<2; rg++) {
             for(int na=0; na<3; na++){
               for(int tb=0; tb<5; tb++) {
-                if ((mubtN[0][ag]*RRmuRFN[nm]+vTMortN[ag][tb]) < 1){
-                V1[ag][tb][0][im][nm][rg][na]  -= V0[ag][tb][0][im][nm][rg][na]*(mubtN[0][ag]*RRmuRFN[nm]+vTMortN[ag][tb]);
+                if ((mubtN[0][ag]*RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][tb]) < 1){
+                V1[ag][tb][0][im][nm][rg][na]  -= V0[ag][tb][0][im][nm][rg][na]*(mubtN[0][ag]*RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][tb]);
                 } else {
                   V1[ag][tb][0][im][nm][rg][na]  -= V0[ag][tb][0][im][nm][rg][na];
                 }  }
-              if ((mubtN[0][ag]*RRmuRFN[nm]+vTMortN[ag][5 ]*pow(1.0-TxVecZ[1],TunTxMort))<1){
+              if ((mubtN[0][ag]*RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][5 ]*pow(1.0-TxVecZ[1],TunTxMort))<1){
               ////////////////          MORTALITY WITH TB TREATMENT         ////////////////////
-              V1[ag][5 ][0][im][nm][rg][na]  -= V0[ag][5 ][0][im][nm][rg][na]*(mubtN[0][ag]*RRmuRFN[nm]+vTMortN[ag][5 ]*pow(1.0-TxVecZ[1],TunTxMort)); //check the mortality in param
+              V1[ag][5 ][0][im][nm][rg][na]  -= V0[ag][5 ][0][im][nm][rg][na]*(mubtN[0][ag]*RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][5 ]*pow(1.0-TxVecZ[1],TunTxMort)); //check the mortality in param
               } else {
               V1[ag][5 ][0][im][nm][rg][na]  -= V0[ag][5 ][0][im][nm][rg][na];
               }
@@ -1229,21 +1231,21 @@ Rcpp::List cSim(
   //               for(int na=0; na<3; na++) {
   //                 for(int tb=0; tb<4; tb++) {
   //
-  //                 if ((mubtN[s][ag]*RRmuRFN[nm])<1 ){
+  //                 if ((mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg])<1 ){
   //                 ////////////////////////UNINFECTED, SUSCEPTIBLE//////////////////////////////////
   //                 VMort[ag][tb ][lt][im][nm][rg][na]  = V0[ag][tb][lt][im][nm][rg][na]*
-  //                   (mubtN[s][ag]*RRmuRFN[nm] );
+  //                   (mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg] );
   //                   } else VMort[ag][tb ][lt][im][nm][rg][na]  = V0[ag][tb][lt][im][nm][rg][na];
   //                 }
-  //                 if (mubtN[s][ag]*RRmuRFN[nm]+vTMortN[ag][4 ]+temp <1){
+  //                 if (mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][4 ]+temp <1){
   //                 ////////////////////////      ACTIVE TB         /////////////////////////////////
   //                 VMort[ag][4 ][lt][im][nm][rg][na]  = V0[ag][4 ][lt][im][nm][rg][na]*
-  //                   (mubtN[s][ag]*RRmuRFN[nm]+vTMortN[ag][4 ]+temp );
+  //                   (mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][4 ]+temp );
   //               } else VMort[ag][4 ][lt][im][nm][rg][na]  = V0[ag][4 ][lt][im][nm][rg][na];
   //                 ////////////////////////    TB TREATMENT        /// //////////////////////////////
-  //                 if ((mubtN[s][ag]*RRmuRFN[nm]+(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort))<1 ){
+  //                 if ((mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]+(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort))<1 ){
   //                 VMort[ag][5 ][lt][im][nm][rg][na]  = V0[ag][5 ][lt][im][nm][rg][na]*
-  //                   (mubtN[s][ag]*RRmuRFN[nm]+(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort));
+  //                   (mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]+(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort));
   //               } else  VMort[ag][5 ][lt][im][nm][rg][na]  = V0[ag][5 ][lt][im][nm][rg][na];
   //                 } } } } } }
   //     ///////////// UPDATE THE PRIMARY VECTOR BY REMOVING MORTALITY /////////////////
