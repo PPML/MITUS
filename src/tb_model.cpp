@@ -336,7 +336,7 @@ long  double        mat_sum;
 
   ////////////////////////RUN THE MODEL FOR 3000 MONTHS /////////////////////////
   for(int m=0; m<3001; m++) {
-    Rcpp::Rcout << m << "\n";
+    // Rcpp::Rcout << m << "\n";
     /////////////////////////////////START BURN IN//////////////////////////////////
     ////////////////////////////////////BIRTHS//////////////////////////////////////
     ///////////USE DISTRIBUTION TO POPULATE THE MODEL ACROSS RISK GROUPS////////////
@@ -510,11 +510,11 @@ long  double        mat_sum;
             VNkl[1][1]  += V0[ag][tb][0][im][nm][1][1] + V0[ag][tb][0][im][nm][1][2];
      } } } }
 
-    for (int i=0; i<2; i++){
-      for (int j=0; j<2; j++){
-        Rcpp::Rcout <<"sums are " <<  VNkl[i][j] << "for i= " << i << " and j = " <<  j << "\n";
-      }
-    }
+    // for (int i=0; i<2; i++){
+    //   for (int j=0; j<2; j++){
+    //     Rcpp::Rcout <<"sums are " <<  VNkl[i][j] << "for i= " << i << " and j = " <<  j << "\n";
+    //   }
+    // }
     // Step 2  (active TB)
     // Number of active cases* relative infectiousness
     for(int ag=0; ag<11; ag++) {
@@ -531,11 +531,11 @@ long  double        mat_sum;
           VGjkl[1][1]  += (V0[ag][tb][0][im][nm][1][1] + V0[ag][tb][0][im][nm][1][2])*RelInf[tb];
         } } } }
 
-    for (int i=0; i<2; i++){
-      for (int j=0; j<2; j++){
-        Rcpp::Rcout <<"VGs are " <<  VGjkl[i][j] << "for i= " << i << " and j = " <<  j << "\n";
-      }
-    }
+    // for (int i=0; i<2; i++){
+    //   for (int j=0; j<2; j++){
+    //     Rcpp::Rcout <<"VGs are " <<  VGjkl[i][j] << "for i= " << i << " and j = " <<  j << "\n";
+    //   }
+    // }
     // Step 2 (treated TB)
     // No contribution to force of infection
 
@@ -558,9 +558,9 @@ long  double        mat_sum;
     Vjaf[3] = VGjkl[1][1] / (VNkl[1][1] + 1e-12);
 
 
-    for (int i=0; i<4; i++){
-     Rcpp::Rcout << "Vjaf is "<<  Vjaf[i] << "\n";
-    }
+    // for (int i=0; i<4; i++){
+    //  Rcpp::Rcout << "Vjaf is "<<  Vjaf[i] << "\n";
+    // }
 
     // Step 4
     /// LOW RISK US BORN
@@ -574,11 +574,11 @@ long  double        mat_sum;
     VLjkl[1 ][1 ]  = RelInfRg[3]*Vjaf[3]*(1-Vmix[0])*(1-Vmix[1]) + RelInfRg[2]*Vjaf[2]*Vmix[0]*(1-Vmix[1]) + RelInfRg[1]*Vjaf[1]*Vmix[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]*Vmix[1] + ExogInf[0];
 
 
-    for (int i=0; i<2; i++){
-      for (int j=0; j<2; j++){
-        Rcpp::Rcout <<"VLs are " <<  VLjkl[i][j] << "for i= " << i << " and j = " <<  j << "\n";
-      }
-    }
+    // for (int i=0; i<2; i++){
+    //   for (int j=0; j<2; j++){
+    //     Rcpp::Rcout <<"VLs are " <<  VLjkl[i][j] << "for i= " << i << " and j = " <<  j << "\n";
+    //   }
+    // }
     ///////////////////////////////INFECTION///////////////////////////////////////
     ///////////////////////for all age groups, risk groups/////////////////////////
     ///////INFECTION IS CALCULATED WITH THE FORCE OF INFECTION BY RISK GROUP///////
@@ -628,16 +628,16 @@ long  double        mat_sum;
 
             } } } } }
 
-    temp=0;
-    for(int ag=0; ag<11; ag++) {
-      for(int im=0; im<4; im++) {
-        for(int nm=0; nm<4; nm++){
-          for(int rg=0; rg<2; rg++){
-            for (int na=0; na<3; na++){
-              temp+=V1[ag][4][0][im][nm][rg][0];
-
-            } } } } }
-    Rcpp::Rcout << "at m= "<< m<< "number of active US: "<< temp << "\n";
+    // temp=0;
+    // for(int ag=0; ag<11; ag++) {
+    //   for(int im=0; im<4; im++) {
+    //     for(int nm=0; nm<4; nm++){
+    //       for(int rg=0; rg<2; rg++){
+    //         for (int na=0; na<3; na++){
+    //           temp+=V1[ag][4][0][im][nm][rg][0];
+    //
+    //         } } } } }
+    // Rcpp::Rcout << "at m= "<< m<< "number of active US: "<< temp << "\n";
 
 
       ///////////////////////////         BREAK DOWN      /////////////////////////////
@@ -750,19 +750,19 @@ long  double        mat_sum;
               for(int tb=0; tb<6; tb++) {
                 // V0[ag][tb][0][im][nm][rg][na]=V1[ag][tb][0][im][nm][rg][na];
 
-                if (V1[ag][tb][0][im][nm][rg][na] < 0){
-                  Rcpp::Rcout << "pop la is neg at ag " << ag <<"tb=" << tb << "na " << na << "im " << im << "nm "<<nm << "& rg" << rg<< "\n";
-                  // Rcpp::Rcout << "pop is "<< V1[ag][tb][0][im][nm][rg][na]<< "at ag " << ag <<"tb=" << tb << "na " << na << "im " << im << "nm "<<nm << "& rg" << rg<< "\n";
-                }
-
-                if (isnan(V1[ag][tb][0][im][nm][rg][na])){
-                  Rcpp::Rcout << "pop la is nan" << ag <<"tb=" << tb << "na " << na << "im " << im << "nm "<<nm << "& rg" << rg<< "\n";
-                  // Rcpp::Rcout << "pop is "<< V1[ag][tb][0][im][nm][rg][na]<< "at ag " << ag <<"tb=" << tb << "na " << na << "im " << im << "nm "<<nm << "& rg" << rg<< "\n";
-                }
+                // if (V1[ag][tb][0][im][nm][rg][na] < 0){
+                //   Rcpp::Rcout << "pop la is neg at ag " << ag <<"tb=" << tb << "na " << na << "im " << im << "nm "<<nm << "& rg" << rg<< "\n";
+                //   // Rcpp::Rcout << "pop is "<< V1[ag][tb][0][im][nm][rg][na]<< "at ag " << ag <<"tb=" << tb << "na " << na << "im " << im << "nm "<<nm << "& rg" << rg<< "\n";
+                // }
+                //
+                // if (isnan(V1[ag][tb][0][im][nm][rg][na])){
+                //   Rcpp::Rcout << "pop la is nan" << ag <<"tb=" << tb << "na " << na << "im " << im << "nm "<<nm << "& rg" << rg<< "\n";
+                //   // Rcpp::Rcout << "pop is "<< V1[ag][tb][0][im][nm][rg][na]<< "at ag " << ag <<"tb=" << tb << "na " << na << "im " << im << "nm "<<nm << "& rg" << rg<< "\n";
+                // }
 
               } } } } } }
     /////reblance the population & ((m%12)==0)
-    if (reblnc==1){
+    if (reblnc==1 & ((m%12)==0)){
 //       ////// need to define the current distribution of persons across the RG at this timestep
       for(int ag=0; ag<11; ag++) {
         for(int na=0; na<3; na++) {
@@ -934,53 +934,57 @@ for (int r=0; r<16; r++){
           for(int rg=0; rg<2; rg++){
             for (int na=0; na<3; na++){
               for(int tb=0; tb<6; tb++) {
+                if (reblnc==1 & (m%12)==0){
                   V1[ag][tb][0][im][nm][rg][na] = V2[ag][tb][0][im][nm][rg][na];
                   V0[ag][tb][0][im][nm][rg][na] = V2[ag][tb][0][im][nm][rg][na];
-              } } } } } }
+                } else {
+                  V0[ag][tb][0][im][nm][rg][na] = V1[ag][tb][0][im][nm][rg][na];
+                }
+                } } } } } }
 
 
-    for(int ag=0; ag<11; ag++) {
-      for(int tb=0; tb<6; tb++) {
-        for(int im=0; im<4; im++) {
-          for(int nm=0; nm<4; nm++){
-            for(int rg=0; rg<2; rg++){
-              for(int na=0; na<3; na++){
-          if (V2[ag][tb][0][im][nm][rg][na] < 0){
-            Rcpp::Rcout << "pop negative at ag= " <<  ag << "nm=" << nm<< "im "<< im<< "rg =" << rg << "& na =" << na << "\n";
-          } } } } } } }
+    // for(int ag=0; ag<11; ag++) {
+    //   for(int tb=0; tb<6; tb++) {
+    //     for(int im=0; im<4; im++) {
+    //       for(int nm=0; nm<4; nm++){
+    //         for(int rg=0; rg<2; rg++){
+    //           for(int na=0; na<3; na++){
+    //       if (V2[ag][tb][0][im][nm][rg][na] < 0){
+    //         Rcpp::Rcout << "pop negative at ag= " <<  ag << "nm=" << nm<< "im "<< im<< "rg =" << rg << "& na =" << na << "\n";
+    //       } } } } } } }
 
     // if (m==1000){
-         for (int i=0; i<4; i++){
-      temp_vec2[i]=0; }
-    mat_sum=0;
-          for(int ag=0; ag<11; ag++) {
-            for(int tb=0; tb<6; tb++) {
-              for(int im=0; im<4; im++) {
-                for(int nm=0; nm<4; nm++){
-                for(int rg=0; rg<2; rg++){
-                  for(int na=0; na<3; na++){
-                    temp_vec2[nm]  += V1[ag][tb][0][im][nm][rg][na];
-                  } } } } } }
-        for(int nm=0; nm<4; nm++){
-          mat_sum+=temp_vec2[nm];
-        }
-        for(int nm=0; nm<4; nm++){
-          mort_dist[nm] = temp_vec2[nm]/mat_sum;
-          Rcpp::Rcout << "mort dist after reblnc is" << mort_dist[nm] << "@s= "<< m<< "\n";}
+         // for (int i=0; i<4; i++){
+    //   temp_vec2[i]=0; }
+    // mat_sum=0;
+    //       for(int ag=0; ag<11; ag++) {
+    //         for(int tb=0; tb<6; tb++) {
+    //           for(int im=0; im<4; im++) {
+    //             for(int nm=0; nm<4; nm++){
+    //             for(int rg=0; rg<2; rg++){
+    //               for(int na=0; na<3; na++){
+    //                 temp_vec2[nm]  += V1[ag][tb][0][im][nm][rg][na];
+    //               } } } } } }
+    //     for(int nm=0; nm<4; nm++){
+    //       mat_sum+=temp_vec2[nm];
+    //     }
+    //     for(int nm=0; nm<4; nm++){
+    //       mort_dist[nm] = temp_vec2[nm]/mat_sum;
+    //       Rcpp::Rcout << "mort dist after reblnc is" << mort_dist[nm] << "@s= "<< m<< "\n";}
 
 
     // // if (m==1000){
-    temp=0;
-    for(int ag=0; ag<11; ag++) {
-        for(int im=0; im<4; im++) {
-          for(int nm=0; nm<4; nm++){
-            for(int rg=0; rg<2; rg++){
-              for (int na=0; na<3; na++){
-                temp+=V1[ag][0][0][im][nm][rg][na];
-
-              } } } } }
-    Rcpp::Rcout << "at m= "<< m<< "number of susceptibles: "<< temp << "\n";
-
+    // temp=0;
+    // for(int ag=0; ag<11; ag++) {
+    //     for(int im=0; im<4; im++) {
+    //       for(int nm=0; nm<4; nm++){
+    //         for(int rg=0; rg<2; rg++){
+    //           for (int na=0; na<3; na++){
+    //             temp+=V1[ag][0][0][im][nm][rg][na];
+    //
+    //           } } } } }
+    // Rcpp::Rcout << "at m= "<< m<< "number of susceptibles: "<< temp << "\n";
+    //
 
     ///////////////////////////////////////////////////////////////////////////////
   } ///////////////////////////END BURN IN///////////////////////////////////////
@@ -1009,7 +1013,7 @@ for (int r=0; r<16; r++){
     for(int m=0; m<12; m++) {
       /////////////////////CREATE A COUNTER OF MONTHS SINCE START////////////////////
       s = y*12+m;
-      Rcpp::Rcout << s <<"\n";
+      // Rcpp::Rcout << s <<"\n";
       /////////////////////////UPDATING TREATMENT PARAMETERS/////////////////////////
       ///// TxMatZ: 0=completion rate, 1 = tx success, 2 = RATE OF EXIT TO CURE /////
       ///// 3 = RATE OF EXIT TO ACTIVE TB, 4 = RATE OF EXIT TO RETREATMENT      /////
@@ -1020,9 +1024,9 @@ for (int r=0; r<16; r++){
       ///////// RATE OF TREATMENT EXIT TO CURE (LS) //////////////////////////////////
       TxVecZ[2] = TxVec[0]*TxVecZ[1] + rDeft[s]*TxVecZ[1]*RRcurDef;
       ///////// RATE OF TREATMENT EXIT TO ACTIVE TB //////////////////////////////////
-      TxVecZ[3] = TxVec[0]*(1-TxVecZ[1])*(1-pReTx[s]) + rDeft[s]*(1-TxVecZ[1])*RRcurDef;//*(1-pReTx[s]);
+      TxVecZ[3] = TxVec[0]*(1-TxVecZ[1])*(1-pReTx[s]) + rDeft[s]*(1-TxVecZ[1])*RRcurDef;
       ///////// RATE OF TREATMENT EXIT TO RE TREATMENT////////////////////////////////
-      TxVecZ[4] = TxVec[0]*(1-TxVecZ[1])*(pReTx[s]);//   + rDeft[s]*(1-TxVecZ[1])*RRcurDef*pReTx[s];
+      TxVecZ[4] = TxVec[0]*(1-TxVecZ[1])*(pReTx[s]);
       ////////////////////// P(TREATMENT COMPLETION) /////////////////////////////////
       TxVecZ[5] = TxVec[0]*(1-(1.0-TxVecZ[1])*pReTx[s]);
       /////////////////////////////////////////////////////////////////////////////////
@@ -1475,32 +1479,32 @@ for (int r=0; r<16; r++){
                     V1[ag][5][lt][im][nm][rg][na]  += temp;
                   } } } } } }
       // }//end of TB loop
-      temp=0;
-        temp2=0;
-        for(int ag=0; ag<11; ag++) {
-            for(int im=0; im<4; im++) {
-              for(int nm=0; nm<4; nm++){
-                for(int rg=0; rg<2; rg++){
-                  for (int na=0; na<3; na++){
-                    for(int lt=0; lt<2; lt++){
-                      for(int tb=0; tb<6; tb++) {
-
-                      temp2+=V1[ag][tb][lt][im][nm][rg][na];
-                        if (V1[ag][tb][0][im][nm][rg][na] <0 ){
-                          Rcpp::Rcout << "pop is negative at ag " << ag <<"tb=" << tb << "na " << na << "im " << im << "nm "<<nm << "& rg" << rg<< "\n";
-                          Rcpp::Rcout << "pop is "<< V1[ag][tb][0][im][nm][rg][na]<< "at ag " << ag <<"tb=" << tb << "na " << na << "im " << im << "nm "<<nm << "& rg" << rg<< "\n";
-                        } }
-
-                    temp+=V1[ag][0][lt][im][nm][rg][na];
-
-                    }
-
-
-                } } } } }
-
-        Rcpp::Rcout << "at m= "<< m<< "population total: "<< temp2 << "\n";
-
-        Rcpp::Rcout << "at m= "<< m<< "number of susceptibles: "<< temp << "\n";
+      // temp=0;
+      //   temp2=0;
+      //   for(int ag=0; ag<11; ag++) {
+      //       for(int im=0; im<4; im++) {
+      //         for(int nm=0; nm<4; nm++){
+      //           for(int rg=0; rg<2; rg++){
+      //             for (int na=0; na<3; na++){
+      //               for(int lt=0; lt<2; lt++){
+      //                 for(int tb=0; tb<6; tb++) {
+      //
+      //                 temp2+=V1[ag][tb][lt][im][nm][rg][na];
+      //                   if (V1[ag][tb][0][im][nm][rg][na] <0 ){
+      //                     Rcpp::Rcout << "pop is negative at ag " << ag <<"tb=" << tb << "na " << na << "im " << im << "nm "<<nm << "& rg" << rg<< "\n";
+      //                     Rcpp::Rcout << "pop is "<< V1[ag][tb][0][im][nm][rg][na]<< "at ag " << ag <<"tb=" << tb << "na " << na << "im " << im << "nm "<<nm << "& rg" << rg<< "\n";
+      //                   } }
+      //
+      //               temp+=V1[ag][0][lt][im][nm][rg][na];
+      //
+      //               }
+      //
+      //
+      //           } } } } }
+      //
+      //   Rcpp::Rcout << "at m= "<< m<< "population total: "<< temp2 << "\n";
+      //
+      //   Rcpp::Rcout << "at m= "<< m<< "number of susceptibles: "<< temp << "\n";
 
       ///////////////////////////////////////////////////////////////////////////////
       /////////////////////////    FILL RESULTS TABLE    ////////////////////////////
@@ -1967,7 +1971,7 @@ for (int r=0; r<16; r++){
       //          ////////////////////////// REBALANCE THE POPULATION //////////////////////////////
       //          //////////////////////////////////////////////////////////////////////////////////
       /////reblance the population
-      if (reblnc==1){
+      if (reblnc==1 & m==6){
         ////// need to define the current distribution of persons across the RG at this timestep
         for(int ag=0; ag<11; ag++) {
           for(int na=0; na<3; na++) {
@@ -2281,12 +2285,12 @@ for (int r=0; r<16; r++){
               for (int nm=0; nm<4; nm++){
                 for(int rg=0; rg<2; rg++) {
                   for(int na=0; na<3; na++){
-                    // if (reblnc > 0){
+                    if (reblnc > 0 & m ==6){
                       V0[ag][tb][lt][im][nm][rg][na] = V2[ag][tb][lt][im][nm][rg][na];
                       V1[ag][tb][lt][im][nm][rg][na] = V2[ag][tb][lt][im][nm][rg][na];
-                    // } else {
-                    //   V0[ag][tb][lt][im][nm][rg][na] = V1[ag][tb][lt][im][nm][rg][na];
-                    // }
+                    } else {
+                      V0[ag][tb][lt][im][nm][rg][na] = V1[ag][tb][lt][im][nm][rg][na];
+                    }
                   } } } } } } }
       //
       //          // temp=0;
