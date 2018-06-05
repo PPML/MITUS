@@ -109,7 +109,7 @@ tbdyn_graphs <-function(df){
 
   #'format the plot
   cls <- colorRampPalette(c("blue", "red"))( 4 )
-  plot(0,0,ylim=c(0,1000),xlim=c(2000,2014),xlab="",ylab="",axes=F)
+  plot(0,0,ylim=c(0,40),xlim=c(2000,2014),xlab="",ylab="",axes=F)
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
 
@@ -142,30 +142,30 @@ tbdyn_graphs <-function(df){
 ################################################################################
   #'Age Distribution of TB Cases in Percentages
   #'0-24 yrs, 25-44 yrs, 45-64 yrs, 65+ yrs
-
-  V   <- (df[51:65,136:146]+df[51:65,189:199])
-  V2  <- V[,-11]
-  V2[,10] <- V2[,10]+V[,11]
-
-  #'format the plot
-  plot(0,0,ylim=c(0,20),xlim=c(0.6,10.4),xlab="",ylab="",axes=F,col=NA)
-  axis(1,1:10,paste(c("0-4",paste(0:7*10+5,1:8*10+4,sep="-"),"85+"),"\nyears",sep=""),
-       tick=F,cex.axis=0.6)
-  axis(1,1:11-0.5,rep("",11))
-  axis(2,las=2);box()
-  abline(h=axTicks(2),col="grey85")
-
-  #'plot the model data
-  for(i in 1:10) polygon(i+c(-.5,.5,.5,-.5),c(0,0,V2[i],V2[i]),border="white",col="lightblue")
-
-  #'reported data for comparison
-  points(1:10,colSums(notif_age[7:21,])/sum(notif_age[7:21,])*100,pch=19,cex=1.2)
-
-  #'plot text
-  mtext("Age Group",1,2.5,cex=0.9)
-  mtext("Age Distribution of TB Cases (%), 2000-14",3,.8,font=2,cex=0.8)
-  legend("topright",c("Reported data","Fitted model"),pch=c(19,15),lwd=NA,
-         pt.cex=c(1,2),col=c("black","lightblue"),bg="white")
+#'
+#'   V   <- (df[51:65,136:146]+df[51:65,189:199])
+#'   V2  <- V[,-11]
+#'   V2[,10] <- V2[,10]+V[,11]
+#'
+#'   #'format the plot
+#'   plot(0,0,ylim=c(0,max(range(V2))),xlim=c(0.6,10.4),xlab="",ylab="",axes=F,col=NA)
+#'   axis(1,1:10,paste(c("0-4",paste(0:7*10+5,1:8*10+4,sep="-"),"85+"),"\nyears",sep=""),
+#'        tick=F,cex.axis=0.6)
+#'   axis(1,1:11-0.5,rep("",11))
+#'   axis(2,las=2);box()
+#'   abline(h=axTicks(2),col="grey85")
+#'
+#'   #'plot the model data
+#'   for(i in 1:10) polygon(i+c(-.5,.5,.5,-.5),c(0,0,V2[i],V2[i]),border="white",col="lightblue")
+#'
+#'   #'reported data for comparison
+#'   points(1:10,colSums(notif_age[7:21,])/sum(notif_age[7:21,])*100,pch=19,cex=1.2)
+#'
+#'   #'plot text
+#'   mtext("Age Group",1,2.5,cex=0.9)
+#'   mtext("Age Distribution of TB Cases (%), 2000-14",3,.8,font=2,cex=0.8)
+#'   legend("topright",c("Reported data","Model"),pch=c(19,15),lwd=NA,
+#'          pt.cex=c(1,2),col=c("black","lightblue"),bg="white")
 ################################################################################
   #' Distribution of Cases across the TB Progression Categories
 
@@ -282,7 +282,7 @@ tbdyn_graphs <-function(df){
   V3 <- colSums(V2)*1e6
 
   #'format the plot
-  plot(0,0,ylim=c(0,max(range(V3))),xlim=c(0.6,10.4),xlab="",ylab="",axes=F)
+  plot(0,0,ylim=c(0,max(range(V3))+500),xlim=c(0.6,10.4),xlab="",ylab="",axes=F)
   axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
   axis(1,1:10,paste(c("0-4","5-14","15-24","25-34","35-44","45-54","55-64","65-74","75-84","85+"),"\nyears",sep=""),tick=F,cex.axis=0.75)
@@ -296,7 +296,7 @@ tbdyn_graphs <-function(df){
   #'plot text
   mtext("Age Group",1,2.5,cex=0.9)
   mtext("Total TB Deaths by Age Group",3,.8,font=2,cex=0.8)
-  legend("topleft",c("Reported data","Fitted model"),pch=c(19,15),lwd=NA,
+  legend("topleft",c("Reported data","Model"),pch=c(19,15),lwd=NA,
          pt.cex=c(1,2),col=c("black","lightblue"),bg="white")
 
   dev.off()
