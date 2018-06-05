@@ -59,7 +59,7 @@ RRmuHR    <- c(1,P["RRmuHR"])
 ############### CREATE A MATRIX OF RF MORTALITIES BY AGE GROUP ###############
 mort_dist<-rowSums(dist_goal)
 
-RF_fact=20
+RF_fact=2
 
 RRmuRF    <- rep(NA,4);
 names(RRmuRF) <- c("RF1","RF2","RF3","RF4")
@@ -166,7 +166,7 @@ if(Scen3==1) {
 
 # NEED TO REMOVE DRUG RESISTANCE
 ExogInf        <- rep(NA,length(PrevTrend25_34a))
-ExogInf        <- P["ExogInf"]*PrevTrend25_34a/PrevTrend25_341a["2013"]/12
+ExogInf <- P["ExogInf"]*PrevTrend25_34a/PrevTrend25_341a["2013"]/12
 #removed *(ImmigInputs[[7]][4]*DrN[,i]+(1-ImmigInputs[[7]][4])*DrE[,i])
 ###############################    EMMIGRATION   ##############################
 
@@ -187,8 +187,8 @@ HrEntEx  <- cbind(HR_entry,HR_exit)/12
 
 CR           <- P["CR"]/12
 TrIn         <- P["TrIn"]	# Contact rate for In as a fraction of Ip
-RelInfRg     <- c(1.0,P["RelCrHr"],1.0, 1.0)*CR
-TunTbTransTx <- P["TunTbTransTx"]  # set to zero?
+RelInfRg     <- c(1.0,P["RelCrHr"], 1.0, P["RelCrHr"])*CR
+TunTbTransTx <- 0 #P["TunTbTransTx"]  # set to zero?
 Vmix         <- 1-c(P["sigmaHr"],P["sigmaFb"])
 RelInf       <- rep(0,6)
 names(RelInf) <- c("Su","Sp","Ls","Lf","Ac", "Tx")
@@ -204,6 +204,7 @@ EarlyTrend <- c(rep(1+Early0,200*12),seq(1+Early0,1.0,length.out=50*12+2))
 ######################     PROGRESSION TO DISEASE     ##########################
 
 pfast      <- P["pfast"]
+pimmed    <- P["pimmed"]
 ORpfast1   <- P["ORpfast1"] ## age group 1
 ORpfast2   <- P["ORpfast2"] ## age group 2
 ORpfastRF  <- P["ORpfastH"] ##riskfactor
@@ -212,6 +213,7 @@ rslow      <- P["rslow"]/12
 rslowRF    <- P["rslowH"]/12
 RRrslowRF  <- rslowRF/rslow
 rfast      <- P["rfast"]/12
+# rfast      <- ((1-pimmed)*rfast)+pimmed
 rrSlowFB0  <- P["rrSlowFB"]
 rrSlowFB   <- c(1,rrSlowFB0,rrSlowFB0)
 ##############            ORIGINAL Mpfast[ag][hv]             ################
@@ -229,7 +231,7 @@ MpfastPI     <- Mpfast
 
 #vector of ORpfastRF
 vORpfastPIRF<-vORpfastRF  <-c(1,1,1,1)
-vORpfastRF  <-pfast*(exp((0:3)/3*log(ORpfastRF)))
+vORpfastRF  <-  (exp((0:3)/3*log(ORpfastRF)))
 vORpfastPIRF  <- vORpfastRF*ORpfastPI
 
 ############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
@@ -242,7 +244,7 @@ MpfastPI[,3]   <- vORpfastPIRF[3]*Mpfast[,3]
 Mpfast[,4]   <- vORpfastRF[4]*Mpfast[,4]
 MpfastPI[,4]   <- vORpfastPIRF[4]*Mpfast[,4]
 
-##### UPDATE BOTH MATRICES WITH PROBABILITIES, NOT RATES
+##### UPDATE BOTH MATRICES WITH PROBABILITIES, NOT ODDS
 Mpfast[,]    <- Mpfast[,]  /(1+Mpfast[,]);
 MpfastPI[,]  <- MpfastPI[,]/(1+MpfastPI[,]);
 
@@ -333,6 +335,7 @@ rDxt1          <- cbind(rDxt0,rDxt0)
 rDxt           <- 1/(1/rDxt1+DelaySp)*SensSp
 rDxt[,2]       <- (rDxt[,1]-min(rDxt[,1]))/P["rrDxH"]+min(rDxt[,1]) #check this with Nick
 colnames(rDxt) <- c("Active","Active_HighRisk")
+
 #### #### #### INT 3 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
 if(Int3==1) { for(i in 1:4) { rDxt[,i] <- rDxt[,i]+ rDxt[,i]*LgtCurve(2016,2021,1)     }   }
@@ -394,7 +397,7 @@ if(Int4==1) {  TxQualt <- 1-(1-TxQualt)*(1-LgtCurve(2016,2021,0.5))      }
 #### #### #### SCEN 1 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
 NixTrans <- 1-LgtCurve(2016,2017,1)
-if(Scen1==0) {  NixTrans[] <- 1      }
+#if(Scen1==0) {  NixTrans[] <- 1      }
 
 #### #### #### SCEN 1 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
