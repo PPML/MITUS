@@ -1400,59 +1400,80 @@ for (int r=0; r<16; r++){
                     V1[ag][2 ][lt][im][nm][rg][na]  += temp;
                   } } } } } }
         /// LTBI SCREENING AND TLTBI INITIATION /// only for no previous TB or LTBI tx
-        for(int nm=0; nm<4; nm++) {
-          for(int im=0; im<4; im++) {
-            for(int rg=0; rg<2; rg++) {
-              for(int na=0; na<3; na++) {
-                /////////DOES OUR GENERIC RISK GROUP AFFECT LT DX PARAMETERS?
-                /////////should there be a joint number for foreign born and high risk (more elevated than high risk; particularly for the rTBN BCG)
-                ////////////// US BORN, LOW RISK  //////////////////
-                if( rg==0 & na==0) {
-                  rTbP = rLtScrt[s]*LtDxParN[0][0];
-                  rTbN = rLtScrt[s]*LtDxParN[0][1];
-                }
-                //////////// NON US BORN  ////////////////
-                if(rg==0 & na > 0) {
-                  rTbP = rLtScrt[s]*LtDxParN[2][0];
-                  rTbN = rLtScrt[s]*LtDxParN[2][1];
-                }
-                ////////////// US BORN, HIGH RISK  /////////////////
-                if(rg==1) {
-                  rTbP = rLtScrt[s]*LtDxParN[1][0];
-                  rTbN = rLtScrt[s]*LtDxParN[1][1];
-                }
-                for(int ag=0; ag<11; ag++) {
-                  ////if we want a count of the number of people with LTBI diagnosis we will need to create a new vector
-                  ////////////// HAVE LTBI
-                  temp  = V0[ag][2][0][im][nm][rg][na]*rTbP;
-                  temp2 = V0[ag][3][0][im][nm][rg][na]*rTbP;
-                  for(int tb=2; tb<3; tb++){
-                    VLdx[ag][tb][0][im][nm][rg][na] = temp+temp2;
-                  }
-                  ////////////// Dont have LTBI
-                  temp  = V0[ag][0][0][im][nm][rg][na]*rTbN;
-                  temp2 = V0[ag][1][0][im][nm][rg][na]*rTbN;
-                  V1[ag][0][0][im][nm][rg][na]  -= temp;
-                  V1[ag][1][0][im][nm][rg][na]  -= temp2;
-                  ///////moving to latent tx experienced as in last model -- is this correct?
-                  V1[ag][0][1][im][nm][rg][na]  += temp;
-                  V1[ag][1][1][im][nm][rg][na]  += temp2;
-                } } } } }
+        // for(int nm=0; nm<4; nm++) {
+        //   for(int im=0; im<4; im++) {
+        //     for(int rg=0; rg<2; rg++) {
+        //       for(int na=0; na<3; na++) {
+        //         /////////DOES OUR GENERIC RISK GROUP AFFECT LT DX PARAMETERS?
+        //         /////////should there be a joint number for foreign born and high risk (more elevated than high risk; particularly for the rTBN BCG)
+        //         ////////////// US BORN, LOW RISK  //////////////////
+                // if( rg==0 & na==0) {
+                //   rTbP = rLtScrt[s]*LtDxParN[0][0];
+                //   rTbN = rLtScrt[s]*LtDxParN[0][1];
+                // }
+                // //////////// NON US BORN  ////////////////
+                // if(rg==0 & na > 0) {
+                //   rTbP = rLtScrt[s]*LtDxParN[2][0];
+                //   rTbN = rLtScrt[s]*LtDxParN[2][1];
+                // }
+                // ////////////// US BORN, HIGH RISK  /////////////////
+                // if(rg==1) {
+                //   rTbP = rLtScrt[s]*LtDxParN[1][0];
+                //   rTbN = rLtScrt[s]*LtDxParN[1][1];
+                // }
+        //         for(int ag=0; ag<11; ag++) {
+        //           ////if we want a count of the number of people with LTBI diagnosis we will need to create a new vector
+        //           ////////////// HAVE LTBI
+        //           temp  = V0[ag][2][0][im][nm][rg][na]*rTbP;
+        //           temp2 = V0[ag][3][0][im][nm][rg][na]*rTbP;
+        //
+        //             VLdx[ag][2][0][im][nm][rg][na] = temp;
+        //             VLdx[ag][2][0][im][nm][rg][na] = temp2;
+        //
+        //           ////////////// Dont have LTBI
+        //           temp  = V0[ag][0][0][im][nm][rg][na]*rTbN;
+        //           temp2 = V0[ag][1][0][im][nm][rg][na]*rTbN;
+        //           V1[ag][0][0][im][nm][rg][na]  -= temp;
+        //           V1[ag][1][0][im][nm][rg][na]  -= temp2;
+        //           ///////moving to latent tx experienced as in last model -- is this correct?
+        //           V1[ag][0][1][im][nm][rg][na]  += temp;
+        //           V1[ag][1][1][im][nm][rg][na]  += temp2;
+        //         } } } } }
         /// TLTBI: TX COMPLETION + DEFAULT /// only need to consider tx naive compartment
+        for(int rg=0; rg<2; rg++) {
+          for(int na=0; na<3; na++) {
+
+            if( rg==0 & na==0) {
+              rTbP = rLtScrt[s]*LtDxParN[0][0];
+              rTbN = rLtScrt[s]*LtDxParN[0][1];
+            }
+            //////////// NON US BORN  ////////////////
+            if(rg==0 & na > 0) {
+              rTbP = rLtScrt[s]*LtDxParN[2][0];
+              rTbN = rLtScrt[s]*LtDxParN[2][1];
+            }
+            ////////////// US BORN, HIGH RISK  /////////////////
+            if(rg==1) {
+              rTbP = rLtScrt[s]*LtDxParN[1][0];
+              rTbN = rLtScrt[s]*LtDxParN[1][1];
+            }
+
         for(int ag=0; ag<11; ag++) {
             for(int im=0; im<4 ; im++) {
               for(int nm=0; nm<4; nm++) {
-                for(int rg=0; rg<2; rg++) {
-                  for(int na=0; na<3; na++) {
+
                     temp  = V0[ag][2][0][im][nm][rg][na]*rTbP*dLtt[s]; // tx completion
                     temp2 = V0[ag][3][0][im][nm][rg][na]*rTbP*dLtt[s]; // tx completion
+
                     temp3 = V0[ag][2][0][im][nm][rg][na]*rTbP*LtTxPar[1]; // default
                     temp4 = V0[ag][3][0][im][nm][rg][na]*rTbP*LtTxPar[1]; // default
 
                     V1[ag][2][0][im][nm][rg][na]  -= temp+temp3; //remove from latent slow
                     V1[ag][3][0][im][nm][rg][na]  -= temp2+temp4;  //remove from latent fast
-                    V1[ag][1][1][im][nm][rg][na]   += (temp+temp2)*EffLt;//*EffLt0[s]; //exit to cure
-                    V1[ag][2][1][im][nm][rg][na]   += (temp+temp2)*(1-EffLt);//*(1-EffLt0[s]*EffLt);  //tx comp fail to latent slow
+
+                    V1[ag][1][1][im][nm][rg][na]   += (temp+temp2)*EffLt*EffLt0[s]; //exit to cure
+                    V1[ag][2][1][im][nm][rg][na]   += (temp+temp2)*(1-EffLt0[s]*EffLt);  //tx comp fail to latent slow
+
                     ///placed in tx naive for consistency in last model
                     V1[ag][2][0][im][nm][rg][na]  += (temp3+temp4); //latent tx default to latent slow
                   } } } } }
