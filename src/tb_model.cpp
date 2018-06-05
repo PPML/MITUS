@@ -100,10 +100,10 @@ Rcpp::List cSim(
   long double   VMort[11][6][2][4][4][2][3];
   double        Vdx[11][6][2][4][4][2][3];
   double        VLdx[11][6][2][4][4][2][3];
-  double        VNkl[2][2];  ///HIGH AND LOW RISK, NATIVITY
-  double        VGjkl[2][2]; ///HIGH AND LOW RISK, NATIVITY
+ long double        VNkl[2][2];  ///HIGH AND LOW RISK, NATIVITY
+long  double        VGjkl[2][2]; ///HIGH AND LOW RISK, NATIVITY
   long double        Vjaf[4];     ///BY NUMBER OF MIXING GROUPS
-  double        VLjkl[2][2];  ///HIGH AND LOW RISK, NATIVITY
+ long  double        VLjkl[2][2];  ///HIGH AND LOW RISK, NATIVITY
   int           N;
   long double        dist_genN[dist_gen.nrow()][dist_gen.ncol()];
   double        can_goN[can_go.nrow()][can_go.ncol()];
@@ -415,14 +415,14 @@ long  double        mat_sum;
                 if ((mubtN[0][ag]*RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][tb]) < 1){
                 V1[ag][tb][0][im][nm][rg][na]  -= V0[ag][tb][0][im][nm][rg][na]*(mubtN[0][ag]*RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][tb]);
                 } else {
-                  V1[ag][tb][0][im][nm][rg][na]  -= (V0[ag][tb][0][im][nm][rg][na]);
+                  V1[ag][tb][0][im][nm][rg][na]  -= V0[ag][tb][0][im][nm][rg][na];
                 }  }
 
 ////////////////          MORTALITY WITH TB TREATMENT         ////////////////////
   if ((mubtN[0][ag]*RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][5 ]*pow(1.0-TxVecZ[1],TunTxMort))<1){
        V1[ag][5 ][0][im][nm][rg][na]  -= V0[ag][5 ][0][im][nm][rg][na]*(mubtN[0][ag]*RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][5 ]*pow(1.0-TxVecZ[1],TunTxMort)); //check the mortality in param
 } else {
-       V1[ag][5 ][0][im][nm][rg][na]  -= (V0[ag][5 ][0][im][nm][rg][na]);
+       V1[ag][5 ][0][im][nm][rg][na]  -= V0[ag][5 ][0][im][nm][rg][na];
 }
 
 } } } } }
@@ -628,6 +628,18 @@ long  double        mat_sum;
 
             } } } } }
 
+    temp=0;
+    for(int ag=0; ag<11; ag++) {
+      for(int im=0; im<4; im++) {
+        for(int nm=0; nm<4; nm++){
+          for(int rg=0; rg<2; rg++){
+            for (int na=0; na<3; na++){
+              temp+=V1[ag][4][0][im][nm][rg][0];
+
+            } } } } }
+    Rcpp::Rcout << "at m= "<< m<< "number of active US: "<< temp << "\n";
+
+
       ///////////////////////////         BREAK DOWN      /////////////////////////////
       for(int ag=0; ag<11; ag++) {
         for(int im=0; im<4 ; im++) {
@@ -679,7 +691,6 @@ long  double        mat_sum;
                 temp  = V0[ag][4 ][0][im][nm][rg][na]*rDxtN[0][rg]/RRdxAge[ag]/EarlyTrend[m];
                 V1[ag][4 ][0][im][nm][rg][na]  -= temp;
                 V1[ag][5 ][0][im][nm][rg][na]  += temp;
-
               } } } } }
 
       ///////////////////////////   TREATMENT OUTCOMES    /////////////////////////////
@@ -794,7 +805,7 @@ long  double        mat_sum;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////BEGIN THE N LOOP//////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-          for(int n=0; n<50; n++){
+          for(int n=0; n<30; n++){
 /////// CALCULATE DIFFERENCE FROM CURRENT DISTRIBUTION TO GOAL DISTRIBUTION /////
             for (int i=0; i<16; i++){
               diff_i_v[i] = dist_i_v[i] - dist_goal_v[i];
@@ -956,26 +967,6 @@ for (int r=0; r<16; r++){
         for(int nm=0; nm<4; nm++){
           mort_dist[nm] = temp_vec2[nm]/mat_sum;
           Rcpp::Rcout << "mort dist after reblnc is" << mort_dist[nm] << "@s= "<< m<< "\n";}
-    // }
-
-//     ///////////////////////
-//     ///////////////////////////////////////////////////////////////////////////////////
-//     ///////////                       UPDATE V0 as V1                       ///////////
-//     ///////////////////////////////////////////////////////////////////////////////////
-//
-    // for(int ag=0; ag<11; ag++) {
-    //   for(int tb=0; tb<6; tb++) {
-    //     for(int im=0; im<4; im++) {
-    //       for(int nm=0; nm<4; nm++){
-    //         for(int rg=0; rg<2; rg++){
-    //           for (int na=0; na<3; na++){
-    //             // if (reblnc==1) {
-    //             // V1[ag][tb][0][im][nm][rg][na]  = V2[ag][tb][0][im][nm][rg][na];
-    //             // V0[ag][tb][0][im][nm][rg][na]  = V2[ag][tb][0][im][nm][rg][na];
-    //             // } else {
-    //             V0[ag][tb][0][im][nm][rg][na]  = V1[ag][tb][0][im][nm][rg][na];
-    //             // }
-    //           } } } } } }
 
 
     // // if (m==1000){
@@ -1029,9 +1020,9 @@ for (int r=0; r<16; r++){
       ///////// RATE OF TREATMENT EXIT TO CURE (LS) //////////////////////////////////
       TxVecZ[2] = TxVec[0]*TxVecZ[1] + rDeft[s]*TxVecZ[1]*RRcurDef;
       ///////// RATE OF TREATMENT EXIT TO ACTIVE TB //////////////////////////////////
-      TxVecZ[3] = TxVec[0]*(1-TxVecZ[1])*(1-pReTx[s]) + rDeft[s]*(1-TxVecZ[1])*RRcurDef*(1-pReTx[s]);
+      TxVecZ[3] = TxVec[0]*(1-TxVecZ[1])*(1-pReTx[s]) + rDeft[s]*(1-TxVecZ[1])*RRcurDef;//*(1-pReTx[s]);
       ///////// RATE OF TREATMENT EXIT TO RE TREATMENT////////////////////////////////
-      TxVecZ[4] = TxVec[0]*(1-TxVecZ[1])*(pReTx[s])   + rDeft[s]*(1-TxVecZ[1])*RRcurDef*pReTx[s];
+      TxVecZ[4] = TxVec[0]*(1-TxVecZ[1])*(pReTx[s]);//   + rDeft[s]*(1-TxVecZ[1])*RRcurDef*pReTx[s];
       ////////////////////// P(TREATMENT COMPLETION) /////////////////////////////////
       TxVecZ[5] = TxVec[0]*(1-(1.0-TxVecZ[1])*pReTx[s]);
       /////////////////////////////////////////////////////////////////////////////////
@@ -1130,42 +1121,16 @@ for (int r=0; r<16; r++){
                   if (mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][4 ]+temp <1){
                   VMort[ag][4 ][lt][im][nm][rg][na]  = V0[ag][4 ][lt][im][nm][rg][na]*
                     (mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][4 ]+temp );
-                } else VMort[ag][4 ][lt][im][nm][rg][na]  = V0[ag][4 ][lt][im][nm][rg][na];
-
+                } else {VMort[ag][4 ][lt][im][nm][rg][na]  = V0[ag][4 ][lt][im][nm][rg][na]; }
 
                   ////////////////////////    TB TREATMENT        /// //////////////////////////////
                   if ((mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]+(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort))<1 ){
                   VMort[ag][5 ][lt][im][nm][rg][na]  = V0[ag][5 ][lt][im][nm][rg][na]*
                     (mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]+(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort));
-                } else  VMort[ag][5 ][lt][im][nm][rg][na]  = V0[ag][5 ][lt][im][nm][rg][na];
-                  } } } } } }
+                  } else  {
+                    VMort[ag][5 ][lt][im][nm][rg][na]  = V0[ag][5 ][lt][im][nm][rg][na]; }
+
       ///////////// UPDATE THE PRIMARY VECTOR BY REMOVING MORTALITY /////////////////
-      // for(int ag=0; ag<11; ag++){
-      //   for(int tb=0; tb<6; tb++) {
-      //     for(int lt=0; lt<2; lt++) {
-      //       for (int im=0; im<4; im++) {
-      //         for (int nm=0; nm<4; nm++) {
-      //           for(int rg=0; rg<2; rg++) {
-      //             for(int na=0; na<3; na++) {
-      //
-      //               temp_vec3[ag] +=VMort[ag][tb][lt][im][nm][rg][na];
-      //               temp_vec4[ag] +=V1[ag][tb][lt][im][nm][rg][na];
-      //               temp_vec5[ag] = temp_vec3[ag]/temp_vec4[ag];
-      //
-      //             }
-      //
-      //           } } } } } }
-      // for(int ag=0; ag<11; ag++){
-      //   if (s==0){
-      //     Rcpp::Rcout << "mort rate @ time = " << s << "& ag = " << ag << "is = " << temp_vec5[ag] << "\n";}
-      for(int ag=0; ag<11; ag++){
-
-        for(int lt=0; lt<2; lt++) {
-          for (int im=0; im<4; im++) {
-            for (int nm=0; nm<4; nm++) {
-              for(int rg=0; rg<2; rg++) {
-                for(int na=0; na<3; na++) {
-
                   for(int tb=0; tb<6; tb++) {
                     V1[ag][tb][lt][im][nm][rg][na]  -= VMort[ag][tb][lt][im][nm][rg][na];
                     // temp += VMort[ag][tb][lt][im][nm][rg][na];
@@ -1370,8 +1335,8 @@ for (int r=0; r<16; r++){
                     V1[ag][3][lt][im][nm][rg][na]  -= temp2; //REMOVE FROM LATENT FAST
                     V1[ag][4][lt][im][nm][rg][na]  += (temp+temp2); //PLACE IN ACTIVE DISEASE
                     //////PROGRESSION OF DISEASE IF LATENT TREATMENT FAILS
-                    temp  = V0[ag][2][lt][im][nm][rg][na]*MrslowN[ag][im]*rrSlowFB[na];//*(1-EffLt0[s]);
-                    temp2 = V0[ag][3][lt][im][nm][rg][na]*MrslowN[ag][im]*rrSlowFB[na];//*(1-EffLt0[s]);
+                    temp  = V0[ag][2][lt][im][nm][rg][na]*MrslowN[ag][im]*rrSlowFB[na]*(1-EffLt0[s]);
+                    temp2 = V0[ag][3][lt][im][nm][rg][na]*MrslowN[ag][im]*rrSlowFB[na]*(1-EffLt0[s]);
 
                     V1[ag][2][lt][im][nm][rg][na]  -= temp;
                     V1[ag][3][lt][im][nm][rg][na]  -= temp2;
