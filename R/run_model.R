@@ -1,15 +1,17 @@
+
 library(Rcpp)
 source("R/process_sims.R");
 sourceCpp("src/tb_model.cpp");
+  # system.time(
 
-# system.time(
-
-  OutputsZint(samp_i = 1, parAll200,endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0)# )
+OutputsZint(samp_i = 1, parAll200,endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0)
+  #
 
 source("R/graphs_demo.R")
-
 tb_graph_demo(results)
 
+source("R/graphs_tb.R")
+tbdyn_graphs(results)
 
 source("R/format_df.R")
 
@@ -55,7 +57,7 @@ dist<-cSim( 2050-1950,  nRes     = length(ResNam), rDxt      = rDxt     , TxQual
           EarlyTrend = EarlyTrend, EffLt    = EffLt         , EffLt0    = EffLt0   , dLtt     = dLtt        , NixTrans = NixTrans    ,
           can_go   = can_go      , dist_goal=dist_goal      ,  diff_i_v = diff_i_v , dist_orig_v=dist_orig_v )$dist
 
-trans<-cSim( 2050-1950,  nRes     = length(ResNam), rDxt      = rDxt     , TxQualt   = TxQualt    , InitPop   = InitPop    ,
+V1<-cSim( 2050-1950,  nRes     = length(ResNam), rDxt      = rDxt     , TxQualt   = TxQualt    , InitPop   = InitPop    ,
             Mpfast   = Mpfast      , ExogInf   = ExogInf      , MpfastPI  = MpfastPI , Mrslow    = Mrslow     , rrSlowFB = rrSlowFB    ,
             rfast    = rfast       , RRcurDef = RRcurDef      , rSlfCur  = rSlfCur   , p_HR     = p_HR        , dist_gen = dist_gen    ,
             vTMort   = vTMort      , RRmuRF = RRmuRF , muTbRF = muTbRF        , Birthst   = Birthst    ,
@@ -64,7 +66,7 @@ trans<-cSim( 2050-1950,  nRes     = length(ResNam), rDxt      = rDxt     , TxQua
             TxVec    = TxVec       , TunTxMort = TunTxMort    , rDeft     = rDeft    , pReTx     = pReTx      , LtTxPar  = LtTxPar     ,
             LtDxPar  = LtDxPar     , rLtScrt   = rLtScrt      , RRdxAge  = RRdxAge   , rRecov   = rRecov      , pImmScen  = pImmScen   ,
             EarlyTrend = EarlyTrend, EffLt    = EffLt         , EffLt0    = EffLt0   , dLtt     = dLtt        , NixTrans = NixTrans    ,
-            can_go   = can_go      , dist_goal=dist_goal      ,  diff_i_v = diff_i_v , dist_orig_v=dist_orig_v )$trans_mat_tot
+            can_go   = can_go      , dist_goal=dist_goal      ,  diff_i_v = diff_i_v , dist_orig_v=dist_orig_v )$V1
 #
 # v0<-cSim(  nYrs     =   2050-1950,  nRes     = length(ResNam), rDxt      = rDxt     , TxQualt   = TxQualt    , InitPop   = InitPop    ,
 #            Mpfast   = Mpfast      , ExogInf   = ExogInf      , MpfastPI  = MpfastPI , Mrslow    = Mrslow     , rrSlowFB = rrSlowFB    ,
