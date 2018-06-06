@@ -46,10 +46,7 @@ Rcpp::List cSim(
     double              rRecov,      //rate from latent slow to partially immune TB
     double              pImmScen,    // lack of reactivitiy to IGRA for Sp
     std::vector<double>  EarlyTrend,  // TB natural history parameter
-    std::vector<double> dLtt,        //latent diagnosis over time
     std::vector<double> pReTx,
-    std::vector<double> EffLt0,
-    double              EffLt,
     std::vector<double> NixTrans,
     Rcpp::NumericMatrix       dist_gen,
     Rcpp::NumericMatrix       can_go,
@@ -564,15 +561,14 @@ long  double        mat_sum;
 
     // Step 4
     /// LOW RISK US BORN
-    VLjkl[0 ][0 ]  = RelInfRg[0]*Vjaf[0];
+    VLjkl[0 ][0 ]  = (RelInfRg[0]*Vjaf[0])/5;
     ///////// HIGH RISK US BORN
-    VLjkl[1 ][0 ]  = RelInfRg[1]*Vjaf[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0];
+    VLjkl[1 ][0 ]  = (RelInfRg[1]*Vjaf[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0])/5;
     ///////// LOW RISK NON US BORN
-    VLjkl[0 ][1 ]  = RelInfRg[2]*Vjaf[2]*(1-Vmix[1]) + RelInfRg[0]*Vjaf[0]*Vmix[1] + ExogInf[0];
+    VLjkl[0 ][1 ]  = ((RelInfRg[2]*Vjaf[2]*(1-Vmix[1]) + RelInfRg[0]*Vjaf[0]*Vmix[1])/5) + ExogInf[0];
     ///////// HIGH RISK NON US BORN
     ///check the use of RelInfRg here as beta, might need to be a combo param but unclear check the old param file
-    VLjkl[1 ][1 ]  = RelInfRg[3]*Vjaf[3]*(1-Vmix[0])*(1-Vmix[1]) + RelInfRg[2]*Vjaf[2]*Vmix[0]*(1-Vmix[1]) + RelInfRg[1]*Vjaf[1]*Vmix[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]*Vmix[1] + ExogInf[0];
-
+    VLjkl[1 ][1 ]  = ((RelInfRg[3]*Vjaf[3]*(1-Vmix[0])*(1-Vmix[1]) + RelInfRg[2]*Vjaf[2]*Vmix[0]*(1-Vmix[1]) + RelInfRg[1]*Vjaf[1]*Vmix[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]*Vmix[1])/5) + ExogInf[0];
 
     // for (int i=0; i<2; i++){
     //   for (int j=0; j<2; j++){
@@ -1272,14 +1268,14 @@ for (int r=0; r<16; r++){
 
       // Step 4
       /// LOW RISK US BORN
-      VLjkl[0 ][0 ]  = RelInfRg[0]*Vjaf[0];
+      VLjkl[0 ][0 ]  = (RelInfRg[0]*Vjaf[0])/5;
       ///////// HIGH RISK US BORN
-      VLjkl[1 ][0 ]  = RelInfRg[1]*Vjaf[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0];
+      VLjkl[1 ][0 ]  = (RelInfRg[1]*Vjaf[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0])/5;
       ///////// LOW RISK NON US BORN
-      VLjkl[0 ][1 ]  = RelInfRg[2]*Vjaf[2]*(1-Vmix[1]) + RelInfRg[0]*Vjaf[0]*Vmix[1] + ExogInf[s];
+      VLjkl[0 ][1 ]  = ((RelInfRg[2]*Vjaf[2]*(1-Vmix[1]) + RelInfRg[0]*Vjaf[0]*Vmix[1])/5) + ExogInf[s];
       ///////// HIGH RISK NON US BORN
       ///check the use of RelInfRg here as beta, might need to be a combo param but unclear check the old param file
-      VLjkl[1 ][1 ]  = RelInfRg[3]*Vjaf[3]*(1-Vmix[0])*(1-Vmix[1]) + RelInfRg[2]*Vjaf[2]*Vmix[0]*(1-Vmix[1]) + RelInfRg[1]*Vjaf[1]*Vmix[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]*Vmix[1] + ExogInf[s];
+      VLjkl[1 ][1 ]  = ((RelInfRg[3]*Vjaf[3]*(1-Vmix[0])*(1-Vmix[1]) + RelInfRg[2]*Vjaf[2]*Vmix[0]*(1-Vmix[1]) + RelInfRg[1]*Vjaf[1]*Vmix[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]*Vmix[1]) /5)+ ExogInf[s];
 
 
         ///////////////////////////////INFECTION///////////////////////////////////////
@@ -1338,13 +1334,6 @@ for (int r=0; r<16; r++){
                     V1[ag][2][lt][im][nm][rg][na]  -= temp;  //REMOVE FROM LATENT SLOW
                     V1[ag][3][lt][im][nm][rg][na]  -= temp2; //REMOVE FROM LATENT FAST
                     V1[ag][4][lt][im][nm][rg][na]  += (temp+temp2); //PLACE IN ACTIVE DISEASE
-                    //////PROGRESSION OF DISEASE IF LATENT TREATMENT FAILS
-                    temp  = V0[ag][2][lt][im][nm][rg][na]*MrslowN[ag][im]*rrSlowFB[na]*(1-EffLt0[s]);
-                    temp2 = V0[ag][3][lt][im][nm][rg][na]*MrslowN[ag][im]*rrSlowFB[na]*(1-EffLt0[s]);
-
-                    V1[ag][2][lt][im][nm][rg][na]  -= temp;
-                    V1[ag][3][lt][im][nm][rg][na]  -= temp2;
-                    V1[ag][4][lt][im][nm][rg][na]  += temp+temp2;
                   } } } } } }
         ///////////////////////////   LATENT SLOW TO SAFE   /////////////////////////////
         for(int ag=0; ag<11; ag++) {
@@ -1369,45 +1358,36 @@ for (int r=0; r<16; r++){
                     V1[ag][2 ][lt][im][nm][rg][na]  += temp;
                   } } } } } }
         /// LTBI SCREENING AND TLTBI INITIATION /// only for no previous TB or LTBI tx
-        // for(int nm=0; nm<4; nm++) {
-        //   for(int im=0; im<4; im++) {
-        //     for(int rg=0; rg<2; rg++) {
-        //       for(int na=0; na<3; na++) {
-        //         /////////DOES OUR GENERIC RISK GROUP AFFECT LT DX PARAMETERS?
-        //         /////////should there be a joint number for foreign born and high risk (more elevated than high risk; particularly for the rTBN BCG)
-        //         ////////////// US BORN, LOW RISK  //////////////////
-                // if( rg==0 & na==0) {
-                //   rTbP = rLtScrt[s]*LtDxParN[0][0];
-                //   rTbN = rLtScrt[s]*LtDxParN[0][1];
-                // }
-                // //////////// NON US BORN  ////////////////
-                // if(rg==0 & na > 0) {
-                //   rTbP = rLtScrt[s]*LtDxParN[2][0];
-                //   rTbN = rLtScrt[s]*LtDxParN[2][1];
-                // }
-                // ////////////// US BORN, HIGH RISK  /////////////////
-                // if(rg==1) {
-                //   rTbP = rLtScrt[s]*LtDxParN[1][0];
-                //   rTbN = rLtScrt[s]*LtDxParN[1][1];
-                // }
-        //         for(int ag=0; ag<11; ag++) {
-        //           ////if we want a count of the number of people with LTBI diagnosis we will need to create a new vector
-        //           ////////////// HAVE LTBI
-        //           temp  = V0[ag][2][0][im][nm][rg][na]*rTbP;
-        //           temp2 = V0[ag][3][0][im][nm][rg][na]*rTbP;
-        //
-        //             VLdx[ag][2][0][im][nm][rg][na] = temp;
-        //             VLdx[ag][2][0][im][nm][rg][na] = temp2;
-        //
-        //           ////////////// Dont have LTBI
-        //           temp  = V0[ag][0][0][im][nm][rg][na]*rTbN;
-        //           temp2 = V0[ag][1][0][im][nm][rg][na]*rTbN;
-        //           V1[ag][0][0][im][nm][rg][na]  -= temp;
-        //           V1[ag][1][0][im][nm][rg][na]  -= temp2;
-        //           ///////moving to latent tx experienced as in last model -- is this correct?
-        //           V1[ag][0][1][im][nm][rg][na]  += temp;
-        //           V1[ag][1][1][im][nm][rg][na]  += temp2;
-        //         } } } } }
+        for(int nm=0; nm<4; nm++) {
+          for(int im=0; im<4; im++) {
+            for(int rg=0; rg<2; rg++) {
+              for(int na=0; na<3; na++) {
+                ////////////// US BORN, LOW RISK  //////////////////
+        if( rg==0 & na==0) {
+          rTbP = rLtScrt[s]*LtDxParN[0][0];
+          rTbN = rLtScrt[s]*LtDxParN[0][1];
+        }
+        //////////// NON US BORN  ////////////////
+        if(rg==0 & na > 0) {
+          rTbP = rLtScrt[s]*LtDxParN[2][0];
+          rTbN = rLtScrt[s]*LtDxParN[2][1];
+        }
+        ////////////// US BORN, HIGH RISK  /////////////////
+        if(rg==1) {
+          rTbP = rLtScrt[s]*LtDxParN[1][0];
+          rTbN = rLtScrt[s]*LtDxParN[1][1];
+        }
+                for(int ag=0; ag<11; ag++) {
+
+                  ////////////// Dont have LTBI
+                  temp  = V0[ag][0][0][im][nm][rg][na]*rTbN;
+                  temp2 = V0[ag][1][0][im][nm][rg][na]*rTbN;
+                  V1[ag][0][0][im][nm][rg][na]  -= temp;
+                  V1[ag][1][0][im][nm][rg][na]  -= temp2;
+                  ///////moving to latent tx experienced as in last model -- is this correct?
+                  V1[ag][0][1][im][nm][rg][na]  += temp;
+                  V1[ag][1][1][im][nm][rg][na]  += temp2;
+                } } } } }
         /// TLTBI: TX COMPLETION + DEFAULT /// only need to consider tx naive compartment
         for(int rg=0; rg<2; rg++) {
           for(int na=0; na<3; na++) {
@@ -1430,20 +1410,20 @@ for (int r=0; r<16; r++){
         for(int ag=0; ag<11; ag++) {
             for(int im=0; im<4 ; im++) {
               for(int nm=0; nm<4; nm++) {
+                            //N(latent)*r(posLTBIscreen)*p(TLTBI Initiation)*p(TLTBI completion)
+                    temp  = V0[ag][2][0][im][nm][rg][na]*rTbP*LtTxPar[0]*(1-LtTxPar[1]); // tx completion
+                    temp2 = V0[ag][3][0][im][nm][rg][na]*rTbP*LtTxPar[0]*(1-LtTxPar[1]); // tx completion
 
-                    temp  = V0[ag][2][0][im][nm][rg][na]*rTbP*dLtt[s]; // tx completion
-                    temp2 = V0[ag][3][0][im][nm][rg][na]*rTbP*dLtt[s]; // tx completion
+                    temp3 = V0[ag][2][0][im][nm][rg][na]*rTbP*LtTxPar[0]*LtTxPar[1]; // default
+                    temp4 = V0[ag][3][0][im][nm][rg][na]*rTbP*LtTxPar[0]*LtTxPar[1]; // default
 
-                    temp3 = V0[ag][2][0][im][nm][rg][na]*rTbP*LtTxPar[1]; // default
-                    temp4 = V0[ag][3][0][im][nm][rg][na]*rTbP*LtTxPar[1]; // default
+                    V1[ag][2][0][im][nm][rg][na]  -=  (temp+temp3); //remove from latent slow
+                    V1[ag][3][0][im][nm][rg][na]  -=  (temp2+temp4);  //remove from latent fast
 
-                    V1[ag][2][0][im][nm][rg][na]  -= temp+temp3; //remove from latent slow
-                    V1[ag][3][0][im][nm][rg][na]  -= temp2+temp4;  //remove from latent fast
+                    V1[ag][1][1][im][nm][rg][na]   += (temp+temp2)*LtTxPar[2]; //*EffLt0[s]; //exit to cure
+                    V1[ag][2][1][im][nm][rg][na]   += (temp+temp2)*(1-LtTxPar[2]); //*(1-EffLt0[s]) //tx comp fail to latent slow
 
-                    V1[ag][1][1][im][nm][rg][na]   += (temp+temp2)*EffLt*EffLt0[s]; //exit to cure
-                    V1[ag][2][1][im][nm][rg][na]   += (temp+temp2)*(1-EffLt0[s]*EffLt);  //tx comp fail to latent slow
-
-                    ///placed in tx naive for consistency in last model
+                    ///defaults are placed in tx naive because it is considered the same tb infection
                     V1[ag][2][0][im][nm][rg][na]  += (temp3+temp4); //latent tx default to latent slow
                   } } } } }
         ///////////////////// TB DIAGNOSIS AND TX INITIATION  /////////////////////////
