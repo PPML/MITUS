@@ -237,11 +237,13 @@ load("data/ModelInputs_9-2-16.rData")
 ###########   WILL THIS PARAMETER NEED TO BE REDUCED?
   rrTestHr      <- P["rrTestHr"] # RR of LTBI screening for HIV and HR as cmpared to general
   rrTestLrNoTb  <- P["rrTestLrNoTb"] # RR of LTBI screening for individuals with no risk factors
-  dLt           <- 1/9
+#  dLt           <- 1/9
 
   rDefLt        <- dLt*P["pDefLt"]/(1-P["pDefLt"])  # based on 50% tx completion with 6 mo INH regimen 2.0 [1.0,3.0] from Menzies Ind J Med Res 2011
   EffLt         <- P["EffLt"]
-  LtTxPar       <- c(dLt,rDefLt,EffLt)
+  ######NEW PARAMETER FOR MITUS MODEL
+  pTlInt        <- .80
+  LtTxPar       <- c(pTlInt,rDefLt,EffLt)
 
   LtDxPar <- matrix(NA,3,2);
   colnames(LtDxPar) <- c("latent","no latent");

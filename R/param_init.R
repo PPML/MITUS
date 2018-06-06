@@ -258,6 +258,7 @@ Vrslow=rslow*exp((0:3)/3*log(RRrslowRF))
 TunrslowAge  <- P["TunrslowAge"]
 rrReactAg       <- exp(c(0,0,0,0,0,0,0.5,1:4)*P["TunrslowAge"])
 Mrslow <- outer(rrReactAg,Vrslow)
+Mrslow <- Mrslow;
 
 
 #######################       RATE OF RECOVERY          ########################
@@ -277,12 +278,14 @@ SpecLtFb      <- SpecLt         #  spec of test for latent TB infection (based o
 ###removed rrTestHIV
 rrTestHr      <- P["rrTestHr"] # RR of LTBI screening for HIV and HR as cmpared to general
 rrTestLrNoTb  <- P["rrTestLrNoTb"] # RR of LTBI screening for individuals with no risk factors
-dLt           <- 1/9
+#dLt           <- 1/9
 rDefLt        <- dLt*P["pDefLt"]/(1-P["pDefLt"])  # based on 50% tx completion with 6 mo INH regimen 2.0 [1.0,3.0] from Menzies Ind J Med Res 2011
 EffLt         <- P["EffLt"]
-LtTxPar       <- c(dLt,rDefLt,EffLt)
+######NEW PARAMETER FOR MITUS MODEL
+pTlInt        <- .80
+LtTxPar       <- c(pTlInt,DefLt,EffLt)
 
-dLtt          <- (1-LgtCurve(2016,2021,0)) * 1/9
+#dLtt          <- (1-LgtCurve(2016,2021,0)) * 1/9
 
 EffLt0        <- LgtCurve(2016,2021,0)+1
 EffLtX        <- cbind(EffLt0,0,EffLt0,0,0)
@@ -410,7 +413,7 @@ pReTx   <- LgtCurve(1985,2000,P["pReTx"])   	# Probability Tx failure identified
 TxVec           <- rep(NA,2)
 names(TxVec) <- c("TxCompRate","TxEff")
 TxVec[1]       <-  d1st
-TxVec[2]       <- pCurPs
+TxVec[2]       <-  pCurPs
 ### REMOVED ART PARAMETERS
 ################################################################################
 ##### CREATE A LIST TO HOLD THE VECTORS FOR AGE CATEGORIES, TB STATES,     #####
