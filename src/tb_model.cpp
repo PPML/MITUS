@@ -1623,25 +1623,33 @@ for (int r=0; r<16; r++){
                   } } } } } }
         for(int i=134; i<151; i++) { Outputs[y][i] = Outputs[y][i]*12; }
         /// TLTBI INITS ///
-        for(int im=0; im<4; im++) {
-          for(int nm=0; nm<4; nm++) {
             for(int rg=0; rg<2; rg++) {
               for(int na=0; na<3; na++) {
-                if(na==0 & rg==0 ) { rTbP = rLtScrt[s]*LtDxParN[0][0];
-                  rTbN = rLtScrt[s]*LtDxParN[0][1]; }
-                if(na==0 & rg==1 ) { rTbP = rLtScrt[s]*LtDxParN[1][0];
-                  rTbN = rLtScrt[s]*LtDxParN[1][1]; }
-                if(na > 0) { rTbP = rLtScrt[s]*LtDxParN[3][0];
-                  rTbN = rLtScrt[s]*LtDxParN[3][1]; }
+                if( rg==0 & na==0) {
+                  rTbP = rLtScrt[s]*LtDxParN[0][0];
+                  rTbN = rLtScrt[s]*LtDxParN[0][1];
+                }
+                //////////// NON US BORN  ////////////////
+                if(rg==0 & na > 0) {
+                  rTbP = rLtScrt[s]*LtDxParN[2][0];
+                  rTbN = rLtScrt[s]*LtDxParN[2][1];
+                }
+                ////////////// US BORN, HIGH RISK  /////////////////
+                if(rg==1) {
+                  rTbP = rLtScrt[s]*LtDxParN[1][0];
+                  rTbN = rLtScrt[s]*LtDxParN[1][1];
+                }
+                for(int im=0; im<4; im++) {
+                  for(int nm=0; nm<4; nm++) {
                 for(int ag=0; ag<11; ag++) {
-                  Outputs[y][151] += (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP +
-                    (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN; //all init
+                  Outputs[y][151] += (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP*LtTxPar[0] +
+                                     (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxPar[0]; //all init
                   if(na>0) {
-                    Outputs[y][152] += (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP +
-                      (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN; } // FB inits
+                    Outputs[y][152] += (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP*LtTxPar[0] +
+                                       (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxPar[0]; } // FB inits
                   if(rg==1) {
-                    Outputs[y][153] +=  (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP +
-                      (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN; } // high risk inits
+                    Outputs[y][153] +=  (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP*LtTxPar[0] +
+                                        (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxPar[0]; } // high risk inits
                   // if(im>0) {
                   //   Outputs[y][156] += (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP +
                   //     (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN; } // RF inits
