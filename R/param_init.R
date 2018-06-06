@@ -278,12 +278,12 @@ SpecLtFb      <- SpecLt         #  spec of test for latent TB infection (based o
 ###removed rrTestHIV
 rrTestHr      <- P["rrTestHr"] # RR of LTBI screening for HIV and HR as cmpared to general
 rrTestLrNoTb  <- P["rrTestLrNoTb"] # RR of LTBI screening for individuals with no risk factors
-#dLt           <- 1/9
+dLt           <- 1/9
 rDefLt        <- dLt*P["pDefLt"]/(1-P["pDefLt"])  # based on 50% tx completion with 6 mo INH regimen 2.0 [1.0,3.0] from Menzies Ind J Med Res 2011
 EffLt         <- P["EffLt"]
 ######NEW PARAMETER FOR MITUS MODEL
 pTlInt        <- .80
-LtTxPar       <- c(pTlInt,DefLt,EffLt)
+LtTxPar       <- c(pTlInt,P["pDefLt"],EffLt)
 
 #dLtt          <- (1-LgtCurve(2016,2021,0)) * 1/9
 

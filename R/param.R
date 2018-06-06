@@ -243,7 +243,7 @@ load("data/ModelInputs_9-2-16.rData")
   EffLt         <- P["EffLt"]
   ######NEW PARAMETER FOR MITUS MODEL
   pTlInt        <- .80
-  LtTxPar       <- c(pTlInt,rDefLt,EffLt)
+  LtTxPar       <- c(pTlInt,P["pDefLt"],EffLt)
 
   LtDxPar <- matrix(NA,3,2);
   colnames(LtDxPar) <- c("latent","no latent");
