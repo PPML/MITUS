@@ -1,6 +1,5 @@
 #include <Rcpp.h>
 #include <algorithm>
-#include "dist_orig_func.h"
 
 using namespace Rcpp;
 
