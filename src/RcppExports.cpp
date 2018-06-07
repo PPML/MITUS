@@ -6,124 +6,6 @@
 using namespace Rcpp;
 
 // cSim
-Rcpp::List cSim(int nYrs, int nRes, Rcpp::NumericMatrix rDxt, std::vector<double> TxQualt, Rcpp::NumericMatrix InitPop, Rcpp::NumericMatrix Mpfast, std::vector<double> ExogInf, Rcpp::NumericMatrix MpfastPI, Rcpp::NumericMatrix Mrslow, std::vector<double> rrSlowFB, double rfast, double RRcurDef, double rSlfCur, double p_HR, Rcpp::NumericMatrix vTMort, std::vector<double> RRmuRF, std::vector<double> RRmuHR, double muTbRF, std::vector<double> Birthst, Rcpp::NumericMatrix HrEntEx, Rcpp::NumericMatrix ImmNon, Rcpp::NumericMatrix ImmLat, Rcpp::NumericMatrix ImmAct, Rcpp::NumericMatrix ImmFst, Rcpp::NumericMatrix mubt, std::vector<double> RelInf, std::vector<double> RelInfRg, std::vector<double> Vmix, std::vector<double> rEmmigFB, std::vector<double> TxVec, double TunTxMort, std::vector<double> rDeft, std::vector<double> rLtScrt, std::vector<double> LtTxPar, Rcpp::NumericMatrix LtDxPar, std::vector<double> RRdxAge, double rRecov, double pImmScen, std::vector<double> EarlyTrend, std::vector<double> dLtt, std::vector<double> pReTx, std::vector<double> EffLt0, double EffLt, std::vector<double> NixTrans, Rcpp::NumericMatrix dist_gen, Rcpp::NumericMatrix can_go, std::vector<double> dist_goal_v, std::vector<double> dist_orig_v, std::vector<double> diff_i_v);
-RcppExport SEXP _MITUS_cSim(SEXP nYrsSEXP, SEXP nResSEXP, SEXP rDxtSEXP, SEXP TxQualtSEXP, SEXP InitPopSEXP, SEXP MpfastSEXP, SEXP ExogInfSEXP, SEXP MpfastPISEXP, SEXP MrslowSEXP, SEXP rrSlowFBSEXP, SEXP rfastSEXP, SEXP RRcurDefSEXP, SEXP rSlfCurSEXP, SEXP p_HRSEXP, SEXP vTMortSEXP, SEXP RRmuRFSEXP, SEXP RRmuHRSEXP, SEXP muTbRFSEXP, SEXP BirthstSEXP, SEXP HrEntExSEXP, SEXP ImmNonSEXP, SEXP ImmLatSEXP, SEXP ImmActSEXP, SEXP ImmFstSEXP, SEXP mubtSEXP, SEXP RelInfSEXP, SEXP RelInfRgSEXP, SEXP VmixSEXP, SEXP rEmmigFBSEXP, SEXP TxVecSEXP, SEXP TunTxMortSEXP, SEXP rDeftSEXP, SEXP rLtScrtSEXP, SEXP LtTxParSEXP, SEXP LtDxParSEXP, SEXP RRdxAgeSEXP, SEXP rRecovSEXP, SEXP pImmScenSEXP, SEXP EarlyTrendSEXP, SEXP dLttSEXP, SEXP pReTxSEXP, SEXP EffLt0SEXP, SEXP EffLtSEXP, SEXP NixTransSEXP, SEXP dist_genSEXP, SEXP can_goSEXP, SEXP dist_goal_vSEXP, SEXP dist_orig_vSEXP, SEXP diff_i_vSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type nYrs(nYrsSEXP);
-    Rcpp::traits::input_parameter< int >::type nRes(nResSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type rDxt(rDxtSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type TxQualt(TxQualtSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type InitPop(InitPopSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Mpfast(MpfastSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type ExogInf(ExogInfSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type MpfastPI(MpfastPISEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Mrslow(MrslowSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type rrSlowFB(rrSlowFBSEXP);
-    Rcpp::traits::input_parameter< double >::type rfast(rfastSEXP);
-    Rcpp::traits::input_parameter< double >::type RRcurDef(RRcurDefSEXP);
-    Rcpp::traits::input_parameter< double >::type rSlfCur(rSlfCurSEXP);
-    Rcpp::traits::input_parameter< double >::type p_HR(p_HRSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type vTMort(vTMortSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type RRmuRF(RRmuRFSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type RRmuHR(RRmuHRSEXP);
-    Rcpp::traits::input_parameter< double >::type muTbRF(muTbRFSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type Birthst(BirthstSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type HrEntEx(HrEntExSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type ImmNon(ImmNonSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type ImmLat(ImmLatSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type ImmAct(ImmActSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type ImmFst(ImmFstSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type mubt(mubtSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type RelInf(RelInfSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type RelInfRg(RelInfRgSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type Vmix(VmixSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type rEmmigFB(rEmmigFBSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type TxVec(TxVecSEXP);
-    Rcpp::traits::input_parameter< double >::type TunTxMort(TunTxMortSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type rDeft(rDeftSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type rLtScrt(rLtScrtSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type LtTxPar(LtTxParSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type LtDxPar(LtDxParSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type RRdxAge(RRdxAgeSEXP);
-    Rcpp::traits::input_parameter< double >::type rRecov(rRecovSEXP);
-    Rcpp::traits::input_parameter< double >::type pImmScen(pImmScenSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type EarlyTrend(EarlyTrendSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type dLtt(dLttSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type pReTx(pReTxSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type EffLt0(EffLt0SEXP);
-    Rcpp::traits::input_parameter< double >::type EffLt(EffLtSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type NixTrans(NixTransSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type dist_gen(dist_genSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type can_go(can_goSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type dist_goal_v(dist_goal_vSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type dist_orig_v(dist_orig_vSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type diff_i_v(diff_i_vSEXP);
-    rcpp_result_gen = Rcpp::wrap(cSim(nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow, rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, muTbRF, Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, mubt, RelInf, RelInfRg, Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, LtTxPar, LtDxPar, RRdxAge, rRecov, pImmScen, EarlyTrend, dLtt, pReTx, EffLt0, EffLt, NixTrans, dist_gen, can_go, dist_goal_v, dist_orig_v, diff_i_v));
-    return rcpp_result_gen;
-END_RCPP
-}
-// cSim
-Rcpp::List cSim(int nYrs, int nRes, Rcpp::NumericMatrix rDxt, std::vector<double> TxQualt, Rcpp::NumericMatrix InitPop, Rcpp::NumericMatrix Mpfast, std::vector<double> ExogInf, Rcpp::NumericMatrix MpfastPI, Rcpp::NumericMatrix Mrslow, std::vector<double> rrSlowFB, double rfast, double RRcurDef, double rSlfCur, double p_HR, Rcpp::NumericMatrix vTMort, std::vector<double> RRmuRF, std::vector<double> RRmuHR, double muTbRF, std::vector<double> Birthst, Rcpp::NumericMatrix HrEntEx, Rcpp::NumericMatrix ImmNon, Rcpp::NumericMatrix ImmLat, Rcpp::NumericMatrix ImmAct, Rcpp::NumericMatrix ImmFst, Rcpp::NumericMatrix mubt, std::vector<double> RelInf, std::vector<double> RelInfRg, std::vector<double> Vmix, std::vector<double> rEmmigFB, std::vector<double> TxVec, double TunTxMort, std::vector<double> rDeft, std::vector<double> rLtScrt, std::vector<double> LtTxPar, Rcpp::NumericMatrix LtDxPar, std::vector<double> RRdxAge, double rRecov, double pImmScen, std::vector<double> EarlyTrend, std::vector<double> dLtt, std::vector<double> pReTx, std::vector<double> EffLt0, double EffLt, std::vector<double> NixTrans, Rcpp::NumericMatrix dist_gen, Rcpp::NumericMatrix can_go, std::vector<double> dist_goal_v, std::vector<double> dist_orig_v, std::vector<double> diff_i_v);
-RcppExport SEXP _MITUS_cSim(SEXP nYrsSEXP, SEXP nResSEXP, SEXP rDxtSEXP, SEXP TxQualtSEXP, SEXP InitPopSEXP, SEXP MpfastSEXP, SEXP ExogInfSEXP, SEXP MpfastPISEXP, SEXP MrslowSEXP, SEXP rrSlowFBSEXP, SEXP rfastSEXP, SEXP RRcurDefSEXP, SEXP rSlfCurSEXP, SEXP p_HRSEXP, SEXP vTMortSEXP, SEXP RRmuRFSEXP, SEXP RRmuHRSEXP, SEXP muTbRFSEXP, SEXP BirthstSEXP, SEXP HrEntExSEXP, SEXP ImmNonSEXP, SEXP ImmLatSEXP, SEXP ImmActSEXP, SEXP ImmFstSEXP, SEXP mubtSEXP, SEXP RelInfSEXP, SEXP RelInfRgSEXP, SEXP VmixSEXP, SEXP rEmmigFBSEXP, SEXP TxVecSEXP, SEXP TunTxMortSEXP, SEXP rDeftSEXP, SEXP rLtScrtSEXP, SEXP LtTxParSEXP, SEXP LtDxParSEXP, SEXP RRdxAgeSEXP, SEXP rRecovSEXP, SEXP pImmScenSEXP, SEXP EarlyTrendSEXP, SEXP dLttSEXP, SEXP pReTxSEXP, SEXP EffLt0SEXP, SEXP EffLtSEXP, SEXP NixTransSEXP, SEXP dist_genSEXP, SEXP can_goSEXP, SEXP dist_goal_vSEXP, SEXP dist_orig_vSEXP, SEXP diff_i_vSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type nYrs(nYrsSEXP);
-    Rcpp::traits::input_parameter< int >::type nRes(nResSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type rDxt(rDxtSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type TxQualt(TxQualtSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type InitPop(InitPopSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Mpfast(MpfastSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type ExogInf(ExogInfSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type MpfastPI(MpfastPISEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Mrslow(MrslowSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type rrSlowFB(rrSlowFBSEXP);
-    Rcpp::traits::input_parameter< double >::type rfast(rfastSEXP);
-    Rcpp::traits::input_parameter< double >::type RRcurDef(RRcurDefSEXP);
-    Rcpp::traits::input_parameter< double >::type rSlfCur(rSlfCurSEXP);
-    Rcpp::traits::input_parameter< double >::type p_HR(p_HRSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type vTMort(vTMortSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type RRmuRF(RRmuRFSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type RRmuHR(RRmuHRSEXP);
-    Rcpp::traits::input_parameter< double >::type muTbRF(muTbRFSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type Birthst(BirthstSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type HrEntEx(HrEntExSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type ImmNon(ImmNonSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type ImmLat(ImmLatSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type ImmAct(ImmActSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type ImmFst(ImmFstSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type mubt(mubtSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type RelInf(RelInfSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type RelInfRg(RelInfRgSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type Vmix(VmixSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type rEmmigFB(rEmmigFBSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type TxVec(TxVecSEXP);
-    Rcpp::traits::input_parameter< double >::type TunTxMort(TunTxMortSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type rDeft(rDeftSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type rLtScrt(rLtScrtSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type LtTxPar(LtTxParSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type LtDxPar(LtDxParSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type RRdxAge(RRdxAgeSEXP);
-    Rcpp::traits::input_parameter< double >::type rRecov(rRecovSEXP);
-    Rcpp::traits::input_parameter< double >::type pImmScen(pImmScenSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type EarlyTrend(EarlyTrendSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type dLtt(dLttSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type pReTx(pReTxSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type EffLt0(EffLt0SEXP);
-    Rcpp::traits::input_parameter< double >::type EffLt(EffLtSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type NixTrans(NixTransSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type dist_gen(dist_genSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type can_go(can_goSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type dist_goal_v(dist_goal_vSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type dist_orig_v(dist_orig_vSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type diff_i_v(diff_i_vSEXP);
-    rcpp_result_gen = Rcpp::wrap(cSim(nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow, rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, muTbRF, Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, mubt, RelInf, RelInfRg, Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, LtTxPar, LtDxPar, RRdxAge, rRecov, pImmScen, EarlyTrend, dLtt, pReTx, EffLt0, EffLt, NixTrans, dist_gen, can_go, dist_goal_v, dist_orig_v, diff_i_v));
-    return rcpp_result_gen;
-END_RCPP
-}
-// cSim
 Rcpp::List cSim(int nYrs, int nRes, Rcpp::NumericMatrix rDxt, std::vector<double> TxQualt, Rcpp::NumericMatrix InitPop, Rcpp::NumericMatrix Mpfast, std::vector<double> ExogInf, Rcpp::NumericMatrix MpfastPI, Rcpp::NumericMatrix Mrslow, std::vector<double> rrSlowFB, double rfast, double RRcurDef, double rSlfCur, double p_HR, Rcpp::NumericMatrix vTMort, std::vector<double> RRmuRF, std::vector<double> RRmuHR, double muTbRF, std::vector<double> Birthst, Rcpp::NumericMatrix HrEntEx, Rcpp::NumericMatrix ImmNon, Rcpp::NumericMatrix ImmLat, Rcpp::NumericMatrix ImmAct, Rcpp::NumericMatrix ImmFst, Rcpp::NumericMatrix mubt, std::vector<double> RelInf, std::vector<double> RelInfRg, std::vector<double> Vmix, std::vector<double> rEmmigFB, std::vector<double> TxVec, double TunTxMort, std::vector<double> rDeft, std::vector<double> rLtScrt, std::vector<double> LtTxPar, Rcpp::NumericMatrix LtDxPar, std::vector<double> RRdxAge, double rRecov, double pImmScen, std::vector<double> EarlyTrend, std::vector<double> pReTx, std::vector<double> NixTrans, Rcpp::NumericMatrix dist_gen, Rcpp::NumericMatrix can_go, std::vector<double> dist_goal_v, std::vector<double> dist_orig_v, std::vector<double> diff_i_v);
 RcppExport SEXP _MITUS_cSim(SEXP nYrsSEXP, SEXP nResSEXP, SEXP rDxtSEXP, SEXP TxQualtSEXP, SEXP InitPopSEXP, SEXP MpfastSEXP, SEXP ExogInfSEXP, SEXP MpfastPISEXP, SEXP MrslowSEXP, SEXP rrSlowFBSEXP, SEXP rfastSEXP, SEXP RRcurDefSEXP, SEXP rSlfCurSEXP, SEXP p_HRSEXP, SEXP vTMortSEXP, SEXP RRmuRFSEXP, SEXP RRmuHRSEXP, SEXP muTbRFSEXP, SEXP BirthstSEXP, SEXP HrEntExSEXP, SEXP ImmNonSEXP, SEXP ImmLatSEXP, SEXP ImmActSEXP, SEXP ImmFstSEXP, SEXP mubtSEXP, SEXP RelInfSEXP, SEXP RelInfRgSEXP, SEXP VmixSEXP, SEXP rEmmigFBSEXP, SEXP TxVecSEXP, SEXP TunTxMortSEXP, SEXP rDeftSEXP, SEXP rLtScrtSEXP, SEXP LtTxParSEXP, SEXP LtDxParSEXP, SEXP RRdxAgeSEXP, SEXP rRecovSEXP, SEXP pImmScenSEXP, SEXP EarlyTrendSEXP, SEXP pReTxSEXP, SEXP NixTransSEXP, SEXP dist_genSEXP, SEXP can_goSEXP, SEXP dist_goal_vSEXP, SEXP dist_orig_vSEXP, SEXP diff_i_vSEXP) {
 BEGIN_RCPP
@@ -179,63 +61,12 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// mat_mult
-arma::mat mat_mult(arma::mat& a, arma::mat& b);
-RcppExport SEXP _MITUS_mat_mult(SEXP aSEXP, SEXP bSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat& >::type a(aSEXP);
-    Rcpp::traits::input_parameter< arma::mat& >::type b(bSEXP);
-    rcpp_result_gen = Rcpp::wrap(mat_mult(a, b));
-    return rcpp_result_gen;
-END_RCPP
-}
-// rebal
-Rcpp::List rebal(double V1[11][6][2][4][4][2][3], Rcpp::NumericMatrix dist_gen, arma::mat dist_new, arma::mat can_go, arma::mat did_go, arma::mat dist_goal, arma::vec dist_goal_v, arma::vec dist_orig_v, arma::vec diff_i_v);
-RcppExport SEXP _MITUS_rebal(SEXP V1[11][6][2][4][4][2][3]SEXP, SEXP dist_genSEXP, SEXP dist_newSEXP, SEXP can_goSEXP, SEXP did_goSEXP, SEXP dist_goalSEXP, SEXP dist_goal_vSEXP, SEXP dist_orig_vSEXP, SEXP diff_i_vSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type V1[11][6][2][4][4][2][3](V1[11][6][2][4][4][2][3]SEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type dist_gen(dist_genSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type dist_new(dist_newSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type can_go(can_goSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type did_go(did_goSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type dist_goal(dist_goalSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type dist_goal_v(dist_goal_vSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type dist_orig_v(dist_orig_vSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type diff_i_v(diff_i_vSEXP);
-    rcpp_result_gen = Rcpp::wrap(rebal(V1[11][6][2][4][4][2][3], dist_gen, dist_new, can_go, did_go, dist_goal, dist_goal_v, dist_orig_v, diff_i_v));
-    return rcpp_result_gen;
-END_RCPP
-}
-// cRebal
-Rcpp::List cRebal(Rcpp::NumericMatrix V1, Rcpp::NumericMatrix dist_new, Rcpp::NumericMatrix can_go, Rcpp::NumericMatrix did_go, Rcpp::NumericMatrix dist_goal, std::vector<double> dist_goal_v, std::vector<double> dist_orig_v, std::vector<double> diff_i_v);
-RcppExport SEXP _MITUS_cRebal(SEXP V1SEXP, SEXP dist_newSEXP, SEXP can_goSEXP, SEXP did_goSEXP, SEXP dist_goalSEXP, SEXP dist_goal_vSEXP, SEXP dist_orig_vSEXP, SEXP diff_i_vSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type V1(V1SEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type dist_new(dist_newSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type can_go(can_goSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type did_go(did_goSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type dist_goal(dist_goalSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type dist_goal_v(dist_goal_vSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type dist_orig_v(dist_orig_vSEXP);
-    Rcpp::traits::input_parameter< std::vector<double> >::type diff_i_v(diff_i_vSEXP);
-    rcpp_result_gen = Rcpp::wrap(cRebal(V1, dist_new, can_go, did_go, dist_goal, dist_goal_v, dist_orig_v, diff_i_v));
-    return rcpp_result_gen;
-END_RCPP
-}
+
+RcppExport SEXP _MITUS_mat_mult(SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_MITUS_cSim", (DL_FUNC) &_MITUS_cSim, 49},
-    {"_MITUS_cSim", (DL_FUNC) &_MITUS_cSim, 49},
     {"_MITUS_cSim", (DL_FUNC) &_MITUS_cSim, 46},
-    {"_MITUS_mat_mult", (DL_FUNC) &_MITUS_mat_mult, 2},
-    {"_MITUS_rebal", (DL_FUNC) &_MITUS_rebal, 9},
-    {"_MITUS_cRebal", (DL_FUNC) &_MITUS_cRebal, 8},
+    {"_MITUS_mat_mult", (DL_FUNC) &_MITUS_mat_mult,  2},
     {NULL, NULL, 0}
 };
 
