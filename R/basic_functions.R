@@ -8,7 +8,7 @@
 #'@param val known risk for population of interest
 #'@param OR odds ratio by which the known risk will be modified
 #'@return new risk for population
-#'@export
+
 
 ORAdd <- function(val,OR) {
   x <- (val/(1-val))*OR; x/(1+x)
@@ -17,13 +17,13 @@ ORAdd <- function(val,OR) {
 #'This function calculates the logit of the value or parameter inputted.
 #'@param x value of interest, often an odds
 #'@return logit of input x
-#'@export
+
 lgt <-  function(x) log(x/(1-x));
 
 #'This function calculates the inverse logit of the value or parameter inputted.
 #'@param x value of interest, often an odds
 #'@return inverse logit of input x
-#'@export
+
 invlgt <- function(x) 1/(1+exp(-x))
 
 #'This function is used to simulate a logistic increase between two years of interest
@@ -33,7 +33,7 @@ invlgt <- function(x) 1/(1+exp(-x))
 #'@param Endyr Year to end the logit curve
 #'@param EndVal maximum value that the logistic curve can reach
 #'@return vector of values demonstrating a logistic increase from zero to EndVal
-#'@export
+
 LgtCurve <- function(StYr,Endyr,EndVal) {
   z <- log(1/0.005-1)
   zz  <- seq(-z*(1+2*(StYr-1950)/(Endyr-StYr)),z*(1+2*(2100-Endyr)/(Endyr-StYr)),by=(2*z)/(Endyr-StYr)/12)
@@ -46,7 +46,7 @@ LgtCurve <- function(StYr,Endyr,EndVal) {
 #'This function creates a smooth curve from a vector of values.
 #'@param vec vector of values that the user would like to have smoothed into a curve
 #'@return expanded vector of values that determine the shape of the smoothing spline
-#'@export
+
 SmoCurve <- function(vec) {
   jj <- predict(smooth.spline(x=1:length(vec),y=vec,spar=0.2),
                 x=seq(1,length(vec),1/12))$y;
@@ -59,8 +59,7 @@ SmoCurve <- function(vec) {
 #'@param i
 #'@param m
 #'@return
-#'@export
-#'
+
 bspline <- function(x,k,i,m) {
   if (m==-1) {
     res <- as.numeric(x<k[i+1] & x>=k[i])
