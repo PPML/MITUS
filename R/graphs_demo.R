@@ -2,8 +2,8 @@
 #' and writes these results to a .pdf file.
 #' Use to check both with and without tb in the model
 
-US_tot_mort <- read.csv(file="data/US_total_mort.csv", header = FALSE)
-US_mort_age <- read.csv(file="data/US_mort_age.csv", header = TRUE)
+US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
+US_mort_age <- read.csv(file="inst/extdata/US_mort_age.csv", header = TRUE)
 
 #'Create a function to be run on a specific model run output to
 #'create simple graphs of all the output for a selected year range
