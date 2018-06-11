@@ -1,0 +1,328 @@
+#'Calibration Functions for use with the tb_model.cpp model
+#'This script creates several individual log likelihood functions
+#'for the calibration of the State Level TB model in tb_model.cpp
+#'These llikelihood functions are called in IMIS_functions.R
+
+#'load the necessary library
+library(MCMCpack)
+
+#'load the necessary calibration data
+load("data/CalibDat_9-14-16.rData") # CalibDat
+
+#'Dirichlet multinomial density function
+#'@param M params of the dirichlet, i.e. model strain distribution
+#'@param rho correlation parameter = 1/sample size
+#'@param n category counts from the survey
+#'@return
+
+dDirMult <- function(M,n,Rho) {
+  if(dim(as.matrix(M))[2]==1) {
+    M <- M/sum(M)
+} else {
+    M <- M/rowSums(M)
+}
+  rowSums(lgamma(n+M/Rho))-rowSums(lgamma(M/Rho))
+}
+
+#'Log-likelihood functions
+#'Assign the calibration importance weights from CalibDat
+#'These weights are based on year of the simulation.
+wts <- CalibDat[["ImptWeights"]]
+
+#'Total Diagnosed Cases 1953-2017
+#'Motivation: Normal, mean centered with CI = +/- 5% of the mean
+notif_tot     <- CalibDat[["tot_cases"]][,2]
+adj_1         <- sum(dnorm(notif_tot,notif_tot,notif_tot*0.1/1.96,log=T)*wts[4:66])
+#'@param V vector of total notifications 1953-2014
+#'@return
+notif_tot_lik <- function(V) {
+  sum(dnorm(notif_tot,V*1e6,notif_tot*0.1/1.96,log=T)*wts[4:66]) - adj_1  }
+
+#'US Cases Age Distribution 1993-2013
+#'Motivation: dirichlet-multinomial data with additional non-sampling biases
+notif_age         <- CalibDat[["age_cases"]][,-c(1,12)]*CalibDat[["age_cases"]][,12]
+notif_age_us      <- CalibDat[["age_cases_us"]][,-c(1,12)]*CalibDat[["age_cases_us"]][,12]
+adj_2a            <- sum(dDirMult(M=notif_age_us,n=notif_age_us,Rho=0.005)*wts[44:65])
+#'@param V table of us notifications by age 1993-2013 (row=21 years, col=11 ages)
+#'@param rho correlation parameter
+#'@return
+notif_age_us_lLik <- function(V,rho=0.005) {
+  V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
+  sum(dDirMult(M=V2,n=notif_age_us,Rho=rho)*wts[44:65]) - adj_2a  }
+
+#' FB CASES AGE DISTRIBUTION 1993-2013
+#' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
+notif_age_fb     <- CalibDat[["age_cases_fb"]][,-c(1,12)]*CalibDat[["age_cases_fb"]][,12]
+adj_2b           <- sum(dDirMult(M=notif_age_fb,n=notif_age_fb,Rho=0.005)*wts[44:65])
+#'@param V table of fb notifications by age 1993-2013 (row=21 years, col=11 ages)
+#'@param rho correlation parameter
+#'@return
+notif_age_fb_lLik <- function(V,rho=0.005) {
+  V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
+  sum(dDirMult(M=V2,n=notif_age_fb,Rho=rho)*wts[44:65]) - adj_2b  }
+
+#' CASES FB DISTRIBUTION 1993-2014
+#' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
+notif_fb      <- cbind(CalibDat[["fb_cases"]][,2],1-CalibDat[["fb_cases"]][,2])*CalibDat[["fb_cases"]][,3]
+adj_3         <- sum(dDirMult(M=notif_fb,n=notif_fb,Rho=0.005)*wts[44:66])
+#'@param V table of notifications by fb 1993-2014 (row=22 years, col=fb then us)
+#'@param rho correlation parameter
+#'@return
+notif_fb_lLik <- function(V,rho=0.005) {
+  sum(dDirMult(M=V,n=notif_fb,Rho=rho)*wts[44:66]) - adj_3  }
+
+#' CASES FB DISTRIBUTION SLOPES OVER PAST 4 year
+notif_fbus_slp5     <- CalibDat[["fbus_cases_slope5"]];
+adj_3a         <- sum(dnorm(notif_fbus_slp5,notif_fbus_slp5,0.01/2,log=T))
+#'@param V table of notifications by fb 1993-2014 (row=22 years, col=fb then us)
+#'@return
+notif_fbus_slp_lLik <- function(V) {
+  V2 <- apply(log(V[20:23,]),2,function(x) lm(x~I(1:4))$coef[2])
+  sum(dnorm(V2,notif_fbus_slp5,0.01/2,log=T)) - adj_3a  }
+
+#' CASES TX HISTORY DISTRIBUTION 1993-2013
+#' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
+notif_prev      <- cbind(1-CalibDat[["prev_cases"]][,2],CalibDat[["prev_cases"]][,2])*CalibDat[["prev_cases"]][,3]
+adj_4           <- sum(dDirMult(M=notif_prev,n=notif_prev,Rho=0.005)*wts[44:65])
+#'@param V table of notifications by tx history 1993-2013 (row=21 years, col=n then e)
+#'@return
+notif_prev_lLik <- function(V,rho=0.005) {
+  sum(dDirMult(M=V,n=notif_prev,Rho=rho)*wts[44:65]) - adj_4  }
+
+#' CASES HR DISTRIBUTION 1993-2014
+#' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
+notif_us_hr      <- cbind(CalibDat[["us_homeless_cases"]][,2],1-CalibDat[["us_homeless_cases"]][,2])*CalibDat[["us_homeless_cases"]][,3]
+adj_5b           <- sum(dDirMult(M=notif_us_hr,n=notif_us_hr,Rho=0.005)*wts[44:65])
+#'@param V table of notifications by hr 1993-2014 (row=22 years, col=pos then neg)
+#'@param rho correlation parameter
+#'@return
+notif_us_hr_lLik <- function(V,rho=0.005) {
+  sum(dDirMult(M=V,n=notif_us_hr,Rho=rho)*wts[44:65]) - adj_5b  }
+
+#' CASES FB RECENT ENTRY DISTRIBUTION 1993-2013
+#' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
+notif_fb_rec      <- cbind(CalibDat[["fb_recent_cases"]][,2],1-CalibDat[["fb_recent_cases"]][,2])*CalibDat[["fb_recent_cases"]][,3]
+adj_6          <- sum(dDirMult(M=notif_fb_rec,n=notif_fb_rec,Rho=0.005)*wts[44:65])
+#'@param V table of notifications by FB 1993-2014 (row=22 years, col=pos then neg)
+#'@param rho correlation parameter
+#'@return
+notif_fb_rec_lLik <- function(V,rho=0.005) {
+  sum(dDirMult(M=V,n=notif_fb_rec,Rho=rho)*wts[44:65]) - adj_6  }
+
+#' TREATMENT OUTCOMES 1993-2012
+#' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
+tx_outcomes      <- cbind(1-rowSums(CalibDat[["tx_outcomes"]][,2:3]),CalibDat[["tx_outcomes"]][,2],CalibDat[["tx_outcomes"]][,3])*CalibDat[["tx_outcomes"]][,4]
+adj_11           <- sum(dDirMult(M=tx_outcomes,n=tx_outcomes,Rho=0.005)*wts[44:63])
+#'@param V table of treatment outcomes 1993-2012 (row=20 years, col= complete, discontinue, dead)
+#'@param rho correlation parameter
+#'@return
+tx_outcomes_lLik <- function(V,rho=0.005) {
+  sum(dDirMult(M=V,n=tx_outcomes,Rho=rho)*wts[44:63]) - adj_11  }
+
+#' TOTAL LTBI TREATMENT INITS 2002
+#' Motivation: norm, mean centered with CI = +/- 10% of mean
+tltbi_vol        <- CalibDat[["TLTBI_volume"]]
+adj_12           <- dnorm(tltbi_vol[1],tltbi_vol[1],diff(tltbi_vol[2:3])/2/1.96,log=T)
+#'@param V scalar total TLTBI inits in 2002
+#'@return
+tltbi_tot_lLik   <- function(V) {
+  dnorm(tltbi_vol[1],V*1e6,diff(tltbi_vol[2:3])/2/1.96,log=T) - adj_12  }
+
+#' DISTRIBUTION OF LTBI TREATMENT INITS 2002
+TLTBI_dist       <- CalibDat[["TLTBI_dist"]]
+adj_13          <- sum( dbeta(TLTBI_dist,TLTBI_dist*100,(1-TLTBI_dist)*100,log=T) )
+#'@param V dist TLTBI inits in 2002 (vector fraction FB, HR, HV in 2002)
+#'@return
+tltbi_dist_lLik  <- function(V) {
+  sum( dbeta(TLTBI_dist,V*100,(1-V)*100,log=T) ) - adj_13  }
+
+#' LTBI PREVALENCE BY AGE 2011, US
+#' Motivation: additional prior on LTBI, using beta densities parameterized to Miramontes/Hill results
+ltbi_us_11      <- CalibDat[["LTBI_prev_US_11_IGRA"]]
+adj_15          <- sum( dbeta(ltbi_us_11[,2]/rowSums(ltbi_us_11[,2:3]),ltbi_us_11[,2],ltbi_us_11[,3],log=T) )
+#'@param V LTBI in US pop 2011 (row=11 ages, col= ltbi, non-ltbi)
+#'@return
+ltbi_us_11_lLik <- function(V) {
+  V[9,] <- colSums(V[9:11,])
+  (sum( dbeta(V[2:9,1]/rowSums(V[2:9,]),ltbi_us_11[,2],ltbi_us_11[,3],log=T) ) - adj_15)*2  }
+
+ltbi_us_11_dp      <- CalibDat[["LTBI_prev_US_11_DoubPos"]]
+adj_15dp           <- sum( dbeta(ltbi_us_11_dp[,2]/rowSums(ltbi_us_11_dp[,2:3]),ltbi_us_11_dp[,2],ltbi_us_11_dp[,3],log=T) )
+#'@param V LTBI in US pop 2011 (row=11 ages, col= ltbi, non-ltbi)
+#'@return
+ltbi_us_11_dp_lLik <- function(V) {
+  V[9,] <- colSums(V[9:11,])
+  (sum( dbeta(V[2:9,1]/rowSums(V[2:9,]),ltbi_us_11_dp[,2],ltbi_us_11_dp[,3],log=T) ) - adj_15dp)*2  }
+
+#' LTBI PREVALENCE BY AGE 2011, FB
+#' Motivation: multinomial adjusted to match effective sample size due to survey weighting
+ltbi_fb_11      <- CalibDat[["LTBI_prev_FB_11_IGRA"]]
+adj_16          <- sum( dbeta(ltbi_fb_11[,2]/rowSums(ltbi_fb_11[,2:3]),ltbi_fb_11[,2],ltbi_fb_11[,3],log=T) )
+#'@param V LTBI in FB pop 2011 (row=11 ages, col= ltbi, non-ltbi)
+#'@return
+ltbi_fb_11_lLik <- function(V) {
+  V[9,] <- colSums(V[9:11,])
+  (sum( dbeta(V[2:9,1]/rowSums(V[2:9,]),ltbi_fb_11[,2],ltbi_fb_11[,3],log=T) ) - adj_16)*2  }
+
+ltbi_fb_11_dp      <- CalibDat[["LTBI_prev_FB_11_DoubPos"]]
+adj_16dp           <- sum( dbeta(ltbi_fb_11_dp[,2]/rowSums(ltbi_fb_11_dp[,2:3]),ltbi_fb_11_dp[,2],ltbi_fb_11_dp[,3],log=T) )
+#'@param V LTBI in FB pop 2011 (row=11 ages, col= ltbi, non-ltbi)
+#'@return
+ltbi_fb_11_dp_lLik <- function(V) {
+  V[9,] <- colSums(V[9:11,])
+  (sum( dbeta(V[2:9,1]/rowSums(V[2:9,]),ltbi_fb_11_dp[,2],ltbi_fb_11_dp[,3],log=T) ) - adj_16dp)*2  }
+
+#' TOTAL POP EACH DECADE, FOR FB
+#' Motivation: norm, mean centered with CI = +/- 2 million wts[1+0:6*10]
+tot_pop_yr_fb      <- CalibDat[["tot_pop_yr_fb"]]
+adj_17             <- sum(dnorm(tot_pop_yr_fb[-1,4],tot_pop_yr_fb[-1,4],tot_pop_yr_fb[7,4]*0.1/1.96,log=T)*wts[1+1:6*10])
+#'@param V total pop (rows=year, cols=us, fb)
+#'@return
+tot_pop_yr_fb_lLik <- function(V) {
+  sum(dnorm(tot_pop_yr_fb[-1,4],V[c(11,21,31,41,51,61)],tot_pop_yr_fb[7,4]*0.1/1.96,log=T)*wts[1+1:6*10]) - adj_17  } # CI = +/- 2mil
+
+#' TOTAL POP AGE DISTRIBUTION 2014
+#' Motivation: reported estimates represent pseudo-data for a multinomial likelihood, with ESS = 500
+tot_pop14_ag_fb      <- cbind(CalibDat[["tot_pop14_ag_fb"]][-9,3]/sum(CalibDat[["tot_pop14_ag_fb"]][-9,3]),
+                              CalibDat[["tot_pop14_ag_fb"]][-9,4]/sum(CalibDat[["tot_pop14_ag_fb"]][-9,4]))
+adj_18               <- sum(log(tot_pop14_ag_fb[,1])*tot_pop14_ag_fb[,1])+sum(log(tot_pop14_ag_fb[,2])*tot_pop14_ag_fb[,2])
+#'@param V US pop in 2014 (row=11 ages, col= us, fb)
+#'@return
+tot_pop14_ag_fb_lLik <- function(V,ESS=500) {
+  V1 <- rbind(V[1,],V[2,]+V[3,],V[4,]+V[5,],V[6,],V[7,],V[8,],V[9,],V[10,]+V[11,])
+  (sum(log(V1[,1]/sum(V1[,1]))*tot_pop14_ag_fb[,1])+sum(log(V1[,2]/sum(V1[,2]))*tot_pop14_ag_fb[,2]))*ESS - adj_18*ESS  }
+
+#' Total TB DEATHS 1999-2014
+#' Motivation: overdispersed poisson, modelled with negbin with overdispersion param = 100 *wts[50:65]
+tb_deaths      <- CalibDat[["tb_deaths"]][,-1]
+adj_19         <- 0
+for(i in 1:16) adj_19 <- adj_19 + sum(dnbinom(as.numeric(tb_deaths[i,]),mu=as.numeric(tb_deaths[i,]),size=50,log=T))*wts[50:65][i]
+#'@param V TB deaths by age 1999-2013  (row=15 years, col= 11 ages)
+#'@return
+tb_deaths_lLik <- function(V,sgsq=50) {
+  V2 <- V[,-11]; V2[,10] <- V[,10]+V[,11]
+  l1 <- 0
+  for(i in 1:16) l1 <- l1 + sum(dnbinom(as.numeric(tb_deaths[i,]),mu=as.numeric(V2[i,])*1e6,size=sgsq,log=T))*wts[50:65][i]
+  l1 - adj_19  }
+
+#' TOTAL TB DEATHS 1999-2014
+#' Motivation: norm, mean centered with CI = +/- 5% of mean
+tb_deaths_tot   <- rowSums(CalibDat[["tb_deaths"]][,-1])
+adj_19a         <- sum(dnorm(tb_deaths_tot,tb_deaths_tot,tb_deaths_tot*0.25/1.96,log=T)*wts[50:65])
+#'@param V
+#'@return
+tb_dth_tot_lLik <- function(V) {
+  sum(dnorm(tb_deaths_tot,rowSums(V)*1e6,tb_deaths_tot*0.2/1.96,log=T)*wts[50:65]) - adj_19a  }
+
+#' TB DEATHS AGE DISTRIBUTION 1999-2014
+#' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
+tb_deaths_age  <- CalibDat[["tb_deaths"]][,-1]
+adj_19b        <- sum(dDirMult(M=tb_deaths_age+0.1,n=tb_deaths_age+0.1,Rho=0.01)*wts[50:65])
+#'@param V table of deaths by age 1999-2014 (row=16 years, col=11 ages)
+#'@param rho correlation parameter
+#'@return
+tb_dth_age_lLik <- function(V,rho=0.01) {
+  V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
+  sum(dDirMult(M=V2,n=tb_deaths_age,Rho=rho)*wts[50:65]) - adj_19b  }
+
+#'Homeless Population in 2010
+#'Motivation: normally distributed, mean centered with CI = +/- 25% of mean
+homeless_pop      <- CalibDat[["homeless_pop"]][1]
+adj_23b          <- dnorm(homeless_pop,homeless_pop,homeless_pop*0.25/1.96,log=T)
+#'@param V scalar value of homeless pop in 2010
+#'@return
+homeless_10_lLik <- function(V) {
+  dnorm(homeless_pop,V,homeless_pop*0.25/1.96,log=T) - adj_23b   }
+########################################################################################
+#'Functions for likelihood of different published estimates
+########################################################################################
+#'Likelihood of Borgdorff Estimates
+ss_borgdorff   <- 854.5463/4
+datB           <- CalibDat[["borgdorff_data"]]
+adj_24         <- sum(diff(-datB[,2])*ss_borgdorff*log(diff(-datB[,2])) + (1-diff(-datB[,2]))*ss_borgdorff*log(1-diff(-datB[,2])))
+#'@param Par vector (pfast,rslow,rfast,rRecov)
+#'@param n_red
+#'@return
+borgdorff_lLik <- function(Par,N_red=1) {
+  zz <- tryCatch({
+    pfast <- Par[1];
+    rslow <- Par[2]*12;
+    rfast <- Par[3]*12;
+    rRecov <- Par[4]*12;
+    p <- pfast*(1-(1-exp(-(rfast+rRecov)*datB[,1]))*(rfast/(rfast+rRecov))) +
+        (1-pfast)*(1-(1-exp(-(rslow+rRecov)*datB[,1]))*(rslow/(rslow+rRecov)))
+    p <- 1-(1-p)/(1-p)[nrow(datB)]
+    sum(diff(-datB[,2])*ss_borgdorff*log(diff(-p)) + (1-diff(-datB[,2]))*ss_borgdorff*log(1-diff(-p)))/N_red - adj_24/N_red
+  },error=function(e) -Inf )
+  if(is.nan(zz)) { zz = -10^4
+} else { if(zz== -Inf) zz = -10^4 }
+  zz }
+
+#'Likelihood of Ferebee Estimates
+datF         <- CalibDat[["ferebee_data"]]
+adj_25       <- sum(datF[,3]*log(datF[,3]/datF[,2]) + (datF[,2]-datF[,3])*log(1-datF[,3]/datF[,2]))
+n_yr_F       <- nrow(datF)
+#'@param Par vector (pfast,rslow,rfast,rRecov)
+#'@param n_red
+#'@return
+ferebee_lLik <- function(Par,N_red=4) {
+  zz <- tryCatch({
+    pfast <- Par[1];
+    rslow <- Par[2]*12;
+    rfast <- Par[3]*12;
+    rRecov <- Par[4]*12;
+
+    p2 <-pfast*(1-(1-exp(-(rfast+rRecov)*(0:n_yr_F)))*(rfast/(rfast+rRecov))) +
+        (1-pfast)*(1-(1-exp(-(rslow+rRecov)*(0:n_yr_F)))*(rslow/(rslow+rRecov)))
+
+    r2 <- -log(1-diff(-p2)/p2[-(n_yr_F+1)])/1
+    sum((datF[,3]*log(r2) + (datF[,2]-datF[,3])*log(1-r2))/N_red)-adj_25/N_red
+  },error=function(e) -Inf )
+  if(is.nan(zz)) {
+    zz = -10^4
+  } else {
+      if(zz== -Inf) zz = -10^4 }
+  zz  }
+
+#'Likelihood of Sutherland Estimates
+datS            <- CalibDat[["sutherland_data"]]
+datSz           <- datS; datSz[datS[,3]==0,3] <- 0.01
+adj_26          <- sum(datSz[,3]*log(datSz[,3]/datSz[,2]) + (datSz[,2]-datSz[,3])*log(1-datSz[,3]/datSz[,2]))
+n_yr_S          <- nrow(datS)
+#'@param Par vector (pfast,rslow,rfast,rRecov)
+#'@param n_red
+#'@return
+sutherland_lLik <- function(Par,N_red=4) {
+  zz <- tryCatch({
+    pfast <- Par[1];
+    rslow <- Par[2]*12;
+    rfast <- Par[3]*12;
+    rRecov <- Par[4]*12;
+    p2 <-pfast*(1-(1-exp(-(rfast+rRecov)*(0:n_yr_S)))*(rfast/(rfast+rRecov))) +
+        (1-pfast)*(1-(1-exp(-(rslow+rRecov)*(0:n_yr_S)))*(rslow/(rslow+rRecov)))
+    r2 <- -log(1-diff(-p2)/p2[-(n_yr_S+1)])/1
+    sum((datS[,3]*log(r2) + (datS[,2]-datS[,3])*log(1-r2))/N_red) - adj_26/N_red
+  },error=function(e) -Inf )
+  if(is.nan(zz)) {
+    zz = -10^4
+  } else {
+      if(zz== -Inf) zz = -10^4 }
+  zz  }
+
+#' #'Likelihood of Tiemersa Estimates
+#' adj_27         <- dnorm(3.0,3.0,0.5/1.96,log=T)+dbeta(0.2,0.2*50,(1-0.2)*50,log=T)+dbeta(0.7,0.7*50,(1-0.7)*50,log=T)
+#' #'@param Par vector (pfast,rslow,rfast,rRecov)
+#' #'@param n_red
+#' #'@return
+#' tiemersma_lLik <- function(Par) { # Par= c(pSmPos,rSlfCur,muIn,muIp)
+#'   pSmPos <- Par[1]; rSlfCur <- Par[2]*12; muIn <- Par[3]*12;  muIp <- Par[4]*12;
+#'   dur <- pSmPos*(1/(rSlfCur+muIp)) + (1-pSmPos)*(1/(rSlfCur+muIn))
+#'   cf_sp <- muIp/(rSlfCur+muIp);  cf_sn <- muIn/(rSlfCur+muIn)
+#'   l1 <- dnorm(3.0,dur,0.5/1.96,log=T)
+#'   l2 <- dbeta(0.2,cf_sn*50,(1-cf_sn)*50,log=T)
+#'   l3 <- dbeta(0.7,cf_sp*50,(1-cf_sp)*50,log=T)
+#'   l1+l2+l3 - adj_27  }
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+
+
+
