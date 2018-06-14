@@ -6,11 +6,11 @@ Authors@R: c(person("Nick", "Menzies", email="nmenzies@hsph.harvard.edu"),
              person("Nicole", "Swartwood", email="nswartwood@hsph.harvard.edu"))
 Author: Dr. Nick Menzies and Nicole Swartwood
 Maintainer: Nicole Swartwood <nswartwood@hsph.harvard.edu>
-Depends: Rcpp, mvtnorm, mnormt, lhs, parallel, MCMCpack, RColorBrewer
+Depends: Rcpp, mvtnorm, lhs, parallel, MCMCpack, RColorBrewer
 Description: Modeling Interventions for Tuberculosis in the United States in R. 
     The package allows users to input and explore effects policy interventions 
     on the burden of tuberculosis in each of United States. 
-License: What license is it under?
+License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1.9000
@@ -18,5 +18,5 @@ Suggests: testthat,
     knitr,
     rmarkdown
 VignetteBuilder: knitr
+Imports: Rcpp (>= 0.12.15)
 LinkingTo: Rcpp
-Imports: Rcpp
