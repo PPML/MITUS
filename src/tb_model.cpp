@@ -1,50 +1,97 @@
 #include <Rcpp.h>
-#include <algorithm>
 
 using namespace Rcpp;
-
+//'@title cSim
+//'@description runs a simulation of the tb model
+//'@param nYrs number of years to run the model.
+//'@param nRes number of results of the model
+//'@param rDxt Rate of active TB diagnosis over time
+//'@param TxQualt active TB treatment over time
+//'@param InitPop Initial Population matrix
+//'@param Mpfast Matrix of the probabilities of fast TB progression (age x TB prog risk group)
+//'@param ExogInf Exogenous infection risk for non-US born population
+//'@param MpfastPI Matrix of the probabilities of fast TB progression w/ partial immunity (age x TB prog risk group)
+//'@param Mrslow matrix of the rates of slow progression (age x TB prog risk group)
+//'@param rrSlowFB rate of fast TB progression
+//'@param RRcurDef Rate Ratio for cure given treatment defaul
+//'@param rSlfCur rate of self cure from active TB
+//'@param p_HR probability of high risk population @ entry into the model
+//'@param vTMort vector of TB mortality rates
+//'@param RRmuRF rate ratio of mortality across mortality risk group
+//'@param RRmuHR rate ratio of mortality across low/high risk dimension
+//'@param muTBRF comorbidity factor btw TB and mortality risk group
+//'@param Birthst Births over time
+//'@param HrEntEx Matrix of Entry and Exit rates into the High Risk population
+//'@param ImmNon Immigration with no TB
+//'@param ImmLat Immigration with Latent TB
+//'@param ImmAct Immigration with Active TB
+//'@param ImmFst Immigration with Fast Progressing TB
+//'@param mubt background mortality over time
+//'@param RelInf beta
+//'@param RelInfRg beta based off of risk group
+//'@param Vmix 1-sigma
+//'@param rEmmigFB rate of emmigration in non-US born population
+//'@param TxVec vector of parameters for TB Tx
+//'@param TunTxMort Tuning parameter for mortality on TB Tx
+//'@param rDeft rate of default from TB treatment over time
+//'@param rLtScrt rate of latent screening over time
+//'@param LtDxPar matrix of latent diagnosis parameters
+//'@param LtTxPar matrix of latent treatment parameters
+//'@param RRdxAge vector of rate ratios for TB diagnosis by age
+//'@param rRecov rate of recovery from latent slow to safe tb state
+//'@param pImmScen lack of reactivitiy to IGRA for Sp
+//'@param EarlyTrend ramp down of TB in burn-in
+//'@param pReTx probability of re-treatment for TB
+//'@param NixTrans
+//'@param dist_gen general distribution across tb progression and mort
+//'@param can_go matrix of logical transitions for reblnc code
+//'@param dist_goal_v goal distribution of reblnc code
+//'@param dist_orig_v empty vector for reblnc
+//'@param diff_i_v empty vector for reblnc
+//'@return a list of outputs
 //[[Rcpp::export]]
+
 Rcpp::List cSim(
-    int                 nYrs,      //number of years to run the model
-    int                 nRes,      // results
-    Rcpp::NumericMatrix rDxt,      // rate of diagnosis over time
-    std::vector<double> TxQualt,   // treatment quality over time
-    Rcpp::NumericMatrix       InitPop,   // initial population matrix
-    Rcpp::NumericMatrix       Mpfast,    // matrix of probability of fast TB progression
-    std::vector<double> ExogInf,   // exogenous infection risk
-    Rcpp::NumericMatrix       MpfastPI,  // matrix of probability of fast TB progression in those with partial immunity from prior infection
-    Rcpp::NumericMatrix       Mrslow,    // matrix of the rate of slow TB progression
-    std::vector<double> rrSlowFB,  // rate ratios that are applied to the rate of slow progression for foreign born population
-    double              rfast,     // rate of fast TB progression
-    double              RRcurDef,  // rate ratio of cure given treatment default
-    double              rSlfCur,   // rate of self cure
+    int                 nYrs,
+    int                 nRes,
+    Rcpp::NumericMatrix rDxt,
+    std::vector<double> TxQualt,
+    Rcpp::NumericMatrix       InitPop,
+    Rcpp::NumericMatrix       Mpfast,
+    std::vector<double> ExogInf,
+    Rcpp::NumericMatrix       MpfastPI,
+    Rcpp::NumericMatrix       Mrslow,
+    std::vector<double> rrSlowFB,
+    double              rfast,
+    double              RRcurDef,
+    double              rSlfCur,
     double              p_HR,
-    Rcpp::NumericMatrix       vTMort,    // matrix of TB mortality
+    Rcpp::NumericMatrix       vTMort,
     std::vector<double> RRmuRF,
     std::vector<double> RRmuHR,
 
-    double              muTbRF,    //factor for comorbidity btw TB and non-TB,
-    std::vector<double> Birthst,   // vector of absolute births over time
+    double              muTbRF,
+    std::vector<double> Birthst,
     Rcpp::NumericMatrix       HrEntEx,
     Rcpp::NumericMatrix       ImmNon,
     Rcpp::NumericMatrix       ImmLat,
     Rcpp::NumericMatrix       ImmAct,
     Rcpp::NumericMatrix       ImmFst,
-    Rcpp::NumericMatrix       mubt,       //background mortality over time
-    std::vector<double> RelInf,     //relative infectiousness
-    std::vector<double> RelInfRg,   //relative infectiousness by risk group
-    std::vector<double> Vmix,       // vector of mixing parameters (sigmas)
-    std::vector<double> rEmmigFB,    // rate of emmigration among the foreign born
-    std::vector<double> TxVec,       //vector of TB treatment parameters
-    double              TunTxMort,   //tuning for treatment mortality
-    std::vector<double> rDeft,       // rate of treatment default over time
+    Rcpp::NumericMatrix       mubt,
+    std::vector<double> RelInf,
+    std::vector<double> RelInfRg,
+    std::vector<double> Vmix,
+    std::vector<double> rEmmigFB,
+    std::vector<double> TxVec,
+    double              TunTxMort,
+    std::vector<double> rDeft,
     std::vector<double> rLtScrt,
-    std::vector<double> LtTxPar,     // latent treatment parameters
-    Rcpp::NumericMatrix       LtDxPar,     // latent diagnosis parameters
-    std::vector<double> RRdxAge,     // rate ratios for diagnosis with respect to age
-    double              rRecov,      //rate from latent slow to partially immune TB
-    double              pImmScen,    // lack of reactivitiy to IGRA for Sp
-    std::vector<double>  EarlyTrend,  // TB natural history parameter
+    std::vector<double> LtTxPar,
+    Rcpp::NumericMatrix       LtDxPar,
+    std::vector<double> RRdxAge,
+    double              rRecov,
+    double              pImmScen,
+    std::vector<double>  EarlyTrend,
     std::vector<double> pReTx,
     std::vector<double> NixTrans,
     Rcpp::NumericMatrix       dist_gen,
@@ -756,8 +803,8 @@ long  double        mat_sum;
                 // }
 
               } } } } } }
-    /////reblance the population & ((m%12)==0)
-    if (reblnc==1 & ((m%12)==0)){
+    /////reblance the population & (((m%12)==0))
+    if ((reblnc==1) & (((m%12)==0))){
 //       ////// need to define the current distribution of persons across the RG at this timestep
       for(int ag=0; ag<11; ag++) {
         for(int na=0; na<3; na++) {
@@ -929,7 +976,7 @@ for (int r=0; r<16; r++){
           for(int rg=0; rg<2; rg++){
             for (int na=0; na<3; na++){
               for(int tb=0; tb<6; tb++) {
-                if (reblnc==1 & (m%12)==0){
+                if ((reblnc==1) & ((m%12)==0)){
                   V1[ag][tb][0][im][nm][rg][na] = V2[ag][tb][0][im][nm][rg][na];
                   V0[ag][tb][0][im][nm][rg][na] = V2[ag][tb][0][im][nm][rg][na];
                 } else {
@@ -1653,7 +1700,7 @@ for (int r=0; r<16; r++){
                   //   Outputs[y][156] += (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP +
                   //     (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN; } // RF inits
 
-                  Outputs[y][154] += (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP; // inits with LTBI
+                  Outputs[y][154] += (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP*LtTxPar[0]; // inits with LTBI
                 } } } } }
         for(int i=151; i<155; i++) { Outputs[y][i] = Outputs[y][i]*12; } // annualize
 
@@ -1679,19 +1726,19 @@ for (int r=0; r<16; r++){
                       Outputs[y][167+16   ] += temp2;   //  incidence, US born, recent infection
                     } else {
                       Outputs[y][168      ] += temp ;   //  incidence, FB
-                      Outputs[y][168+16   ] += temp2;
-                    }//  incidence, FB, recent infection
+                      Outputs[y][168+16   ] += temp2;   //  incidence, FB, recent infection
+                    }
                     if(na==2) {
                       Outputs[y][169      ] += temp ;   //  incidence, FB2 born
                       Outputs[y][169+16   ] += temp2;    //  incidence, FB2 born, recent infection
                     }
                     if(rg==1) {
                       Outputs[y][170      ] += temp ;   //  incidence, HR
-                      Outputs[y][170+16   ] += temp2;
-                    } //  incidence, HR, recent infection
+                      Outputs[y][170+16   ] += temp2;   //  incidence, HR, recent infection
+                    }
                     // if(im>0) {
-                    //   Outputs[y][175      ] += temp ;   //  incidence, HIV pos
-                    //   Outputs[y][175+17   ] += temp2; } //  incidence, HIV pos, recent infection
+                    //   Outputs[y][171      ] += temp ;   //  incidence, HIV pos
+                    //   Outputs[y][171+16   ] += temp2; } //  incidence, HIV pos, recent infection
                   } } } } } }
         for(int i=154; i<187; i++) { Outputs[y][i] = Outputs[y][i]*12; } // annualize
 
@@ -1958,7 +2005,7 @@ for (int r=0; r<16; r++){
       //          ////////////////////////// REBALANCE THE POPULATION //////////////////////////////
       //          //////////////////////////////////////////////////////////////////////////////////
       /////reblance the population
-      if (reblnc==1 & m==6){
+      if ((reblnc==1) & (m==6)){
         ////// need to define the current distribution of persons across the RG at this timestep
         for(int ag=0; ag<11; ag++) {
           for(int na=0; na<3; na++) {
@@ -2325,19 +2372,12 @@ for (int r=0; r<16; r++){
       Outputs2(i,j)  = Outputs[i][j];
     }  }
 
-  for(int i=0; i<16; i++) {
-    dist(i)=dist_i_v[i];
-    for(int j=0; j<16; j++) {
-      trans_mat_fin(i,j)  = trans_mat[i][j];
-    }  }
   return
     Rcpp::List::create(
       Rcpp::Named("Outputs") = Outputs2,
-      Rcpp::Named("dist")= dist,
-      Rcpp::Named("trans_mat_tot") = trans_mat_fin
-    // Rcpp::Named("dist_new_fin") = dist_new_fin,
-    // Rcpp::Named("V0") = CheckV0,
-    // Rcpp::Named("V1") = CheckV
+      Rcpp::Named("V1")= CheckV,
+      Rcpp::Named("V") = CheckV0
+
     );
 
 }
