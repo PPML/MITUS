@@ -14,7 +14,7 @@ CalibDat[["tot_cases"]] <- tot_cases2
 
 #'Age distribution by year up until 2014
 age_cases0         <- read.csv("inst/extdata/6.15.18 Final Data/age_cases_6-15-18.csv")
-age_cases_us0      <- read.csv("inst/extdata/6.15.18 Final Data/age_cases_us_6-15-18.csv")[,-1]
+age_cases_us0      <- read.csv("inst/extdata/6.15.18 Final Data/age_cases_us_6-15-18.csv")
 age_cases_fb0      <- age_cases_us0
 age_cases_fb0[,-1] <- age_cases0[,-1] - age_cases_us0[,-1]
 
