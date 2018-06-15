@@ -6,15 +6,15 @@ CalibDat <- list()
 
 #' TB Notifications
 #' Total by year up until 2015
-tot_cases  <- read.csv("calib files/Total_cases_4-1-16.csv")
+tot_cases  <- read.csv("inst/extdata/6.15.18 Final Data/Total_cases_6-15-18.csv")
 tot_cases2 <- tot_cases
 shift75    <- tot_cases[23,2]*2-tot_cases[22,2]-tot_cases[24,2]
 tot_cases2[1:22,2] <- tot_cases[1:22,2]+shift75
 CalibDat[["tot_cases"]] <- tot_cases2
 
 #'Age distribution by year up until 2014
-age_cases0         <- read.csv("calib files/age_cases_10-21-15.csv")
-age_cases_us0      <- read.csv("calib files/age_cases_us_3-1-16.csv")[,-1]
+age_cases0         <- read.csv("inst/extdata/6.15.18 Final Data/age_cases_6-15-18.csv")
+age_cases_us0      <- read.csv("inst/extdata/6.15.18 Final Data/age_cases_us_6-15-18.csv")[,-1]
 age_cases_fb0      <- age_cases_us0
 age_cases_fb0[,-1] <- age_cases0[,-1] - age_cases_us0[,-1]
 
@@ -31,7 +31,7 @@ CalibDat[["age_cases_fb"]] <- data.frame(year = age_cases_fb0[,1],
                                          sample_size= age_cases_fb0[,12])
 
 #'Nativity by year up to 2015
-fb_cases0 <- read.csv("calib files/fb_cases_4-1-16.csv")
+fb_cases0 <- read.csv("inst/extdata/6.15.18 Final Data/fb_cases_6-15-18.csv")
 CalibDat[["fb_cases"]] <- data.frame(year        = fb_cases0[,1],
                                      pct_fb      = fb_cases0[,3]/fb_cases0[,4],
                                      sample_size = fb_cases0[,4])
@@ -39,26 +39,26 @@ CalibDat[["fb_cases"]] <- data.frame(year        = fb_cases0[,1],
 CalibDat[["fbus_cases_slope5"]] <- apply(log(fb_cases0[20:23,3:2]),2,function(x) lm(x~I(1:4))$coef[2])
 
 #'US Homeless by year up to 2014
-us_hr_cases0 <- read.csv("calib files/us_hr_cases_3-9-16.csv")
+us_hr_cases0 <- read.csv("inst/extdata/6.15.18 Final Data/us_hr_cases_6-15-18.csv")
 CalibDat[["us_homeless_cases"]] <- data.frame(year        = us_hr_cases0$year,
                                               pct_hr      = us_hr_cases0[,2]/us_hr_cases0[,3],
                                               sample_size = us_hr_cases0[,3])
 
 #'Homeless by year up to 2014
-hr_cases0 <- read.csv("calib files/Homeless_cases_10-21-15.csv")
+hr_cases0 <- read.csv("inst/extdata/6.15.18 Final Data/Homeless_cases_6-15-18.csv")
 CalibDat[["homeless_cases"]] <- data.frame(year        = hr_cases0$year,
                                            pct_hr      = hr_cases0[,2]/hr_cases0[,3],
                                            sample_size = hr_cases0[,3])
 
 #'Long Term Resident (Non-US born >2 yrs) overall
-fb_rec_cases0 <- read.csv("calib files/FB_recent_cases_10-21-15.csv")
-CalibDat[["fb_recent_cases"]] <- data.frame(year        = fb_rec_cases0$year,
-                                            pct_fb_rec  = fb_rec_cases0[,3]/fb_rec_cases0[,2],
-                                            sample_size = fb_rec_cases0[,2])
+# fb_rec_cases0 <- read.csv("calib files/FB_recent_cases_10-21-15.csv")
+# CalibDat[["fb_recent_cases"]] <- data.frame(year        = fb_rec_cases0$year,
+#                                             pct_fb_rec  = fb_rec_cases0[,3]/fb_rec_cases0[,2],
+#                                             sample_size = fb_rec_cases0[,2])
 
 #'TB Treatment Outcomes
 #'Overall, up to 2012
-tx_outcomes0 <- read.csv("calib files/tx_outcomes_10-21-15.csv")
+tx_outcomes0 <- read.csv("inst/extdata/6.15.18 Final Data/tx_outcomes_6-15-18.csv")
 CalibDat[["tx_outcomes"]] <- data.frame(year        = tx_outcomes0$year,
                                         pct_disc     = tx_outcomes0[,4]/tx_outcomes0[,2],
                                         pct_dead     = tx_outcomes0[,5]/tx_outcomes0[,2],
@@ -82,15 +82,15 @@ CalibDat[["LTBI_prev_FB_11_DoubPos"]] <- DoubPosDat[DoubPosDat$nativity=="fb",c(
 
 #'Total Population
 #'by Year
-pop_year_fb0 <- read.csv("calib files/tot_by_year_fb_10-21-15.csv")
+pop_year_fb0 <- read.csv("inst/extdata/6.15.18 Final Data/tot_by_year_fb_6-15-18.csv")
 #'age distribution
 
-pop_age_fb0 <- read.csv("calib files/tot2014_by_age_fb_10-21-15.csv")
+pop_age_fb0 <- read.csv("inst/extdata/6.15.18 Final Data/total2016_by_age_fb-6-15-18.csv")
 CalibDat[["tot_pop_yr_fb"]]   <- pop_year_fb0
 CalibDat[["tot_pop14_ag_fb"]] <- pop_age_fb0
 
 #'TB Deaths
-deaths0 <- read.csv("calib files/icd10_mcd_mort_4-1-16.csv")
+deaths0 <- read.csv("inst/extdata/6.15.18 Final Data/icd10_mcd_mort_6-15-18.csv")
 deaths0$TB_code <- deaths0$Cause.of.death.Code=="tb"
 deaths0$HIV_code <- deaths0$Cause.of.death.Code=="hiv"
 
@@ -119,9 +119,9 @@ for(i in 1:nrow(tb_deaths0)) { for(j in 1:ncol(tb_deaths0)) {
   CalibDat[["tb_deaths"]]  <- tb_deaths1
 
 #'TB progression with time based off of several studies
-borgdorff_data  <- read.csv("Borgorff 2011 data.csv")
-ferebee_data <- read.csv("Ferebee 1970 data_rev2.csv")
-sutherland_data <- read.csv("Sutherland 1968 data_rev2.csv")[,-3]
+borgdorff_data  <- read.csv("inst/extdata/Borgorff 2011 data.csv")
+ferebee_data <- read.csv("inst/extdata/Ferebee 1970 data_rev2.csv")
+sutherland_data <- read.csv("inst/extdata/Sutherland 1968 data_rev2.csv")[,-3]
 CalibDat[["borgdorff_data"]]   <- borgdorff_data
 CalibDat[["ferebee_data"]]     <- ferebee_data
 CalibDat[["sutherland_data"]]  <- sutherland_data
