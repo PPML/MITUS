@@ -1,17 +1,20 @@
 #'This script creates a function that loops over the log-likelihood
 #'functions found in calib_functions.R and updates the
+#'this is the function that goes into the optimizer
 #'load the necessary libraries
 library(mnormt)
 library(parallel)
 library(lhs)
 
 #'@name llikelihoodZ
-#'@param samp_i
-#'@param ParMatrix ParInit
+#'@param samp_i sample id
+#'@param ParMatrix matrix of parameters (ParamInit)
 #'@return lLik
-#'
 llikelihoodZ <-  function(samp_i,ParMatrix) {
   Par <- ParMatrix[samp_i,]
+  ##previously, the distribution of parameters were transformed to normal distribution in
+  ##to facilitate comparisons. These first two steps convert these parameters back to their
+  ##distributions
   # normal to uniform
   Par2 <- pnorm(Par,0,1)
   # uniform to true
@@ -23,25 +26,27 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
   P <- P
 
   jj <- tryCatch({
-    source("R/param.R")
-    IP <- param(P)
-    zz <- cSim(  nYrs     =   2050-1950         , nRes      = length(IP[["ResNam"]]), rDxt     = IP[["rDxt"]]    , TxQualt    = IP[["TxQualt"]]   , InitPop  = IP[["InitPop"]]    ,
-                 Mpfast     = IP[["Mpfast"]]    , ExogInf   = IP[["ExogInf"]]       , MpfastPI = IP[["MpfastPI"]], Mrslow     = IP[["Mrslow"]]    , rrSlowFB = IP[["rrSlowFB"]]    ,
-                 rfast      = IP[["rfast"]]     , RRcurDef  = IP[["RRcurDef"]]      , rSlfCur  = IP[["rSlfCur"]] , p_HR       = IP[["p_HR"]]      , dist_gen = IP[["dist_gen"]]    ,
-                 vTMort     = IP[["vTMort"]]    , RRmuRF    = IP[["RRmuRF"]]        , RRmuHR   = IP[["RRmuHR"]]  , muTbRF     = IP[["muTbRF"]]    , Birthst  = IP[["Birthst"]]    ,
-                 HrEntEx    = IP[["HrEntEx"]]   , ImmNon    = IP[["ImmNon"]]        , ImmLat   = IP[["ImmLat" ]] , ImmAct     = IP[["ImmAct"]]    , ImmFst   = IP[["ImmFst" ]]    ,
-                 mubt       = IP[["mubt"]]      , RelInf    = IP[["RelInf"]]        , RelInfRg = IP[["RelInfRg"]], Vmix       = IP[["Vmix"]]      , rEmmigFB = IP [["rEmmigFB"]]  ,
-                 TxVec      = IP[["TxVec"]]     , TunTxMort = IP[["TunTxMort"]]     , rDeft    = IP[["rDeft"]]   , pReTx      = IP[["pReTx"]]     , LtTxPar  = IP[["LtTxPar"]]    ,
-                 LtDxPar    = IP[["LtDxPar"]]   , rLtScrt   = IP[["rLtScrt"]]       , RRdxAge  = IP[["RRdxAge"]] , rRecov     = IP[["rRecov"]]    , pImmScen = IP[["pImmScen"]]   ,
-                 EarlyTrend = IP[["EarlyTrend"]], NixTrans  = IP[["NixTrans"]]      , can_go   = IP[["can_go"]]  , dist_goal  = IP[["dist_goal"]] , diff_i_v = IP[["diff_i_v"]]   ,
-                 dist_orig_v=IP[["dist_orig_v"]])
+    prms <-list()
+    prms <- param(P)
+    IP <- list()
+    IP <- param_init(P)
+    zz <- cSim(  nYrs     =   2050-1950         , nRes      = length(prms[["ResNam"]]), rDxt     = prms[["rDxt"]]    , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
+                 Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]    ,
+                 rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
+                 vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , muTbRF     = prms[["muTbRF"]]    , Birthst  = prms[["Birthst"]]    ,
+                 HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat" ]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst" ]]    ,
+                 mubt       = prms[["mubt"]]      , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], Vmix       = prms[["Vmix"]]      , rEmmigFB = IP [["rEmmigFB"]]  ,
+                 TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
+                 LtDxPar    = prms[["LtDxPar"]]   , rLtScrt   = prms[["rLtScrt"]]       , RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
+                 EarlyTrend = prms[["EarlyTrend"]], NixTrans  = IP[["NixTrans"]]        , can_go   = prms[["can_go"]]  , dist_goal  = prms[["dist_goal"]] , diff_i_v = prms[["diff_i_v"]]   ,
+                 dist_orig_v=prms[["dist_orig_v"]])
 #'if any output is missing or negative or if any model state population is negative
 #'set the likelihood to a hugely negative number (penalized)
     if(sum(is.na(zz$Outputs[65,]))>0 | min(zz$Outputs[65,])<0 | min(zz$V1)<0 ) {
       lLik <- -10^12
   } else {
       M <- zz$Outputs
-      colnames(M) <- ResNam
+      colnames(M) <- prms[[ResNam]]
       lLik <- 0
       #' TOTAL DIAGNOSED CASES 1953-2014 - index is same
       v1   <- M[4:66,"NOTIF_ALL"]+M[4:66,"NOTIF_MORT_ALL"]
@@ -83,7 +88,7 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
       lLik <- lLik + addlik
       #' DIST LTBI TREATMENT INITS 2002 - index updated
       v13  <- M[53,153:155]/M[53,152]
-      addlik <- tltbi_dist_lLik(V=v13)*2; addlik
+      addlik <- (tltbi_dist_lLik(V=v13))*2; addlik
       lLik <- lLik + addlik
       #' LTBI PREVALENCE BY AGE 2011, US - index updated
       v15  <- cbind(M[62,55:65],M[62,33:43]-M[62,55:65])
@@ -117,7 +122,7 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
       lLik <- lLik + addlik
 
       #' LIKELIHOOD FOR BORGDORFF, FEREBEE & SUTHERLAND ESTIMATES
-      v2456  <- c(pfast,pimmed,rslow,rfast,rRecov)
+      v2456  <- list(prms[["Mpfast"]],prms[["Mrslow"]],prms[["rfast"]],prms[["rRecov"]])
       addlik <- borgdorff_lLik( Par=v2456); addlik
       lLik <- lLik + addlik
       addlik <- ferebee_lLik(   Par=v2456); addlik
@@ -138,9 +143,11 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
 
   return((lLik))  }
 #'Local parallelization via multicore
-#'@param ParMatrix
-#'@param n_cores
+#'@name llikelihood
+#'@param ParMatrix matrix of parameters
+#'@param n_cores number of cores to use on the cluster
 #'@return lLik
+#'@export
 llikelihood <- function(ParMatrix,n_cores=1) {
   if(dim(as.data.frame(ParMatrix))[2]==1) {
     lLik <- llikelihoodZ(1,t(as.data.frame(ParMatrix)))
@@ -151,10 +158,10 @@ return((lLik))
 }
 
 #'@name lprior
-#'@param ParMatrix
+#'@param ParMatrix matrix of Initial parameters
 #'@return lPri
 
-lprior <- function(ParMatrix) { # Par = ParInit
+lprior <- function(ParMatrix = ParInit) { # Par = ParInit
   if(dim(as.data.frame(ParMatrix))[2]==1) {
     ParMatrix <- t(as.data.frame(ParMatrix)) }
   lPri <- rep(0,nrow(ParMatrix))
@@ -178,7 +185,7 @@ lprior <- function(ParMatrix) { # Par = ParInit
 
 #'sample the prior function
 #'@name sample.prior1
-#'@param n
+#'@param n n of the sample
 #'@return random sample of the prior
 sample.prior1 <- function(n) {
   rmnorm(n,rep(0,sum(ParamInit$Calib==1)),diag(sum(ParamInit$Calib==1))) }
