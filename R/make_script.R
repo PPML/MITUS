@@ -1,0 +1,69 @@
+#'Function to create scripts for optimization
+#'@name ScriptMak
+#'@param b number of scripts to generate
+#'@return b number of scripts for optimization
+#'@export
+ScriptMak <- function(b) {
+for (i in 1:b){
+Script <- paste('
+
+  b    <-  ',i,'   # batch number
+
+#########################  SET-UP  #########################
+## Parameter stuff
+load("data/ParamInitUS_V738tab.rData") # ParamInit
+P  <- ParamInit[,1]
+names(P) <- rownames(ParamInit)
+ii <-  ParamInit[,5]==1
+ParamInitZ <- ParamInit[ParamInit$Calib==1,]
+idZ0 <- ParamInitZ[,4]==0
+idZ1 <- ParamInitZ[,4]==1
+idZ2 <- ParamInitZ[,4]==2
+
+## Scripts and functions
+load("data/ModelInputs_9-2-16.rData")
+# source("R/param.r")
+source("R/PriorFuncUS_V22.r")
+source("R/calib_functions.r")
+source("R/IMIS_functions.r")
+source("R/BetterImisUS_V7.r")
+source("OptUniv_V3.r")
+load("StartValUS_9-6-2016.rData") # StartVal
+ posterior = function(theta) { -lprior(theta) - llikelihood(theta,n_cores) }
+
+##### OPTIMISE ###########
+o1  <- optim(StartVal[b,], posterior, method ="BFGS", control=list(maxit=400,trace=5,reltol=sqrt(.Machine$double.eps)/5)) ; o1$value
+save(o1,file=paste("Opt_US540_r1_",b,"_1-27-16.rData",sep=""))
+o2  <- optim(o1$par ,posterior, method ="Nelder-Mead", control=list(maxit=1000,trace=1,reltol=sqrt(.Machine$double.eps)/5));  o2$value
+save(o2,file=paste("Opt_US540_r2_",b,"_1-27-16.rData",sep=""))
+o3  <- optim(o2$par, posterior, method ="BFGS", control=list(maxit=400,trace=5,reltol=sqrt(.Machine$double.eps)/5)) ; o3$value
+save(o3,file=paste("Opt_US540_r3_",b,"_1-27-16.rData",sep=""))
+o4  <- optim(o3$par ,posterior, method ="Nelder-Mead", control=list(maxit=1000,trace=1,reltol=sqrt(.Machine$double.eps)/5));  o4$value
+save(o4,file=paste("Opt_US540_r4_",b,"_1-27-16.rData",sep=""))
+o5  <- optim(o4$par, posterior, method ="BFGS", control=list(maxit=400,trace=5,reltol=sqrt(.Machine$double.eps)/5)) ; o5$value
+save(o5,file=paste("Opt_US540_r5_",b,"_1-27-16.rData",sep=""))
+o6  <- optim(o5$par ,posterior, method ="Nelder-Mead", control=list(maxit=1000,trace=1,reltol=sqrt(.Machine$double.eps)/5));  o6$value
+save(o6,file=paste("Opt_US540_r6_",b,"_1-27-16.rData",sep=""))
+o7  <- optim(o6$par, posterior, method ="BFGS", control=list(maxit=400,trace=5,reltol=sqrt(.Machine$double.eps)/5)) ; o7$value
+save(o7,file=paste("Opt_US540_r7_",b,"_1-27-16.rData",sep=""))
+o8 <- UnivOptim(o7$par) ; o8$value
+save(o8,file=paste("Opt_US540_r8_",b,"_1-27-16.rData",sep=""))
+
+############ Done!   #####################################
+
+quit("no")  # Kill
+
+',sep="")
+
+write(Script,file=paste("OptUS540_",i,".r",sep=""))
+
+} }
+
+
+
+
+
+
+
+
+
