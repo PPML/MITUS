@@ -1,7 +1,7 @@
 #' Basic Functions Used In Package
 #' This script includes several functions that are useful for data manipulation
 #' throughout the package.
-#'
+
 #'The first function takes the odds of a risk, then calculates the join
 #'probability of that odds and and an inputted Odds Ratio that the user inputs, then
 #'generates the corresponding risk.
@@ -53,12 +53,22 @@ SmoCurve <- function(vec) {
   jj[jj<0] <- 0 ; jj
 }
 
+#'This function is for the expit
+#'@name expit
+#'@param x number
+#'@return expit of that number x
+expit <- function(x) {
+  exp(x)/(1+exp(x))
+}
+
+
 #'This function is used to return the basis of a spline function.
+#'@name bspline
 #'@param x
 #'@param k
 #'@param i
 #'@param m
-#'@return
+#'@return basis of a spline
 
 bspline <- function(x,k,i,m) {
   if (m==-1) {
