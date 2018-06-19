@@ -242,113 +242,132 @@ homeless_10_lLik <- function(V) {
 #' #'@param Par_list list of parameters Mpfast, Mrslow, rfast, rRecov
 #' #'@param n_red crude reductions the likelihood (allows non-sampling bias)
 #' #'@return likelihood
-#' borgdorff_lLik <- function(Par_list,N_red=1) {
-#'   ss_borgdorff   <- 854.5463/4
-#'   datB           <- CalibDat[["borgdorff_data"]]
-#'   adj_24         <- sum(diff(-datB[,2])*ss_borgdorff*log(diff(-datB[,2])) + (1-diff(-datB[,2]))*ss_borgdorff*log(1-diff(-datB[,2])))
-#'   zz <- tryCatch({
-#'     Mpfast[] <- Par_list[[1]];
-#'     Mrslow[] <- Par_list[[2]]*12;
-#'     rfast    <- Par_list[[3]]*12;
-#'     rRecov   <- Par_list[[4]]*12;
-#'     # p[]<-rep(NA,4)
-#'     for (i in 1:4){
-#'     p[i] <- Mpfast[i]*(1-(1-exp(-(rfast+rRecov)*datB[,1]))*(rfast/(rfast+rRecov))) +
-#'         (1-Mpfast[i])*(1-(1-exp(-(Mrslow[i]+rRecov)*datB[,1]))*(Mrslow[i]/(Mrslow[i]+rRecov)))
-#'     p[i] <- 1-(1-p[i])/(1-p[i])[nrow(datB)]
-#'     sum[i]<-sum(diff(-datB[,2])*ss_borgdorff*log(diff(-p[i])) + (1-diff(-datB[,2]))*ss_borgdorff*log(1-diff(-p[i])))/N_red - adj_24/N_red
-#'     sum[i]*colSums(dist_gen)[i] #weighted average of the likelihoods
-#'     }
-#'
-#'   },error=function(e) -Inf )
-#'   if(is.nan(zz)) { zz = -10^4
-#'   } else {
-#'   if(zz== -Inf) zz = -10^4 }
-#'   zz }
+borgdorff_lLik <- function(Par_list,N_red=1) {
+  ss_borgdorff   <- 854.5463/4
+  datB           <- CalibDat[["borgdorff_data"]]
+  adj_24         <- sum(diff(-datB[,2])*ss_borgdorff*log(diff(-datB[,2])) + (1-diff(-datB[,2]))*ss_borgdorff*log(1-diff(-datB[,2])))
+  zz <- tryCatch({
+    pfast     <- Par[1];
+    ORpfastRF <- Par[2];
+    rslow     <- Par[3]*12;
+    RRrSlowRF <- Par[4];
+    rfast     <- Par[5]*12;
+    rRecov    <- Par[6]*12;
+    pfast_v <- rslow_v <- rep(NA,4)
+    pfast_v <- pfast * exp(0:3)/3*log(ORpfastRF)
+    rslow_v <- rslow * exp(0:3)/3*log(RRrslowRF)
+
+    for (i in 1:4){
+      p <- pfast_v[i] *(1-(1-exp(-(rfast+rRecov)*datB[,1]))*(rfast/(rfast+rRecov))) +
+        (1-pfast_v[i])*(1-(1-exp(-(rslow_v[i]+rRecov)*datB[,1]))*(rslow_v[i]/(rslow_v[i]+rRecov)))
+      p <- 1-(1-p)/(1-p)[nrow(datB)]
+    s[i]<-sum(diff(-datB[,2])*ss_borgdorff*log(diff(-p)) + (1-diff(-datB[,2]))*ss_borgdorff*log(1-diff(-p)))/N_red - adj_24/N_red
+    print(s[i])
+    }
+    print(s*(colSums(dist_gen))) #weighted average of the likelihoods
+
+  },error=function(e) -Inf )
+  if(is.nan(zz)) { zz = -10^4
+  } else {
+  if(zz== -Inf) zz = -10^4 }
+  zz }
 #'
 #' #'Likelihood of Ferebee Estimates
 #' #'across the tb_progression groups
 #' #'average at the end
-#' #'@param Par_list list (Mpfast,Mrslow,rfast,rRecov)
+#' #'@param Par_list list (pfast,rslow,rfast,rRecov)
 #' #'@param n_red
 #' #'@return likelihood
-#' ferebee_lLik <- function(Par_list,N_red=4) {
-#'   datF         <- CalibDat[["ferebee_data"]]
-#'   adj_25       <- sum(datF[,3]*log(datF[,3]/datF[,2]) + (datF[,2]-datF[,3])*log(1-datF[,3]/datF[,2]))
-#'   n_yr_F       <- nrow(datF)
-#'   zz <- tryCatch({
-#'     Mpfast[] <- Par_list[[1]];
-#'     Mrslow[] <- Par_list[[2]]*12;
-#'     rfast    <- Par_list[[3]]*12;
-#'     rRecov   <- Par_list[[4]]*12;
-#'     # p2 <- r2 <- rep(NA,4)
-#'     for (i in 1:4){
-#'       p2[i]  <- Mpfast[i]*(1-(1-exp(-(rfast+rRecov)*(0:n_yr_F)))*(rfast/(rfast+rRecov))) +
-#'                 (1-Mpfast[i])*(1-(1-exp(-(Mrslow[i]+rRecov)*(0:n_yr_F)))*(Mrslow[i]/(Mrslow[i]+rRecov)))
-#'       r2[i]  <- -log(1-diff(-p2[i])/p2[-(n_yr_F+1)])/1
-#'       sum[i] <- sum((datF[,3]*log(r2[i]) + (datF[,2]-datF[,3])*log(1-r2[i]))/N_red)-adj_25/N_red
-#'       sum[i]*colSums(dist_gen)[i]
-#' }
-#'   },error=function(e) -Inf )
-#'   if(is.nan(zz)) {
-#'     zz = -10^4
-#'   } else {
-#'       if(zz== -Inf) zz = -10^4 }
-#'   zz  }
-#'
-#'
+ferebee_lLik <- function(Par_list,N_red=4) {
+  datF         <- CalibDat[["ferebee_data"]]
+  adj_25       <- sum(datF[,3]*log(datF[,3]/datF[,2]) + (datF[,2]-datF[,3])*log(1-datF[,3]/datF[,2]))
+  n_yr_F       <- nrow(datF)
+  zz <- tryCatch({
+    pfast     <- Par[1];
+    ORpfastRF <- Par[2];
+    rslow     <- Par[3]*12;
+    RRrSlowRF <- Par[4];
+    rfast     <- Par[5]*12;
+    rRecov    <- Par[6]*12;
+    pfast_v <- rslow_v <- rep(NA,4)
+    pfast_v <- pfast * exp(0:3)/3*log(ORpfastRF)
+    rslow_v <- rslow * exp(0:3)/3*log(RRrslowRF)
+    s2 <- rep(NA,4)
+    for (i in 1:4){
+      p2 <- pfast_v[i] *(1-(1-exp(-(rfast+rRecov)*(0:n_yr_F)))*(rfast/(rfast+rRecov))) +
+         (1-pfast_v[i])*(1-(1-exp(-(rslow_v[i]+rRecov)*(0:n_yr_F)))*(rslow_v[i]/(rslow_v[i]+rRecov)))
+      r2 <- -log(1-diff(-p2)/p2[-(n_yr_F+1)])/1
+      s2[i]<- sum((datF[,3]*log(r2) + (datF[,2]-datF[,3])*log(1-r2))/N_red)-adj_25/N_red
+      print(s2[i])
+    }
+    print(sum(s2*colSums(dist_gen)))
+  },error=function(e) -Inf )
+  if(is.nan(zz)) {
+    zz = -10^4
+  } else {
+      if(zz== -Inf) zz = -10^4 }
+  zz  }
+
 #' #'Likelihood of Sutherland Estimates
 #' #'across the tb_progression groups
 #' #'average at the end
 #' #'@param Par_list list (Mpfast,Mrslow,rfast,rRecov)
 #' #'@param n_red
 #' #'@return likelihood
-#' sutherland_lLik <- function(Par_list,N_red=4) {
-#'   datS            <- CalibDat[["sutherland_data"]]
-#'   datSz           <- datS; datSz[datS[,3]==0,3] <- 0.01
-#'   adj_26          <- sum(datSz[,3]*log(datSz[,3]/datSz[,2]) + (datSz[,2]-datSz[,3])*log(1-datSz[,3]/datSz[,2]))
-#'   n_yr_S          <- nrow(datS)
-#'   zz <- tryCatch({
-#'     Mpfast[] <- Par_list[[1]];
-#'     Mrslow[] <- Par_list[[2]]*12;
-#'     rfast    <- Par_list[[3]]*12;
-#'     rRecov   <- Par_list[[4]]*12;
-#'     # p2 <- r2 <- rep(NA,4)
-#'     for (i in 1:4){
-#'       p2[i] <-Mpfast[i]*(1-(1-exp(-(rfast+rRecov)*(0:n_yr_S)))*(rfast/(rfast+rRecov))) + (1-Mpfast[i])*(1-(1-exp(-(Mrslow[i]+rRecov)*(0:n_yr_S)))*(Mrslow[i]/(Mrslow[i]+rRecov)))
-#'       r2[i] <- -log(1-diff(-p2[i])/p2[i[-(n_yr_S+1)])/1
-#'       sum[i] <- sum((datS[,3]*log(r2[i]) + (datS[,2]-datS[,3])*log(1-r2[i]))/N_red) - adj_26/N_red
-#'       sum[i]*colSums(dist_gen)[i]
-#'     }
-#'   },error=function(e) -Inf )
-#'   if(is.nan(zz)) {
-#'     zz = -10^4
-#'   } else {
-#'       if(zz== -Inf) zz = -10^4 }
-#'   zz  }
-#'
-#' #'Likelihood of Tiemersa Estimates
-#' #'Needs to stay -- pulls together a lot of old data;
-#' #'qualitative review of national history data
-#' #'used for duration of infectiousness absent treatment
-#' #'mortality and self cure. need to break out across our mortalitycategories
-#' #'ratio of self cure to death & infectiousness and death.
-#' #'average the mortality rate dimensions
-#' #'@param Par vector (pfast,rslow,rfast,rRecov)
-#' #'@return likelihood
-#' tiemersma_lLik <- function(Par) { # Par= c(pSmPos,rSlfCur,muIn,muIp)
-#'   adj_27         <- dnorm(3.0,3.0,0.5/1.96,log=T)+dbeta(0.2,0.2*50,(1-0.2)*50,log=T)+dbeta(0.7,0.7*50,(1-0.7)*50,log=T)
-#'   pSmPos <- Par[1];
-#'   rSlfCur <- Par[2]*12;
-#'   muIn <- Par[3]*12;
-#'   muIp <- Par[4]*12;
-#'   dur <- pSmPos*(1/(rSlfCur+muIp)) + (1-pSmPos)*(1/(rSlfCur+muIn))
-#'   cf_sp <- muIp/(rSlfCur+muIp);
-#'   cf_sn <- muIn/(rSlfCur+muIn)
-#'   l1 <- dnorm(3.0,dur,0.5/1.96,log=T)
-#'   l2 <- dbeta(0.2,cf_sn*50,(1-cf_sn)*50,log=T)
-#'   l3 <- dbeta(0.7,cf_sp*50,(1-cf_sp)*50,log=T)
-#'   l1+l2+l3 - adj_27  }
+sutherland_lLik <- function(Par_list,N_red=4) {
+  datS            <- CalibDat[["sutherland_data"]]
+  datSz           <- datS; datSz[datS[,3]==0,3] <- 0.01
+  adj_26          <- sum(datSz[,3]*log(datSz[,3]/datSz[,2]) + (datSz[,2]-datSz[,3])*log(1-datSz[,3]/datSz[,2]))
+  n_yr_S          <- nrow(datS)
+  zz <- tryCatch({
+    pfast     <- Par[1];
+    ORpfastRF <- Par[2];
+    rslow     <- Par[3]*12;
+    RRrSlowRF <- Par[4];
+    rfast     <- Par[5]*12;
+    rRecov    <- Par[6]*12;
+    pfast_v <- rslow_v <- rep(NA,4)
+    pfast_v <- pfast * exp(0:3)/3*log(ORpfastRF)
+    rslow_v <- rslow * exp(0:3)/3*log(RRrslowRF)
+    s3 <- rep(NA,4)
+    for (i in 1:4){
+      p3<-pfast_v[i]*(1-(1-exp(-(rfast+rRecov)*(0:n_yr_S)))*(rfast/(rfast+rRecov))) +
+        (1-pfast_v[i])*(1-(1-exp(-(rslow_v[i]+rRecov)*(0:n_yr_S)))*(rslow_v[i]/(rslow_v[i]+rRecov)))
+      r3 <- -log(1-diff(-p3)/p3[-(n_yr_S+1)])/1
+      s3[i] <- sum((datS[,3]*log(r3) + (datS[,2]-datS[,3])*log(1-r3))/N_red) - adj_26/N_red
+      print(s3[i])
+    }
+    print(sum(s3*colSums(dist_gen)))
+
+  },error=function(e) -Inf )
+  if(is.nan(zz)) {
+    zz = -10^4
+  } else {
+      if(zz== -Inf) zz = -10^4 }
+  zz  }
+
+#'Likelihood of Tiemersa Estimates
+#'Needs to stay -- pulls together a lot of old data;
+#'qualitative review of national history data
+#'used for duration of infectiousness absent treatment
+#'mortality and self cure. need to break out across our mortalitycategories
+#'ratio of self cure to death & infectiousness and death.
+#'average the mortality rate dimensions
+#'@param Par vector (pfast,rslow,rfast,rRecov)
+#'@return likelihood
+# tiemersma_lLik <- function(Par) { # Par= c(pSmPos,rSlfCur,muIn,muIp)
+#   adj_27         <- dnorm(3.0,3.0,0.5/1.96,log=T)+dbeta(0.2,0.2*50,(1-0.2)*50,log=T)+dbeta(0.7,0.7*50,(1-0.7)*50,log=T)
+#   pSmPos <- Par[1];
+#   rSlfCur <- Par[2]*12;
+#   muIn <- Par[3]*12;
+#   muIp <- Par[4]*12;
+#   dur <- pSmPos*(1/(rSlfCur+muIp)) + (1-pSmPos)*(1/(rSlfCur+muIn))
+#   cf_sp <- muIp/(rSlfCur+muIp);
+#   cf_sn <- muIn/(rSlfCur+muIn)
+#   l1 <- dnorm(3.0,dur,0.5/1.96,log=T)
+#   l2 <- dbeta(0.2,cf_sn*50,(1-cf_sn)*50,log=T)
+#   l3 <- dbeta(0.7,cf_sp*50,(1-cf_sp)*50,log=T)
+#   l1+l2+l3 - adj_27  }
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
 
