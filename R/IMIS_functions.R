@@ -122,13 +122,13 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
       lLik <- lLik + addlik
 
       #' LIKELIHOOD FOR BORGDORFF, FEREBEE & SUTHERLAND ESTIMATES
-      v2456  <- list(prms[["Mpfast"]],prms[["Mrslow"]],prms[["rfast"]],prms[["rRecov"]])
-      addlik <- borgdorff_lLik( Par=v2456); addlik
-      lLik <- lLik + addlik
-      addlik <- ferebee_lLik(   Par=v2456); addlik
-      lLik <- lLik + addlik
-      addlik <- sutherland_lLik(Par=v2456); addlik
-      lLik <- lLik + addlik
+      # v2456  <- list(prms[["Mpfast"]],prms[["Mrslow"]],prms[["rfast"]],prms[["rRecov"]])
+      # addlik <- borgdorff_lLik( Par=v2456); addlik
+      # lLik <- lLik + addlik
+      # addlik <- ferebee_lLik(   Par=v2456); addlik
+      # lLik <- lLik + addlik
+      # addlik <- sutherland_lLik(Par=v2456); addlik
+      # lLik <- lLik + addlik
 
 
       ### ### ### FB RT LIKELIHOOD
@@ -156,6 +156,22 @@ llikelihood <- function(ParMatrix,n_cores=1) {
   }
 return((lLik))
 }
+
+#'@name lPrior2 calculates the parameter prior with Jacobians
+#'@param Par
+#'@param Par3
+#'@return ldensity
+
+lPrior2 <- function(Par,Par3) {
+  if(dim(as.matrix(Par))[2]==1) Par <- t(as.matrix(Par))
+  ldensity <- dmnorm(Par,rep(0,nrow(ParamInitZ)),diag(nrow(ParamInitZ)),log=T)
+  ldensity2 <- ldensity-sum(dnorm(Par,0,1,log=T))
+  lDensTrue <- rep(NA,nrow(ParamInitZ))
+  lDensTrue[idZ0] <- dbeta( Par3[idZ0], shape1  = ParamInitZ[idZ0,6], shape2 = ParamInitZ[idZ0,7],log=T)
+  lDensTrue[idZ1] <- dgamma(Par3[idZ1], shape   = ParamInitZ[idZ1,6], rate   = ParamInitZ[idZ1,7],log=T)
+  lDensTrue[idZ2] <- dnorm( Par3[idZ2], mean    = ParamInitZ[idZ2,6], sd     = ParamInitZ[idZ2,7],log=T)
+  ldensity3 <- ldensity2+sum(lDensTrue)
+  ldensity3  }
 
 #'@name lprior
 #'@param ParMatrix matrix of Initial parameters
