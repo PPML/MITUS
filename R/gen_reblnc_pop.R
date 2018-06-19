@@ -1,10 +1,6 @@
 #'Create parameters for population distribution
 #'This script generates the necessary parameters to distribute
 #'the model population across two multivariate normal distributions
-#'
-
-library(mvtnorm)
-source("R/basic_functions.R")
 
 #'Define the number of mortality and progression risk groups
 num_mRF=4
