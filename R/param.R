@@ -1,14 +1,17 @@
-################################################################################
-##### THE CODE BELOW WILL GATHER AND FORMAT INPUTS FOR THE TB_MODEL        #####
-##### FUNCTION FILE. ALL VARIABLE NAMES THAT END IN t ARE INDEXED BY TIME; #####
-##### VARIABLE NAMES BEGINNING WITH m ARE MATRICES & V ARE VECTORS.        #####
-################################################################################
-##### THIS FILE USES FUNCTIONS FOUND IN HELPER_FUNCTIONS.R                 #####
-################################################################################
-library(MASS)
-source("R/basic_functions.R")
-source("R/define_P.R")
-load("data/ModelInputs_9-2-16.rData")
+#'THE CODE BELOW SOURCES THE MODEL INPUTS AND THEN FORMATS THEM FOR USE
+#'IN THE OUTPUTSINTZ FUNCTION THAT CALLS CSIM FROM THE TB_MODEL.CPP
+#'FUNCTION FILE. ALL VARIABLE NAMES THAT END IN t ARE INDEXED BY TIME
+#'VARIABLE NAMES BEGINNING WITH m ARE MATRICES & V ARE VECTORS.
+
+#'@name param
+#' @param ParVector vector of Inputs to format
+#' @return Params list
+#' @export
+param <- function (P){
+#'load in the input data
+  load("data/ModelInputs_9-2-16.rData")
+  source("R/define_P.R")
+  source("R/gen_reblnc_pop.R")
 ################################################################################
 ###########################          INPUTS            #########################
 ################################################################################
@@ -239,7 +242,7 @@ load("data/ModelInputs_9-2-16.rData")
   rrTestLrNoTb  <- P["rrTestLrNoTb"] # RR of LTBI screening for individuals with no risk factors
 #  dLt           <- 1/9
 
-  rDefLt        <- dLt*P["pDefLt"]/(1-P["pDefLt"])  # based on 50% tx completion with 6 mo INH regimen 2.0 [1.0,3.0] from Menzies Ind J Med Res 2011
+  rDefLt        <- P["pDefLt"]/(1-P["pDefLt"])  # based on 50% tx completion with 6 mo INH regimen 2.0 [1.0,3.0] from Menzies Ind J Med Res 2011
   EffLt         <- P["EffLt"]
   ######NEW PARAMETER FOR MITUS MODEL
   pTlInt        <- .80
@@ -542,17 +545,53 @@ ResNam <- c("Year",                                         # year            1
             paste("mort_rate ag 9",StatList[[5]],sep="_" ),
             paste("mort_rate ag 10",StatList[[5]],sep="_" ),
             paste("mort_rate ag 11",StatList[[5]],sep="_" )
-
-
-
 )
-length(ResNam)
 
-###################################################
-
-########################### HOW MANY VARS IN ResNam ############################
-length(ResNam)
-################################################################################
-################################################################################
-################################################################################
-
+Params<-list()
+Params[["rDxt"]]      = rDxt
+Params[["TxQualt"]]   = TxQualt
+Params[["InitPop"]]   = InitPop
+Params[["Mpfast"]]    = Mpfast
+Params[["ExogInf"]]   = ExogInf
+Params[["MpfastPI"]]  = MpfastPI
+Params[["Mrslow"]]    = Mrslow
+Params[["rrSlowFB"]]  = rrSlowFB
+Params[["rfast"]]     = rfast
+Params[["RRcurDef"]]  = RRcurDef
+Params[["rSlfCur"]]   = rSlfCur
+Params[["p_HR"]]      = p_HR
+Params[["dist_gen"]]  = dist_gen
+Params[["vTMort"]]    = vTMort
+Params[["RRmuRF"]]    = RRmuRF
+Params[["RRmuHR"]]    = RRmuHR
+Params[["muTbRF"]]    = muTbRF
+Params[["Birthst"]]   = Birthst
+Params[["HrEntEx"]]   = HrEntEx
+Params[["ImmNon"]]    = ImmNon
+Params[["ImmLat"]]    = ImmLat
+Params[["ImmAct"]]    = ImmAct
+Params[["ImmFst"]]    = ImmFst
+Params[["mubt"]]      = mubt
+Params[["RelInf"]]    = RelInf
+Params[["RelInfRg"]]  = RelInfRg
+Params[["Vmix"]]      = Vmix
+Params[["rEmmigFB"]]  = rEmmigFB
+Params[["TxVec"]]     = TxVec
+Params[["TunTxMort"]] = TunTxMort
+Params[["rDeft"]]     = rDeft
+Params[["pReTx"]]     = pReTx
+Params[["LtTxPar"]]   = LtTxPar
+Params[["LtDxPar"]]   = LtDxPar
+Params[["rLtScrt"]]   = rLtScrt
+Params[["RRdxAge"]]   = RRdxAge
+Params[["rRecov"]]    = rRecov
+Params[["pImmScen"]]  = pImmScen
+Params[["EarlyTrend"]]= EarlyTrend
+# Params[["NixTrans"]]  = NixTrans
+Params[["can_go"]]    = can_go
+Params[["dist_goal"]] = dist_goal
+Params[["diff_i_v"]]  = diff_i_v
+Params[["dist_orig_v"]]=dist_orig_v
+Params[["ResNam"]]    = ResNam
+return(Params)
+}
