@@ -1,20 +1,24 @@
-################################################################################
-######### THIS SCRIPT CODES A FUNCTION THAT TAKES THE FOLLOWING PARAMETERS:
-#########
-######### THIS FUNCTION INPUTS A TABLE OF PARAMETERS AND RUNS THE TB MODEL
-######### AND GENERATES AN ARRAY OF OUTPUTS
-################################################################################
+#' THIS FUNCTION INPUTS A TABLE OF PARAMETERS AND RUNS THE TB MODEL
+#' AND GENERATES AN ARRAY OF OUTPUTS
 
-################################################################################
-library(parallel)
-library(Rcpp)
 
-load("~/MITUS/data/parAll200_9-14-16.rData")
-source("R/gen_reblnc_pop.R")
-
-################################################################################
-#########                      FUNCTION                                #########
-
+#load("~/MITUS/data/parAll200_9-14-16.rData")
+# load("data/ParamInitUS_V738tab.rData")
+#'function to run the model
+#'@name OutputsZint
+#'@param samp_i how many samples
+#'@param ParMatrix parameters to use in the simulation
+#'@param endyr year to end the simulation
+#'@param Int1 boolean for intervention 1
+#'@param Int2 boolean for intervention 2
+#'@param Int3 boolean for intervention 3
+#'@param Int4 boolean for intervention 4
+#'@param Int5 boolean for intervention 5
+#'@param Scen1 boolean for scenario 1
+#'@param Scen2 boolean for scenario 2
+#'@param Scen3 boolean for scenario 3
+#'@return results data frame of output
+#'@export
 OutputsZint <-  function(samp_i=1,ParMatrix,endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0) {
    if(min(dim(as.data.frame(ParMatrix)))==1) { ;
     Par <- as.numeric(ParMatrix);
@@ -30,48 +34,42 @@ OutputsZint <-  function(samp_i=1,ParMatrix,endyr=2050,Int1=0,Int2=0,Int3=0,Int4
     Scen2 <<- Scen2;
     Scen3 <<- Scen3
 
-    P <<- Par
+   P <- Par
+   IP <- param_init(P,Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3)
 
-    source("R/param_init.R")
- #   source("R/param.R")
-    sourceCpp("src/tb_model.cpp")
-
- m <-       cSim( nYrs     =   2050-1950,  nRes     = length(ResNam), rDxt      = rDxt     , TxQualt   = TxQualt    , InitPop   = InitPop    ,
-                           Mpfast   = Mpfast      , ExogInf   = ExogInf      , MpfastPI  = MpfastPI , Mrslow    = Mrslow     , rrSlowFB = rrSlowFB    ,
-                           rfast    = rfast       , RRcurDef = RRcurDef      , rSlfCur  = rSlfCur   , p_HR     = p_HR        , dist_gen = dist_gen    ,
-                           vTMort   = vTMort      , RRmuRF = RRmuRF          , RRmuHR=RRmuHR        , muTbRF = muTbRF        , Birthst   = Birthst    ,
-                           HrEntEx   = HrEntEx    , ImmNon    = ImmNon       , ImmLat    = ImmLat   , ImmAct   = ImmAct      , ImmFst    = ImmFst     ,
-                           mubt     = mubt        , RelInf   = RelInf        , RelInfRg  = RelInfRg , Vmix      = Vmix       , rEmmigFB  = rEmmigFB   ,
-                           TxVec    = TxVec       , TunTxMort = TunTxMort    , rDeft     = rDeft    , pReTx     = pReTx      , LtTxPar  = LtTxPar     ,
-                           LtDxPar  = LtDxPar     , rLtScrt   = rLtScrt      , RRdxAge  = RRdxAge   , rRecov   = rRecov      , pImmScen  = pImmScen   ,
-                           EarlyTrend = EarlyTrend,  NixTrans = NixTrans    ,
-                           can_go   = can_go      , dist_goal=dist_goal      ,  diff_i_v = diff_i_v , dist_orig_v=dist_orig_v
+   m <-       cSim(        nYrs     =   2050-1950         , nRes      = length(IP[["ResNam"]]), rDxt     = IP[["rDxt"]]    , TxQualt    = IP[["TxQualt"]]   , InitPop  = IP[["InitPop"]]    ,
+                           Mpfast     = IP[["Mpfast"]]    , ExogInf   = IP[["ExogInf"]]       , MpfastPI = IP[["MpfastPI"]], Mrslow     = IP[["Mrslow"]]    , rrSlowFB = IP[["rrSlowFB"]]    ,
+                           rfast      = IP[["rfast"]]     , RRcurDef  = IP[["RRcurDef"]]      , rSlfCur  = IP[["rSlfCur"]] , p_HR       = IP[["p_HR"]]      , dist_gen = IP[["dist_gen"]]    ,
+                           vTMort     = IP[["vTMort"]]    , RRmuRF    = IP[["RRmuRF"]]        , RRmuHR   = IP[["RRmuHR"]]  , muTbRF     = IP[["muTbRF"]]    , Birthst  = IP[["Birthst"]]    ,
+                           HrEntEx    = IP[["HrEntEx"]]   , ImmNon    = IP[["ImmNon"]]        , ImmLat   = IP[["ImmLat" ]] , ImmAct     = IP[["ImmAct"]]    , ImmFst   = IP[["ImmFst" ]]    ,
+                           mubt       = IP[["mubt"]]      , RelInf    = IP[["RelInf"]]        , RelInfRg = IP[["RelInfRg"]], Vmix       = IP[["Vmix"]]      , rEmmigFB = IP [["rEmmigFB"]]  ,
+                           TxVec      = IP[["TxVec"]]     , TunTxMort = IP[["TunTxMort"]]     , rDeft    = IP[["rDeft"]]   , pReTx      = IP[["pReTx"]]     , LtTxPar  = IP[["LtTxPar"]]    ,
+                           LtDxPar    = IP[["LtDxPar"]]   , rLtScrt   = IP[["rLtScrt"]]       , RRdxAge  = IP[["RRdxAge"]] , rRecov     = IP[["rRecov"]]    , pImmScen = IP[["pImmScen"]]   ,
+                           EarlyTrend = IP[["EarlyTrend"]], NixTrans  = IP[["NixTrans"]]      , can_go   = IP[["can_go"]]  , dist_goal  = IP[["dist_goal"]] , diff_i_v = IP[["diff_i_v"]]   ,
+                           dist_orig_v=IP[["dist_orig_v"]]
                            )$Outputs
-
-    # n <-       cSim( nYrs     =   2050-1950,  nRes     = length(ResNam), rDxt      = rDxt     , TxQualt   = TxQualt    , InitPop   = InitPop    ,
-    #                  Mpfast   = Mpfast      , ExogInf   = ExogInf      , MpfastPI  = MpfastPI , Mrslow    = Mrslow     , rrSlowFB = rrSlowFB    ,
-    #                  rfast    = rfast       , RRcurDef = RRcurDef      , rSlfCur  = rSlfCur   , p_HR     = p_HR        , dist_gen = dist_gen    ,
-    #                  vTMort   = vTMort      , vRFMort = vRFMort        , RRmuHR    = RRmuHR   , muTbRF = muTbRF        , Birthst   = Birthst    ,
-    #                  HrEntEx   = HrEntEx    , ImmNon    = ImmNon       , ImmLat    = ImmLat   , ImmAct   = ImmAct      , ImmFst    = ImmFst     ,
-    #                  mubt     = mubt        , RelInf   = RelInf        , RelInfRg  = RelInfRg , Vmix      = Vmix       , rEmmigFB  = rEmmigFB   ,
-    #                  TxVec    = TxVec       , TunTxMort = TunTxMort    , rDeft     = rDeft    , pReTx     = pReTx      , LtTxPar  = LtTxPar     ,
-    #                  LtDxPar  = LtDxPar     , rLtScrt   = rLtScrt      , RRdxAge  = RRdxAge   , rRecov   = rRecov      , pImmScen  = pImmScen   ,
-    #                  EarlyTrend = EarlyTrend, EffLt    = EffLt         , EffLt0    = EffLt0   , dLtt     = dLtt        , NixTrans = NixTrans    ,
-    #                  can_go   = can_go      , did_go=did_go            , dist_goal=dist_goal,  diff_i_v = diff_i_v,  dist_orig_v=dist_orig_v,
-    # )$dist_new
-
-   colnames(m) <- ResNam;
-  results<<-data.frame(m)
-    # dist_df<<-data.frame(dist_new)
+   colnames(m) <- IP[["ResNam"]];
+   results<<-data.frame(m)
 
    return(results)
-
-
 }
 
-################################################################################
 
-######### WRAPPER FUNCTION #########
+#'wrapper function for the above function
+#'@name OutputsInt
+#'@param ParMatrix parameters to use in the simulation
+#'@param n_cores how many cores to use
+#'@param endyr year to end the simulation
+#'@param Int1 boolean for intervention 1
+#'@param Int2 boolean for intervention 2
+#'@param Int3 boolean for intervention 3
+#'@param Int4 boolean for intervention 4
+#'@param Int5 boolean for intervention 5
+#'@param Scen1 boolean for scenario 1
+#'@param Scen2 boolean for scenario 2
+#'@param Scen3 boolean for scenario 3
+#'@return out outputs
+#'@export
 OutputsInt <- function(ParMatrix,n_cores=1,endyr=2100,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0) {
   if(min(dim(as.data.frame(ParMatrix)))==1) {
     out <- OutputsZint(samp_i=1,ParMatrix=ParMatrix,endyr=endyr,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3)
