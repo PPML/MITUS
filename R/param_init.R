@@ -3,12 +3,10 @@
 ##### FUNCTION FILE. ALL VARIABLE NAMES THAT END IN t ARE INDEXED BY TIME; #####
 ##### VARIABLE NAMES BEGINNING WITH m ARE MATRICES & V ARE VECTORS.        #####
 ################################################################################
-##### THIS FILE USES FUNCTIONS FOUND IN BASIC_FUNCTIONS.R                  #####
-################################################################################
 
 #' This function takes the same inputs as the Outputs
-#' @name param_init
-#' @param ParVector vector of Inputs to format
+#'@name param_init
+#'@param ParVector vector of Inputs to format
 #'@param Int1 boolean for intervention 1
 #'@param Int2 boolean for intervention 2
 #'@param Int3 boolean for intervention 3
@@ -17,16 +15,12 @@
 #'@param Scen1 boolean for scenario 1
 #'@param Scen2 boolean for scenario 2
 #'@param Scen3 boolean for scenario 3
-#' @return InputParams list
-#' @export
-
-library(MASS)
-source("R/basic_functions.R")
-source("R/gen_reblnc_pop.R")
+#'@return InputParams list
+#'@export
 
 param_init <- function(ParVector,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0){
 load("data/ModelInputs_9-2-16.rData")
-
+# source("R/gen_reblnc_pop.R")
 #'Create an empty list to hold the formatted intitial parameters
 InputParams <-vector("list", 45)
 names(InputParams) <- c("rDxt","TxQualt", "InitPop", "Mpfast", "ExogInf", "MpfastPI",
@@ -54,11 +48,11 @@ InputParams[["dist_orig_v"]] <-dist_orig_v;
 ################################################################################
 ###########################          INPUTS            #########################
 ################################################################################
-BgMort           <- Inputs[["BgMort"]]
-InputParams[["InitPop"]]          <- Inputs[["InitPop"]]
-Births           <- Inputs[["Births"]]
-ImmigInputs      <- Inputs[["ImmigInputs"]]
-TxInputs         <- Inputs[["TxInputs"]]
+BgMort                   <- Inputs[["BgMort"]]
+InputParams[["InitPop"]] <- Inputs[["InitPop"]]
+Births                   <- Inputs[["Births"]]
+ImmigInputs              <- Inputs[["ImmigInputs"]]
+TxInputs                 <- Inputs[["TxInputs"]]
 
 ##########                PARAMETER DEFINITIONS                      ###########
 #######################           BIRTHS                 #######################
@@ -642,6 +636,7 @@ ResNam <- c("Year",                                         # year
             paste("mort_rate ag 10",StatList[[5]],sep="_" ),
             paste("mort_rate ag 11",StatList[[5]],sep="_" )
 )
+
 InputParams[["ResNam"]]<-ResNam
 return(InputParams)
 
