@@ -62,11 +62,8 @@ BEGIN_RCPP
 END_RCPP
 }
 
-RcppExport SEXP _MITUS_mat_mult(SEXP, SEXP);
-
 static const R_CallMethodDef CallEntries[] = {
     {"_MITUS_cSim", (DL_FUNC) &_MITUS_cSim, 46},
-    {"_MITUS_mat_mult", (DL_FUNC) &_MITUS_mat_mult,  2},
     {NULL, NULL, 0}
 };
 
