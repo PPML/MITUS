@@ -4,7 +4,10 @@
 \alias{ORAdd}
 \title{Basic Functions Used In Package
 This script includes several functions that are useful for data manipulation
-throughout the package.}
+throughout the package.
+The first function takes the odds of a risk, then calculates the join
+probability of that odds and and an inputted Odds Ratio that the user inputs, then
+generates the corresponding risk.}
 \usage{
 ORAdd(val, OR)
 }
@@ -17,6 +20,9 @@ ORAdd(val, OR)
 new risk for population
 }
 \description{
+Basic Functions Used In Package
+This script includes several functions that are useful for data manipulation
+throughout the package.
 The first function takes the odds of a risk, then calculates the join
 probability of that odds and and an inputted Odds Ratio that the user inputs, then
 generates the corresponding risk.
