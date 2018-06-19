@@ -122,13 +122,14 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
       lLik <- lLik + addlik
 
       #' LIKELIHOOD FOR BORGDORFF, FEREBEE & SUTHERLAND ESTIMATES
-      # v2456  <- list(prms[["Mpfast"]],prms[["Mrslow"]],prms[["rfast"]],prms[["rRecov"]])
-      # addlik <- borgdorff_lLik( Par=v2456); addlik
-      # lLik <- lLik + addlik
-      # addlik <- ferebee_lLik(   Par=v2456); addlik
-      # lLik <- lLik + addlik
-      # addlik <- sutherland_lLik(Par=v2456); addlik
-      # lLik <- lLik + addlik
+
+      v2456  <- list(prms[["pfast"]],prms[["ORpfastRF"]],prms[["rslow"]], prms[["RRrSlowRF"]], prms[["rfast"]],prms[["rRecov"]])
+      addlik <- borgdorff_lLik( Par=v2456); addlik
+      lLik <- lLik + addlik
+      addlik <- ferebee_lLik(   Par=v2456); addlik
+      lLik <- lLik + addlik
+      addlik <- sutherland_lLik(Par=v2456); addlik
+      lLik <- lLik + addlik
 
 
       ### ### ### FB RT LIKELIHOOD
