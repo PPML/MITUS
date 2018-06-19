@@ -20,7 +20,6 @@
 
 param_init <- function(ParVector,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0){
 load("data/ModelInputs_9-2-16.rData")
-# source("R/gen_reblnc_pop.R")
 #'Create an empty list to hold the formatted intitial parameters
 InputParams <-vector("list", 45)
 names(InputParams) <- c("rDxt","TxQualt", "InitPop", "Mpfast", "ExogInf", "MpfastPI",
