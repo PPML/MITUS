@@ -607,14 +607,14 @@ long  double        mat_sum;
 
     // Step 4
     /// LOW RISK US BORN
-    VLjkl[0 ][0 ]  = (RelInfRg[0]*Vjaf[0])/5;
+    VLjkl[0 ][0 ]  = (RelInfRg[0]*Vjaf[0]);
     ///////// HIGH RISK US BORN
-    VLjkl[1 ][0 ]  = (RelInfRg[1]*Vjaf[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0])/5;
+    VLjkl[1 ][0 ]  = (RelInfRg[1]*Vjaf[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]);
     ///////// LOW RISK NON US BORN
-    VLjkl[0 ][1 ]  = ((RelInfRg[2]*Vjaf[2]*(1-Vmix[1]) + RelInfRg[0]*Vjaf[0]*Vmix[1])/5) + ExogInf[0];
+    VLjkl[0 ][1 ]  = ((RelInfRg[2]*Vjaf[2]*(1-Vmix[1]) + RelInfRg[0]*Vjaf[0]*Vmix[1])) + ExogInf[0];
     ///////// HIGH RISK NON US BORN
     ///check the use of RelInfRg here as beta, might need to be a combo param but unclear check the old param file
-    VLjkl[1 ][1 ]  = ((RelInfRg[3]*Vjaf[3]*(1-Vmix[0])*(1-Vmix[1]) + RelInfRg[2]*Vjaf[2]*Vmix[0]*(1-Vmix[1]) + RelInfRg[1]*Vjaf[1]*Vmix[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]*Vmix[1])/5) + ExogInf[0];
+    VLjkl[1 ][1 ]  = ((RelInfRg[3]*Vjaf[3]*(1-Vmix[0])*(1-Vmix[1]) + RelInfRg[2]*Vjaf[2]*Vmix[0]*(1-Vmix[1]) + RelInfRg[1]*Vjaf[1]*Vmix[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]*Vmix[1])) + ExogInf[0];
 
     // for (int i=0; i<2; i++){
     //   for (int j=0; j<2; j++){
@@ -1314,14 +1314,14 @@ for (int r=0; r<16; r++){
 
       // Step 4
       /// LOW RISK US BORN
-      VLjkl[0 ][0 ]  = (RelInfRg[0]*Vjaf[0])/5;
+      VLjkl[0 ][0 ]  = (RelInfRg[0]*Vjaf[0]);
       ///////// HIGH RISK US BORN
-      VLjkl[1 ][0 ]  = (RelInfRg[1]*Vjaf[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0])/5;
+      VLjkl[1 ][0 ]  = (RelInfRg[1]*Vjaf[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]);
       ///////// LOW RISK NON US BORN
-      VLjkl[0 ][1 ]  = ((RelInfRg[2]*Vjaf[2]*(1-Vmix[1]) + RelInfRg[0]*Vjaf[0]*Vmix[1])/5) + ExogInf[s];
+      VLjkl[0 ][1 ]  = ((RelInfRg[2]*Vjaf[2]*(1-Vmix[1]) + RelInfRg[0]*Vjaf[0]*Vmix[1])) + ExogInf[s];
       ///////// HIGH RISK NON US BORN
       ///check the use of RelInfRg here as beta, might need to be a combo param but unclear check the old param file
-      VLjkl[1 ][1 ]  = ((RelInfRg[3]*Vjaf[3]*(1-Vmix[0])*(1-Vmix[1]) + RelInfRg[2]*Vjaf[2]*Vmix[0]*(1-Vmix[1]) + RelInfRg[1]*Vjaf[1]*Vmix[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]*Vmix[1]) /5)+ ExogInf[s];
+      VLjkl[1 ][1 ]  = ((RelInfRg[3]*Vjaf[3]*(1-Vmix[0])*(1-Vmix[1]) + RelInfRg[2]*Vjaf[2]*Vmix[0]*(1-Vmix[1]) + RelInfRg[1]*Vjaf[1]*Vmix[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]*Vmix[1]) )+ ExogInf[s];
 
 
         ///////////////////////////////INFECTION///////////////////////////////////////
