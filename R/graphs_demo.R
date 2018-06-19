@@ -14,7 +14,7 @@ US_mort_age <- read.csv(file="inst/extdata/US_mort_age.csv", header = TRUE)
 tb_graph_demo <- function(df){
 
   load("data/CalibDat_9-14-16.rData")
-  source("R/CalibFunctionsUS_V23.r")
+#  source("R/calib_functions.R")
 
   pdf(file=paste("MITUS_results/graphs_demo",Sys.time(),".pdf"), width = 11, height = 8.5)
 
@@ -459,7 +459,7 @@ tb_graph_demo <- function(df){
   # ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   V   <- cbind(df[1:65,510:520])
   x<-seq(6,781,12)
-  V2  <-mubt[x,]
+  V2  <-InputParams[["mubt"]][x,]
 
   col<-rainbow(11)
 
@@ -478,3 +478,4 @@ tb_graph_demo <- function(df){
   }
 dev.off()
   }
+
