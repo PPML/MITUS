@@ -1,10 +1,23 @@
 #' Formats Outputs to dataframe format for the TABBY2 interface
 
+#'@name format_df
+#'@param years vector of years
+#'@param loc location of results
+#'@param nat nationality of results
+#'@param scen scenario
+#'@param int  intervention
+#'@param df dataframe of results
+#'@return csv of results formatted
+#'@export
+
+
+format_df<-function(year, loc, nat, scen, int, df){
+
 Date <- Sys.Date();
 
-#' pull the year from results data frame
-Year <- rep(NA,nrow(results)*(ncol(results)-1))
-Year <-rep(results[,1], (ncol(results)-1))
+#' pull the year from df data frame
+Year <- rep(NA,nrow(df)*(ncol(df)-1))
+Year <-rep(df[,1], (ncol(df)-1))
 
 #'location will need to be inputted from user
 #'for now we will input the national example
@@ -42,18 +55,18 @@ Intervention <- 5
 
 
 #' Input the Output Name from ResNam
-Output <- rep(NA,(length(ResNam)-1)*nrow(results))
+Output <- rep(NA,(length(ResNam)-1)*nrow(df))
   for (i in 1:(length(ResNam)-1)){
       Output[(((i-1)*100)+1):(i*100)] <-ResNam[i+1]
  }
 
-#' Input the values from results dataframe
-Value <- rep(NA,(nrow(results)*(ncol(results)-1)))
+#' Input the values from df dataframe
+Value <- rep(NA,(nrow(df)*(ncol(df)-1)))
 
-for (i in 1:nrow(results)){
-  for (j in 1:(ncol(results)-1)){
+for (i in 1:nrow(df)){
+  for (j in 1:(ncol(df)-1)){
 
-    Value[i+(j-1)*100] <- results[i,j+1]
+    Value[i+(j-1)*100] <- df[i,j+1]
 
 } }
 
@@ -62,3 +75,4 @@ results_form <- data.frame(Date,Location,Year,Nativity,Scenario,Intervention,Out
 save(results_form,file = paste("data/results_form", Sys.time(),".rData"))
 write.csv(results_form, file = paste("MITUS_results/results_form", Sys.time(),".csv"))
 
+}
