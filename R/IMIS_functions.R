@@ -8,7 +8,7 @@ library(lhs)
 
 #'@name llikelihoodZ
 #'@param samp_i sample id
-#'@param ParMatrix matrix of parameters (ParamInit)
+#'@param ParMatrix matrix of parameters  # Par = par_1
 #'@return lLik
 llikelihoodZ <-  function(samp_i,ParMatrix) {
   Par <- ParMatrix[samp_i,]
@@ -30,7 +30,7 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
     prms <- param(P)
     IP <- list()
     IP <- param_init(P)
-    zz <- cSim(  nYrs     =   2050-1950         , nRes      = length(prms[["ResNam"]]), rDxt     = prms[["rDxt"]]    , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
+    zz <- cSim(  nYrs       =   2050-1950         , nRes      = length(prms[["ResNam"]]), rDxt     = prms[["rDxt"]]    , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
                  Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]    ,
                  rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
                  vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , muTbRF     = prms[["muTbRF"]]    , Birthst  = prms[["Birthst"]]    ,
@@ -123,7 +123,7 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
 
       #' LIKELIHOOD FOR BORGDORFF, FEREBEE & SUTHERLAND ESTIMATES
 
-      v2456  <- list(prms[["pfast"]],prms[["ORpfastRF"]],prms[["rslow"]], prms[["RRrSlowRF"]], prms[["rfast"]],prms[["rRecov"]])
+      v2456  <- list(prms[["Mpfast"]],prms[["Mrslow"]], prms[["rfast"]],prms[["rRecov"]])
       addlik <- borgdorff_lLik( Par=v2456); addlik
       lLik <- lLik + addlik
       addlik <- ferebee_lLik(   Par=v2456); addlik
@@ -161,7 +161,7 @@ return((lLik))
 #'@name lPrior2 calculates the parameter prior with Jacobians
 #'@param Par
 #'@param Par3
-#'@return ldensity
+#'@return ldensity3
 
 lPrior2 <- function(Par,Par3) {
   if(dim(as.matrix(Par))[2]==1) Par <- t(as.matrix(Par))
