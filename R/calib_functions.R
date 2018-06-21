@@ -247,15 +247,13 @@ borgdorff_lLik <- function(Par_list,N_red=1) {
   datB           <- CalibDat[["borgdorff_data"]]
   adj_24         <- sum(diff(-datB[,2])*ss_borgdorff*log(diff(-datB[,2])) + (1-diff(-datB[,2]))*ss_borgdorff*log(1-diff(-datB[,2])))
   zz <- tryCatch({
-    pfast     <- Par[1];
-    ORpfastRF <- Par[2];
-    rslow     <- Par[3]*12;
-    RRrSlowRF <- Par[4];
-    rfast     <- Par[5]*12;
-    rRecov    <- Par[6]*12;
+    Mpfast     <- Par_list[[1]];
+    Mrslow     <- Par_list[[2]]*12;
+    rfast      <- Par_list[[3]]*12;
+    rRecov     <- Par_list[[4]]*12;
     pfast_v <- rslow_v <- rep(NA,4)
-    pfast_v <- pfast * exp(0:3)/3*log(ORpfastRF)
-    rslow_v <- rslow * exp(0:3)/3*log(RRrslowRF)
+    pfast_v <- Mpfast[3,]
+    rslow_v <- Mrslow[3,]
 
     for (i in 1:4){
       p <- pfast_v[i] *(1-(1-exp(-(rfast+rRecov)*datB[,1]))*(rfast/(rfast+rRecov))) +
@@ -271,36 +269,37 @@ borgdorff_lLik <- function(Par_list,N_red=1) {
   } else {
   if(zz== -Inf) zz = -10^4 }
   zz }
-#'
+
 #' #'Likelihood of Ferebee Estimates
 #' #'across the tb_progression groups
 #' #'average at the end
 #' #'@param Par_list list (pfast,rslow,rfast,rRecov)
 #' #'@param n_red
 #' #'@return likelihood
-ferebee_lLik <- function(Par_list,N_red=4) {
+ferebee_lLik <- function(Par,N_red=4) {
   datF         <- CalibDat[["ferebee_data"]]
   adj_25       <- sum(datF[,3]*log(datF[,3]/datF[,2]) + (datF[,2]-datF[,3])*log(1-datF[,3]/datF[,2]))
   n_yr_F       <- nrow(datF)
   zz <- tryCatch({
-    pfast     <- Par[1];
-    ORpfastRF <- Par[2];
-    rslow     <- Par[3]*12;
-    RRrSlowRF <- Par[4];
-    rfast     <- Par[5]*12;
-    rRecov    <- Par[6]*12;
+
+    Mpfast     <- Par_list[[1]];
+    Mrslow     <- Par_list[[2]]*12;
+    rfast      <- Par_list[[3]]*12;
+    rRecov     <- Par_list[[4]]*12;
     pfast_v <- rslow_v <- rep(NA,4)
-    pfast_v <- pfast * exp(0:3)/3*log(ORpfastRF)
-    rslow_v <- rslow * exp(0:3)/3*log(RRrslowRF)
+    pfast_v <- Mpfast[3,]
+    rslow_v <- Mrslow[3,]
     s2 <- rep(NA,4)
     for (i in 1:4){
       p2 <- pfast_v[i] *(1-(1-exp(-(rfast+rRecov)*(0:n_yr_F)))*(rfast/(rfast+rRecov))) +
          (1-pfast_v[i])*(1-(1-exp(-(rslow_v[i]+rRecov)*(0:n_yr_F)))*(rslow_v[i]/(rslow_v[i]+rRecov)))
       r2 <- -log(1-diff(-p2)/p2[-(n_yr_F+1)])/1
       s2[i]<- sum((datF[,3]*log(r2) + (datF[,2]-datF[,3])*log(1-r2))/N_red)-adj_25/N_red
-      print(s2[i])
+      # print(s2[i])
     }
-    print(sum(s2*colSums(dist_gen)))
+   # x<- c(s2,sum(s2*colSums(dist_gen)))
+   # x
+    sum(s2*colSums(dist_gen))
   },error=function(e) -Inf )
   if(is.nan(zz)) {
     zz = -10^4
@@ -320,15 +319,13 @@ sutherland_lLik <- function(Par_list,N_red=4) {
   adj_26          <- sum(datSz[,3]*log(datSz[,3]/datSz[,2]) + (datSz[,2]-datSz[,3])*log(1-datSz[,3]/datSz[,2]))
   n_yr_S          <- nrow(datS)
   zz <- tryCatch({
-    pfast     <- Par[1];
-    ORpfastRF <- Par[2];
-    rslow     <- Par[3]*12;
-    RRrSlowRF <- Par[4];
-    rfast     <- Par[5]*12;
-    rRecov    <- Par[6]*12;
+    Mpfast     <- Par_list[[1]];
+    Mrslow     <- Par_list[[2]]*12;
+    rfast      <- Par_list[[3]]*12;
+    rRecov     <- Par_list[[4]]*12;
     pfast_v <- rslow_v <- rep(NA,4)
-    pfast_v <- pfast * exp(0:3)/3*log(ORpfastRF)
-    rslow_v <- rslow * exp(0:3)/3*log(RRrslowRF)
+    pfast_v <- Mpfast[3,]
+    rslow_v <- Mrslow[3,]
     s3 <- rep(NA,4)
     for (i in 1:4){
       p3<-pfast_v[i]*(1-(1-exp(-(rfast+rRecov)*(0:n_yr_S)))*(rfast/(rfast+rRecov))) +
@@ -361,7 +358,8 @@ sutherland_lLik <- function(Par_list,N_red=4) {
 #   rSlfCur <- Par[2]*12;
 #   muIn <- Par[3]*12;
 #   muIp <- Par[4]*12;
-#   dur <- pSmPos*(1/(rSlfCur+muIp)) + (1-pSmPos)*(1/(rSlfCur+muIn))
+#   dur <- 1/(rSlfCur+muTbRF)
+#   cf  <- muTB+muTbRF
 #   cf_sp <- muIp/(rSlfCur+muIp);
 #   cf_sn <- muIn/(rSlfCur+muIn)
 #   l1 <- dnorm(3.0,dur,0.5/1.96,log=T)
