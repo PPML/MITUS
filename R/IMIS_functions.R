@@ -5,7 +5,7 @@
 library(mnormt)
 library(parallel)
 library(lhs)
-
+source("R/define_P.R")
 #'@name llikelihoodZ
 #'@param samp_i sample id
 #'@param ParMatrix matrix of parameters  # Par = par_1
@@ -46,7 +46,7 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
       lLik <- -10^12
   } else {
       M <- zz$Outputs
-      colnames(M) <- prms[[ResNam]]
+      colnames(M) <- prms[["ResNam"]]
       lLik <- 0
       #' TOTAL DIAGNOSED CASES 1953-2014 - index is same
       v1   <- M[4:66,"NOTIF_ALL"]+M[4:66,"NOTIF_MORT_ALL"]
@@ -87,17 +87,17 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
       addlik <- tltbi_tot_lLik(V=v12); addlik
       lLik <- lLik + addlik
       #' DIST LTBI TREATMENT INITS 2002 - index updated
-      v13  <- M[53,153:155]/M[53,152]
+      v13  <- M[53,153:154]/M[53,152]
       addlik <- (tltbi_dist_lLik(V=v13))*2; addlik
       lLik <- lLik + addlik
       #' LTBI PREVALENCE BY AGE 2011, US - index updated
       v15  <- cbind(M[62,55:65],M[62,33:43]-M[62,55:65])
-      v15a <- outer(v15[,1],c(SensLt,1-SensLt))+outer(v15[,2],c(1-SpecLt,SpecLt))
+      v15a <- outer(v15[,1],c(P[["SensLt"]],1-P[["SensLt"]]))+outer(v15[,2],c(1-P[["SpecLt"]],P[["SpecLt"]]))
       addlik <- ltbi_us_11_lLik(V=v15a)*2; addlik
       lLik <- lLik + addlik
       #' LTBI PREVALENCE BY AGE 2011, FB - index updated
       v16  <- cbind(M[62,66:76],M[62,44:54]-M[62,66:76])
-      v16a <- outer(v16[,1],c(SensLt,1-SensLt))+outer(v16[,2],c(1-SpecLt,SpecLt))
+      v16a <- outer(v16[,1],c(P[["SensLt"]],1-P[["SensLt"]]))+outer(v16[,2],c(1-P[["SpecLt"]],P[["SpecLt"]]))
       addlik <- ltbi_fb_11_lLik(V=v16a)*2; addlik
       lLik <- lLik + addlik
       #' TOTAL POP EACH DECADE, BY US/FB - index updated (maybe)
@@ -129,6 +129,11 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
       addlik <- ferebee_lLik(   Par=v2456); addlik
       lLik <- lLik + addlik
       addlik <- sutherland_lLik(Par=v2456); addlik
+      lLik <- lLik + addlik
+
+      # ### ### ### LIKELIHOOD FOR TIEMERSMA ESTS ### ### ### ### ### ### ~~~
+      v35   <- c(P["rSlfCur"],P["muIp"])
+      addlik <- tiemersma_lLik(Par=v35); addlik
       lLik <- lLik + addlik
 
 
