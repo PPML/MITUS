@@ -8,5 +8,6 @@ library(MCMCpack)
 library(MASS)
 
 #'lazy load necessary datasets
-#'Model Input style
+#'Model Input
 load("data/ModelInputs_9-2-16.rData")
+
