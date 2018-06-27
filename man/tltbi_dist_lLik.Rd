@@ -7,7 +7,7 @@
 tltbi_dist_lLik(V)
 }
 \arguments{
-\item{V}{dist TLTBI inits in 2002 (vector fraction FB, HR, HV in 2002)}
+\item{V}{dist TLTBI inits in 2002 (vector fraction FB, HR in 2002)}
 }
 \value{
 likelihood

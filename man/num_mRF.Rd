@@ -3,12 +3,18 @@
 \docType{data}
 \name{num_mRF}
 \alias{num_mRF}
-\title{Define the number of mortality and progression risk groups}
+\title{Create parameters for population distribution
+This script generates the necessary parameters to distribute
+the model population across two multivariate normal distributions
+Define the number of mortality and progression risk groups}
 \format{An object of class \code{numeric} of length 1.}
 \usage{
 num_mRF
 }
 \description{
+Create parameters for population distribution
+This script generates the necessary parameters to distribute
+the model population across two multivariate normal distributions
 Define the number of mortality and progression risk groups
 }
 \keyword{datasets}

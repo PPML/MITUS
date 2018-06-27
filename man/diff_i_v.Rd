@@ -4,7 +4,7 @@
 \name{diff_i_v}
 \alias{diff_i_v}
 \title{Create several vectors populated with NA to input into the model;}
-\format{An object of class \code{logical} of length 16.}
+\format{An object of class \code{matrix} with 1 rows and 16 columns.}
 \usage{
 diff_i_v
 }

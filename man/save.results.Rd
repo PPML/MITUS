@@ -10,7 +10,7 @@ save.results(df)
 \item{df}{dataframe of output}
 }
 \value{
-.csv
+.csv of results (unformatted)
 }
 \description{
 function to save results
