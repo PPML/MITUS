@@ -15,6 +15,8 @@ ORAdd <- function(val,OR) {
 }
 
 #'This function calculates the logit of the value or parameter inputted.
+#'@title lgt
+#'@name logit
 #'@param x value of interest, often an odds
 #'@return logit of input x
 
