@@ -1,10 +1,9 @@
 #'@name optim_b
 #'@param b batch number; must be > 21; corresponds to a row of start vals
-#'@param ParMatrix
 #'@return 8 datasets from optimization loop
 #'@export
 
-optim_b <- function(b, ParMatrix){
+optim_b <- function(b){
 
 load("data/ParamInitUS_V738tab.rData") # ParamInit
 P  <- ParamInit[,1]
