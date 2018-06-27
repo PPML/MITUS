@@ -4,14 +4,11 @@
 #'VARIABLE NAMES BEGINNING WITH m ARE MATRICES & V ARE VECTORS.
 
 #'@name param
-#' @param ParVector vector of Inputs to format
+#' @param P vector of
 #' @return Params list
 #' @export
 param <- function (P){
-#'load in the input data
   load("data/ModelInputs_9-2-16.rData")
-  source("R/define_P.R")
-  source("R/gen_reblnc_pop.R")
 ################################################################################
 ###########################          INPUTS            #########################
 ################################################################################
@@ -232,8 +229,8 @@ param <- function (P){
   rSlfCur      <- P["rSlfCur"]/12
 
 ######################          LTBI DIAGNOSIS           ########################
-#  rLtScrt       <- LgtCurve(1985,2015,P["rLtScr"])/12
-  rLtScrt       <- c(rep(0,888),LgtCurve(1985,2015,P["rLtScr"])/12)
+  rLtScrt       <- LgtCurve(1985,2015,P["rLtScr"])/12
+  # rLtScrt       <- c(rep(0,888),LgtCurve(1985,2015,P["rLtScr"])/12)
   SensLt        <- P["SensLt"]    #  sens of test for latent TB infection (based on IGRA QFT-GIT)
   SpecLt        <- P["SpecLt"]    #  spec of test for latent TB infection (based on IGRA QFT-GIT)
   SpecLtFb      <- SpecLt         #  spec of test for latent TB infection (based on IGRA QFT-GIT) in foreign-born (assumed BCG exposed)
@@ -345,7 +342,7 @@ param <- function (P){
 
 #########################         RETREATMENT         ##########################
 
-   pReTx   <- c(rep(0,888),LgtCurve(1985,2000,P["pReTx"]))   	# Probability Tx failure identified, patient initiated on tx experienced reg (may be same)
+   pReTx   <- LgtCurve(1985,2000,P["pReTx"])   	# Probability Tx failure identified, patient initiated on tx experienced reg (may be same)
 
 #####################         NEW TB TREATMENT VECTOR       ####################
 
