@@ -1455,7 +1455,7 @@ n2=na;
                   Outputs[y][27+rg] += V1[ag][tb][lt][im][nm][rg][na];   // N_ by rg (2)
                   Outputs[y][29+na] += V1[ag][tb][lt][im][nm][rg][na];   // N_ by na (3)
                 } } } } } } }
-    // Rcpp::Rcout << "total population is" << Outputs[y][1]<< "\n";
+    Rcpp::Rcout << "total population is" << Outputs[y][1]<< "\n";
 
     ////////////////////    COUNTS BY NATIVITY AND AGE    ////////////////////////
     for(int ag=0; ag<11; ag++) {
@@ -1474,12 +1474,11 @@ n2=na;
           for(int nm=0; nm<4; nm++) {
             for(int rg=0; rg<2; rg++) {
               Outputs[y][54+ag] += (V1[ag][1][lt][im][nm][rg][0])*(1-pImmScen)+
-                V1[ag][2][lt][im][nm][rg][0]+V1[ag][3][lt][im][nm][rg][0];   // N_ by age and US (11) LATENT INFECTION
-
+                                    V1[ag][2][lt][im][nm][rg][0]+V1[ag][3][lt][im][nm][rg][0];   // N_ by age and US (11) LATENT INFECTION
               Outputs[y][65+ag] += (V1[ag][1][lt][im][nm][rg][1]+V1[ag][1][lt][im][nm][rg][2])*(1-pImmScen)+
-                V1[ag][2][lt][im][nm][rg][1]+V1[ag][2][lt][im][nm][rg][2]+
-                V1[ag][3][lt][im][nm][rg][1]+V1[ag][3][lt][im][nm][rg][2]; // N_ by age and FB (11) LATENT INFECTION
-            } } } } }
+                                    V1[ag][2][lt][im][nm][rg][1]+V1[ag][2][lt][im][nm][rg][2]+
+                                    V1[ag][3][lt][im][nm][rg][1]+V1[ag][3][lt][im][nm][rg][2]; // N_ by age and FB (11) LATENT INFECTION
+    } } } } }
     /////////////////////RISK FACTOR OF INTEREST COUNT BY AGE/////////////////////
     ///////will need to be updated; if im>1 | nm>1 then i=1, else i=0 ////////////
     for(int ag=0; ag<11; ag++) {
@@ -1492,6 +1491,7 @@ n2=na;
                   Outputs[y][76+ag] += V1[ag][tb][lt][im][nm][rg][na];   // N_RF by age (11)
                 } } } } } } }
     ///////////// TB MORTALITY COUNT BY AGE, RISK FACTOR OF INTEREST///////////////
+    ///////////// This output will likely be updated but it is not calib'd
     for(int ag=0; ag<11; ag++) {
       for(int lt=0; lt<2; lt++) {
         for(int im=0; im<4; im++) {
@@ -1569,11 +1569,11 @@ n2=na;
 
                 Outputs[y][149+rg] += Vdx[ag][4 ][lt][im][nm][rg][na];   // N_ by rg (2)
               } } } } } }
-    for(int i=134; i<151; i++) { Outputs[y][i] = Outputs[y][i]*12; }
+    for(int i=134; i<151; i++) { Outputs[y][i] = Outputs[y][i]*12; } //yes these are updated
     /// TLTBI INITS ///
         for(int rg=0; rg<2; rg++) {
           for(int na=0; na<3; na++) {
-            if( rg==0 & na==0) {
+            if(rg==0 & na==0) {
               rTbP = rLtScrt[s]*LtDxParN[0][0];
               rTbN = rLtScrt[s]*LtDxParN[0][1];
             }
@@ -1605,7 +1605,6 @@ n2=na;
               Outputs[y][154] += (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP*LtTxPar[0]; // inits with LTBI
             } } } } }
     for(int i=151; i<155; i++) { Outputs[y][i] = Outputs[y][i]*12; } // annualize
-    Rcpp::Rcout << "tltbi is =" << Outputs[y][151] << "at y= "<<y<< "\n";
 
     /// TB INCIDENCE, BY ALL VS RECENT  ///
     // By recency (<2 years) == all immediate, 1-(1-rfast)^24 x all Lf
@@ -1692,32 +1691,6 @@ n2=na;
             } } } } }
     for(int i=215; i<226; i++) { Outputs[y][i] = Outputs[y][i]*12; }
 
-    // // NOTIFICATIONS, dead at diagnosis  HIV_NEGATIVE
-    // for(int ag=0; ag<11; ag++) {
-    //   for(int lt=0; lt<2; lt++){
-    //     for(int rg=0; rg<2; rg++) {
-    //       for(int na=0; na<3; na++){
-    //         temp2 = V0[ag][4 ][lt][0][0][rg][na]*(vTMortN[ag][4]+temp);
-    //         Outputs[y][254+ag] += temp2;   // dx by age (11)
-    //       } } } }
-
-
-    ////////////     CREATE YEARLY VALUES FROM THE MONTH ESTIMATE     ////////////
-    // for(int i=229; i<240; i++) { Outputs[y][i] = Outputs[y][i]*12; }
-    // // TOTAL MORTALITY BY AGE, HAVE HIV
-    // for(int ag=0; ag<11; ag++) {
-    //   for(int tb=0; tb<6; tb++) {
-    //     for(int lt=0; lt<2; lt++){
-    //       for (int im=0; im<4; im++){
-    //         for (int nm=0; nm<4; nm++){
-    //           for(int rg=0; rg<2; rg++) {
-    //             for(int na=0; na<3; na++){
-    //               Outputs[y][267+ag]  += VMort[ag][tb][lt][im][nm][rg][na];
-    //             } } } } } } }
-
-    ////////////     CREATE YEARLY VALUES FROM THE MONTH ESTIMATE     ////////////
-    // for(int i=241; i<252; i++) { Outputs[y][i] = Outputs[y][i]*12; }
-
     /////////////////////  TOTAL MORTALITY BY AGE, HAVE TB   /////////////////////
     for(int ag=0; ag<11; ag++) {
       for(int lt=0; lt<2; lt++){
@@ -1775,7 +1748,7 @@ n2=na;
           for (int nm=0; nm<4; nm++){
             for(int rg=0; rg<2; rg++) {
               for(int na=0; na<3; na++){
-                if(na>1) {
+                if(na > 0 ) {
                   ti = 1;
                 } else { ti = 0; }
                 // if(im > 2) { temp = muTbRF;
@@ -1794,7 +1767,7 @@ n2=na;
             for(int nm=0; nm<4; nm++) {
               for(int rg=0; rg<2; rg++) {
                 for(int na=0; na<3; na++) {
-                  if (na<1){
+                  if (na < 1){
                     Outputs[y][254+ag]  += VMort[ag][tb][lt][im][nm][rg][na];
                     Outputs[y][276+im]  += VMort[ag][tb][lt][im][nm][rg][na];
                     Outputs[y][284+nm]  += VMort[ag][tb][lt][im][nm][rg][na];
@@ -1881,44 +1854,16 @@ n2=na;
                   Outputs[y][520+ag+(nm*11)] += VMort[ag][tb][lt][im][nm][rg][na];
                 } } } } } } }
   } ////end of mid-year results bracket
-  //    //       ///////////////////////////////////////////////////////////////////////////////////
-  //    //       //////////////////////////////END MIDYEAR RESULTS//////////////////////////////////
-  //    //       //////////////////////////////////////////////////////////////////////////////////
-  //          // for(int i=0; i<16; i++){
-  //          //   for(int j=0; j<16; j++){
-  //          //     temp_mat[i][j] = dist_goal[i][j];
-  //          //     sum1=
-  //          //     sse = arma::accu(pow(dist_goal[i][j] - dist_new[i][j], 2)) /
-  //          //       arma::accu(pow(dist_goal[i][j] - dist_orig[i][j], 2));
-  //          //   }}
-  //          // Rcpp::Rcout << "sse is" << sse;
-  //
-  //          //////REVERT TO A FORM THAT CAN BE EXPORTED TO R
-  //          // for (int im=0; im<4; im++){
-  //          //   for (int nm=0; nm<4; nm++){
-  //          //     dist_new_fin(nm,im) = dist_newN[nm][im];
-  //          //   } }
-  //          // //
-  //      // for (int i=0; i<11; i++){
-  //      //   for (int j=0; j<2; j++){
-  //      //     InitPopZ_fin(i,j) = InitPopZ[i][j];
-  //      //   } }
-  //          // //
-  //          // for (int i=0; i<528; i++){
-  //          //   dist_i_v_fin(i) = dist_i_v[i];
-  //          // }
-  //          //////////////////////////////////////////////////////////////////////////////////
-  //          ////////////////////////// REBALANCE THE POPULATION //////////////////////////////
-  //          //////////////////////////////////////////////////////////////////////////////////
-  /////reblance the population
+ ///////////////////////////////////////////////////////////////////////////////////
+ //////////////////////////////END MIDYEAR RESULTS//////////////////////////////////
+ //////////////////////////////////////////////////////////////////////////////////
+ //////////////////////////////////////////////////////////////////////////////////
+ ////////////////////////// REBALANCE THE POPULATION //////////////////////////////
+ //////////////////////////////////////////////////////////////////////////////////
   if ((reblnc==1) & (m==6)){
     ////// need to define the current distribution of persons across the RG at this timestep
     for(int ag=0; ag<11; ag++) {
       for(int na=0; na<3; na++) {
-        // for(int tb=0; tb<6; tb++) {
-        //   for(int rg=0; rg<2; rg++) {
-        //     for(int lt=0; lt<2; lt++) {
-
 
             for (int i=0; i<4; i++){
               for (int j=0; j<4; j++){
