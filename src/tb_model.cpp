@@ -1501,10 +1501,11 @@ n2=na;
                 if(im>0) {
                   ti = 11;
                 } else { ti = 0; }
-                if(im==3) {
-                  temp = muTbRF;
-                } else { temp = 0;
-                }
+                // if(im==3) {
+                //   temp = muTbRF;
+                // } else { temp = 0;
+                // }
+                temp=0;
                 Outputs[y][87+ag+ti]  += V0[ag][4 ][lt][im][nm][rg][na]*(vTMortN[ag][4 ]+temp);
                 Outputs[y][87+ag+ti]  += V0[ag][5 ][lt][im][nm][rg][na]*(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort); //last term is approx .6
               } } } } } }
@@ -1646,11 +1647,12 @@ n2=na;
 
     // NOTIFICATIONS, dead at diagnosis
     for(int nm=0; nm<4 ; nm++) {
-      if(nm > 2) {
-        temp = muTbRF;
-      } else {
-        temp = 0;
-      }
+      // if(nm > 2) {
+      //   temp = muTbRF;
+      // } else {
+      //   temp = 0;
+      // }
+      temp = 0;
       for(int ag=0; ag<11; ag++) {
         for(int lt=0; lt<2; lt++){
           for (int im=0; im<4; im++){
@@ -1680,7 +1682,8 @@ n2=na;
     // NOTIFICATIONS US, dead at diagnosis
     for(int nm=0; nm<4 ; nm++) {
       for (int im=0; im<4; im++){
-        if(im > 2) { temp = muTbRF;  } else { temp = 0;  }
+        // if(im > 2) { temp = muTbRF;  } else { temp = 0;  }
+        temp=0;
         for(int ag=0; ag<11; ag++) {
           for(int lt=0; lt<2; lt++){
             for(int rg=0; rg<2; rg++) {
@@ -1775,8 +1778,9 @@ n2=na;
                 if(na>1) {
                   ti = 1;
                 } else { ti = 0; }
-                if(im > 2) { temp = muTbRF;
-                } else { temp = 0; }
+                // if(im > 2) { temp = muTbRF;
+                // } else { temp = 0; }
+                temp=0;
                 Outputs[y][252+ti]  += V0[ag][4][lt][im][nm][rg][na]*(vTMortN[ag][4 ]+temp);
                 Outputs[y][252+ti]  += V0[ag][5][lt][im][nm][rg][na]*(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort); //check the TxMatZ portion
               } } } } } }
