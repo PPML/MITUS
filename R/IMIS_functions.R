@@ -205,12 +205,3 @@ lprior <- function(ParMatrix = ParInit) { # Par = ParInit
   return(lPri)
 }
 
-#'sample the prior function
-#'@name sample.prior1
-#'@param n n of the sample
-#'@return random sample of the prior
-sample.prior1 <- function(n) {
-  rmnorm(n,rep(0,sum(ParamInit$Calib==1)),diag(sum(ParamInit$Calib==1))) }
-sample.prior2 <- function(n) {
-  qnorm(randomLHS(n,sum(ParamInit$Calib==1)),0,1)   }
-sample.prior  <- sample.prior2
