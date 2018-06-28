@@ -1,3 +1,11 @@
+#'This function is used to run a optimization on the input parameters.
+#'The only input to the function is a "batch number" which will determine
+#'which row of the starting values dataframe the optimization will use.
+#'It will return 8 datasets of the optimized parameters --one from each
+#'optimization step. The final (8th) optimization step is an univariate
+#'optimization.
+#'The function requires the use of the ParamInit Rdata file and the
+#'StartValues Rdata file.
 #'@name optim_b
 #'@param b batch number; must be > 21; corresponds to a row of start vals
 #'@return 8 datasets from optimization loop
@@ -14,6 +22,9 @@ idZ0 <<- ParamInitZ[,4]==0
 idZ1 <<- ParamInitZ[,4]==1
 idZ2 <<- ParamInitZ[,4]==2
 load("data/StartValUS_9-5-2016.rData") # StartVal
+
+posterior = function(theta) { -lprior(theta) - llikelihood(theta,n_cores) }
+
 
 # for (i in min(b, nrow(StartVal))){
   o1  <- optim(StartVal[b,], posterior, method ="BFGS", control=list(maxit=400,trace=5,reltol=sqrt(.Machine$double.eps)/5)) ; o1$value
