@@ -1,4 +1,5 @@
 tb_graph_orig <- function(df){
+  load("data/CalibDat_2018-06-28.rData")
 
 pdf(file=paste("MITUS_results/orig_graphs",Sys.time(),".pdf"), width = 11, height = 8.5)
 

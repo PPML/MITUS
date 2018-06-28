@@ -13,8 +13,8 @@
 
 optim_b <- function(b){
 
-load("data/ParamInitUS_V738tab.rData") # ParamInit
-P  <- ParamInit[,1]
+  load("/data/ParamInit_2018.RData")
+  P  <- ParamInit[,1]
 names(P) <- rownames(ParamInit)
 ii <-  ParamInit[,5]==1
 ParamInitZ <- ParamInit[ParamInit$Calib==1,]

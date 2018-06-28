@@ -3,7 +3,7 @@
 
 
 #load("~/MITUS/data/parAll200_9-14-16.rData")
-# load("data/ParamInitUS_V738tab.rData")
+# load("data/ParamInit_2018.rData")
 #'function to run the model
 #'@name OutputsZint
 #'@param samp_i how many samples

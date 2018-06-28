@@ -10,7 +10,7 @@ Script <- paste('
   b    <-  ',i,'   # batch number
 
 #setup the parameters for the model
-load("data/ParamInitUS_V738tab.rData") # ParamInit
+load("/data/ParamInit_2018.RData") # ParamInit
 P  <- ParamInit[,1]
 names(P) <- rownames(ParamInit)
 #logical vector for whether the parameter is to be calibrated
