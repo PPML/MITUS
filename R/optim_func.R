@@ -13,7 +13,7 @@
 
 optim_b <- function(b){
 
-  load("/data/ParamInit_2018.RData")
+  load("/data/ParamInit_2018.rData")
   P  <- ParamInit[,1]
 names(P) <- rownames(ParamInit)
 ii <-  ParamInit[,5]==1
