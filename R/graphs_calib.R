@@ -6,7 +6,7 @@ library(MCMCpack)
 
 calib_graphs <- function(dataset){
 #'load the parameter data set & model inputs
-load("data/ParamInit_2018") # ParamInit
+load("data/ParamInit_2018.rData") # ParamInit
 load("data/ModelInputs_9-2-16.rData")
 load("data/CalibDat_2018-06-28.rData")
 
