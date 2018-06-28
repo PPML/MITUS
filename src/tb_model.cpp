@@ -2177,30 +2177,7 @@ n2=na;
                   V0[ag][tb][lt][im][nm][rg][na] = V1[ag][tb][lt][im][nm][rg][na];
                 }
               } } } } } } }
-  //
-  //          // temp=0;
-  //          // temp2=0;
-  //          // temp3=0;
-  //          // temp4=0;
-  //          // for(int ag=0; ag<11; ag++) {
-  //          //   for(int tb=0; tb<6; tb++) {
-  //          //     for(int lt=0; lt<2; lt++){
-  //          //       for(int im=0; im<4; im++){
-  //          //         for(int rg=0; rg<2; rg++) {
-  //          //           for(int na=0; na<3; na++) {
-  //          //             for(int nm=0; nm<4; nm++){
-  //          //               temp +=V2[ag][tb][lt][im][nm][rg][na];
-  //          //               temp4 +=VMort[ag][tb][lt][im][nm][rg][na];
-  //          //             }
-  //          //                temp2+=V2[ag][tb][lt][im][3][rg][na];
-  //          //           } } } } } }
-  //          //
-  //          // temp3=temp2/temp;
-  //          //
-  //          // Rcpp::Rcout << "after reblnc mort 4 % at time= " << s << "is" << temp3 << "\n";
-  //          // Rcpp::Rcout << "after reblnc mort 4 at time= " << s << "is" << temp4 << "\n";
-  //          // Rcpp::Rcout  << "after reblnc mort rate 4 at time= " << s << "is" << temp4/temp << "\n";
-  //          //       if (tb_dyn==1){
+
 } //// end of month loop!//////////////////////////////////////////////////////////
 } //// end of year loop!///////////////////////////////////////////////////////////
 
