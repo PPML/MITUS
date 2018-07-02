@@ -6,9 +6,10 @@ library(MCMCpack)
 
 calib_graphs <- function(dataset){
 #'load the parameter data set & model inputs
-load("~/MITUS/data/ParamInit_2018.rData") # ParamInit
-load("~/MITUS/data/ModelInputs_9-2-16.rData")
-load("~/MITUS/data/CalibDat_2018-06-28.rData")
+data("ParamInit_2018", package='MITUS')# ParamInit
+data("ModelInputs_9-2-16", package='MITUS')
+data("CalibDat_2018-06-28", package='MITUS')
+
 
 #'Define the Posterior Function
 #'@param theta

@@ -13,7 +13,8 @@
 
 tbdyn_graphs <-function(df){
 
-  load("~/MITUS/data/CalibDat_2018-06-28.rData")
+
+  data("CalibDat_2018-06-28", package='MITUS')
 
   pdf(file=paste("MITUS_results/graphs_tbdyn",Sys.time(),".pdf"), width = 11, height = 8.5)
 

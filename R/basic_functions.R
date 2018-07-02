@@ -1,3 +1,4 @@
+#' attempting to see if sync works
 #' Basic Functions Used In Package
 #' This script includes several functions that are useful for data manipulation
 #' throughout the package.

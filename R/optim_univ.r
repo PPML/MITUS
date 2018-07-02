@@ -5,7 +5,7 @@
 #'@return list
 #'@export
  UnivOptim <- function(parr) {
-   load("~/MITUS/data/StartVal_ 2018-06-28 .rData")
+   data("StartVal_ 2018-06-28 ", package = 'MITUS')
    print(posterior(parr))
    parr2 <- parr
    for(fi in 1:ncol(StartVal)) {

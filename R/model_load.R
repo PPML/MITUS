@@ -9,5 +9,4 @@ library(MASS)
 
 #'lazy load necessary datasets
 #'Model Input
-load("~/MITUS/data/ModelInputs_9-2-16.rData")
-
+data("ModelInputs_9-2-16", package = 'MITUS')

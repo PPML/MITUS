@@ -5,7 +5,7 @@
 #'takes in the outputs and calibration data and creates likelihood functions
 
 #'load the necessary calibration data
-load("~/MITUS/data/CalibDat_2018-06-28.rData") # CalibDat
+data("CalibDat_2018-06-28", package='MITUS') # CalibDat
 
 #'Dirichlet multinomial density function
 #'@name dDirMult

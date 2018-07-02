@@ -13,7 +13,7 @@
 
 optim_b <- function(b){
 
-load("~/MITUS/data/ParamInit_2018.rData")
+data("ParamInit_2018", package='MITUS')
 P  <- ParamInit[,1]
 names(P) <- rownames(ParamInit)
 ii <-  ParamInit[,5]==1
@@ -21,7 +21,7 @@ ParamInitZ <- ParamInit[ParamInit$Calib==1,]
 idZ0 <- ParamInitZ[,4]==0
 idZ1 <- ParamInitZ[,4]==1
 idZ2 <- ParamInitZ[,4]==2
-load("~/MITUS/data/StartVal_ 2018-06-28 .rData") # StartVal
+data("StartVal_ 2018-06-28 ", package = 'MITUS') # StartVal
 
 posterior = function(theta) { -lprior(theta) - llikelihood(theta,n_cores) }
 
