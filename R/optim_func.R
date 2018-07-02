@@ -21,7 +21,7 @@ ParamInitZ <- ParamInit[ParamInit$Calib==1,]
 idZ0 <- ParamInitZ[,4]==0
 idZ1 <- ParamInitZ[,4]==1
 idZ2 <- ParamInitZ[,4]==2
-load("data/StartVal_ 2018-06-28 .rData") # StartVal
+load("~/MITUS/data/StartVal_ 2018-06-28 .rData") # StartVal
 
 posterior = function(theta) { -lprior(theta) - llikelihood(theta,n_cores) }
 
