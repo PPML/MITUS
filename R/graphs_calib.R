@@ -6,9 +6,9 @@ library(MCMCpack)
 
 calib_graphs <- function(dataset){
 #'load the parameter data set & model inputs
-load("data/ParamInit_2018.rData") # ParamInit
-load("data/ModelInputs_9-2-16.rData")
-load("data/CalibDat_2018-06-28.rData")
+load("~/MITUS/data/ParamInit_2018.rData") # ParamInit
+load("~/MITUS/data/ModelInputs_9-2-16.rData")
+load("~/MITUS/data/CalibDat_2018-06-28.rData")
 
 #'Define the Posterior Function
 #'@param theta
@@ -17,7 +17,7 @@ posterior <- function(theta){
   -lprior(theta) - llikelihood(theta,n_cores)
 }
 #' load the optimized data set
-load("data/Opt_US5401_r8_1_1-27-16.rData")
+#load("~MITUS/data/Opt_US5401_r8_1_1-27-16.rData")
 dataset #this is the name of the data set above
 
 par_1 <- dataset$par
