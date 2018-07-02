@@ -10,7 +10,7 @@
 gen_st_val <-function(n=10, samp="LHS"){
   if(identical(samp,"LHS")==FALSE & identical(samp,"NORM")==FALSE) stop("'samp' must be either 'LHS' or 'NORM'")
   if(identical(samp,"NORM")==TRUE) StartVal <-sample.prior1(n)
-  if(identical(samp,"LHS") ==TRUE)StartVal <- sample.prior(n)
+  if(identical(samp,"LHS") ==TRUE) StartVal <- sample.prior2(n)
   save(StartVal, file=paste("StartVal_", Sys.Date(),".rData", sep=""))
 }
 
