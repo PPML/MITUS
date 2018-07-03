@@ -271,7 +271,7 @@ borgdorff_lLik <- function(Par_list,N_red=1) {
 #'@param Par_list list (pfast,rslow,rfast,rRecov)
 #'@param n_red
 #'@return likelihood
-ferebee_lLik <- function(Par,N_red=4) {
+ferebee_lLik <- function(Par_list,N_red=4) {
   datF         <- CalibDat[["ferebee_data"]]
   adj_25       <- sum(datF[,3]*log(datF[,3]/datF[,2]) + (datF[,2]-datF[,3])*log(1-datF[,3]/datF[,2]))
   n_yr_F       <- nrow(datF)
