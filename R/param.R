@@ -431,7 +431,7 @@ ResNam <- c("Year",                                         # year            1
             "INCID_REC_HR",                                 # Total incidence, high risk, recent infection
             #            "INCID_REC_HV",                                 # Total incidence, HIV pos, recent infection
             ###########################    NOTIFICATION DEAD      ##############################
-            "NOTIF_MORT_ALL",                               # total notif, dead at diagnosis (188)
+  "NOTIF_MORT_ALL",                               # total notif, dead at diagnosis (188)
             paste("NOTIF_MORT",StatList[[1]],sep="_"),      # notif by ag cat, dead at diagnosis
             paste("NOTIF_MORT",StatList[[7]],sep="_"),      # notif by nat cat, dead at diagnosis
             #            paste("NOTIF_MORT_HIV",c("POS","NEG"),sep="_"), # notif by HIV pos/neg, dead at diagnosis

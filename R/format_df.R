@@ -25,7 +25,7 @@ Location <- "Nat"
 
 #'Nativity Selection will need to be input by the User
 #'for now, will input all;
-#'
+#update this so that it is just the nativity group of the outputs
 Nativity <- "all"
 
 #' fill in the scenario number
