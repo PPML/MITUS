@@ -2,7 +2,6 @@
 
 export(OutputsInt)
 export(OutputsZint)
-export(ScriptMak)
 export(UnivOptim)
 export(gen_st_val)
 export(llikelihood)
