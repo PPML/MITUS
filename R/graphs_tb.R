@@ -38,6 +38,8 @@ tbdyn_graphs <-function(df){
   points(CalibDat[["tot_cases"]][,1],CalibDat[["tot_cases"]][,2]/1000,pch=19,cex=0.3) #total population
   lines(CalibDat[["tot_cases"]][,1],CalibDat[["tot_cases"]][,2]/1000,lty=3,col=1)
 
+  notif_fb      <- cbind(CalibDat[["fb_cases"]][,2],1-CalibDat[["fb_cases"]][,2])*CalibDat[["fb_cases"]][,3]
+
   points(1993:2015,notif_fb[,2]/1000,pch=19,cex=0.3,col=4) #US born population
   lines(1993:2015,notif_fb[,2]/1000,pch=19,lty=3,col=4)
 
@@ -92,6 +94,8 @@ tbdyn_graphs <-function(df){
   lines(1993:2014,V*100,lwd=2,col=4)
 
   #'reported data for comparison
+  notif_fb_rec   <- cbind(CalibDat[["fb_recent_cases"]][,2],1-CalibDat[["fb_recent_cases"]][,2])*CalibDat[["fb_recent_cases"]][,3]
+
   points(1993:2014,notif_fb_rec[,1]/rowSums(notif_fb_rec)*100,pch=19,cex=0.6)
   lines(1993:2014,notif_fb_rec[,1]/rowSums(notif_fb_rec)*100,lty=3)
 
@@ -193,6 +197,8 @@ tbdyn_graphs <-function(df){
   lines(1993:2012,Vdead*100,lwd=2,col="blue")
 
   #'reported data for comparison
+  tx_outcomes      <- cbind(1-rowSums(CalibDat[["tx_outcomes"]][,2:3]),CalibDat[["tx_outcomes"]][,2],CalibDat[["tx_outcomes"]][,3])*CalibDat[["tx_outcomes"]][,4]
+
   points(1993:2012,tx_outcomes[,2]/rowSums(tx_outcomes)*100,pch=19,cex=0.6,col="red3")
   points(1993:2012,tx_outcomes[,3]/rowSums(tx_outcomes)*100,pch=19,cex=0.6,col="blue")
   lines(1993:2012,tx_outcomes[,2]/rowSums(tx_outcomes)*100,lty=3,col="red3")
@@ -231,6 +237,8 @@ tbdyn_graphs <-function(df){
   for(i in 1:8) polygon(i+c(-.5,.5,.5,-.5),c(0,0,V2[i],V2[i]),border="white",col="lightblue")
 
   #'reported data for comparison
+  ltbi_us_11      <- CalibDat[["LTBI_prev_US_11_IGRA"]]
+
   points(1:8,ltbi_us_11[,2]/rowSums(ltbi_us_11[,2:3])*100,pch=19,cex=1.2)
   for(i in 1:8) lines((1:8)[c(i,i)],qbeta(c(1,39)/40,ltbi_us_11[i,2],ltbi_us_11[i,3])*100,pch=19,cex=1.2)
 
@@ -292,6 +300,8 @@ tbdyn_graphs <-function(df){
   for(i in 1:10) polygon(i+c(-.5,.5,.5,-.5),c(0,0,V3[i],V3[i]),border="white",col="lightblue")
 
   #'reported data for comparison
+  tb_deaths      <- CalibDat[["tb_deaths"]][,-1]
+
   points(1:10,colSums(tb_deaths),pch=19,cex=1.2,col="black")
 
   #'plot text
