@@ -7,11 +7,12 @@
 #'The function requires the use of the ParamInit Rdata file and the
 #'StartValues Rdata file.
 #'@name optim_b
-#'@param b batch number; must be > 21; corresponds to a row of start vals
+#'@param df dataframe or matrix of starting values data frame
+#'@param samp_i which rows of the data frame to use
 #'@return 8 datasets from optimization loop
 #'@export
 
-optim_b <- function(b){
+optim_b <- function(df, samp_i=1){
 
 data("ParamInit_2018", package='MITUS')
 P  <- ParamInit[,1]
@@ -25,9 +26,15 @@ data("StartVal_ 2018-06-28 ", package = 'MITUS') # StartVal
 
 posterior = function(theta) { -lprior(theta) - llikelihood(theta,n_cores) }
 
+if(min(dim(as.data.frame(df)))==1) {
+  df1 <- as.numeric(df)
+  names(df1) <- names(df)
+} else{
+  df1 <- as.numeric(df[samp_i,])
+}
 
 # for (i in min(b, nrow(StartVal))){
-  o1  <- optim(StartVal[b,], posterior, method ="BFGS", control=list(maxit=400,trace=5,reltol=sqrt(.Machine$double.eps)/5)) ; o1$value
+  o1  <- optim(df1, posterior, method ="BFGS", control=list(maxit=400,trace=5,reltol=sqrt(.Machine$double.eps)/5)) ; o1$value
   save(o1,file=paste("Opt_US_r1_",b,"_new.rData",sep=""))
   o2  <- optim(o1$par,posterior, method ="Nelder-Mead", control=list(maxit=1000,trace=1,reltol=sqrt(.Machine$double.eps)/5));  o2$value
   save(o2,file=paste("Opt_US_r2_",b,"_new.rData",sep=""))
