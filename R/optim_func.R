@@ -22,7 +22,7 @@ ParamInitZ <- ParamInit[ParamInit$Calib==1,]
 idZ0 <- ParamInitZ[,4]==0
 idZ1 <- ParamInitZ[,4]==1
 idZ2 <- ParamInitZ[,4]==2
-data("StartVal_ 2018-06-28 ", package = 'MITUS') # StartVal
+# data("StartVal_ 2018-06-28 ", package = 'MITUS') # StartVal
 
 posterior = function(theta) { -lprior(theta) - llikelihood(theta,n_cores) }
 
@@ -32,7 +32,7 @@ if(min(dim(as.data.frame(df)))==1) {
 } else{
   df1 <- as.numeric(df[samp_i,])
 }
-
+b<-samp_i
 # for (i in min(b, nrow(StartVal))){
   o1  <- optim(df1, posterior, method ="BFGS", control=list(maxit=400,trace=5,reltol=sqrt(.Machine$double.eps)/5)) ; o1$value
   save(o1,file=paste("Opt_US_r1_",b,"_new.rData",sep=""))
