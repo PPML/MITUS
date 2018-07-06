@@ -800,7 +800,7 @@ for(int ag=0; ag<11; ag++) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////BEGIN THE N LOOP//////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-          for(int n=0; n<30; n++){
+          for(int n=0; n<1; n++){
 /////// CALCULATE DIFFERENCE FROM CURRENT DISTRIBUTION TO GOAL DISTRIBUTION /////
             for (int i=0; i<16; i++){
               diff_i_v[i] = dist_i_v[i] - dist_goal_v[i];
@@ -1455,7 +1455,7 @@ n2=na;
                   Outputs[y][27+rg] += V1[ag][tb][lt][im][nm][rg][na];   // N_ by rg (2)
                   Outputs[y][29+na] += V1[ag][tb][lt][im][nm][rg][na];   // N_ by na (3)
                 } } } } } } }
-    Rcpp::Rcout << "total population is" << Outputs[y][1]<< "\n";
+    // Rcpp::Rcout << "total population is" << Outputs[y][1]<< "\n";
 
     ////////////////////    COUNTS BY NATIVITY AND AGE    ////////////////////////
     for(int ag=0; ag<11; ag++) {
@@ -1924,7 +1924,7 @@ n2=na;
               ////////////////////////////////////////////////////////////////////////////////////////////////////////////
               //////////////////////////////////////BEGIN THE N LOOP//////////////////////////////////////////////////////
               ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-              for(int n=0; n<30; n++){
+              for(int n=0; n<1; n++){
                 //   // /////// CALCULATE DISTANCE FROM CURRENT DISTRIBUTION TO GOAL DISTRIBUTION /////
                 for (int i=0; i<16; i++){
                   diff_i_v[i] = dist_i_v[i] - dist_goal_v[i];
