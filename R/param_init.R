@@ -118,9 +118,8 @@ InputParams[["vTMort"]]  <- matrix(0,11,6);
 rownames(InputParams[["vTMort"]]) <- c("0_4",paste(0:8*10+5,1:9*10+4,sep="_"),"95p")
 colnames(InputParams[["vTMort"]]) <- c("Su","Sp","Ls","Lf","Ac","Tx")
 InputParams[["vTMort"]][,5:6] <- muIp #active disease rates default to smear positive
-RRmuTbAg <- exp(c(0,0,1:9)*TunmuTbAg)
-for(i in 1:ncol(InputParams[["vTMort"]])) {
-  InputParams[["vTMort"]][,i] <- InputParams[["vTMort"]][,i] * RRmuTbAg
+for(i in 1:11) {
+  InputParams[["vTMort"]][i,] <-  InputParams[["vTMort"]][i,]*c(3,1+0:9*TunmuTbAg)[i]
 }
 
 
