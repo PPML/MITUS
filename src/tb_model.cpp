@@ -169,14 +169,13 @@ long  double        mat_sum;
  long double temp_vec2[4];
   int reblnc; int tb_dyn;
   Rcpp::NumericMatrix Outputs2(nYrs,nRes);
-  Rcpp::NumericMatrix dist_new_fin(4,4);
+  Rcpp::NumericMatrix dist_mat(4,4);
   double RRmuRFN[4];
   double mort_dist[4];
   double func_dist[16];
   long double temp_vec3[11];
   long double temp_vec4[11];
   long double temp_vec5[11];
-
 
   ///////////////////////////////////////////////////////////////////////////////
   ///////                            INITIALIZE                             /////
@@ -378,7 +377,7 @@ long  double        mat_sum;
             } } } } } }
 
   ////////////////////////RUN THE MODEL FOR 3000 MONTHS /////////////////////////
-  for(int m=0; m<3001; m++) {
+  for(int m=0; m<1501; m++) {
     // Rcpp::Rcout << m << "\n";
     /////////////////////////////////START BURN IN//////////////////////////////////
     ////////////////////////////////////BIRTHS//////////////////////////////////////
@@ -591,14 +590,14 @@ Vjaf[3] = VGjkl[1][1] / (VNkl[1][1] + 1e-12);
 
 // Step 4
 /// LOW RISK US BORN
-VLjkl[0 ][0 ]  = (RelInfRg[0]*Vjaf[0]);
+VLjkl[0 ][0 ]  = (RelInfRg[0]*Vjaf[0])/5;
 ///////// HIGH RISK US BORN
-VLjkl[1 ][0 ]  = (RelInfRg[1]*Vjaf[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]);
+VLjkl[1 ][0 ]  = (RelInfRg[1]*Vjaf[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0])/5;
 ///////// LOW RISK NON US BORN
-VLjkl[0 ][1 ]  = ((RelInfRg[2]*Vjaf[2]*(1-Vmix[1]) + RelInfRg[0]*Vjaf[0]*Vmix[1])) + ExogInf[0];
+VLjkl[0 ][1 ]  = ((RelInfRg[2]*Vjaf[2]*(1-Vmix[1]) + RelInfRg[0]*Vjaf[0]*Vmix[1]))/5 + ExogInf[0];
 ///////// HIGH RISK NON US BORN
 ///check the use of RelInfRg here as beta, might need to be a combo param but unclear check the old param file
-VLjkl[1 ][1 ]  = ((RelInfRg[3]*Vjaf[3]*(1-Vmix[0])*(1-Vmix[1]) + RelInfRg[2]*Vjaf[2]*Vmix[0]*(1-Vmix[1]) + RelInfRg[1]*Vjaf[1]*Vmix[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]*Vmix[1])) + ExogInf[0];
+VLjkl[1 ][1 ]  = ((RelInfRg[3]*Vjaf[3]*(1-Vmix[0])*(1-Vmix[1]) + RelInfRg[2]*Vjaf[2]*Vmix[0]*(1-Vmix[1]) + RelInfRg[1]*Vjaf[1]*Vmix[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]*Vmix[1]))/5 + ExogInf[0];
 
 // for (int i=0; i<2; i++){
 //   for (int j=0; j<2; j++){
@@ -800,7 +799,7 @@ for(int ag=0; ag<11; ag++) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////BEGIN THE N LOOP//////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-          for(int n=0; n<30; n++){
+          for(int n=0; n<10; n++){
 /////// CALCULATE DIFFERENCE FROM CURRENT DISTRIBUTION TO GOAL DISTRIBUTION /////
             for (int i=0; i<16; i++){
               diff_i_v[i] = dist_i_v[i] - dist_goal_v[i];
@@ -1215,14 +1214,14 @@ for(int m=0; m<12; m++) {
 
   // Step 4
   /// LOW RISK US BORN
-  VLjkl[0 ][0 ]  = (RelInfRg[0]*Vjaf[0]);
+  VLjkl[0 ][0 ]  = (RelInfRg[0]*Vjaf[0])/5;
   ///////// HIGH RISK US BORN
-  VLjkl[1 ][0 ]  = (RelInfRg[1]*Vjaf[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]);
+  VLjkl[1 ][0 ]  = (RelInfRg[1]*Vjaf[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0])/5;
   ///////// LOW RISK NON US BORN
-  VLjkl[0 ][1 ]  = ((RelInfRg[2]*Vjaf[2]*(1-Vmix[1]) + RelInfRg[0]*Vjaf[0]*Vmix[1])) + ExogInf[s];
+  VLjkl[0 ][1 ]  = ((RelInfRg[2]*Vjaf[2]*(1-Vmix[1]) + RelInfRg[0]*Vjaf[0]*Vmix[1])/5) + ExogInf[s];
   ///////// HIGH RISK NON US BORN
   ///check the use of RelInfRg here as beta, might need to be a combo param but unclear check the old param file
-  VLjkl[1 ][1 ]  = ((RelInfRg[3]*Vjaf[3]*(1-Vmix[0])*(1-Vmix[1]) + RelInfRg[2]*Vjaf[2]*Vmix[0]*(1-Vmix[1]) + RelInfRg[1]*Vjaf[1]*Vmix[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]*Vmix[1]) ) + ExogInf[s];
+  VLjkl[1 ][1 ]  = ((RelInfRg[3]*Vjaf[3]*(1-Vmix[0])*(1-Vmix[1]) + RelInfRg[2]*Vjaf[2]*Vmix[0]*(1-Vmix[1]) + RelInfRg[1]*Vjaf[1]*Vmix[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]*Vmix[1])/5 ) + ExogInf[s];
 
 
     ///////////////////////////////INFECTION///////////////////////////////////////
@@ -1924,7 +1923,7 @@ n2=na;
               ////////////////////////////////////////////////////////////////////////////////////////////////////////////
               //////////////////////////////////////BEGIN THE N LOOP//////////////////////////////////////////////////////
               ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-              for(int n=0; n<30; n++){
+              for(int n=0; n<10; n++){
                 //   // /////// CALCULATE DISTANCE FROM CURRENT DISTRIBUTION TO GOAL DISTRIBUTION /////
                 for (int i=0; i<16; i++){
                   diff_i_v[i] = dist_i_v[i] - dist_goal_v[i];
@@ -2139,25 +2138,31 @@ n2=na;
   } //end of rebalancing loop
 
 
-  //     for (int i=0; i<4; i++){
-  //   temp_vec2[i]=0; }
-  // mat_sum=0;
-  //     for(int nm=0; nm<4; nm++){
-  //       for(int ag=0; ag<11; ag++) {
-  //         for(int tb=0; tb<6; tb++) {
-  //           for(int lt=0; lt<2; lt++){
-  //
-  //           for(int im=0; im<4; im++) {
-  //             for(int rg=0; rg<2; rg++){
-  //               for(int na=0; na<3; na++){
-  //                 temp_vec2[nm]  += V2[ag][tb][lt][im][nm][rg][na];
-  //               } } } } } }
-  //     }
-  //     for(int nm=0; nm<4; nm++){
-  //       mat_sum+=temp_vec2[nm];
-  //     }
-  //     for(int nm=0; nm<4; nm++){
-  //       mort_dist[nm] = temp_vec2[nm]/mat_sum;
+      for (int i=0; i<4; i++){
+        for (int j=0; j<4; j++){
+
+    temp_mat[i][j]=0; } }
+  mat_sum=0;
+      for(int nm=0; nm<4; nm++){
+        for(int ag=0; ag<11; ag++) {
+          for(int tb=0; tb<6; tb++) {
+            for(int lt=0; lt<2; lt++){
+
+            for(int im=0; im<4; im++) {
+              for(int rg=0; rg<2; rg++){
+                for(int na=0; na<3; na++){
+                  temp_mat[nm][im]  += V2[ag][tb][lt][im][nm][rg][na];
+                } } } } } }
+      }
+      for(int nm=0; nm<4; nm++){
+        for(int im=0; im<4; im++){
+           mat_sum+=temp_mat[nm][im];
+        } }
+      for(int nm=0; nm<4; nm++){
+        for(int im=0; im<4; im++){
+
+        dist_mat(nm,im) = temp_mat[nm][im]/mat_sum;
+        } }
   //       Rcpp::Rcout << "mort dist after reblnc is" << mort_dist[nm] << "@s= "<< s<< "\n";}
   //
   //    ///////////////////////////////////////////////////////////////////////////////////
@@ -2204,7 +2209,8 @@ return
 Rcpp::List::create(
   Rcpp::Named("Outputs") = Outputs2,
   Rcpp::Named("V1")= CheckV,
-  Rcpp::Named("V") = CheckV0
+  Rcpp::Named("V") = CheckV0,
+  Rcpp::Named("dist_mat") = dist_mat
 
 );
 
