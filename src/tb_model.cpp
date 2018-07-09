@@ -800,7 +800,7 @@ for(int ag=0; ag<11; ag++) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////BEGIN THE N LOOP//////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-          for(int n=0; n<1; n++){
+          for(int n=0; n<30; n++){
 /////// CALCULATE DIFFERENCE FROM CURRENT DISTRIBUTION TO GOAL DISTRIBUTION /////
             for (int i=0; i<16; i++){
               diff_i_v[i] = dist_i_v[i] - dist_goal_v[i];
@@ -974,7 +974,7 @@ for(int m=0; m<12; m++) {
   ///////// RATE OF TREATMENT EXIT TO CURE (LS) //////////////////////////////////
   TxVecZ[2] = TxVec[0]*TxVecZ[1] + rDeft[s]*TxVecZ[1]*RRcurDef;
   ///////// RATE OF TREATMENT EXIT TO ACTIVE TB //////////////////////////////////
-  TxVecZ[3] = TxVec[0]*(1-TxVecZ[1])*(1-pReTx[s]) + rDeft[s]*(1-TxVecZ[1])*RRcurDef;
+  TxVecZ[3] = TxVec[0]*(1-TxVecZ[1])*(1-pReTx[s]) + rDeft[s]*(1-TxVecZ[1]*RRcurDef);
   ///////// RATE OF TREATMENT EXIT TO RE TREATMENT////////////////////////////////
   TxVecZ[4] = TxVec[0]*(1-TxVecZ[1])*(pReTx[s]);
   ////////////////////// P(TREATMENT COMPLETION) /////////////////////////////////
@@ -1173,9 +1173,9 @@ for(int m=0; m<12; m++) {
           for(int lt=0; lt<2; lt++) {
 
           /////////  LOW RISK US BORN
-          VGjkl[0][0]  +=  V0[ag][tb][lt][im][nm][0][0]                               *RelInf[tb];
+          VGjkl[0][0]  +=  V0[ag][tb][lt][im][nm][0][0]                                *RelInf[tb];
           ///////// HIGH RISK US BORN
-          VGjkl[1][0]  +=  V0[ag][tb][lt][im][nm][1][0]                               *RelInf[tb];
+          VGjkl[1][0]  +=  V0[ag][tb][lt][im][nm][1][0]                                *RelInf[tb];
           ///////// LOW RISK NON US BORN
           VGjkl[0][1]  += (V0[ag][tb][lt][im][nm][0][1] + V0[ag][tb][lt][im][nm][0][2])*RelInf[tb];
           /////////  HIGH RISK NON US BORN
@@ -1222,7 +1222,7 @@ for(int m=0; m<12; m++) {
   VLjkl[0 ][1 ]  = ((RelInfRg[2]*Vjaf[2]*(1-Vmix[1]) + RelInfRg[0]*Vjaf[0]*Vmix[1])) + ExogInf[s];
   ///////// HIGH RISK NON US BORN
   ///check the use of RelInfRg here as beta, might need to be a combo param but unclear check the old param file
-  VLjkl[1 ][1 ]  = ((RelInfRg[3]*Vjaf[3]*(1-Vmix[0])*(1-Vmix[1]) + RelInfRg[2]*Vjaf[2]*Vmix[0]*(1-Vmix[1]) + RelInfRg[1]*Vjaf[1]*Vmix[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]*Vmix[1]) )+ ExogInf[s];
+  VLjkl[1 ][1 ]  = ((RelInfRg[3]*Vjaf[3]*(1-Vmix[0])*(1-Vmix[1]) + RelInfRg[2]*Vjaf[2]*Vmix[0]*(1-Vmix[1]) + RelInfRg[1]*Vjaf[1]*Vmix[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]*Vmix[1]) ) + ExogInf[s];
 
 
     ///////////////////////////////INFECTION///////////////////////////////////////
@@ -1924,7 +1924,7 @@ n2=na;
               ////////////////////////////////////////////////////////////////////////////////////////////////////////////
               //////////////////////////////////////BEGIN THE N LOOP//////////////////////////////////////////////////////
               ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-              for(int n=0; n<1; n++){
+              for(int n=0; n<30; n++){
                 //   // /////// CALCULATE DISTANCE FROM CURRENT DISTRIBUTION TO GOAL DISTRIBUTION /////
                 for (int i=0; i<16; i++){
                   diff_i_v[i] = dist_i_v[i] - dist_goal_v[i];
