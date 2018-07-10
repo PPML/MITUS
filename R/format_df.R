@@ -54,10 +54,10 @@ Intervention <- 5
 
 
 
-#' Input the Output Name from ResNam
-Output <- rep(NA,(length(ResNam)-1)*nrow(df))
-  for (i in 1:(length(ResNam)-1)){
-      Output[(((i-1)*100)+1):(i*100)] <-ResNam[i+1]
+#' Input the Output Name from InputParams[["ResNam"]]
+Output <- rep(NA,(length(InputParams[["ResNam"]])-1)*nrow(df))
+  for (i in 1:(length(InputParams[["ResNam"]])-1)){
+      Output[(((i-1)*100)+1):(i*100)] <-InputParams[["ResNam"]][i+1]
  }
 
 #' Input the values from df dataframe
