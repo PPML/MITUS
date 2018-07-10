@@ -87,7 +87,7 @@ Rcpp::List cSim(
     std::vector<double> rDeft,
     std::vector<double> rLtScrt,
     std::vector<double> LtTxPar,
-    Rcpp::NumericMatrix       LtDxPar,
+    Rcpp::NumericMatrix LtDxPar,
     std::vector<double> RRdxAge,
     double              rRecov,
     double              pImmScen,
@@ -821,7 +821,7 @@ for (int r=0; r<16; r++){
 
 /////////                ADJUST THE TRANSITION MATRIX                  ////////
 /////////   1ST SCALE UP RATES, 2ND MAKE SURE DOES NOT SUM OVER 1    //////////
-frc = 0.1;  // approach seems quite sensitive to this value, = fraction of change to
+frc = 0.15;  // approach seems quite sensitive to this value, = fraction of change to
 for(int i=0; i<16; i++){
   for(int j=0; j<16; j++){
     // if (dist_i_v[i] != 0){
@@ -1955,7 +1955,7 @@ n2=na;
                 // //
                 // // //////////                ADJUST THE TRANSITION MATRIX                  ////////
                 // // //////////   1ST SCALE UP RATES, 2ND MAKE SURE DOES NOT SUM OVER 1    //////////
-                frc = 0.1;  // approach seems quite sensitive to this value, = fraction of change to
+                frc = 0.15;  // approach seems quite sensitive to this value, = fraction of change to
                 mat_sum=0;
                 ////is this correct, idk
                 for(int i=0; i<16; i++){
@@ -2196,7 +2196,24 @@ for(int tb=0; tb<6; tb++) {
         for(int rg=0; rg<2; rg++) {
           for(int na=0; na<3; na++) {
             CheckV(ag+tb*11+lt*66+im*132+nm*528+rg*2112+na*4224) = V1[ag][tb][lt][im][nm][rg][na];
-          } } } } } } }
+            } } } } } } }
+
+// for (int i=0; i <12672; i++){
+// if (CheckV(i) <0){
+//   for(int ag=0; ag<11; ag++) {
+//     for(int tb=0; tb<6; tb++) {
+//       for(int lt=0; lt<2; lt++){
+//         for(int im=0; im<4; im++){
+//           for(int nm=0; nm<4; nm++){
+//             for(int rg=0; rg<2; rg++) {
+//               for(int na=0; na<3; na++) {
+//   Rcout <<"population is negative at ag = "<< ag << " tb = " << tb <<
+//     " lt = " << lt << " im = " << im << " nm = " << nm << " rg = " << rg << " & na = " << na << "\n";
+//               } } } } } } }
+// // } else {Rcout << "no negatives \n" ;
+// //        }
+// } }
+
 ///////////////////////////////////////////////////////////////////////////////////
 //////                              RETURN STUFF                              /////
 ///////////////////////////////////////////////////////////////////////////////////
