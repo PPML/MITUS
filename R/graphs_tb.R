@@ -17,7 +17,7 @@ tbdyn_graphs <-function(df){
   data("CalibDat_2018-06-28", package='MITUS')
 
   pdf(file=paste("MITUS_results/graphs_tbdyn",Sys.time(),".pdf"), width = 11, height = 8.5)
-
+  par(mfrow=c(2,2),mar=c(4,4.5,3,1))
   #' graph of total diagnosed cases
   #' by total population, US born population, and non-US born population
   V0 <- df[4:66,"NOTIF_ALL"]+df[4:66,"NOTIF_MORT_ALL"] #total population
@@ -238,6 +238,7 @@ tbdyn_graphs <-function(df){
 
   #'reported data for comparison
   ltbi_us_11      <- CalibDat[["LTBI_prev_US_11_IGRA"]]
+  ltbi_fb_11      <- CalibDat[["LTBI_prev_FB_11_IGRA"]]
 
   points(1:8,ltbi_us_11[,2]/rowSums(ltbi_us_11[,2:3])*100,pch=19,cex=1.2)
   for(i in 1:8) lines((1:8)[c(i,i)],qbeta(c(1,39)/40,ltbi_us_11[i,2],ltbi_us_11[i,3])*100,pch=19,cex=1.2)
