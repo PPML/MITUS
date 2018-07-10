@@ -225,7 +225,7 @@ InputParams[["RelInf"]] <-RelInf
 #########################__   EARLY EPIDEMTIC   ###############################
 
 Early0 <- P["Early0"]
-InputParams[["EarlyTrend"]] <- c(rep(1+Early0,200*12),seq(1+Early0,1.0,length.out=50*12+2))
+InputParams[["EarlyTrend"]] <- c(rep(1+Early0,75*12),seq(1+Early0,1.0,length.out=25*12+2))
 
 ######################     PROGRESSION TO DISEASE     ##########################
 
