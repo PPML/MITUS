@@ -2,8 +2,8 @@
 #' and writes these results to a .pdf file.
 #' Use to check both with and without tb in the model
 
-US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
-US_mort_age <- read.csv(file="inst/extdata/US_mort_age.csv", header = TRUE)
+CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
+CalibDat$US_mort_age <- read.csv(file="inst/extdata/US_mort_age.csv", header = TRUE)
 
 #'Create a function to be run on a specific model run output to
 #'create simple graphs of all the output for a selected year range
@@ -24,12 +24,12 @@ tb_graph_demo <- function(df){
   plot(1,1,ylim=c(2,500),xlim=c(1950,2015),xlab="",ylab="",axes=F,log="y")
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
-  points(tot_pop_yr_fb[,1],tot_pop_yr_fb[,2],pch=19,cex=0.6,col="grey50")
-  points(tot_pop_yr_fb[,1],tot_pop_yr_fb[,3],pch=19,cex=0.6,col="blue")
-  points(tot_pop_yr_fb[,1],tot_pop_yr_fb[,4],pch=19,cex=0.6,col="red3")
-  lines(tot_pop_yr_fb[,1],tot_pop_yr_fb[,2],lty=3,col="grey50")
-  lines(tot_pop_yr_fb[,1],tot_pop_yr_fb[,3],lty=3,col="blue")
-  lines(tot_pop_yr_fb[,1],tot_pop_yr_fb[,4],lty=3,col="red3")
+  points(CalibDat$tot_pop_yr_fb[,1],CalibDat$tot_pop_yr_fb[,2],pch=19,cex=0.6,col="grey50")
+  points(CalibDat$tot_pop_yr_fb[,1],CalibDat$tot_pop_yr_fb[,3],pch=19,cex=0.6,col="blue")
+  points(CalibDat$tot_pop_yr_fb[,1],CalibDat$tot_pop_yr_fb[,4],pch=19,cex=0.6,col="red3")
+  lines(CalibDat$tot_pop_yr_fb[,1],CalibDat$tot_pop_yr_fb[,2],lty=3,col="grey50")
+  lines(CalibDat$tot_pop_yr_fb[,1],CalibDat$tot_pop_yr_fb[,3],lty=3,col="blue")
+  lines(CalibDat$tot_pop_yr_fb[,1],CalibDat$tot_pop_yr_fb[,4],lty=3,col="red3")
   lines(1950:2015,V[,2],lwd=2,col="red3")
   lines(1950:2015,V[,1],lwd=2,col="blue")
   lines(1950:2015,rowSums(V),lwd=2,col="grey50")
@@ -169,8 +169,8 @@ tb_graph_demo <- function(df){
   plot(0,0,ylim=c(0,max(range(V4))*100),xlim=c(1993,2014),xlab="",ylab="",axes=F)
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
-  # points(1993:2014,notif_us_hr[,1]/rowSums(notif_us_hr)*100,pch=19,cex=0.6)
-  # lines(1993:2014,notif_us_hr[,1]/rowSums(notif_us_hr)*100,lty=3)
+  # points(1993:2014,CalibDat$notif_us_hr[,1]/rowSums(CalibDat$notif_us_hr)*100,pch=19,cex=0.6)
+  # lines(1993:2014,CalibDat$notif_us_hr[,1]/rowSums(CalibDat$notif_us_hr)*100,lty=3)
   lines(1993:2014,V[,2]*100,lwd=2,col="red3")
   lines(1993:2014,V[,1]*100,lwd=2,col="blue")
   lines(1993:2014,V4*100,lwd=2,col="grey50")
@@ -196,8 +196,8 @@ tb_graph_demo <- function(df){
   lines(1950:2015,V[,2],lwd=2,col="red3")
   lines(1950:2015,V[,1],lwd=2,col="blue")
   lines(1950:2015,V1,lwd=2,col="grey50")
-  points(US_tot_mort[,1],US_tot_mort[,2]/1e6,pch=19,cex=0.6,col="grey50")
-  lines(US_tot_mort[,1],US_tot_mort[,2]/1e6,lty=3,col="grey50")
+  points(CalibDat$US_tot_mort[,1],CalibDat$US_tot_mort[,2]/1e6,pch=19,cex=0.6,col="grey50")
+  lines(CalibDat$US_tot_mort[,1],CalibDat$US_tot_mort[,2]/1e6,lty=3,col="grey50")
 
   mtext("Year",1,2.5,cex=0.9)
   mtext("Mortality: Total, US, and Foreign Born",3,.8,font=2,cex=0.8)
@@ -224,7 +224,7 @@ tb_graph_demo <- function(df){
   abline(h=axTicks(2),col="grey85")
 
   for(i in 1:8) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V3[1,i],V3[1,i]),border=NA,col="gray")
-  for(i in 1:8) points(i+.2,(US_mort_age[16,i+1])/1e6,pch=19,cex=1.2,col="black")
+  for(i in 1:8) points(i+.2,(CalibDat$US_mort_age[16,i+1])/1e6,pch=19,cex=1.2,col="black")
 
 
   mtext("Age Group",1,2.5,cex=0.9)
@@ -247,7 +247,7 @@ tb_graph_demo <- function(df){
   abline(h=axTicks(2),col="grey85")
   color=c("red", "orange", "gold", "green", "blue", "purple", "darkred", "light blue", "pink", "darkblue", "light green")
   for(i in 1:11) lines(1993:2049,V2[,i],lwd=2,col=color[i])
-  # for(i in 1:8) points(i+.2,(US_mort_age"[16,i+1])/1e6,pch=19,cex=1.2,col="black")
+  # for(i in 1:8) points(i+.2,(CalibDat$US_mort_age"[16,i+1])/1e6,pch=19,cex=1.2,col="black")
 
 
   mtext("Year",1,2.5,cex=0.9)
@@ -441,8 +441,8 @@ tb_graph_demo <- function(df){
   plot(0,0,ylim=c(0,max(range(V))*100),xlim=c(1993,2014),xlab="",ylab="",axes=F)
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
-  # points(1993:2014,notif_us_hr[,1]/rowSums(notif_us_hr)*100,pch=19,cex=0.6)
-  # lines(1993:2014,notif_us_hr[,1]/rowSums(notif_us_hr)*100,lty=3)
+  # points(1993:2014,CalibDat$notif_us_hr[,1]/rowSums(CalibDat$notif_us_hr)*100,pch=19,cex=0.6)
+  # lines(1993:2014,CalibDat$notif_us_hr[,1]/rowSums(CalibDat$notif_us_hr)*100,lty=3)
   lines(1993:2014,V[,2]*100,lwd=2,col="red3")
   lines(1993:2014,V[,1]*100,lwd=2,col="blue")
   lines(1993:2014,V4*100,lwd=2,col="grey50")
@@ -465,7 +465,7 @@ tb_graph_demo <- function(df){
   plot(0,0,ylim=c(0,max(range(V), range(V2))),xlim=c(1950,2014),xlab="",ylab="",axes=F)
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
-  # points(1993:2014,notif_us_hr[,1]/rowSums(notif_us_hr)*100,pch=19,cex=0.6)
+  # points(1993:2014,CalibDat$notif_us_hr[,1]/rowSums(CalibDat$notif_us_hr)*100,pch=19,cex=0.6)
   for (i in 1:11){
   lines(1950:2014,V[,i],lwd=3,col=col[i])
   lines(1950:2014,V2[,i],lty=3,lwd=2, col="black")
