@@ -228,14 +228,14 @@ homeless_10_lLik <- function(V) {
 ########################################################################################
 #'Functions for likelihood of different published estimates
 ########################################################################################
-
+dist_gen <- matrix(1:16,4,4); dist_gen <- dist_gen/sum(dist_gen)
 #' #'Likelihood of Borgdorff Estimates
 #' #'across the tb_progression groups
 #' #'average at the end
 #' #'@param Par_list list of parameters Mpfast, Mrslow, rfast, rRecov
 #' #'@param n_red crude reductions the likelihood (allows non-sampling bias)
 #' #'@return likelihood
-borgdorff_lLik <- function(Par_list,N_red=1) {
+borgdorff_lLik <- function(Par_list,N_red=1) {  # Par_list = list(Mpfast[,c(1,3,2,4)], Mrslow[,c(1,3,2,4)], rfast, rRecov)
   ss_borgdorff   <- 854.5463/4
   datB           <- CalibDat[["borgdorff_data"]]
   adj_24         <- sum(diff(-datB[,2])*ss_borgdorff*log(diff(-datB[,2])) + (1-diff(-datB[,2]))*ss_borgdorff*log(1-diff(-datB[,2])))
@@ -246,23 +246,21 @@ borgdorff_lLik <- function(Par_list,N_red=1) {
     # RRrSlowRF <- Par[4];
     rfast     <- Par_list[[3]]*12;
     rRecov    <- Par_list[[4]]*12;
-    s<-pfast_v <- rslow_v <- rep(NA,4)
+    pfast_v <- rslow_v <- rep(NA,4)
     pfast_v <- Mpfast[3,]
     rslow_v <- Mrslow[3,]
-
+    p0 <- matrix(NA,4,10)  # this added
     for (i in 1:4){
-      p <- pfast_v[i] *(1-(1-exp(-(rfast+rRecov)*datB[,1]))*(rfast/(rfast+rRecov))) +
+      p0[i,] <- pfast_v[i] *(1-(1-exp(-(rfast+rRecov)*datB[,1]))*(rfast/(rfast+rRecov))) +
         (1-pfast_v[i])*(1-(1-exp(-(rslow_v[i]+rRecov)*datB[,1]))*(rslow_v[i]/(rslow_v[i]+rRecov)))
-      p <- 1-(1-p)/(1-p)[nrow(datB)]
-    s[i]<-sum(diff(-datB[,2])*ss_borgdorff*log(diff(-p)) + (1-diff(-datB[,2]))*ss_borgdorff*log(1-diff(-p)))/N_red - adj_24/N_red
-    # print(s[i])
     }
-  sum(s*(colSums(dist_gen))) #weighted average of the likelihoods
-
+    p1 <- as.numeric(t(p0)%*%colSums(dist_gen))
+    p <- 1-(1-p1)/(1-p1)[nrow(datB)]
+    sum(diff(-datB[,2])*ss_borgdorff*log(diff(-p)) + (1-diff(-datB[,2]))*ss_borgdorff*log(1-diff(-p)))/N_red - adj_24/N_red
   },error=function(e) -Inf )
   if(is.nan(zz)) { zz = -10^4
   } else {
-  if(zz== -Inf) zz = -10^4 }
+    if(zz== -Inf) zz = -10^4 }
   zz }
 
 #'Likelihood of Ferebee Estimates
@@ -283,22 +281,22 @@ ferebee_lLik <- function(Par_list,N_red=4) {
     # RRrSlowRF <- Par[4];
     rfast     <- Par_list[[3]]*12;
     rRecov    <- Par_list[[4]]*12;
-    s2<-pfast_v <- rslow_v <- rep(NA,4)
+    pfast_v <- rslow_v <- rep(NA,4)
     pfast_v <- Mpfast[3,]
     rslow_v <- Mrslow[3,]
+    p0 <- matrix(NA,4,11)  # this added
     for (i in 1:4){
-      p2 <- pfast_v[i] *(1-(1-exp(-(rfast+rRecov)*(0:n_yr_F)))*(rfast/(rfast+rRecov))) +
-         (1-pfast_v[i])*(1-(1-exp(-(rslow_v[i]+rRecov)*(0:n_yr_F)))*(rslow_v[i]/(rslow_v[i]+rRecov)))
-      r2 <- -log(1-diff(-p2)/p2[-(n_yr_F+1)])/1
-      s2[i]<- sum((datF[,3]*log(r2) + (datF[,2]-datF[,3])*log(1-r2))/N_red)-adj_25/N_red
-      # print(s2[i])
-}
-    sum(s2*colSums(dist_gen))
+      p0[i,] <- pfast_v[i] *(1-(1-exp(-(rfast+rRecov)*(0:n_yr_F)))*(rfast/(rfast+rRecov))) +
+        (1-pfast_v[i])*(1-(1-exp(-(rslow_v[i]+rRecov)*(0:n_yr_F)))*(rslow_v[i]/(rslow_v[i]+rRecov)))
+    }
+    p1 <- as.numeric(t(p0)%*%colSums(dist_gen))
+    r2 <- -log(1-diff(-p1)/p1[-(n_yr_F+1)])/1
+    sum((datF[,3]*log(r2) + (datF[,2]-datF[,3])*log(1-r2)))/N_red - adj_25/N_red
   },error=function(e) -Inf )
   if(is.nan(zz)) {
     zz = -10^4
   } else {
-      if(zz== -Inf) zz = -10^4 }
+    if(zz== -Inf) zz = -10^4 }
   zz  }
 
 #' #'Likelihood of Sutherland Estimates
@@ -322,20 +320,19 @@ sutherland_lLik <- function(Par_list,N_red=4) {
     s<-pfast_v <- rslow_v <- rep(NA,4)
     pfast_v <- Mpfast[3,]
     rslow_v <- Mrslow[3,]
-    s3 <- rep(NA,4)
+    p0 <- matrix(NA,4,16)  # this added
     for (i in 1:4){
-      p3<-pfast_v[i]*(1-(1-exp(-(rfast+rRecov)*(0:n_yr_S)))*(rfast/(rfast+rRecov))) +
+      p0[i,] <- pfast_v[i] *(1-(1-exp(-(rfast+rRecov)*(0:n_yr_S)))*(rfast/(rfast+rRecov))) +
         (1-pfast_v[i])*(1-(1-exp(-(rslow_v[i]+rRecov)*(0:n_yr_S)))*(rslow_v[i]/(rslow_v[i]+rRecov)))
-      r3 <- -log(1-diff(-p3)/p3[-(n_yr_S+1)])/1
-      s3[i] <- sum((datS[,3]*log(r3) + (datS[,2]-datS[,3])*log(1-r3))/N_red) - adj_26/N_red
     }
-     sum(s3*colSums(dist_gen))
-
+    p1 <- as.numeric(t(p0)%*%colSums(dist_gen))
+    r2 <- -log(1-diff(-p1)/p1[-(n_yr_S+1)])/1
+    sum((datS[,3]*log(r2) + (datS[,2]-datS[,3])*log(1-r2)))/N_red - adj_26/N_red
   },error=function(e) -Inf )
   if(is.nan(zz)) {
     zz = -10^4
   } else {
-      if(zz== -Inf) zz = -10^4 }
+    if(zz== -Inf) zz = -10^4 }
   zz  }
 
 #'Likelihood of Tiemersa Estimates
