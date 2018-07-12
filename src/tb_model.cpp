@@ -622,7 +622,7 @@ for(int ag=0; ag<11; ag++) {
              n2=na;
           } else {n2=1;}
 
-          ///////////////////////////////   SUCEPTIBLE  /////////////////////////////////
+          ///////////////////////////////   SUCEPTIBLE  /////™////////////////////////////
           temp = V0[ag][0][0][im][nm][rg][na]*(VLjkl[rg][n2])*EarlyTrend[m];
           //////////////////////////// REMOVE FROM SUSCEPTIBLE //////////////////////////
           V1[ag][0][0][im][nm][rg][na]  -= temp;
@@ -1597,9 +1597,6 @@ n2=na;
               if(rg==1) {
                 Outputs[y][153] +=  (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP*LtTxPar[0] +
                                     (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxPar[0]; } // high risk inits
-              // if(im>0) {
-              //   Outputs[y][156] += (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP +
-              //     (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN; } // RF inits
 
               Outputs[y][154] += (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP*LtTxPar[0]; // inits with LTBI
             } } } } }
