@@ -10,6 +10,7 @@
 #' tot_cases2 <- tot_cases
 #' shift75    <- tot_cases[23,2]*2-tot_cases[22,2]-tot_cases[24,2]
 #' tot_cases2[1:22,2] <- tot_cases[1:22,2]+shift75
+#' tot_cases2[,2]<-tot_cases2[,2]/1e6
 #' CalibDat[["tot_cases"]] <- tot_cases2
 #'
 #' #'Age distribution by year up until 2014
@@ -31,6 +32,7 @@
 #'                                          sample_size= age_cases_fb0[,12])
 #'
 #' #'Nativity by year up to 2015
+#' #' Year | pct_fb | sample_size
 #' fb_cases0 <- read.csv("inst/extdata/6.15.18 Final Data/fb_cases_6-15-18.csv")
 #' CalibDat[["fb_cases"]] <- data.frame(year        = fb_cases0[,1],
 #'                                      pct_fb      = fb_cases0[,3]/fb_cases0[,4],
@@ -67,7 +69,7 @@
 #' CalibDat[["TLTBI_volume"]] <- c(sqrt(291000*433000),c(291000,433000))
 #'
 #' TLTBI_dist <- c(0.562,0.048,0.021); names(TLTBI_dist) <- c("FB","HR","HV")
-#' CalibDat[["TLTBI_dist"]] <- TLTBI_dist
+#' CalibDat[["TLTBI_dist"]] <- TLTBI_dist[-3]
 #'
 #' #'LTBI Prevalence, NHANES 1999-2011
 #' # load("calib files/IgraDat_1-13-2016.rData") # IgraDat
@@ -82,10 +84,14 @@
 #'
 #' #'Total Population
 #' #'by Year
-#' pop_year_fb0 <- read.csv("inst/extdata/6.15.18 Final Data/tot_by_year_fb_6-15-18.csv")
+#' pop_year_fb0      <- read.csv("inst/extdata/6.15.18 Final Data/tot_by_year_fb_6-15-18.csv")
+#' pop_year_fb0[,2:4]<-pop_year_fb0[,2:4]/1e6
+#'
 #' #'age distribution
 #'
-#' pop_age_fb0 <- read.csv("inst/extdata/6.15.18 Final Data/total2016_by_age_fb-6-15-18.csv")
+#' pop_age_fb0      <- read.csv("inst/extdata/6.15.18 Final Data/total2016_by_age_fb-6-15-18.csv")
+#' pop_age_fb0[,2:4]<-pop_age_fb0[,2:4]/1e6
+#'
 #' CalibDat[["tot_pop_yr_fb"]]   <- pop_year_fb0
 #' CalibDat[["tot_pop14_ag_fb"]] <- pop_age_fb0
 #'
@@ -106,7 +112,7 @@
 #'
 #'   tb_deaths0[i,j] <- sum(deaths0[idxtb,3]); hiv_deaths0[i,j] <- sum(deaths0[idxhiv,3]);
 #' }  }
-#'
+#'   tb_deaths0 <-tb_deaths0/1e6
 #'   tb_deaths1 <- data.frame(year   = 1999:2014,
 #'                            "0_4"   = rowSums(tb_deaths0[,1:2]),
 #'                            "5_14"  = tb_deaths0[,3],
@@ -120,6 +126,7 @@
 #'                            "85p"   = tb_deaths0[,11] )
 #'
 #'   CalibDat[["tb_deaths"]]  <- tb_deaths1
+#'   CalibDat[["tb_deaths"]]  <- CalibDat[["tb_deaths"]]
 #'
 #' #'TB progression with time based off of several studies
 #' borgdorff_data  <- read.csv("inst/extdata/Borgorff 2011 data.csv")
@@ -144,14 +151,15 @@
 #'
 #' CalibDat[["ImptWeights"]]   <- ImptWeights
 #'
-#' #'Temporarily add in 5 data points from the CalibDat_9-14-2016.rData file
-#' load("data/OldCalibDat_2018-06-28.rData")
 #'
-#' CalibDat[["LTBI_prev_US_11_IGRA"]] <- OldCalibDat[["LTBI_prev_US_11_IGRA"]]
-#' CalibDat[["LTBI_prev_FB_11_IGRA"]] <- OldCalibDat[["LTBI_prev_FB_11_IGRA"]]
-#' CalibDat[["LTBI_prev_US_11_DoubPos"]] <- OldCalibDat[["LTBI_prev_US_11_DoubPos"]]
-#' CalibDat[["LTBI_prev_FB_11_DoubPos"]] <- OldCalibDat[["LTBI_prev_FB_11_DoubPos"]]
-#' CalibDat[["fb_recent_cases"]]  <- OldCalibDat[["fb_recent_cases"]]
+#' #'Temporarily add in 5 data points from the CalibDat_9-14-2016.rData file
+#' #load("data/oldCalibDat_2018-06-28.rData")
+#'
+#' CalibDat[["LTBI_prev_US_11_IGRA"]] <- oldCalibDat[["LTBI_prev_US_11_IGRA"]]
+#' CalibDat[["LTBI_prev_FB_11_IGRA"]] <- oldCalibDat[["LTBI_prev_FB_11_IGRA"]]
+#' CalibDat[["LTBI_prev_US_11_DoubPos"]] <- oldCalibDat[["LTBI_prev_US_11_DoubPos"]]
+#' CalibDat[["LTBI_prev_FB_11_DoubPos"]] <- oldCalibDat[["LTBI_prev_FB_11_DoubPos"]]
+#' CalibDat[["fb_recent_cases"]]  <- oldCalibDat[["fb_recent_cases"]]
 #'
 #'
 #' #'Save CalibDat to an .rData file
