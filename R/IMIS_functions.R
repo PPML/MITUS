@@ -48,21 +48,21 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
       M <- zz$Outputs
       colnames(M) <- prms[["ResNam"]]
       lLik <- 0
-      #' TOTAL DIAGNOSED CASES 1953-2014 - index is same
-      v1   <- M[4:66,"NOTIF_ALL"]+M[4:66,"NOTIF_MORT_ALL"]
+      #' TOTAL DIAGNOSED CASES 1953-2016 - index is same
+      v1   <- M[4:67,"NOTIF_ALL"]+M[4:67,"NOTIF_MORT_ALL"]
       addlik <- notif_tot_lik(V=v1); addlik
       lLik <- lLik + addlik
-      #' US CASES AGE DISTRIBUTION 1993-2013 - index updated
-      v2a   <- M[44:65,205:215]+M[44:65,216:226]
+      #' US CASES AGE DISTRIBUTION 1993-2016 - index updated
+      v2a   <- M[44:67,205:215]+M[44:67,216:226]
       addlik <- notif_age_us_lLik(V=v2a); addlik
       lLik <- lLik + addlik
-      #' FB CASES AGE DISTRIBUTION 1993-2013 - index updated
-      v2b   <- (M[44:65,136:146]+M[44:65,189:199]) - (M[44:65,205:215]+M[44:65,216:226])
+      #' FB CASES AGE DISTRIBUTION 1993-2016 - index updated
+      v2b   <- (M[44:67,136:146]+M[44:67,189:199]) - (M[44:67,205:215]+M[44:67,216:226])
       addlik <- notif_age_fb_lLik(V=v2b); addlik
       lLik <- lLik + addlik
-      #' CASES FB DISTRIBUTION 1993-2014 - index updated
-      v3   <- cbind(M[44:66,148]+M[44:66,149]+(M[44:66,201]+M[44:66,202]),
-                    M[44:66,147]+M[44:66,200])
+      #' CASES FB DISTRIBUTION 1993-2016 - index updated
+      v3   <- cbind(M[44:67,148]+M[44:67,149]+(M[44:67,201]+M[44:67,202]),
+                    M[44:67,147]+M[44:67,200])
       addlik <- notif_fb_lLik(V=v3); addlik
       lLik <- lLik + addlik
       #' CASES FB, US 2010-2014  SLOPE - index updated
@@ -70,8 +70,8 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
                     M[44:66,147]+M[44:66,200])
       addlik <- notif_fbus_slp_lLik(V=v3); addlik
       lLik <- lLik + addlik
-      #' CASES HR DISTRIBUTION 1993-2014 - index updated
-      v5b   <- cbind(M[44:65,151],M[44:65,150]) + cbind(M[44:65,204],M[44:65,203])
+      #' CASES HR DISTRIBUTION 1993-2016 - index updated
+      v5b   <- cbind(M[44:67,151],M[44:67,150]) + cbind(M[44:67,204],M[44:67,203])
       addlik <- notif_us_hr_lLik(V=v5b); addlik
       lLik <- lLik + addlik
       #' CASES FB RECENT ENTRY DISTRIBUTION 1993-2014 index updated
@@ -79,7 +79,7 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
       addlik <- notif_fb_rec_lLik(V=v6); addlik
       lLik <- lLik + addlik
       #' TREATMENT OUTCOMES 1993-2012 - index updated
-      v11  <- M[44:63,132:134]
+      v11  <- M[44:65,132:134]
       addlik <- tx_outcomes_lLik(V=v11); addlik
       lLik <- lLik + addlik
       #' TOTAL LTBI TREATMENT INITS 2002 - index updated
@@ -104,9 +104,9 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
       v17  <- M[,30]+(M[,31]+M[,32])
       addlik <- tot_pop_yr_fb_lLik(V=v17); addlik
       lLik <- lLik + addlik
-      #' TOTAL POP AGE DISTRIBUTION 2014 index updated
-      v18  <- cbind(M[65,33:43],M[65,44:54])
-      addlik <- tot_pop14_ag_fb_lLik(V=v18); addlik
+      #' TOTAL POP AGE DISTRIBUTION 2016 index updated
+      v18  <- cbind(M[67,33:43],M[67,44:54])
+      addlik <- tot_pop16_ag_fb_lLik(V=v18); addlik
       lLik <- lLik + addlik
       #' TOTAL DEATHS WITH TB 1999-2014 - index updated
       v19  <- M[50:65,227:237]

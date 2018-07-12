@@ -34,7 +34,7 @@ wts <- CalibDat[["ImptWeights"]]
 notif_tot     <- CalibDat[["tot_cases"]][,2]
 adj_1         <- sum(dnorm(notif_tot,notif_tot,notif_tot*0.1/1.96,log=T)*wts[4:67])
 notif_tot_lik <- function(V) {
-  sum(dnorm(notif_tot,V*1e6,notif_tot*0.1/1.96,log=T)*wts[4:67]) - adj_1  }
+  sum(dnorm(notif_tot,V,notif_tot*0.1/1.96,log=T)*wts[4:67]) - adj_1  }
 
 #'US Cases Age Distribution 1993-2013
 #'Motivation: dirichlet-multinomial data with additional non-sampling biases
@@ -45,9 +45,10 @@ notif_age_us_lLik <- function(V,rho=0.005) {
   notif_age         <- CalibDat[["age_cases"]][,-c(1,12)]*CalibDat[["age_cases"]][,12]
   notif_age_us      <- CalibDat[["age_cases_us"]][,-c(1,12)]*CalibDat[["age_cases_us"]][,12]
   #weighted sum across the years
-  adj_2a            <- sum(dDirMult(M=notif_age_us,n=notif_age_us,Rho=0.005)*wts[44:65])
+  adj_2a            <- sum(dDirMult(M=notif_age_us,n=notif_age_us,Rho=0.005)*wts[44:67])
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
-  sum(dDirMult(M=V2,n=notif_age_us,Rho=rho)*wts[44:65]) - adj_2a  }
+  sum(dDirMult(M=V2,n=notif_age_us,Rho=rho)*wts[44:67]) - adj_2a
+  }
 
 #' FB CASES AGE DISTRIBUTION 1993-2013
 #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
@@ -56,9 +57,10 @@ notif_age_us_lLik <- function(V,rho=0.005) {
 #'@return likelihood
 notif_age_fb_lLik <- function(V,rho=0.005) {
   notif_age_fb     <- CalibDat[["age_cases_fb"]][,-c(1,12)]*CalibDat[["age_cases_fb"]][,12]
-  adj_2b           <- sum(dDirMult(M=notif_age_fb,n=notif_age_fb,Rho=0.005)*wts[44:65])
+  adj_2b           <- sum(dDirMult(M=notif_age_fb,n=notif_age_fb,Rho=0.005)*wts[44:67])
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
-  sum(dDirMult(M=V2,n=notif_age_fb,Rho=rho)*wts[44:65]) - adj_2b  }
+  sum(dDirMult(M=V2,n=notif_age_fb,Rho=rho)*wts[44:67]) - adj_2b
+}
 
 #' CASES FB DISTRIBUTION 1993-2014
 #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases#'@param V table of notifications by fb 1993-2014 (row=22 years, col=fb then us)
@@ -66,8 +68,8 @@ notif_age_fb_lLik <- function(V,rho=0.005) {
 #'@return likelihood
 notif_fb_lLik <- function(V,rho=0.005) {
   notif_fb      <- cbind(CalibDat[["fb_cases"]][,2],1-CalibDat[["fb_cases"]][,2])*CalibDat[["fb_cases"]][,3]
-  adj_3         <- sum(dDirMult(M=notif_fb,n=notif_fb,Rho=0.005)*wts[44:66])
-  sum(dDirMult(M=V,n=notif_fb,Rho=rho)*wts[44:66]) - adj_3  }
+  adj_3         <- sum(dDirMult(M=notif_fb,n=notif_fb,Rho=0.005)*wts[44:67])
+  sum(dDirMult(M=V,n=notif_fb,Rho=rho)*wts[44:67]) - adj_3  }
 
 #' CASES FB DISTRIBUTION SLOPES OVER PAST 4 year
 #'@param V table of notifications by fb 1993-2014 (row=22 years, col=fb then us)
@@ -85,8 +87,8 @@ notif_fbus_slp_lLik <- function(V) {
 #'@return likelihood
 notif_us_hr_lLik <- function(V,rho=0.005) {
   notif_us_hr      <- cbind(CalibDat[["us_homeless_cases"]][,2],1-CalibDat[["us_homeless_cases"]][,2])*CalibDat[["us_homeless_cases"]][,3]
-  adj_5b           <- sum(dDirMult(M=notif_us_hr,n=notif_us_hr,Rho=0.005)*wts[44:65])
-  sum(dDirMult(M=V,n=notif_us_hr,Rho=rho)*wts[44:65]) - adj_5b  }
+  adj_5b           <- sum(dDirMult(M=notif_us_hr,n=notif_us_hr,Rho=0.005)*wts[44:67])
+  sum(dDirMult(M=V,n=notif_us_hr,Rho=rho)*wts[44:67]) - adj_5b  }
 
 #' CASES FB RECENT ENTRY DISTRIBUTION 1993-2013
 #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
@@ -98,15 +100,15 @@ notif_fb_rec_lLik <- function(V,rho=0.005) {
   adj_6          <- sum(dDirMult(M=notif_fb_rec,n=notif_fb_rec,Rho=0.005)*wts[44:65])
   sum(dDirMult(M=V,n=notif_fb_rec,Rho=rho)*wts[44:65]) - adj_6  }
 
-#' TREATMENT OUTCOMES 1993-2012
+#' TREATMENT OUTCOMES 1993-2014
 #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
 #'@param V table of treatment outcomes 1993-2012 (row=20 years, col= complete, discontinue, dead)
 #'@param rho correlation parameter
 #'@return likelihood
 tx_outcomes_lLik <- function(V,rho=0.005) {
   tx_outcomes      <- cbind(1-rowSums(CalibDat[["tx_outcomes"]][,2:3]),CalibDat[["tx_outcomes"]][,2],CalibDat[["tx_outcomes"]][,3])*CalibDat[["tx_outcomes"]][,4]
-  adj_11           <- sum(dDirMult(M=tx_outcomes,n=tx_outcomes,Rho=0.005)*wts[44:63])
-  sum(dDirMult(M=V,n=tx_outcomes,Rho=rho)*wts[44:63]) - adj_11  }
+  adj_11           <- sum(dDirMult(M=tx_outcomes,n=tx_outcomes,Rho=0.005)*wts[44:65])
+  sum(dDirMult(M=V,n=tx_outcomes,Rho=rho)*wts[44:65]) - adj_11  }
 
 #' TOTAL LTBI TREATMENT INITS 2002
 #' Motivation: norm, mean centered with CI = +/- 10% of mean
@@ -175,15 +177,15 @@ tot_pop_yr_fb_lLik <- function(V) {
 
 #' TOTAL POP AGE DISTRIBUTION 2014
 #' Motivation: reported estimates represent pseudo-data for a multinomial likelihood, with ESS = 500
-#'@param V US pop in 2014 (row=11 ages, col= us, fb)
+#'@param V US pop in 2016 (row=11 ages, col= us, fb)
 #'@param ESS
 #'@return likelihood
-tot_pop14_ag_fb_lLik <- function(V,ESS=500) {
-  tot_pop14_ag_fb      <- cbind(CalibDat[["tot_pop14_ag_fb"]][-9,3]/sum(CalibDat[["tot_pop14_ag_fb"]][-9,3]),
-                                CalibDat[["tot_pop14_ag_fb"]][-9,4]/sum(CalibDat[["tot_pop14_ag_fb"]][-9,4]))
-  adj_18               <- sum(log(tot_pop14_ag_fb[,1])*tot_pop14_ag_fb[,1])+sum(log(tot_pop14_ag_fb[,2])*tot_pop14_ag_fb[,2])
+tot_pop16_ag_fb_lLik <- function(V,ESS=500) {
+  tot_pop16_ag_fb      <- cbind(CalibDat[["tot_pop16_ag_fb"]][-9,3]/sum(CalibDat[["tot_pop16_ag_fb"]][-9,3]),
+                                CalibDat[["tot_pop16_ag_fb"]][-9,4]/sum(CalibDat[["tot_pop16_ag_fb"]][-9,4]))
+  adj_18               <- sum(log(tot_pop16_ag_fb[,1])*tot_pop16_ag_fb[,1])+sum(log(tot_pop16_ag_fb[,2])*tot_pop16_ag_fb[,2])
   V1 <- rbind(V[1,],V[2,]+V[3,],V[4,]+V[5,],V[6,],V[7,],V[8,],V[9,],V[10,]+V[11,])
-  (sum(log(V1[,1]/sum(V1[,1]))*tot_pop14_ag_fb[,1])+sum(log(V1[,2]/sum(V1[,2]))*tot_pop14_ag_fb[,2]))*ESS - adj_18*ESS  }
+  (sum(log(V1[,1]/sum(V1[,1]))*tot_pop16_ag_fb[,1])+sum(log(V1[,2]/sum(V1[,2]))*tot_pop16_ag_fb[,2]))*ESS - adj_18*ESS  }
 
 #' Total TB DEATHS 1999-2014
 #' Motivation: overdispersed poisson, modelled with negbin with overdispersion param = 100 *wts[50:65]
