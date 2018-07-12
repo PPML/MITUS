@@ -13,7 +13,7 @@ CalibDat$US_mort_age <- read.csv(file="inst/extdata/US_mort_age.csv", header = T
 
 tb_graph_demo <- function(df){
 
-  data("CalibDat_2018-06-28", package='MITUS')#  source("R/calib_functions.R")
+  data("CalibDat_2018-07-12", package='MITUS')#  source("R/calib_functions.R")
 
   pdf(file=paste("MITUS_results/graphs_demo",Sys.time(),".pdf"), width = 11, height = 8.5)
   par(mfrow=c(2,2),mar=c(4,4.5,3,1))

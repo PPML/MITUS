@@ -14,7 +14,7 @@
 tbdyn_graphs <-function(df){
 
 
-  data("CalibDat_2018-06-28", package='MITUS')
+  data("CalibDat_2018-07-12", package='MITUS')
 
   pdf(file=paste("MITUS_results/graphs_tbdyn",Sys.time(),".pdf"), width = 11, height = 8.5)
   par(mfrow=c(2,2),mar=c(4,4.5,3,1))
@@ -35,16 +35,16 @@ tbdyn_graphs <-function(df){
   lines(1993:2015,V2*1e3,lwd=3,col="white"); lines(1993:2015,V2*1e3,lwd=2,col=3) #non-US born population
 
   #'reported data for comparison
-  points(CalibDat[["tot_cases"]][,1],CalibDat[["tot_cases"]][,2]/1000,pch=19,cex=0.3) #total population
-  lines(CalibDat[["tot_cases"]][,1],CalibDat[["tot_cases"]][,2]/1000,lty=3,col=1)
+  points(CalibDat[["tot_cases"]][,1],CalibDat[["tot_cases"]][,2]*1e3,pch=19,cex=0.3) #total population
+  lines(CalibDat[["tot_cases"]][,1],CalibDat[["tot_cases"]][,2]*1000,lty=3,col=1)
 
   notif_fb      <- cbind(CalibDat[["fb_cases"]][,2],1-CalibDat[["fb_cases"]][,2])*CalibDat[["fb_cases"]][,3]
 
-  points(1993:2015,notif_fb[,2]/1000,pch=19,cex=0.3,col=4) #US born population
-  lines(1993:2015,notif_fb[,2]/1000,pch=19,lty=3,col=4)
+  points(1993:2015,notif_fb[,2]*1e3,pch=19,cex=0.3,col=4) #US born population
+  lines(1993:2015,notif_fb[,2]*1e3,pch=19,lty=3,col=4)
 
-  points(1993:2015,notif_fb[,1]/1000,pch=19,cex=0.3,col=3) #non-US born population
-  lines(1993:2015,notif_fb[,1]/1000,lty=3,col=3)
+  points(1993:2015,notif_fb[,1]*1e3,pch=19,cex=0.3,col=3) #non-US born population
+  lines(1993:2015,notif_fb[,1]*1e3,lty=3,col=3)
 
   #'plot text
   mtext("Year",1,2.5,cex=0.9)
@@ -127,14 +127,14 @@ tbdyn_graphs <-function(df){
   #'reported data for comparison
   notif_age     <- CalibDat[["age_cases"]][,-c(1,12)]*CalibDat[["age_cases"]][,12]
 
-  points(1993:2014,rowSums(notif_age[,1:3])/1e3,pch=19,cex=0.6,col=cls[1]) #0-24 yrs
-  lines(1993:2014,rowSums(notif_age[,1:3])/1e3,col=cls[1],lty=3)
-  points(1993:2014,rowSums(notif_age[,4:5])/1e3,pch=19,cex=0.6,col=cls[2]) #25-44 yrs
-  lines(1993:2014,rowSums(notif_age[,4:5])/1e3,col=cls[2],lty=3)
-  points(1993:2014,rowSums(notif_age[,6:7])/1e3,pch=19,cex=0.6,col=cls[3]) #45-64 yrs
-  lines(1993:2014,rowSums(notif_age[,6:7])/1e3,col=cls[3],lty=3)
-  points(1993:2014,rowSums(notif_age[,8:10])/1e3,pch=19,cex=0.6,col=cls[4]) #65+ yrs
-  lines(1993:2014,rowSums(notif_age[,8:10])/1e3,col=cls[4],lty=3)
+  points(1993:2014,rowSums(notif_age[,1:3])*1e3,pch=19,cex=0.6,col=cls[1]) #0-24 yrs
+  lines(1993:2014,rowSums(notif_age[,1:3])*1e3,col=cls[1],lty=3)
+  points(1993:2014,rowSums(notif_age[,4:5])*1e3,pch=19,cex=0.6,col=cls[2]) #25-44 yrs
+  lines(1993:2014,rowSums(notif_age[,4:5])*1e3,col=cls[2],lty=3)
+  points(1993:2014,rowSums(notif_age[,6:7])*1e3,pch=19,cex=0.6,col=cls[3]) #45-64 yrs
+  lines(1993:2014,rowSums(notif_age[,6:7])*1e3,col=cls[3],lty=3)
+  points(1993:2014,rowSums(notif_age[,8:10])*1e3,pch=19,cex=0.6,col=cls[4]) #65+ yrs
+  lines(1993:2014,rowSums(notif_age[,8:10])*1e3,col=cls[4],lty=3)
 
   #'plot text
   mtext("TB Cases By Age (000s), 2000-14",3,.8,font=2,cex=0.8)
@@ -289,7 +289,7 @@ tbdyn_graphs <-function(df){
 
   V  <- df[50:65,88:98]+df[50:65,99:109]
   V2 <- V[,-11]; V2[,10] <- V[,10]+V[,11]
-  V3 <- colSums(V2)*1e6
+  V3 <- colSums(V2)
 
   #'format the plot
   plot(0,0,ylim=c(0,max(range(V3))+500),xlim=c(0.6,10.4),xlab="",ylab="",axes=F)
