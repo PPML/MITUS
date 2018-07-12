@@ -11,10 +11,12 @@ optimization.
 The function requires the use of the ParamInit Rdata file and the
 StartValues Rdata file.}
 \usage{
-optim_b(b)
+optim_b(df, samp_i = 1)
 }
 \arguments{
-\item{b}{batch number; must be > 21; corresponds to a row of start vals}
+\item{df}{dataframe or matrix of starting values data frame}
+
+\item{samp_i}{which rows of the data frame to use}
 }
 \value{
 8 datasets from optimization loop

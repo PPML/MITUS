@@ -2,7 +2,8 @@
 % Please edit documentation in R/basic_functions.R
 \name{ORAdd}
 \alias{ORAdd}
-\title{Basic Functions Used In Package
+\title{attempting to see if sync works
+Basic Functions Used In Package
 This script includes several functions that are useful for data manipulation
 throughout the package.
 The first function takes the odds of a risk, then calculates the join
@@ -20,6 +21,7 @@ ORAdd(val, OR)
 new risk for population
 }
 \description{
+attempting to see if sync works
 Basic Functions Used In Package
 This script includes several functions that are useful for data manipulation
 throughout the package.

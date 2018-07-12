@@ -2,8 +2,7 @@
 % Please edit documentation in R/calib_functions.R
 \name{borgdorff_lLik}
 \alias{borgdorff_lLik}
-\title{Functions for likelihood of different published estimates
-#'Likelihood of Borgdorff Estimates
+\title{#'Likelihood of Borgdorff Estimates
 #'across the tb_progression groups
 #'average at the end
 #'@param Par_list list of parameters Mpfast, Mrslow, rfast, rRecov
@@ -13,7 +12,6 @@
 borgdorff_lLik(Par_list, N_red = 1)
 }
 \description{
-Functions for likelihood of different published estimates
 #'Likelihood of Borgdorff Estimates
 #'across the tb_progression groups
 #'average at the end

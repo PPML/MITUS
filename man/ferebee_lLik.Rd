@@ -6,7 +6,7 @@
 across the tb_progression groups
 average at the end}
 \usage{
-ferebee_lLik(Par, N_red = 4)
+ferebee_lLik(Par_list, N_red = 4)
 }
 \arguments{
 \item{Par_list}{list (pfast,rslow,rfast,rRecov)}
