@@ -49,7 +49,7 @@ OutputsZint <-  function(samp_i=1,ParMatrix,endyr=2050,Int1=0,Int2=0,Int3=0,Int4
                            dist_orig_v=IP[["dist_orig_v"]]
                            )$Outputs
    colnames(m) <- IP[["ResNam"]];
-   results<<-data.frame(m)
+   results<<-m
 
    return(results)
 }
