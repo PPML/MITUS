@@ -18,6 +18,7 @@ tbdyn_graphs <-function(df){
 
   pdf(file=paste("MITUS_results/graphs_tbdyn",Sys.time(),".pdf"), width = 11, height = 8.5)
   par(mfrow=c(2,2),mar=c(4,4.5,3,1))
+
   #' graph of total diagnosed cases
   #' by total population, US born population, and non-US born population
   V0 <- df[4:66,"NOTIF_ALL"]+df[4:66,"NOTIF_MORT_ALL"] #total population
@@ -40,11 +41,11 @@ tbdyn_graphs <-function(df){
 
   notif_fb      <- cbind(CalibDat[["fb_cases"]][,2],1-CalibDat[["fb_cases"]][,2])*CalibDat[["fb_cases"]][,3]
 
-  points(1993:2015,notif_fb[,2]*1e3,pch=19,cex=0.3,col=4) #US born population
-  lines(1993:2015,notif_fb[,2]*1e3,pch=19,lty=3,col=4)
+  points(1993:2016,notif_fb[,2]*1e3,pch=19,cex=0.3,col=4) #US born population
+  lines(1993:2016,notif_fb[,2]*1e3,pch=19,lty=3,col=4)
 
-  points(1993:2015,notif_fb[,1]*1e3,pch=19,cex=0.3,col=3) #non-US born population
-  lines(1993:2015,notif_fb[,1]*1e3,lty=3,col=3)
+  points(1993:2016,notif_fb[,1]*1e3,pch=19,cex=0.3,col=3) #non-US born population
+  lines(1993:2016,notif_fb[,1]*1e3,lty=3,col=3)
 
   #'plot text
   mtext("Year",1,2.5,cex=0.9)
@@ -57,22 +58,22 @@ tbdyn_graphs <-function(df){
 
   #'Percent of Total Cases Non-US Born Population
 
-  V <- cbind(df[44:66,"NOTIF_US"]+df[44:66,"NOTIF_MORT_US"], #US born population
-             df[44:66,"NOTIF_F1"]+df[44:66,"NOTIF_F2"]+  #non-US born population
-             df[44:66,"NOTIF_MORT_F1"]+df[44:66,"NOTIF_MORT_F2"])
+  V <- cbind(df[44:67,"NOTIF_US"]+df[44:67,"NOTIF_MORT_US"], #US born population
+             df[44:67,"NOTIF_F1"]+df[44:67,"NOTIF_F2"]+  #non-US born population
+             df[44:67,"NOTIF_MORT_F1"]+df[44:67,"NOTIF_MORT_F2"])
   V <- V[,2]/rowSums(V)
 
   #'format the plot
-  plot(0,0,ylim=c(2.5,97.5),xlim=c(2000,2015),xlab="",ylab="",axes=F)
+  plot(0,0,ylim=c(2.5,97.5),xlim=c(2000,2016),xlab="",ylab="",axes=F)
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
 
   #'plot the model data
-  lines(1993:2015,V*100,lwd=2,col=4)
+  lines(1993:2016,V*100,lwd=2,col=4)
 
   #'reported data for comparison
-  points(1993:2015,notif_fb[,1]/rowSums(notif_fb)*100,pch=19,cex=0.6)
-  lines(1993:2015,notif_fb[,1]/rowSums(notif_fb)*100,lty=3)
+  points(1993:2016,notif_fb[,1]/rowSums(notif_fb)*100,pch=19,cex=0.6)
+  lines(1993:2016,notif_fb[,1]/rowSums(notif_fb)*100,lty=3)
 
   #'plot text
   mtext("Year",1,2.5,cex=0.9)
@@ -108,7 +109,7 @@ tbdyn_graphs <-function(df){
   #'Age distribution of Cases
   #'0-24 yrs, 25-44 yrs, 45-64 yrs, 65+ yrs
 
-  V   <- (df[51:65,136:146]+df[51:65,189:199])
+  V   <- (df[51:67,136:146]+df[51:67,189:199])
   V2  <- V[,-11]
   V2[,10] <- V2[,10]+V[,11]
 
@@ -119,25 +120,25 @@ tbdyn_graphs <-function(df){
   abline(h=axTicks(2),col="grey85")
 
   #'plot the model data
-  lines(2000:2014,rowSums(V2[,1:3])*1e3,lwd=2,col=cls[1])    #0-24 yrs
-  lines(2000:2014,rowSums(V2[,4:5])*1e3,lwd=2,col=cls[2])    #25-44 yrs
-  lines(2000:2014,rowSums(V2[,6:7])*1e3,lwd=2,col=cls[3])    #45-64 yrs
-  lines(2000:2014,rowSums(V2[,8:10])*1e3,lwd=2,col=cls[4])   #65+ yrs
+  lines(2000:2016,rowSums(V2[,1:3])*1e3,lwd=2,col=cls[1])    #0-24 yrs
+  lines(2000:2016,rowSums(V2[,4:5])*1e3,lwd=2,col=cls[2])    #25-44 yrs
+  lines(2000:2016,rowSums(V2[,6:7])*1e3,lwd=2,col=cls[3])    #45-64 yrs
+  lines(2000:2016,rowSums(V2[,8:10])*1e3,lwd=2,col=cls[4])   #65+ yrs
 
   #'reported data for comparison
   notif_age     <- CalibDat[["age_cases"]][,-c(1,12)]*CalibDat[["age_cases"]][,12]
 
-  points(1993:2014,rowSums(notif_age[,1:3])*1e3,pch=19,cex=0.6,col=cls[1]) #0-24 yrs
-  lines(1993:2014,rowSums(notif_age[,1:3])*1e3,col=cls[1],lty=3)
-  points(1993:2014,rowSums(notif_age[,4:5])*1e3,pch=19,cex=0.6,col=cls[2]) #25-44 yrs
-  lines(1993:2014,rowSums(notif_age[,4:5])*1e3,col=cls[2],lty=3)
-  points(1993:2014,rowSums(notif_age[,6:7])*1e3,pch=19,cex=0.6,col=cls[3]) #45-64 yrs
-  lines(1993:2014,rowSums(notif_age[,6:7])*1e3,col=cls[3],lty=3)
-  points(1993:2014,rowSums(notif_age[,8:10])*1e3,pch=19,cex=0.6,col=cls[4]) #65+ yrs
-  lines(1993:2014,rowSums(notif_age[,8:10])*1e3,col=cls[4],lty=3)
+  points(1993:2016,rowSums(notif_age[,1:3])*1e3,pch=19,cex=0.6,col=cls[1]) #0-24 yrs
+  lines(1993:2016,rowSums(notif_age[,1:3])*1e3,col=cls[1],lty=3)
+  points(1993:2016,rowSums(notif_age[,4:5])*1e3,pch=19,cex=0.6,col=cls[2]) #25-44 yrs
+  lines(1993:2016,rowSums(notif_age[,4:5])*1e3,col=cls[2],lty=3)
+  points(1993:2016,rowSums(notif_age[,6:7])*1e3,pch=19,cex=0.6,col=cls[3]) #45-64 yrs
+  lines(1993:2016,rowSums(notif_age[,6:7])*1e3,col=cls[3],lty=3)
+  points(1993:2016,rowSums(notif_age[,8:10])*1e3,pch=19,cex=0.6,col=cls[4]) #65+ yrs
+  lines(1993:2016,rowSums(notif_age[,8:10])*1e3,col=cls[4],lty=3)
 
   #'plot text
-  mtext("TB Cases By Age (000s), 2000-14",3,.8,font=2,cex=0.8)
+  mtext("TB Cases By Age (000s), 2000-16",3,.8,font=2,cex=0.8)
   mtext("Year",1,2.5,cex=0.9)
 
   legend("topright",c("0-24 years","25-44 years","45-64 years","65+ years","Reported data","Model"),
@@ -181,28 +182,28 @@ tbdyn_graphs <-function(df){
   #'plot text
 
 ################################################################################
-  #' Treatment Outcomes 1993-2011
+  #' Treatment Outcomes 1993-2014
 
-  V   <- df[44:63,132:134]
+  V   <- df[44:65,132:134]
   Vdisc <- V[,2]/rowSums(V)
   Vdead <- V[,3]/rowSums(V)
 
   #'format the plot
-  plot(0,0,ylim=c(0,15),xlim=c(1993,2011),xlab="",ylab="",axes=F)
+  plot(0,0,ylim=c(0,15),xlim=c(1993,2014),xlab="",ylab="",axes=F)
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
 
   #'plot the model data
-  lines(1993:2012,Vdisc*100,lwd=2,col="red3")
-  lines(1993:2012,Vdead*100,lwd=2,col="blue")
+  lines(1993:2014,Vdisc*100,lwd=2,col="red3")
+  lines(1993:2014,Vdead*100,lwd=2,col="blue")
 
   #'reported data for comparison
   tx_outcomes      <- cbind(1-rowSums(CalibDat[["tx_outcomes"]][,2:3]),CalibDat[["tx_outcomes"]][,2],CalibDat[["tx_outcomes"]][,3])*CalibDat[["tx_outcomes"]][,4]
 
-  points(1993:2012,tx_outcomes[,2]/rowSums(tx_outcomes)*100,pch=19,cex=0.6,col="red3")
-  points(1993:2012,tx_outcomes[,3]/rowSums(tx_outcomes)*100,pch=19,cex=0.6,col="blue")
-  lines(1993:2012,tx_outcomes[,2]/rowSums(tx_outcomes)*100,lty=3,col="red3")
-  lines(1993:2012,tx_outcomes[,3]/rowSums(tx_outcomes)*100,lty=3,col="blue")
+  points(1993:2014,tx_outcomes[,2]/rowSums(tx_outcomes)*100,pch=19,cex=0.6,col="red3")
+  points(1993:2014,tx_outcomes[,3]/rowSums(tx_outcomes)*100,pch=19,cex=0.6,col="blue")
+  lines(1993:2014,tx_outcomes[,2]/rowSums(tx_outcomes)*100,lty=3,col="red3")
+  lines(1993:2014,tx_outcomes[,3]/rowSums(tx_outcomes)*100,lty=3,col="blue")
 
   #'plot text
 
@@ -215,16 +216,13 @@ tbdyn_graphs <-function(df){
   #'LTBI Prevalance by Age in 2011, US born
 
   V  <- cbind(df[62,55:65],(df[62,33:43]-df[62,55:65]))
+  colnames(V) <- c("LTBI", "No-LTBI")
 
-  V1 <- V[,-22]; V1<-V1[,-21]
-  V1[,20] <- V1[,20]+V[,21]+V[,22]
-
-  V1 <- V1[,-11]; V1<-V1[,-10]
-  V1[,9] <- V1[,9]+V[,10]+V[,11]
+  V1 <- V[-11,]; V1<-V1[-10,]
+  V1[9,] <- V1[9,]+V[10,]+V[11,]
 
   V2 <- rep(NA,8)
-  for (i in 2:9) V2[i] <- V1[,i] / (V1[,i]+V1[,i+9])
-  V2 <- V2[-1]*100
+  V2 <- V1[2:9,1]/rowSums(V1[2:9,])*100
 
   #'format the plot
   plot(0,0,ylim=c(0,max(range(V2))),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA)
@@ -254,15 +252,13 @@ tbdyn_graphs <-function(df){
 
   V  <- cbind(df[62,66:76],(df[62,44:54]-df[62,66:76]))
 
-  V1 <- V[,-22]; V1<-V1[,-21]
-  V1[,20] <- V1[,20]+V[,21]+V[,22]
+  colnames(V) <- c("LTBI", "No-LTBI")
 
-  V1 <- V1[,-11]; V1<-V1[,-10]
-  V1[,9] <- V1[,9]+V[,10]+V[,11]
+  V1 <- V[-11,]; V1<-V1[-10,]
+  V1[9,] <- V1[9,]+V[10,]+V[11,]
 
   V2 <- rep(NA,8)
-  for (i in 2:9) V2[i] <- V1[,i] / (V1[,i]+V1[,i+9])
-  V2 <- V2[-1]*100
+  V2 <- V1[2:9,1]/rowSums(V1[2:9,])*100
 
   #'format the plot
   plot(0,0,ylim=c(0,max(range(V2))),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA)
