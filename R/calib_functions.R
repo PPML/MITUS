@@ -5,7 +5,7 @@
 #'takes in the outputs and calibration data and creates likelihood functions
 
 #'load the necessary calibration data
-data("CalibDat_2018-06-28", package='MITUS') # CalibDat
+data("CalibDat_2018-07-12", package='MITUS') # CalibDat
 
 #'Dirichlet multinomial density function
 #'@name dDirMult
@@ -27,14 +27,14 @@ dDirMult <- function(M,n,Rho) {
 #'These weights are based on year of the simulation.
 wts <- CalibDat[["ImptWeights"]]
 
-#'Total Diagnosed Cases 1953-2017
+#'Total Diagnosed Cases 1953-2016
 #'Motivation: Normal, mean centered with CI = +/- 5% of the mean
 #'@param V vector of total notifications 1953-2014
 #'@return likelihood
 notif_tot     <- CalibDat[["tot_cases"]][,2]
-adj_1         <- sum(dnorm(notif_tot,notif_tot,notif_tot*0.1/1.96,log=T)*wts[4:66])
+adj_1         <- sum(dnorm(notif_tot,notif_tot,notif_tot*0.1/1.96,log=T)*wts[4:67])
 notif_tot_lik <- function(V) {
-  sum(dnorm(notif_tot,V*1e6,notif_tot*0.1/1.96,log=T)*wts[4:66]) - adj_1  }
+  sum(dnorm(notif_tot,V*1e6,notif_tot*0.1/1.96,log=T)*wts[4:67]) - adj_1  }
 
 #'US Cases Age Distribution 1993-2013
 #'Motivation: dirichlet-multinomial data with additional non-sampling biases
@@ -115,7 +115,8 @@ tx_outcomes_lLik <- function(V,rho=0.005) {
 tltbi_tot_lLik   <- function(V) {
   tltbi_vol        <- CalibDat[["TLTBI_volume"]]
   adj_12           <- dnorm(tltbi_vol[1],tltbi_vol[1],diff(tltbi_vol[2:3])/2/1.96,log=T)
-  dnorm(tltbi_vol[1],V*1e6,diff(tltbi_vol[2:3])/2/1.96,log=T) - adj_12  }
+  dnorm(tltbi_vol[1],V*1e6,diff(tltbi_vol[2:3])/2/1.96,log=T) - adj_12
+  }
 
 #' DISTRIBUTION OF LTBI TREATMENT INITS 2002
 #'@param V dist TLTBI inits in 2002 (vector fraction FB, HR in 2002)
