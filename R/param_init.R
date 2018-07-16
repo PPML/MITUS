@@ -75,7 +75,7 @@ muRF1      <- P["muH1"]/12*.01
 muRF2      <- (P["muH2"]+P["muH1"])/24*.01
 muRF3      <- P["muH2"]/12*.01
 InputParams[["muTbRF"]]    <- P["muTbH"]/12
-TunmuHvAg <- P["TunmuTbAg"] # ffs.
+# TunmuHvAg <- P["TunmuTbAg"] # ffs.
 
 ###############  RATE RATIO OF MORTALITY INCREASE FOR HIGH RISK ###############
 
@@ -388,9 +388,9 @@ d1st <- 1/9
 
 ## Regimen efficacy
 pCurPs  <- P["pCurPs"]    # probability of cure with pansensitive TB, 1st line regimen (Menzies 09)
-TxE1		<- P["TxEf1"]     # RR cure given mono-resistance, 1st line regimen 0.90
-TxE2		<- P["TxEf2"]     # RR cure given multiresistance, 1st line or 2nd line 0.50
-TxE3		<- P["TxEf3"]     # RR cure given effective 2nd line 0.90
+# TxE1		<- P["TxEf1"]     # RR cure given mono-resistance, 1st line regimen 0.90
+# TxE2		<- P["TxEf2"]     # RR cure given multiresistance, 1st line or 2nd line 0.50
+# TxE3		<- P["TxEf3"]     # RR cure given effective 2nd line 0.90
 
 ## Default
 rDef0         <- rep(NA,151)
@@ -399,7 +399,7 @@ rDef0[44:63]  <- ORAdd(TxInputs[[1]][,2],P["TunTxDef"])
 rDef0[64:151] <- rDef0[63]
 rDef1         <- predict(smooth.spline(x=c(1950:1979,1993:2100),y=rDef0[-(31:43)],spar=0.4),x=1950:2100)$y
 InputParams[["rDeft"]]         <- SmoCurve(rDef1)/12;
-# rDeftH        <- rDeft*P["RRdefHR"] # second col is HR default rate
+# rDeftH        <- InputParams[["rDeft"]]*P["RRdefHR"] # second col is HR default rate
 
 #### #### #### INT 4 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 

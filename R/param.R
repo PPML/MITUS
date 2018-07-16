@@ -44,7 +44,7 @@ param <- function (P){
 ######################## MULTIPLER OF MORT RATE ABOVE ########################
 
   TunmuTbAg <- P["TunmuTbAg"]
-  TunmuHvAg <- P["TunmuTbAg"]
+  # TunmuHvAg <- P["TunmuTbAg"]
 
 ############ CONVERT ANNUAL RATES OF RF MORTALITY TO MONTHLY RATES ##########
 
