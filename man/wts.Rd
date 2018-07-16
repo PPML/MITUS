@@ -6,7 +6,7 @@
 \title{Log-likelihood functions
 Assign the calibration importance weights from CalibDat
 These weights are based on year of the simulation.}
-\format{An object of class \code{numeric} of length 66.}
+\format{An object of class \code{numeric} of length 67.}
 \usage{
 wts
 }

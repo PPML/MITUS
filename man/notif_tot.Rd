@@ -3,9 +3,9 @@
 \docType{data}
 \name{notif_tot}
 \alias{notif_tot}
-\title{Total Diagnosed Cases 1953-2017
+\title{Total Diagnosed Cases 1953-2016
 Motivation: Normal, mean centered with CI = +/- 5% of the mean}
-\format{An object of class \code{numeric} of length 63.}
+\format{An object of class \code{numeric} of length 64.}
 \usage{
 notif_tot
 }
@@ -16,7 +16,7 @@ notif_tot
 likelihood
 }
 \description{
-Total Diagnosed Cases 1953-2017
+Total Diagnosed Cases 1953-2016
 Motivation: Normal, mean centered with CI = +/- 5% of the mean
 }
 \keyword{datasets}

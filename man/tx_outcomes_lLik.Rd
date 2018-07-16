@@ -2,7 +2,7 @@
 % Please edit documentation in R/calib_functions.R
 \name{tx_outcomes_lLik}
 \alias{tx_outcomes_lLik}
-\title{TREATMENT OUTCOMES 1993-2012
+\title{TREATMENT OUTCOMES 1993-2014
 Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases}
 \usage{
 tx_outcomes_lLik(V, rho = 0.005)
@@ -16,6 +16,6 @@ tx_outcomes_lLik(V, rho = 0.005)
 likelihood
 }
 \description{
-TREATMENT OUTCOMES 1993-2012
+TREATMENT OUTCOMES 1993-2014
 Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
 }

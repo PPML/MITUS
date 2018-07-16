@@ -4,6 +4,7 @@
 \alias{OutputsZint}
 \title{THIS FUNCTION INPUTS A TABLE OF PARAMETERS AND RUNS THE TB MODEL
 AND GENERATES AN ARRAY OF OUTPUTS
+load("data/ParamInit_2018.rData")
 function to run the model}
 \usage{
 OutputsZint(samp_i = 1, ParMatrix, endyr = 2050, Int1 = 0, Int2 = 0,
@@ -38,5 +39,6 @@ results data frame of output
 \description{
 THIS FUNCTION INPUTS A TABLE OF PARAMETERS AND RUNS THE TB MODEL
 AND GENERATES AN ARRAY OF OUTPUTS
+load("data/ParamInit_2018.rData")
 function to run the model
 }

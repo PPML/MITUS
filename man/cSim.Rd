@@ -70,7 +70,7 @@ cSim(nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow,
 
 \item{TunTxMort}{Tuning parameter for mortality on TB Tx}
 
-\item{rDeft}{rate of default from TB treatment over time}
+\item{rDeft}{rate of default from TB treatment over time, second col is HR}
 
 \item{rLtScrt}{rate of latent screening over time}
 
