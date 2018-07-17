@@ -20,7 +20,7 @@
 #'@return results data frame of output
 #'@export
 OutputsZint <-  function(samp_i=1,ParMatrix,endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0) {
-   if(min(dim(as.data.frame(ParMatrix)))==1) { ;
+   if(min(dim(as.data.frame(ParMatrix)))==1) {
     Par <- as.numeric(ParMatrix);
     names(Par) <- names(ParMatrix)
 } else {  Par <- as.numeric(ParMatrix[samp_i,]);
