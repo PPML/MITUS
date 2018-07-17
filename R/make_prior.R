@@ -79,6 +79,7 @@
 #   pari1 }
 #
 # set.seed(321); StartVal <- sample.prior2(n=20)
+# colnames(StartVal)<-rownames(ParamInit[ParamInit$Calib==1,])
 # save(StartVal,file=paste0("StartVal_", Sys.Date(), ".rda"))
 # ################################################################################
 #
