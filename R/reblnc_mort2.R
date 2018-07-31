@@ -13,37 +13,18 @@ lgt <-  function(x) log(x/(1-x));
 #setup the variables to determine the number of risk groups to consider
 t=1
 
-# N = 30
-#Define the multivariate normal distribution of the general population
-#this is the distribution of the population at time = 0
-#this distribution is constant for all age groups
-#pars = lower limit, upper limit, mean
-# pars = c(-2.5,2,0.6)
-# cuts <- lgt(0:4/4)
-# dist_gen<-matrix(NA,4,4)
-# for(i in 1:num_mRF) {
-#   for(j in 1:num_pRF) {
-#     dist_gen[i,j] <- pmvnorm(lower = cuts[c(i,j)],
-#                              upper = cuts[c(i,j)+1],
-#                              mean  = pars[c(1,1)],
-#                              sigma = matrix(pars[2]*c(1,pars[3],pars[3],1),2,2) )[[1]]
-#   }
-# }
-dist_orig<-matrix(NA,11,16)
-colnames(dist_orig)<-paste0(rep(paste0("p",0:3),each=4),"_",rep(paste0("m",0:3),4))
 dist_gen_v<-rep(NA,16)
 for(m in 0:3) {
   for(p in 0:3) {
-    dist_gen_v[1+m+p*4] <- IP$dist_gen[m+1,p+1];
+    dist_t0_v[1+m+p*4] <- IP$dist_gen[m+1,p+1];
   } }
-dist_t0_v <- rep(NA,16)
-dist_t0_v <- dist_gen_v
-names(dist_t0_v)<-colnames(dist_orig)
+names(dist_t0_v)<-paste0(rep(paste0("p",0:3),each=4),"_",rep(paste0("m",0:3),4))
 
 #this distribution will remain the target or goal distribution throughout the whole model
 dist_t1_v<-dist_targ<-dist0<-dist_t0_v
-trans_mat_tot_ages <-matrix(NA,176,176)
-
+trans_mat_tot_ages <-matrix(NA,16,176)
+colnames(trans_mat_tot_ages)<-paste0(rep(paste0("ag",1:11), each=16),"_",paste0(rep(paste0("p",0:3),each=4),"_",rep(paste0("m",0:3),4)))
+rownames(trans_mat_tot_ages)<-names(dist_t0_v)
 #create an empty vector for the current distribution of the model
 # for (t in (1:1201)){
 # if(((t-1)%%120)==0){
@@ -57,7 +38,7 @@ for(i in 1:nrow(can_go)){ # i=1
   pi <- rep(0:3,each=4)[i]; mi <- rep(0:3,4)[i]
   can_go[i, rep(0:3,each=4)%in%(pi + -1:1)  & rep(0:3,4)%in%(mi + -1:1)] <- 1
 }
-did_go <- can_go; did_go[] <- 0
+
 
 for (ag in 1:11){
   did_go <- can_go; did_go[] <- 0
@@ -66,8 +47,15 @@ for (ag in 1:11){
    x<-c(.0113957,.0123302,.012528,.0124515,.0120711,.0111045,.00928025,.00676634,.00428208,.00267804,.00154398)
   for(m in 0:3) {
     for(p in 0:3) {
-       if ((ag < 8)| ((IP$RRmuRF[m+1]*IP$RRmuHR[2])<5)){
-      dist_t1_v[(1+m)+p*4] = dist_t0_v[(1+m)+p*4]*(1-((IP$mubt[t,ag]*IP$RRmuRF[m+1]*IP$RRmuHR[2])*x[ag])+.0005)
+       if ((IP$RRmuRF[m+1]*IP$RRmuHR[2])<5){
+         if ((4<ag) & (ag>10)){
+      dist_t1_v[(1+m)+p*4] = dist_t0_v[(1+m)+p*4]*(1-((IP$mubt[t,ag]*IP$RRmuRF[m+1]*IP$RRmuHR[2])*x[ag])+.005)}
+         else if(ag>9){
+           dist_t1_v[(1+m)+p*4] = dist_t0_v[(1+m)+p*4]*(1-((IP$mubt[t,ag]*IP$RRmuRF[m+1]*IP$RRmuHR[2])*x[ag])+.01)
+         }
+         else{
+           dist_t1_v[(1+m)+p*4] = dist_t0_v[(1+m)+p*4]*(1-((IP$mubt[t,ag]*IP$RRmuRF[m+1]*IP$RRmuHR[2])*x[ag]))
+         }
 } else {
       dist_t1_v[(1+m)+p*4] = dist_t0_v[(1+m)+p*4]*(1-(IP$mubt[t,ag]*(5+(.5*m))))}
     } }
@@ -92,8 +80,6 @@ for (n in 1:N){
   #this loop is probs the most complicated
   for(r in 1:16) {
     for(c in 1:16)  {
-      # print(r); print(c)
-      # print(diff_i_v[r]-diff_i_v[c])
       trans_mat[r,c] <- can_go[r,c]*max(0,(diff_i_v[r]-diff_i_v[c]))
     }
   }
@@ -122,9 +108,9 @@ for (n in 1:N){
 #update in one step
 
 trans_mat_tot <- did_go
-print(trans_mat_tot)
+# print(trans_mat_tot)
 for(i in 1:16) {
-  trans_mat_tot[i,] <- (did_go[i,]) / (dist_t0_v[i]+1e-200)
+  trans_mat_tot[i,] <- did_go[i,] / (dist_t0_v[i]+1e-200)
 }
 
 diag(trans_mat_tot) <- 1-rowSums(trans_mat_tot)
@@ -133,40 +119,11 @@ diag(trans_mat_tot) <- 1-rowSums(trans_mat_tot)
 
 for (i in 1:16){
   for (j in 1:16){
-
 trans_mat_tot_ages[((16*(((t-1)/120)+1))-(16-i)),((16*ag)-(16-j))]<-trans_mat_tot[i,j]
   }
-dist_orig[ag,i]<-dist_t1_v[i]
 }
 
-colnames(trans_mat_tot_ages)<-paste0(rep(paste0("ag",1:11), each=16),"_",paste0(rep(paste0("p",0:3),each=4),"_",rep(paste0("m",0:3),4)))
-
 }#end of age loop
-#trans_mat_tot_ages=trans_mat_tot_ages*10;
-# }
-#   }  #end of time loop
+
 return(trans_mat_tot_ages)
 } #end of function loop
-
-# Now finally update distribution
-# dist_new_v <- rep(NA,176)
-# dist_new_v[] <- 0
-# for (ag in 1:11){
-# for(m in 0:3) {
-#   for(p in 0:3) {
-#     for(m2 in 0:3) {
-#       for(p2 in 0:3) {
-#         dist_new_v[ag+(m*11)+(p*44)] <- dist_new_v[ag+(m*11)+(p*44)]+dist_t1_v[ag+(m*11)+(p*44)]*trans_mat_tot_ages[1+m2+p2*4,(16*ag)-(16-(m+p*4))]
-#       }
-#     }
-#   }
-# }
-# }
-# ##dist_new_v[ag+((m+1)*11)+((p+1)*44)] =
-#
-# dist_new_v-dist_t0_v
-#after calculating a matrix for every ten years, we will use a linear spline function
-#to create a linear trend for each transition probability.
-
-#in order to increase computational efficiency, this process will be wrapped in a
-#loop that "skips" over transition probabilities that are zero.
