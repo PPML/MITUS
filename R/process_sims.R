@@ -36,8 +36,9 @@ OutputsZint <-  function(samp_i=1,ParMatrix,endyr=2050,Int1=0,Int2=0,Int3=0,Int4
 
    P <- Par
    IP <- param_init(P,Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3)
+   trans_mat_tot_ages<<-reblnc(IP)
 
-   m <-       cSim(        nYrs     =   2050-1950         , nRes      = length(IP[["ResNam"]]), rDxt     = IP[["rDxt"]]    , TxQualt    = IP[["TxQualt"]]   , InitPop  = IP[["InitPop"]]    ,
+  m <-       cSim(        nYrs     =   2050-1950         , nRes      = length(IP[["ResNam"]]), rDxt     = IP[["rDxt"]]    , TxQualt    = IP[["TxQualt"]]   , InitPop  = IP[["InitPop"]]    ,
                            Mpfast     = IP[["Mpfast"]]    , ExogInf   = IP[["ExogInf"]]       , MpfastPI = IP[["MpfastPI"]], Mrslow     = IP[["Mrslow"]]    , rrSlowFB = IP[["rrSlowFB"]]    ,
                            rfast      = IP[["rfast"]]     , RRcurDef  = IP[["RRcurDef"]]      , rSlfCur  = IP[["rSlfCur"]] , p_HR       = IP[["p_HR"]]      , dist_gen = IP[["dist_gen"]]    ,
                            vTMort     = IP[["vTMort"]]    , RRmuRF    = IP[["RRmuRF"]]        , RRmuHR   = IP[["RRmuHR"]]  , muTbRF     = IP[["muTbRF"]]    , Birthst  = IP[["Birthst"]]    ,
@@ -45,11 +46,10 @@ OutputsZint <-  function(samp_i=1,ParMatrix,endyr=2050,Int1=0,Int2=0,Int3=0,Int4
                            mubt       = IP[["mubt"]]      , RelInf    = IP[["RelInf"]]        , RelInfRg = IP[["RelInfRg"]], Vmix       = IP[["Vmix"]]      , rEmmigFB = IP [["rEmmigFB"]]  ,
                            TxVec      = IP[["TxVec"]]     , TunTxMort = IP[["TunTxMort"]]     , rDeft    = IP[["rDeft"]]   , pReTx      = IP[["pReTx"]]     , LtTxPar  = IP[["LtTxPar"]]    ,
                            LtDxPar    = IP[["LtDxPar"]]   , rLtScrt   = IP[["rLtScrt"]]       , RRdxAge  = IP[["RRdxAge"]] , rRecov     = IP[["rRecov"]]    , pImmScen = IP[["pImmScen"]]   ,
-                           EarlyTrend = IP[["EarlyTrend"]], NixTrans  = IP[["NixTrans"]]      , can_go   = IP[["can_go"]]  , dist_goal  = IP[["dist_goal"]] , diff_i_v = IP[["diff_i_v"]]   ,
-                           dist_orig_v=IP[["dist_orig_v"]]
+                           EarlyTrend = IP[["EarlyTrend"]], NixTrans  = IP[["NixTrans"]]      , trans_mat_tot_ages = trans_mat_tot_ages
                            )$Outputs
    colnames(m) <- IP[["ResNam"]];
-   results<<-m
+   results<<-as.data.frame(m)
 
    return(results)
 }
