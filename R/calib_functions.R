@@ -231,7 +231,7 @@ homeless_10_lLik <- function(V) {
 ########################################################################################
 #'Functions for likelihood of different published estimates
 ########################################################################################
-dist_gen <- matrix(1:16,4,4); dist_gen <- dist_gen/sum(dist_gen)
+# dist_gen <- matrix(1:16,4,4); dist_gen <- dist_gen/sum(dist_gen)
 #' #'Likelihood of Borgdorff Estimates
 #' #'across the tb_progression groups
 #' #'average at the end
