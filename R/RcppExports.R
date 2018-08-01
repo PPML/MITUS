@@ -44,12 +44,9 @@
 #'@param pReTx probability of re-treatment for TB
 #'@param NixTrans
 #'@param dist_gen general distribution across tb progression and mort
-#'@param can_go matrix of logical transitions for reblnc code
-#'@param dist_goal_v goal distribution of reblnc code
-#'@param dist_orig_v empty vector for reblnc
-#'@param diff_i_v empty vector for reblnc
+#'@param trans_mat_tot_ages
 #'@return a list of outputs
-cSim <- function(nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow, rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, muTbRF, Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, mubt, RelInf, RelInfRg, Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, LtTxPar, LtDxPar, RRdxAge, rRecov, pImmScen, EarlyTrend, pReTx, NixTrans, dist_gen, can_go, dist_goal_v, dist_orig_v, diff_i_v) {
-    .Call('_MITUS_cSim', PACKAGE = 'MITUS', nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow, rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, muTbRF, Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, mubt, RelInf, RelInfRg, Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, LtTxPar, LtDxPar, RRdxAge, rRecov, pImmScen, EarlyTrend, pReTx, NixTrans, dist_gen, can_go, dist_goal_v, dist_orig_v, diff_i_v)
+cSim <- function(nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow, rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, muTbRF, Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, mubt, RelInf, RelInfRg, Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, LtTxPar, LtDxPar, RRdxAge, rRecov, pImmScen, EarlyTrend, pReTx, NixTrans, dist_gen, trans_mat_tot_ages) {
+    .Call('_MITUS_cSim', PACKAGE = 'MITUS', nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow, rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, muTbRF, Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, mubt, RelInf, RelInfRg, Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, LtTxPar, LtDxPar, RRdxAge, rRecov, pImmScen, EarlyTrend, pReTx, NixTrans, dist_gen, trans_mat_tot_ages)
 }
 
