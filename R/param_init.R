@@ -21,7 +21,7 @@
 param_init <- function(ParVector,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0){
 data("ModelInputs_9-2-16", package='MITUS')
 #'Create an empty list to hold the formatted intitial parameters
-InputParams <-vector("list", 45)
+InputParams <-vector("list", 42)
 names(InputParams) <- c("rDxt","TxQualt", "InitPop", "Mpfast", "ExogInf", "MpfastPI",
                         "Mrslow", "rrSlowFB", "rfast"    ,"RRcurDef"      , "rSlfCur"  ,
                         "p_HR"        , "dist_gen" , "vTMort"   ,"RRmuRF"          , "RRmuHR",
@@ -29,22 +29,34 @@ names(InputParams) <- c("rDxt","TxQualt", "InitPop", "Mpfast", "ExogInf", "Mpfas
                         "ImmAct"      , "ImmFst" , "mubt"     ,"RelInf"        , "RelInfRg" ,
                         "Vmix"       , "rEmmigFB" , "TxVec"    , "TunTxMort"    , "rDeft"    ,
                        "pReTx"      , "LtTxPar"  , "LtDxPar"  , "rLtScrt"      , "RRdxAge"  ,
-                        "rRecov"      , "pImmScen"  ,   "EarlyTrend", "NixTrans"    , "can_go"  ,
-                        "dist_goal"      ,  "diff_i_v" ,"dist_orig_v", "ResNam")
+                        "rRecov"      , "pImmScen"  ,   "EarlyTrend", "NixTrans"    ,
+                        "ResNam")
 ################################################################################
 ##### INTERVENTION
 ################################################################################
 if(Int5==1) {
   Int1 = Int2 = Int3 = Int4 = 1
 }
-
+num_mRF = 4
+num_pRF = 4
+pars = c(-2.5,2,0.6)
+cuts <- lgt(0:4/4)
+dist_gen<-matrix(NA,4,4)
+for(i in 1:num_mRF) {
+  for(j in 1:num_pRF) {
+    dist_gen[i,j] <- pmvnorm(lower = cuts[c(i,j)],
+                             upper = cuts[c(i,j)+1],
+                             mean  = pars[c(1,1)],
+                             sigma = matrix(pars[2]*c(1,pars[3],pars[3],1),2,2) )[[1]]
+  }
+}
 #'params from general reblnc_pop:
 InputParams[["dist_gen"]] <- dist_gen;
-InputParams[["can_go"]] <- can_go;
-InputParams[["dist_goal"]] <-dist_goal;
-InputParams[["diff_i_v"]] <-diff_i_v;
-InputParams[["dist_orig_v"]] <-dist_orig_v;
-################################################################################
+# InputParams[["can_go"]] <- can_go;
+# InputParams[["dist_goal"]] <-dist_goal;
+# InputParams[["diff_i_v"]] <-diff_i_v;
+# InputParams[["dist_orig_v"]] <-dist_orig_v;
+# ################################################################################
 ###########################          INPUTS            #########################
 ################################################################################
 BgMort                   <- Inputs[["BgMort"]]
@@ -82,9 +94,9 @@ InputParams[["muTbRF"]]    <- P["muTbH"]/12
 InputParams[["RRmuHR"]]    <- c(1,P["RRmuHR"])
 
 ############### CREATE A MATRIX OF RF MORTALITIES BY AGE GROUP ###############
-mort_dist<-rowSums(InputParams[["dist_goal"]])
+mort_dist<-rowSums(InputParams[["dist_gen"]])
 
-RF_fact=2
+RF_fact=20
 
 InputParams[["RRmuRF"]]   <- rep(NA,4);
 names(InputParams[["RRmuRF"]]) <- c("RF1","RF2","RF3","RF4")
