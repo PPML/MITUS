@@ -48,11 +48,8 @@ for (ag in 1:11){
   for(m in 0:3) {
     for(p in 0:3) {
        if ((IP$RRmuRF[m+1]*IP$RRmuHR[2])<5){
-         if ((4<ag) & (ag>10)){
+         if ((4<ag) & (ag>9)){
       dist_t1_v[(1+m)+p*4] = dist_t0_v[(1+m)+p*4]*(1-((IP$mubt[t,ag]*IP$RRmuRF[m+1]*IP$RRmuHR[2])*x[ag])+.005)}
-         else if(ag>9){
-           dist_t1_v[(1+m)+p*4] = dist_t0_v[(1+m)+p*4]*(1-((IP$mubt[t,ag]*IP$RRmuRF[m+1]*IP$RRmuHR[2])*x[ag])+.01)
-         }
          else{
            dist_t1_v[(1+m)+p*4] = dist_t0_v[(1+m)+p*4]*(1-((IP$mubt[t,ag]*IP$RRmuRF[m+1]*IP$RRmuHR[2])*x[ag]))
          }
