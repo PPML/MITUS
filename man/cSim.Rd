@@ -8,8 +8,7 @@ cSim(nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow,
   rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, muTbRF,
   Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, mubt, RelInf, RelInfRg,
   Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, LtTxPar, LtDxPar, RRdxAge,
-  rRecov, pImmScen, EarlyTrend, pReTx, NixTrans, dist_gen, can_go, dist_goal_v,
-  dist_orig_v, diff_i_v)
+  rRecov, pImmScen, EarlyTrend, pReTx, NixTrans, dist_gen, trans_mat_tot_ages)
 }
 \arguments{
 \item{nYrs}{number of years to run the model.}
@@ -89,14 +88,6 @@ cSim(nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow,
 \item{pReTx}{probability of re-treatment for TB}
 
 \item{dist_gen}{general distribution across tb progression and mort}
-
-\item{can_go}{matrix of logical transitions for reblnc code}
-
-\item{dist_goal_v}{goal distribution of reblnc code}
-
-\item{dist_orig_v}{empty vector for reblnc}
-
-\item{diff_i_v}{empty vector for reblnc}
 
 \item{muTBRF}{comorbidity factor btw TB and mortality risk group}
 }
