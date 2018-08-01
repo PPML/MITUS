@@ -60,7 +60,7 @@ param <- function (P){
 
 ############### CREATE A MATRIX OF RF MORTALITIES BY AGE GROUP ###############
   ############### CREATE A MATRIX OF RF MORTALITIES BY AGE GROUP ###############
-  mort_dist<-rowSums(dist_goal)
+  mort_dist<-rowSums(dist_gen)
 
   RF_fact=20
 
@@ -585,10 +585,11 @@ Params[["rRecov"]]    = rRecov
 Params[["pImmScen"]]  = pImmScen
 Params[["EarlyTrend"]]= EarlyTrend
 # Params[["NixTrans"]]  = NixTrans
-Params[["can_go"]]    = can_go
-Params[["dist_goal"]] = dist_goal
-Params[["diff_i_v"]]  = diff_i_v
-Params[["dist_orig_v"]]=dist_orig_v
+# Params[["can_go"]]    = can_go
+# Params[["dist_goal"]] = dist_goal
+# Params[["diff_i_v"]]  = diff_i_v
+# Params[["dist_orig_v"]]=dist_orig_v
 Params[["ResNam"]]    = ResNam
 return(Params)
 }
+
