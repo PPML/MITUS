@@ -122,7 +122,7 @@ Rcpp::List cSim(
   double        LtDxParN[LtDxPar.nrow()][LtDxPar.ncol()];
   double        TxVecZ[6];
   double        temp;
-  long double        temp2;
+  double        temp2;
   double        temp3;
   double        temp4;
   double        indextemp;
@@ -130,37 +130,37 @@ Rcpp::List cSim(
   double        rTbP;
   double        rTbN;
   double        Outputs[nYrs][nRes];
-  long double   V0[11][6][2][4][4][2][3];
-  long double   V1[11][6][2][4][4][2][3];
-  long double   V2[11][6][2][4][4][2][3];
-  long double   VMort[11][6][2][4][4][2][3];
+  double   V0[11][6][2][4][4][2][3];
+  double   V1[11][6][2][4][4][2][3];
+  double   V2[11][6][2][4][4][2][3];
+  double   VMort[11][6][2][4][4][2][3];
   double        Vdx[11][6][2][4][4][2][3];
   double        VLdx[11][6][2][4][4][2][3];
-  long double        VNkl[2][2];  ///HIGH AND LOW RISK, NATIVITY
-  long  double        VGjkl[2][2]; ///HIGH AND LOW RISK, NATIVITY
-  long double        Vjaf[4];     ///BY NUMBER OF MIXING GROUPS
-  long  double        VLjkl[2][2];  ///HIGH AND LOW RISK, NATIVITY
+  double        VNkl[2][2];  ///HIGH AND LOW RISK, NATIVITY
+  double        VGjkl[2][2]; ///HIGH AND LOW RISK, NATIVITY
+  double        Vjaf[4];     ///BY NUMBER OF MIXING GROUPS
+  double        VLjkl[2][2];  ///HIGH AND LOW RISK, NATIVITY
   int           N;
-  long double        dist_genN[dist_gen.nrow()][dist_gen.ncol()];
-  long double        temp_vec[16];
-  long double        temp_mat[4][4];
+  double        dist_genN[dist_gen.nrow()][dist_gen.ncol()];
+  // double        temp_vec[16];
+  double        temp_mat[4][4];
   double   temp_mat2[4][4];
-  long double trans_mat_tot_agesN[trans_mat_tot_ages.nrow()][trans_mat_tot_ages.ncol()];
+  double trans_mat_tot_agesN[trans_mat_tot_ages.nrow()][trans_mat_tot_ages.ncol()];
   // double burnvec[12672];
   // double        pop_t;
   // double        sse;
-  long double        rowsum[16];
-  long  double        mat_sum;
-  long double temp_vec2[4];
+  // long double        rowsum[16];
+  double        mat_sum;
+  double temp_vec2[4];
   int reblnc; int tb_dyn;
   Rcpp::NumericMatrix Outputs2(nYrs,nRes);
   Rcpp::NumericMatrix dist_mat(4,4);
   double RRmuRFN[4];
   double mort_dist[4];
-  double func_dist[16];
-  long double temp_vec3[11];
-  long double temp_vec4[11];
-  long double temp_vec5[11];
+  // double func_dist[16];
+  // long double temp_vec3[11];
+  // long double temp_vec4[11];
+  // long double temp_vec5[11];
 
   ///////////////////////////////////////////////////////////////////////////////
   ///////                            INITIALIZE                             /////
@@ -311,11 +311,11 @@ Rcpp::List cSim(
     // } }
     // for(int rg=0; rg<2; rg++){RRmuHR[rg]=1; }
     muTbRF =0;
-    for(int i=0; i < 11; i++)
-    {  temp_vec3[i]=0;
-      temp_vec4[i]=0;
-      temp_vec5[i]=0;
-    }
+    // for(int i=0; i < 11; i++)
+    // {  temp_vec3[i]=0;
+    //   temp_vec4[i]=0;
+    //   temp_vec5[i]=0;
+    // }
   }
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -832,30 +832,7 @@ for(int ag=0; ag<11; ag++) {
   //   Rcpp::Rcout<<"proportion of high risk at ag = " << ag << "is " << temp/mat_sum<< "\n";
   //   }
 
-    // for (int i=0; i<4; i++){
-    //         for (int j=0; j<4; j++){
-    //           temp_mat[i][j]=0; } }
-    //       mat_sum=0;
-    //       for(int nm=0; nm<4; nm++){
-    //         for(int ag=0; ag<11; ag++) {
-    //           for(int tb=0; tb<6; tb++) {
-    //             for(int lt=0; lt<2; lt++){
-    //
-    //               for(int im=0; im<4; im++) {
-    //                 for(int rg=0; rg<2; rg++){
-    //                   for(int na=0; na<3; na++){
-    //                     temp_mat[nm][im]  += V1[ag][tb][lt][im][nm][rg][na];
-    //                   } } } } } }
-    //       }
-    //       for(int nm=0; nm<4; nm++){
-    //         for(int im=0; im<4; im++){
-    //           mat_sum+=temp_mat[nm][im];
-    //         } }
-    //       for(int nm=0; nm<4; nm++){
-    //         for(int im=0; im<4; im++){
-    //
-    //           dist_mat(nm,im) = temp_mat[nm][im]/mat_sum;
-    //         } }
+
     //       for (int i=0; i<4; i++){
     //         for (int j=0; j<4; j++){
     //
@@ -947,11 +924,12 @@ for(int ag=0; ag<11; ag++) {
                 } } } } } }
 
       /////////////////////////////////  MORTALITY  ///////////////////////////////////
+      for(int ag=0; ag<11; ag++) {
+
       for (int i=0; i<4; i++){
         temp_vec2[i]=0; }
       mat_sum=0;
       ///create a vector of the counts of # ppl in each mort group
-      for(int ag=0; ag<11; ag++) {
         for(int nm=0; nm<4; nm++){
           for(int tb=0; tb<6; tb++) {
             for(int lt=0; lt<2; lt++){
@@ -959,7 +937,7 @@ for(int ag=0; ag<11; ag++) {
                 for(int rg=0; rg<2; rg++){
                   for(int na=0; na<3; na++){
                     temp_vec2[nm] += V1[ag][tb][lt][im][nm][rg][na];
-                  } } } } } } }
+                  } } } } } }
       ////create a population total
       for(int nm=0; nm<4; nm++){
         mat_sum+=temp_vec2[nm];
@@ -976,7 +954,6 @@ for(int ag=0; ag<11; ag++) {
         RRmuRFN[nm]=RRmuRF[nm]/temp;
       }
       temp=0;
-      for(int ag=0; ag<11; ag++) {
         for(int lt=0; lt<2; lt++){
           for(int im=0; im<4 ; im++) {
             for(int nm=0; nm<4; nm++) {
@@ -1011,7 +988,8 @@ for(int ag=0; ag<11; ag++) {
                     // Rcpp::Rcout << "total mortality at time" << s << "is" << temp << "\n";
                   }
 
-                } } } } } }
+                } } } } }
+      } //end of age loop
       /////////////////////////////////////AGING///////////////////////////////////////
       for(int ag=0; ag<10; ag++) {
         /////          IF AGE > 4, IT TAKES 120 MONTHS TO LEAVE AGE GROUP          /////
@@ -1791,12 +1769,17 @@ for(int ag=0; ag<11; ag++) {
 
         for(int ag=0; ag<11; ag++) {
 
+          //update the
+
+
+
+
           for(int na=0; na<3; na++){
             for(int tb=0; tb<6; tb++) {
                for(int lt=0; lt<2; lt++){
-              for (int im=0; im<4; im++){
-                for (int nm=0; nm<4; nm++){
                   for(int rg=0; rg<2; rg++) {
+                    for (int im=0; im<4; im++){
+                      for (int nm=0; nm<4; nm++){
                     V2[ag][tb][lt][im][nm][rg][na]=0;
                   } } } } } }
 
@@ -1808,8 +1791,7 @@ for(int ag=0; ag<11; ag++) {
                     for(int tb=0; tb<6; tb++) {
                       for(int lt=0; lt<2; lt++){
                         for(int na=0; na<3; na++){
-                        // Rcout<< trans_mat_tot_agesN[m2+p2*4][(16*(ag+1))-(16-(nm+im*4))]<<"\n";
-                        V2[ag][tb][lt][im][nm][rg][na] += V1[ag][tb][lt][p2][m2][rg][na] *(trans_mat_tot_agesN[(m2+p2*4)][(16*(ag+1))-(16-(nm+im*4))]);//*(mubtN[s][ag]/mubtN[0][ag]);
+                        V2[ag][tb][lt][im][nm][rg][na] += V1[ag][tb][lt][p2][m2][rg][na] *((trans_mat_tot_agesN[(m2+p2*4)][(16*(ag+1))-(16-(nm+im*4))]));//*((mubtN[s][ag]/mubtN[0][ag])*.1));
                       } } } } } } } }
           for(int im=0; im<4; im++) {
             for(int nm=0; nm<4; nm++){
@@ -1827,45 +1809,7 @@ for(int ag=0; ag<11; ag++) {
     }//end of age loop
 
 
-      //
-      // for(int ag=0; ag<11; ag++) {
-      //   for(int na=0; na<3; na++){
-      //
-      //     for (int i=0; i<4; i++){
-      //       for (int j=0; j<4; j++){
-      //
-      //         temp_mat[i][j]=0; } }
-      //     mat_sum=0;
-      //     ////make a count of # of ppl in each mortality group
-      //     // for(int ag=0; ag<11; ag++) {
-      //     for(int tb=0; tb<6; tb++) {
-      //       for(int im=0; im<4; im++) {
-      //         for(int lt=0; lt<2; lt++){
-      //
-      //         for(int nm=0; nm<4; nm++){
-      //           for(int rg=0; rg<2; rg++){
-      //             if (V1[ag][tb][lt][im][nm][rg][na]<0){
-      //               Rcout<< "V1 is neg @ na " << na << "\n";
-      //             }
-      //             temp_mat[nm][im] += V1[ag][tb][lt][im][nm][rg][na];
-      //           } } } } }
-      //     ////create a population total at this time point
-      //     // for(int ag=0; ag<11; ag++) {
-      //     for(int nm=0; nm<4; nm++){
-      //       for(int im=0; im<4; im++){
-      //
-      //         mat_sum+=temp_mat[nm][im];
-      //         // Rcpp::Rcout << "mat sum is" << mat_sum << "at ag = "<< ag<<"\n";
-      //       }}
-      //
-      //     ///calculate the mortality
-      //     for(int nm=0; nm<4; nm++){
-      //       for(int im=0; im<4; im++){
-      //         temp_mat2[nm][im] = temp_mat[nm][im]/mat_sum;
-      //         Rcpp::Rcout << "mort dist is" << temp_mat2[nm][im] << "at ag = "<< ag <<"and nat = "<< na<<"\n";}
-      //     }
-      //
-      //   } }
+
   //     //
   //     //    ///////////////////////////////////////////////////////////////////////////////////
   //     //    ///////////                       UPDATE V0 as V1                       ///////////
@@ -1884,7 +1828,36 @@ for(int ag=0; ag<11; ag++) {
       //                 V0[ag][tb][lt][im][nm][rg][na] = V1[ag][tb][lt][im][nm][rg][na];
       //               // }
       //             } } } } } } }
-
+      // for(int ag=0; ag<11; ag++) {
+      //
+      // for (int i=0; i<4; i++){
+      //   for (int j=0; j<4; j++){
+      //     temp_mat[i][j]=0; } }
+      // mat_sum=0;
+      // for(int nm=0; nm<4; nm++){
+      //     for(int tb=0; tb<6; tb++) {
+      //       for(int lt=0; lt<2; lt++){
+      //
+      //         for(int im=0; im<4; im++) {
+      //           for(int rg=0; rg<2; rg++){
+      //             for(int na=0; na<3; na++){
+      //               temp_mat[nm][im]  += V1[ag][tb][lt][im][nm][rg][na];
+      //             } } } } }
+      // }
+      // for(int nm=0; nm<4; nm++){
+      //   for(int im=0; im<4; im++){
+      //     mat_sum+=temp_mat[nm][im];
+      //   } }
+      // for(int nm=0; nm<4; nm++){
+      //   for(int im=0; im<4; im++){
+      //
+      //     temp_mat2[nm][im] = temp_mat[nm][im]/mat_sum;
+      //   } }
+      // for(int nm=0; nm<4; nm++){
+      //   for(int im=0; im<4; im++){
+      // Rcpp::Rcout <<"at s "<<s <<"dist is = "<< temp_mat2[nm][im] << "at nm =" << nm <<" at im =" << im << "& ag = " <<ag<< "\n";
+        // } }
+      // }
      } //// end of month loop!//////////////////////////////////////////////////////////
    } //// end of year loop!///////////////////////////////////////////////////////////
   // for(int ag=0; ag<11; ag++) {
@@ -1914,6 +1887,45 @@ for(int ag=0; ag<11; ag++) {
   //       Rcpp::Rcout << temp_mat[nm][im] << "at nm = " << nm << "& im "<< im << "at ag "<< ag<< "\n";
   //
   //     } } }
+  //
+  for(int ag=0; ag<11; ag++) {
+
+      for (int i=0; i<4; i++){
+        for (int j=0; j<4; j++){
+
+          temp_mat[i][j]=0; } }
+      mat_sum=0;
+      ////make a count of # of ppl in each mortality group
+      // for(int ag=0; ag<11; ag++) {
+      for(int tb=0; tb<6; tb++) {
+        for(int im=0; im<4; im++) {
+          for(int lt=0; lt<2; lt++){
+            for(int na=0; na<3; na++){
+
+          for(int nm=0; nm<4; nm++){
+            for(int rg=0; rg<2; rg++){
+              if (V1[ag][tb][lt][im][nm][rg][na]<0){
+                Rcout<< "V1 is neg @ na " << na << "\n";
+              }
+              temp_mat[nm][im] += V1[ag][tb][lt][im][nm][rg][na];
+            } } } } } }
+      ////create a population total at this time point
+      // for(int ag=0; ag<11; ag++) {
+      for(int nm=0; nm<4; nm++){
+        for(int im=0; im<4; im++){
+
+          mat_sum+=temp_mat[nm][im];
+          // Rcpp::Rcout << "mat sum is" << mat_sum << "at ag = "<< ag<<"\n";
+        }}
+
+      ///calculate the mortality
+      for(int nm=0; nm<4; nm++){
+        for(int im=0; im<4; im++){
+          temp_mat2[nm][im] = temp_mat[nm][im]/mat_sum;
+          Rcpp::Rcout << "mort dist is" << temp_mat2[nm][im] << "at ag = "<< ag<<"\n";}
+      }
+
+    }
   ////////////////   RE-CHECK THAT NO STATES HAVE BECOME NEGATIVE    ////////////////
   Rcpp::NumericVector  CheckV(12672);
   for(int ag=0; ag<11; ag++) {
@@ -1941,7 +1953,30 @@ for(int ag=0; ag<11; ag++) {
   // // } else {Rcout << "no negatives \n" ;
   // //        }
   // } }
+  for (int i=0; i<4; i++){
+          for (int j=0; j<4; j++){
+            temp_mat[i][j]=0; } }
+        mat_sum=0;
+        for(int nm=0; nm<4; nm++){
+          for(int ag=0; ag<11; ag++) {
+            for(int tb=0; tb<6; tb++) {
+              for(int lt=0; lt<2; lt++){
 
+                for(int im=0; im<4; im++) {
+                  for(int rg=0; rg<2; rg++){
+                    for(int na=0; na<3; na++){
+                      temp_mat[nm][im]  += V1[ag][tb][lt][im][nm][rg][na];
+                    } } } } } }
+        }
+        for(int nm=0; nm<4; nm++){
+          for(int im=0; im<4; im++){
+            mat_sum+=temp_mat[nm][im];
+          } }
+        for(int nm=0; nm<4; nm++){
+          for(int im=0; im<4; im++){
+
+            dist_mat(nm,im) = temp_mat[nm][im]/mat_sum;
+          } }
   ///////////////////////////////////////////////////////////////////////////////////
   //////                              RETURN STUFF                              /////
   ///////////////////////////////////////////////////////////////////////////////////
@@ -1954,8 +1989,8 @@ for(int ag=0; ag<11; ag++) {
     Rcpp::List::create(
       Rcpp::Named("Outputs") = Outputs2,
       Rcpp::Named("V1")= CheckV,
-      Rcpp::Named("V") = CheckV0
-      // Rcpp::Named("dist_mat") = dist_mat
+      Rcpp::Named("V") = CheckV0,
+      Rcpp::Named("dist_mat") = dist_mat
 
     );
 
