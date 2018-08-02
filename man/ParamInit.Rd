@@ -4,7 +4,7 @@
 \name{ParamInit}
 \alias{ParamInit}
 \title{Let's try documenting something}
-\format{An object of class \code{data.frame} with 66 rows and 7 columns.}
+\format{An object of class \code{data.frame} with 67 rows and 8 columns.}
 \usage{
 ParamInit
 }

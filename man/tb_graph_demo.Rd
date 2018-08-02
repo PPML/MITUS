@@ -2,7 +2,10 @@
 % Please edit documentation in R/graphs_demo.R
 \name{tb_graph_demo}
 \alias{tb_graph_demo}
-\title{Create a function to be run on a specific model run output to
+\title{creates plots of the demographics of the model
+and writes these results to a .pdf file.
+Use to check both with and without tb in the model
+Create a function to be run on a specific model run output to
 create simple graphs of all the output for a selected year range}
 \usage{
 tb_graph_demo(df)
@@ -14,6 +17,9 @@ tb_graph_demo(df)
 .pdf of the graphs
 }
 \description{
+creates plots of the demographics of the model
+and writes these results to a .pdf file.
+Use to check both with and without tb in the model
 Create a function to be run on a specific model run output to
 create simple graphs of all the output for a selected year range
 }
