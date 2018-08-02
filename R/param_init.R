@@ -37,19 +37,7 @@ names(InputParams) <- c("rDxt","TxQualt", "InitPop", "Mpfast", "ExogInf", "Mpfas
 if(Int5==1) {
   Int1 = Int2 = Int3 = Int4 = 1
 }
-num_mRF = 4
-num_pRF = 4
-pars = c(-2.5,2,0.6)
-cuts <- lgt(0:4/4)
-dist_gen<-matrix(NA,4,4)
-for(i in 1:num_mRF) {
-  for(j in 1:num_pRF) {
-    dist_gen[i,j] <- pmvnorm(lower = cuts[c(i,j)],
-                             upper = cuts[c(i,j)+1],
-                             mean  = pars[c(1,1)],
-                             sigma = matrix(pars[2]*c(1,pars[3],pars[3],1),2,2) )[[1]]
-  }
-}
+
 #'params from general reblnc_pop:
 InputParams[["dist_gen"]] <- dist_gen;
 # InputParams[["can_go"]] <- can_go;
