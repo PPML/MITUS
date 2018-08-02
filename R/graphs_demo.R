@@ -2,8 +2,7 @@
 #' and writes these results to a .pdf file.
 #' Use to check both with and without tb in the model
 
-CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
-CalibDat$US_mort_age <- read.csv(file="inst/extdata/US_mort_age.csv", header = TRUE)
+
 
 #'Create a function to be run on a specific model run output to
 #'create simple graphs of all the output for a selected year range
@@ -13,6 +12,8 @@ CalibDat$US_mort_age <- read.csv(file="inst/extdata/US_mort_age.csv", header = T
 
 tb_graph_demo <- function(df){
 
+  CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
+  CalibDat$US_mort_age <- read.csv(file="inst/extdata/US_mort_age.csv", header = TRUE)
   data("CalibDat_2018-07-12", package='MITUS')#  source("R/calib_functions.R")
 
   pdf(file=paste("MITUS_results/graphs_demo",Sys.time(),".pdf"), width = 11, height = 8.5)
@@ -61,8 +62,8 @@ tb_graph_demo <- function(df){
   for(i in 1:8) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V3[i,1],V3[i,1]),border=NA,col="lightblue")
   for(i in 1:8) polygon(i+c(-.4,0,0,-.4),c(0.0001,0.0001,V3[i,2],V3[i,2]),border=NA,col="pink")
 
-  points(1:8+0.2,CalibDat[["tot_pop14_ag_fb"]][-9,3],pch=19,cex=1.2,col="blue")
-  points(1:8-0.2,CalibDat[["tot_pop14_ag_fb"]][-9,4],pch=19,cex=1.2,col="red3")
+  points(1:8+0.2,CalibDat[["tot_pop16_ag_fb"]][-9,3],pch=19,cex=1.2,col="blue")
+  points(1:8-0.2,CalibDat[["tot_pop16_ag_fb"]][-9,4],pch=19,cex=1.2,col="red3")
 
   mtext("Age Group",1,2.5,cex=0.9)
   box()
@@ -143,7 +144,7 @@ tb_graph_demo <- function(df){
   plot(0:4,0:4,xlab="",ylab="",col=NA)
 
   for(i in 1:4) points(1:4-0.5,rep(i-0.5,4),cex=dist_mat[i,]*50,pch=16,col="grey40")
-  for(i in 1:4) points(1:4-0.5,rep(i-0.5,4),cex=dist_goal[i,]*50,pch=16,col=mTrsp(2,75))
+  for(i in 1:4) points(1:4-0.5,rep(i-0.5,4),cex=IP$dist_gen[i,]*50,pch=16,col=mTrsp(2,75))
 
 
   mtext("TB Progression",1,2.5,cex=0.9)
@@ -197,8 +198,8 @@ tb_graph_demo <- function(df){
   lines(1950:2015,V[,2],lwd=2,col="red3")
   lines(1950:2015,V[,1],lwd=2,col="blue")
   lines(1950:2015,V1,lwd=2,col="grey50")
-  points(CalibDat$US_tot_mort[,1],CalibDat$US_tot_mort[,2]/1e6,pch=19,cex=0.6,col="grey50")
-  lines(CalibDat$US_tot_mort[,1],CalibDat$US_tot_mort[,2]/1e6,lty=3,col="grey50")
+  points(CalibDat$US_tot_mort[,1],CalibDat$US_tot_mort[,2],pch=19,cex=0.6,col="grey50")
+  lines(CalibDat$US_tot_mort[,1],CalibDat$US_tot_mort[,2],lty=3,col="grey50")
 
   mtext("Year",1,2.5,cex=0.9)
   mtext("Mortality: Total, US, and Foreign Born",3,.8,font=2,cex=0.8)
@@ -404,7 +405,7 @@ tb_graph_demo <- function(df){
 
   box()
   mtext("Percent of Each Mortality Group Killed, 1950-2014",3,.8,font=2,cex=0.8)
-  legend("bottomright",c("MG1","MG2","MG3","MG4","Model"),pch=c(15,15,15,15,NA),lwd=c(NA,NA,NA,NA,2),lty=c(NA,NA,NA,NA,1), col=c("green","gold","orange","red3","black"),bg="white")
+  legend("bottomleft",c("MG1","MG2","MG3","MG4","Model"),pch=c(15,15,15,15,NA),lwd=c(NA,NA,NA,NA,2),lty=c(NA,NA,NA,NA,1), col=c("green","gold","orange","red3","black"),bg="white")
 
 
   # ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -459,7 +460,7 @@ tb_graph_demo <- function(df){
   # ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   V   <- cbind(df[1:65,510:520])
   x<-seq(6,781,12)
-  V2  <-InputParams[["mubt"]][x,]
+  V2  <-IP[["mubt"]][x,]
 
   col<-rainbow(11)
 
@@ -473,8 +474,8 @@ tb_graph_demo <- function(df){
 
   mtext("Year",1,2.5,cex=0.9)
   mtext("Age Specific Mortality Rates from 1950 to 2014",3,.8,font=2,cex=0.8)
-  legend("topright",colnames(V),cex=0.9,
-         pch=rep(15,i),lwd=rep(NA,i),lty=rep(NA,i),col=col,bg="white",pt.cex=rep(1.8,i))
+  #legend("topright",colnames(V),cex=0.9,
+       #  pch=rep(15,i),lwd=rep(NA,i),lty=rep(NA,i),col=col,bg="white",pt.cex=rep(1.8,i))
   }
 dev.off()
   }
