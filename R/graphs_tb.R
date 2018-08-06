@@ -21,31 +21,32 @@ tbdyn_graphs <-function(df){
 
   #' graph of total diagnosed cases
   #' by total population, US born population, and non-US born population
-  V0 <- df[4:66,"NOTIF_ALL"]+df[4:66,"NOTIF_MORT_ALL"] #total population
-  V1 <- df[44:66,"NOTIF_US"]+df[44:66,"NOTIF_MORT_US"]   #US born population
-  V2 <- df[44:66,"NOTIF_F1"]+df[44:66,"NOTIF_F2"]+df[44:66,"NOTIF_MORT_F1"]+df[44:66,"NOTIF_MORT_F2"]   #non-US born population
+  V0 <- df[4:67,"NOTIF_ALL"]+df[4:67,"NOTIF_MORT_ALL"] #total population
+  V1 <- df[44:67,"NOTIF_US"]+df[44:67,"NOTIF_MORT_US"]   #US born population
+  V2 <- df[44:67,"NOTIF_F1"]+df[44:67,"NOTIF_F2"]+df[44:67,"NOTIF_MORT_F1"]+df[44:67,"NOTIF_MORT_F2"]   #non-US born population
 
   #'format the plot
-  plot(0,0,ylim=c(0,max(range(V0*1e3))),xlim=c(1954,2015),xlab="",ylab="",axes=F)
+  plot(1,1,ylim=c(0.01,10000),xlim=c(1954,2015),xlab="",ylab="",axes=F, log = "y")
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
 
   #'plot the model data
-  lines(1953:2015,V0*1e3,lwd=3,col="white"); lines(1953:2015,V0*1e3,lwd=2,col=1) #total population
-  lines(1993:2015,V1*1e3,lwd=3,col="white"); lines(1993:2015,V1*1e3,lwd=2,col=4) #US born population
-  lines(1993:2015,V2*1e3,lwd=3,col="white"); lines(1993:2015,V2*1e3,lwd=2,col=3) #non-US born population
+  #'multiply raw output by 1,000 to convert from millions to thousands
+  lines(1953:2016,V0*1e3,lwd=3,col="white"); lines(1953:2016,V0*1e3,lwd=2,col=1) #total population
+  lines(1993:2016,V1*1e3,lwd=3,col="white"); lines(1993:2016,V1*1e3,lwd=2,col=4) #US born population
+  lines(1993:2016,V2*1e3,lwd=3,col="white"); lines(1993:2016,V2*1e3,lwd=2,col=3) #non-US born population
 
   #'reported data for comparison
-  points(CalibDat[["tot_cases"]][,1],CalibDat[["tot_cases"]][,2]*1e3,pch=19,cex=0.3) #total population
-  lines(CalibDat[["tot_cases"]][,1],CalibDat[["tot_cases"]][,2]*1000,lty=3,col=1)
+  points(CalibDat[["tot_cases"]][,1],CalibDat[["tot_cases"]][,2],pch=19,cex=0.3) #total population
+  lines(CalibDat[["tot_cases"]][,1],CalibDat[["tot_cases"]][,2],lty=3,col=1)
 
   notif_fb      <- cbind(CalibDat[["fb_cases"]][,2],1-CalibDat[["fb_cases"]][,2])*CalibDat[["fb_cases"]][,3]
 
-  points(1993:2016,notif_fb[,2]*1e3,pch=19,cex=0.3,col=4) #US born population
-  lines(1993:2016,notif_fb[,2]*1e3,pch=19,lty=3,col=4)
+  points(1993:2016,notif_fb[,2],pch=19,cex=0.3,col=4) #US born population
+  lines(1993:2016,notif_fb[,2],pch=19,lty=3,col=4)
 
-  points(1993:2016,notif_fb[,1]*1e3,pch=19,cex=0.3,col=3) #non-US born population
-  lines(1993:2016,notif_fb[,1]*1e3,lty=3,col=3)
+  points(1993:2016,notif_fb[,1],pch=19,cex=0.3,col=3) #non-US born population
+  lines(1993:2016,notif_fb[,1],lty=3,col=3)
 
   #'plot text
   mtext("Year",1,2.5,cex=0.9)
@@ -215,7 +216,7 @@ tbdyn_graphs <-function(df){
 ################################################################################
   #'LTBI Prevalance by Age in 2011, US born
 
-  V  <- cbind(df[62,55:65],(df[62,33:43]-df[62,55:65]))
+  V  <- cbind(t(df[62,55:65]),t(df[62,33:43]-df[62,55:65]))
   colnames(V) <- c("LTBI", "No-LTBI")
 
   V1 <- V[-11,]; V1<-V1[-10,]
@@ -250,7 +251,7 @@ tbdyn_graphs <-function(df){
   ################################################################################
   #'LTBI Prevalance by Age in 2011, non-US born
 
-  V  <- cbind(df[62,66:76],(df[62,44:54]-df[62,66:76]))
+  V  <- cbind(t(df[62,66:76]),t(df[62,44:54]-df[62,66:76]))
 
   colnames(V) <- c("LTBI", "No-LTBI")
 
