@@ -5,7 +5,7 @@
 #'@return list
 #'@export
  UnivOptim <- function(parr) {
-   data("StartVal_ 2018-06-28 ", package = 'MITUS')
+   data("StartVal_2018", package = "MITUS")
    print(posterior(parr))
    parr2 <- parr
    for(fi in 1:ncol(StartVal)) {

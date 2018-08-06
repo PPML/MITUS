@@ -13,7 +13,7 @@
 #'@export
 
 optim_b <- function(df, samp_i=1){
-
+data("StartVal_2018", package = "MITUS")
 data("ParamInit_2018", package='MITUS')
 P  <- ParamInit[,1]
 names(P) <- rownames(ParamInit)
@@ -22,7 +22,6 @@ ParamInitZ <- ParamInit[ParamInit$Calib==1,]
 idZ0 <- ParamInitZ[,4]==0
 idZ1 <- ParamInitZ[,4]==1
 idZ2 <- ParamInitZ[,4]==2
-# data("StartVal_ 2018-06-28 ", package = 'MITUS') # StartVal
 
 posterior = function(theta) { -lprior(theta) - llikelihood(theta,n_cores) }
 
