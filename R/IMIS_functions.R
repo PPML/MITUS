@@ -11,8 +11,11 @@ source("R/define_P.R")
 #'@param ParMatrix matrix of parameters  # Par = par_1
 #'@return lLik
 llikelihoodZ <-  function(samp_i,ParMatrix) {
-  Par <- ParMatrix[samp_i,]
-  ##previously, the distribution of parameters were transformed to normal distribution in
+  if(min(dim(as.data.frame(ParMatrix)))==1) {
+    Par <- as.numeric(ParMatrix);
+    names(Par) <- names(ParMatrix)
+  } else {  Par <- as.numeric(ParMatrix[samp_i,]);
+  names(Par) <- colnames(ParMatrix) }  ##previously, the distribution of parameters were transformed to normal distribution in
   ##to facilitate comparisons. These first two steps convert these parameters back to their
   ##distributions
   # normal to uniform
@@ -30,7 +33,7 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
     prms <- param(P)
     IP <- list()
     IP <- param_init(P)
-    trans_mat_tot_ages<<-reblncd(mubt = IP$mubt,can_go = can_go,RRmuHR = IP$RRmuHR[2], RRmuRF = IP$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v)
+    trans_mat_tot_ages<<-reblncd(mubt = IP$mubt,can_go = can_go,RRmuHR = IP$RRmuHR[2], RRmuRF = IP$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, IP$adj_fact)
 
     zz <- cSim(  nYrs       =   2050-1950         , nRes      = length(prms[["ResNam"]]), rDxt     = prms[["rDxt"]]    , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
                  Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]    ,
@@ -127,7 +130,7 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
       v2456  <- list(prms[["Mpfast"]],prms[["Mrslow"]], prms[["rfast"]],prms[["rRecov"]])
       addlik <- borgdorff_lLik( Par=v2456); addlik
       lLik <- lLik + addlik
-      addlik <- ferebee_lLik(   Par=v2456); addlik
+      addlik <- ferebee_lLik(Par=v2456); addlik
       lLik <- lLik + addlik
       addlik <- sutherland_lLik(Par=v2456); addlik
       lLik <- lLik + addlik
