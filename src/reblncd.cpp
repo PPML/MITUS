@@ -14,7 +14,8 @@ Rcpp::NumericMatrix reblncd(
   double RRmuHR,
   std::vector<double> RRmuRF,
   std::vector<double> HRdist,
-  std::vector<double> dist_gen_v
+  std::vector<double> dist_gen_v,
+  std::vector<double> adj_fact
 ){
   double mubtN[11];
   double dist_i_v[16];
@@ -30,6 +31,7 @@ Rcpp::NumericMatrix reblncd(
   Rcpp::NumericMatrix trans_mat_tot_ages(16,176);
   double frc;
   int mat_sum; int N;
+
 
 /////Initialize the above objects
 
@@ -55,6 +57,8 @@ for (int i=0; i<11; i++){
 frc=0.001;
 mat_sum=0;
 N=0;
+
+
 ////////////////////////////////////////////////////////////////////////////////////////
 
 //'Open the Age Loop to Calculate Age Specific Transition Matrices
@@ -74,10 +78,10 @@ for(int ag=0; ag<11; ag++){
 
     if ((RRmuRF[nm]*RRmuHR)<5){
       if ((ag>5) & (ag<8)){
-        dist_t1_v[nm+im*4]=dist_gen_v[nm+im*4]*(1-((mubtN[ag]*RRmuRF[nm]*RRmuHR*HRdist[ag])-.0005));
+        dist_t1_v[nm+im*4]=dist_gen_v[nm+im*4]*(1-((mubtN[ag]*RRmuRF[nm]*RRmuHR*HRdist[ag])));
 
       } else if (ag>7){
-      dist_t1_v[nm+im*4]=dist_gen_v[nm+im*4]*(1-((mubtN[ag]*RRmuRF[nm]*RRmuHR*HRdist[ag])-0.0025));
+      dist_t1_v[nm+im*4]=dist_gen_v[nm+im*4]*(1-((mubtN[ag]*RRmuRF[nm]*RRmuHR*HRdist[ag])));
 
     }
       else{
@@ -86,9 +90,9 @@ for(int ag=0; ag<11; ag++){
    } else {
      if ((ag>5)& (ag<8)){
 
-   dist_t1_v[nm+im*4]=dist_gen_v[nm+im*4]*(1-((mubtN[ag]*5*HRdist[ag])-0.0005));
+   dist_t1_v[nm+im*4]=dist_gen_v[nm+im*4]*(1-((mubtN[ag]*5*HRdist[ag])));
      } else if (ag>7){
-       dist_t1_v[nm+im*4]=dist_gen_v[nm+im*4]*(1-((mubtN[ag]*5*HRdist[ag])-0.0025));
+       dist_t1_v[nm+im*4]=dist_gen_v[nm+im*4]*(1-((mubtN[ag]*5*HRdist[ag])));
      } else{
        dist_t1_v[nm+im*4]=dist_gen_v[nm+im*4]*(1-(mubtN[ag]*5*HRdist[ag]));
      }
@@ -223,7 +227,10 @@ for(int ag=0; ag<11; ag++){
       if (i==j){
         trans_mat_tot[i][j]=(1-row_sum[i]); //the remainder of those that did not transition to another state
   } } }
-
+  for(int i=0; i<16; i++){
+    for(int j=0; j<16; j++){
+  trans_mat_tot[i][j]=trans_mat_tot[i][j]*adj_fact[ag];
+    } }
   for(int i=0; i<16; i++){
     for(int j=0; j<16; j++){
       trans_mat_tot_ag[i][(16*ag)+j]=trans_mat_tot[i][j];
