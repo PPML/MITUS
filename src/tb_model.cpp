@@ -142,7 +142,7 @@ Rcpp::List cSim(
   double        VLjkl[2][2];  ///HIGH AND LOW RISK, NATIVITY
   int           N;
   double        dist_genN[dist_gen.nrow()][dist_gen.ncol()];
-  // double        temp_vec[16];
+  double        temp_vec[4];
   double        temp_mat[4][4];
   double   temp_mat2[4][4];
   double trans_mat_tot_agesN[trans_mat_tot_ages.nrow()][trans_mat_tot_ages.ncol()];
@@ -258,6 +258,8 @@ Rcpp::List cSim(
     Vjaf[i]= 0;
     mort_dist[i]=0;
     temp_vec2[i]=0;
+    temp_vec[i]=0;
+
     RRmuRFN[i]=RRmuRF[i];
   }
   for(int ag=0; ag<11; ag++) {
@@ -404,33 +406,33 @@ Rcpp::List cSim(
               V1[ag][tb][0][im][nm][rg][2]  -= V0[ag][tb][0][im][nm][rg][2]*rEmmigFB[1];   // FB2
             } } } } }
     ////////////////////////////////MORTALITY//////////////////////////////////////
-    for (int i=0; i<4; i++){
-      temp_vec2[i]=0; }
-    mat_sum=0;
-    ////make a count of # of ppl in each mortality group
-    for(int ag=0; ag<11; ag++) {
-      for(int tb=0; tb<6; tb++) {
-        for(int im=0; im<4; im++) {
-          for(int nm=0; nm<4; nm++){
-            for(int rg=0; rg<2; rg++){
-              for(int na=0; na<3; na++){
-                temp_vec2[nm] += V1[ag][tb][0][im][nm][rg][na];
-              } } } } } }
-    ////create a population total at this time point
-    for(int nm=0; nm<4; nm++){
-      mat_sum+=temp_vec2[nm];}
-    ///calculate the mortality
-    for(int nm=0; nm<4; nm++){
-      mort_dist[nm] = temp_vec2[nm]/mat_sum; }
-    // Rcpp::Rcout << "mort dist is" << mort_dist[nm] << "@m= "<< m<< "for age = "<<ag<<"\n";}
-    temp=0;
-    for(int nm=0; nm<4; nm++){
-      temp+=(RRmuRF[nm]*mort_dist[nm]);}
-    mat_sum=0;
-    for(int nm=0; nm<4; nm++){
-      RRmuRFN[nm]=RRmuRF[nm]/temp;
-      // Rcpp::Rcout << "RRmuRF is" << RRmuRFN[nm] << "@m= "<< m<< "\n";
-    }
+    // for (int i=0; i<4; i++){
+    //   temp_vec2[i]=0; }
+    // mat_sum=0;
+    // ////make a count of # of ppl in each mortality group
+    // for(int ag=0; ag<11; ag++) {
+    //   for(int tb=0; tb<6; tb++) {
+    //     for(int im=0; im<4; im++) {
+    //       for(int nm=0; nm<4; nm++){
+    //         for(int rg=0; rg<2; rg++){
+    //           for(int na=0; na<3; na++){
+    //             temp_vec2[nm] += V1[ag][tb][0][im][nm][rg][na];
+    //           } } } } } }
+    // ////create a population total at this time point
+    // for(int nm=0; nm<4; nm++){
+    //   mat_sum+=temp_vec2[nm];}
+    // ///calculate the mortality
+    // for(int nm=0; nm<4; nm++){
+    //   mort_dist[nm] = temp_vec2[nm]/mat_sum; }
+    // // Rcpp::Rcout << "mort dist is" << mort_dist[nm] << "@m= "<< m<< "for age = "<<ag<<"\n";}
+    // temp=0;
+    // for(int nm=0; nm<4; nm++){
+    //   temp+=(RRmuRF[nm]*mort_dist[nm]);}
+    // mat_sum=0;
+    // for(int nm=0; nm<4; nm++){
+    //   RRmuRFN[nm]=RRmuRF[nm]/temp;
+    //   // Rcpp::Rcout << "RRmuRF is" << RRmuRFN[nm] << "@m= "<< m<< "\n";
+    // }
     temp=0;
     for(int ag=0; ag<11; ag++) {
       for(int im=0; im<4; im++) {
@@ -438,7 +440,7 @@ Rcpp::List cSim(
           for(int rg=0; rg<2; rg++) {
             for(int na=0; na<3; na++){
               for(int tb=0; tb<5; tb++) {
-                if ((ag<8) | ((RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][tb]) < 5)){
+                if ((ag<8) | ((RRmuRFN[nm]*RRmuHR[rg]) < 5)){
                   V1[ag][tb][0][im][nm][rg][na]  -= V0[ag][tb][0][im][nm][rg][na]*(mubtN[0][ag]*RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][tb]);
                 } else {
                   V1[ag][tb][0][im][nm][rg][na]  -= (V0[ag][tb][0][im][nm][rg][na]*(mubtN[0][ag]*5));
@@ -446,7 +448,7 @@ Rcpp::List cSim(
               }//close the tb loop
 
               ////////////////          MORTALITY WITH TB TREATMENT         ////////////////////
-              if ( (ag<8) |((RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][5 ]*pow(1.0-TxVecZ[1],TunTxMort))<5)){
+              if ( (ag<8) |((RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][5 ])<5)){
                 V1[ag][5 ][0][im][nm][rg][na]  -= V0[ag][5 ][0][im][nm][rg][na]*(mubtN[0][ag]*RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][5 ]*pow(1.0-TxVecZ[1],TunTxMort)); //check the mortality in param
               } else {
                 V1[ag][5 ][0][im][nm][rg][na]  -= (V0[ag][5 ][0][im][nm][rg][na]*(mubtN[0][ag]*5));
@@ -573,14 +575,14 @@ Rcpp::List cSim(
 
       // Step 4
       /// LOW RISK US BORN
-      VLjkl[0 ][0 ]  = (RelInfRg[0]*Vjaf[0])/4;
+      VLjkl[0 ][0 ]  = (RelInfRg[0]*Vjaf[0]);
       ///////// HIGH RISK US BORN
-      VLjkl[1 ][0 ]  = (RelInfRg[1]*Vjaf[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0])/4;
+      VLjkl[1 ][0 ]  = (RelInfRg[1]*Vjaf[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]);
       ///////// LOW RISK NON US BORN
-      VLjkl[0 ][1 ]  = ((RelInfRg[2]*Vjaf[2]*(1-Vmix[1]) + RelInfRg[0]*Vjaf[0]*Vmix[1])/4) + ExogInf[0];
+      VLjkl[0 ][1 ]  = ((RelInfRg[2]*Vjaf[2]*(1-Vmix[1]) + RelInfRg[0]*Vjaf[0]*Vmix[1])) + ExogInf[0];
       ///////// HIGH RISK NON US BORN
       ///check the use of RelInfRg here as beta, might need to be a combo param but unclear check the old param file
-      VLjkl[1 ][1 ]  = ((RelInfRg[3]*Vjaf[3]*(1-Vmix[0])*(1-Vmix[1]) + RelInfRg[2]*Vjaf[2]*Vmix[0]*(1-Vmix[1]) + RelInfRg[1]*Vjaf[1]*Vmix[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]*Vmix[1])/4) + ExogInf[0];
+      VLjkl[1 ][1 ]  = ((RelInfRg[3]*Vjaf[3]*(1-Vmix[0])*(1-Vmix[1]) + RelInfRg[2]*Vjaf[2]*Vmix[0]*(1-Vmix[1]) + RelInfRg[1]*Vjaf[1]*Vmix[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]*Vmix[1])) + ExogInf[0];
 
       // for (int i=0; i<2; i++){
       //   for (int j=0; j<2; j++){
@@ -924,43 +926,43 @@ for(int ag=0; ag<11; ag++) {
                 } } } } } }
 
       /////////////////////////////////  MORTALITY  ///////////////////////////////////
-      for(int ag=0; ag<11; ag++) {
 
-      for (int i=0; i<4; i++){
-        temp_vec2[i]=0; }
-      mat_sum=0;
-      ///create a vector of the counts of # ppl in each mort group
-        for(int nm=0; nm<4; nm++){
-          for(int tb=0; tb<6; tb++) {
-            for(int lt=0; lt<2; lt++){
-              for(int im=0; im<4; im++) {
-                for(int rg=0; rg<2; rg++){
-                  for(int na=0; na<3; na++){
-                    temp_vec2[nm] += V1[ag][tb][lt][im][nm][rg][na];
-                  } } } } } }
-      ////create a population total
-      for(int nm=0; nm<4; nm++){
-        mat_sum+=temp_vec2[nm];
-      }
-      ///mortality distribution at mortality time step
-      for(int nm=0; nm<4; nm++){
-        mort_dist[nm] = temp_vec2[nm]/mat_sum; }
-      //reset the temp variable
+      // for (int i=0; i<4; i++){
+      //   temp_vec2[i]=0; }
+      // mat_sum=0;
+      // ///create a vector of the counts of # ppl in each mort group
+      //   for(int nm=0; nm<4; nm++){
+      //     for(int tb=0; tb<6; tb++) {
+      //       for(int lt=0; lt<2; lt++){
+      //         for(int im=0; im<4; im++) {
+      //           for(int rg=0; rg<2; rg++){
+      //             for(int na=0; na<3; na++){
+      //               temp_vec2[nm] += V1[ag][tb][lt][im][nm][rg][na];
+      //             } } } } } }
+      // ////create a population total
+      // for(int nm=0; nm<4; nm++){
+      //   mat_sum+=temp_vec2[nm];
+      // }
+      // ///mortality distribution at mortality time step
+      // for(int nm=0; nm<4; nm++){
+      //   mort_dist[nm] = temp_vec2[nm]/mat_sum; }
+      // //reset the temp variable
+      // temp=0;
+      // ///
+      // for(int nm=0; nm<4; nm++){
+      //   temp+=(RRmuRF[nm]*mort_dist[nm]);}
+      // for(int nm=0; nm<4; nm++){
+      //   RRmuRFN[nm]=RRmuRF[nm]/temp;
+      // }
       temp=0;
-      ///
-      for(int nm=0; nm<4; nm++){
-        temp+=(RRmuRF[nm]*mort_dist[nm]);}
-      for(int nm=0; nm<4; nm++){
-        RRmuRFN[nm]=RRmuRF[nm]/temp;
-      }
-      temp=0;
+      for(int ag=0; ag<11; ag++) {
         for(int lt=0; lt<2; lt++){
           for(int im=0; im<4 ; im++) {
             for(int nm=0; nm<4; nm++) {
               for(int rg=0; rg<2; rg++) {
                 for(int na=0; na<3; na++) {
                   for(int tb=0; tb<4; tb++) {
-                    if ((ag<8) | ((RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][tb]) <5)){
+                    if ((ag<8) | ((RRmuRFN[nm]*RRmuHR[rg]) <5)){
 
                       ////////////////////////UNINFECTED, SUSCEPTIBLE//////////////////////////////////
                       VMort[ag][tb ][lt][im][nm][rg][na]  = V0[ag][tb][lt][im][nm][rg][na]*(mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]);
@@ -969,13 +971,13 @@ for(int ag=0; ag<11; ag++) {
                   }//close the tb loop
                   ////////////////////////      ACTIVE TB         /////////////////////////////////
 
-                  if ((ag<8) | ((RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][4 ]+temp) <5)){
+                  if ((ag<8) | ((RRmuRFN[nm]*RRmuHR[rg]) <5)){
                     VMort[ag][4 ][lt][im][nm][rg][na]  = V0[ag][4 ][lt][im][nm][rg][na]*
                       (mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][4 ]+temp );
                   } else {VMort[ag][4 ][lt][im][nm][rg][na]  = (V0[ag][4 ][lt][im][nm][rg][na]*(mubtN[0][ag]*5)); }
 
                   ////////////////////////    TB TREATMENT        /// //////////////////////////////
-                  if ((ag<8) | ((RRmuRFN[nm]*RRmuHR[rg]+(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort))<5)){
+                  if ((ag<8) | ((RRmuRFN[nm]*RRmuHR[rg])<5)){
                     VMort[ag][5 ][lt][im][nm][rg][na]  = V0[ag][5 ][lt][im][nm][rg][na]*
                       (mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]+(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort));
                   } else  {
@@ -988,8 +990,8 @@ for(int ag=0; ag<11; ag++) {
                     // Rcpp::Rcout << "total mortality at time" << s << "is" << temp << "\n";
                   }
 
-                } } } } }
-      } //end of age loop
+                } } } } } }
+      // } //end of age loop
       /////////////////////////////////////AGING///////////////////////////////////////
       for(int ag=0; ag<10; ag++) {
         /////          IF AGE > 4, IT TAKES 120 MONTHS TO LEAVE AGE GROUP          /////
@@ -1120,14 +1122,14 @@ for(int ag=0; ag<11; ag++) {
 
         // Step 4
         /// LOW RISK US BORN
-        VLjkl[0 ][0 ]  = (RelInfRg[0]*Vjaf[0])/4;
+        VLjkl[0 ][0 ]  = (RelInfRg[0]*Vjaf[0]);
         ///////// HIGH RISK US BORN
-        VLjkl[1 ][0 ]  = (RelInfRg[1]*Vjaf[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0])/4;
+        VLjkl[1 ][0 ]  = (RelInfRg[1]*Vjaf[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]);
         ///////// LOW RISK NON US BORN
-        VLjkl[0 ][1 ]  = ((RelInfRg[2]*Vjaf[2]*(1-Vmix[1]) + RelInfRg[0]*Vjaf[0]*Vmix[1])/4) + ExogInf[s];
+        VLjkl[0 ][1 ]  = ((RelInfRg[2]*Vjaf[2]*(1-Vmix[1]) + RelInfRg[0]*Vjaf[0]*Vmix[1])) + ExogInf[s];
         ///////// HIGH RISK NON US BORN
         ///check the use of RelInfRg here as beta, might need to be a combo param but unclear check the old param file
-        VLjkl[1 ][1 ]  = ((RelInfRg[3]*Vjaf[3]*(1-Vmix[0])*(1-Vmix[1]) + RelInfRg[2]*Vjaf[2]*Vmix[0]*(1-Vmix[1]) + RelInfRg[1]*Vjaf[1]*Vmix[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]*Vmix[1])/4 ) + ExogInf[s];
+        VLjkl[1 ][1 ]  = ((RelInfRg[3]*Vjaf[3]*(1-Vmix[0])*(1-Vmix[1]) + RelInfRg[2]*Vjaf[2]*Vmix[0]*(1-Vmix[1]) + RelInfRg[1]*Vjaf[1]*Vmix[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]*Vmix[1]) ) + ExogInf[s];
 
 
         ///////////////////////////////INFECTION///////////////////////////////////////
@@ -1891,9 +1893,8 @@ for(int ag=0; ag<11; ag++) {
   for(int ag=0; ag<11; ag++) {
 
       for (int i=0; i<4; i++){
-        for (int j=0; j<4; j++){
 
-          temp_mat[i][j]=0; } }
+          temp_vec2[i]=0; }
       mat_sum=0;
       ////make a count of # of ppl in each mortality group
       // for(int ag=0; ag<11; ag++) {
@@ -1907,25 +1908,23 @@ for(int ag=0; ag<11; ag++) {
               if (V1[ag][tb][lt][im][nm][rg][na]<0){
                 Rcout<< "V1 is neg @ na " << na << "\n";
               }
-              temp_mat[nm][im] += V1[ag][tb][lt][im][nm][rg][na];
+              temp_vec2[nm] += V1[ag][tb][lt][im][nm][rg][na];
             } } } } } }
       ////create a population total at this time point
       // for(int ag=0; ag<11; ag++) {
       for(int nm=0; nm<4; nm++){
-        for(int im=0; im<4; im++){
 
-          mat_sum+=temp_mat[nm][im];
+          mat_sum+=temp_vec2[nm];
           // Rcpp::Rcout << "mat sum is" << mat_sum << "at ag = "<< ag<<"\n";
-        }}
+        }
 
       ///calculate the mortality
       for(int nm=0; nm<4; nm++){
-        for(int im=0; im<4; im++){
-          temp_mat2[nm][im] = temp_mat[nm][im]/mat_sum;
-          Rcpp::Rcout << "mort dist is" << temp_mat2[nm][im] << "at ag = "<< ag<<"\n";}
+          temp_vec[nm] = temp_vec2[nm]/mat_sum;
+          Rcpp::Rcout << "mort dist is" << temp_vec[nm] << "at ag = "<< ag<<"\n";
       }
+  }
 
-    }
   ////////////////   RE-CHECK THAT NO STATES HAVE BECOME NEGATIVE    ////////////////
   Rcpp::NumericVector  CheckV(12672);
   for(int ag=0; ag<11; ag++) {
