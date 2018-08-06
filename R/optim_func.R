@@ -13,8 +13,8 @@
 #'@export
 
 optim_b <- function(df, samp_i=1){
-data("StartVal_2018", package = "MITUS")
-data("ParamInit_2018", package='MITUS')
+data("StartVal_2018-08-06", package = "MITUS")
+data("ParamInitUS_2018-08-06_final", package='MITUS')# ParamInit
 P  <- ParamInit[,1]
 names(P) <- rownames(ParamInit)
 ii <-  ParamInit[,5]==1
