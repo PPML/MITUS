@@ -21,7 +21,7 @@
 param_init <- function(ParVector,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0){
 data("ModelInputs_9-2-16", package='MITUS')
 #'Create an empty list to hold the formatted intitial parameters
-InputParams <-vector("list", 42)
+InputParams <-vector("list", 43)
 names(InputParams) <- c("rDxt","TxQualt", "InitPop", "Mpfast", "ExogInf", "MpfastPI",
                         "Mrslow", "rrSlowFB", "rfast"    ,"RRcurDef"      , "rSlfCur"  ,
                         "p_HR"        , "dist_gen" , "vTMort"   ,"RRmuRF"          , "RRmuHR",
@@ -29,7 +29,7 @@ names(InputParams) <- c("rDxt","TxQualt", "InitPop", "Mpfast", "ExogInf", "Mpfas
                         "ImmAct"      , "ImmFst" , "mubt"     ,"RelInf"        , "RelInfRg" ,
                         "Vmix"       , "rEmmigFB" , "TxVec"    , "TunTxMort"    , "rDeft"    ,
                        "pReTx"      , "LtTxPar"  , "LtDxPar"  , "rLtScrt"      , "RRdxAge"  ,
-                        "rRecov"      , "pImmScen"  ,   "EarlyTrend", "NixTrans"    ,
+                        "rRecov"      , "pImmScen"  ,   "EarlyTrend", "NixTrans", "adj_fact"   ,
                         "ResNam")
 ################################################################################
 ##### INTERVENTION
@@ -37,6 +37,9 @@ names(InputParams) <- c("rDxt","TxQualt", "InitPop", "Mpfast", "ExogInf", "Mpfas
 if(Int5==1) {
   Int1 = Int2 = Int3 = Int4 = 1
 }
+adj_fact<-exp(.0001*(10:0)/11 + .0011*(0:10)/11)
+# adj_fact <- exp(P[["adj_ag1"]]*(10:0)/11 + P[["adj_ag11"]]*(0:10)/11)
+InputParams[["adj_fact"]] <- adj_fact;
 
 #'params from general reblnc_pop:
 InputParams[["dist_gen"]] <- dist_gen;

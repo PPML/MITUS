@@ -21,7 +21,7 @@ param <- function (P){
 ##########                PARAMETER DEFINITIONS                      ###########
 ##########                RISK FACTOR DISTRIBUTIONS   ##########################
 
-  #dist   <- dist
+  adj_fact<-exp(.0001*(10:0)/11 + .0011*(0:10)/11)
 
 #######################           BIRTHS                 #######################
 ####### INDEXED BY TIME, ABSOLUTE NUMBER OF NEW ADULT ENTRANTS OVER TIME #######
@@ -589,6 +589,8 @@ Params[["EarlyTrend"]]= EarlyTrend
 # Params[["dist_goal"]] = dist_goal
 # Params[["diff_i_v"]]  = diff_i_v
 # Params[["dist_orig_v"]]=dist_orig_v
+Params[["adj_fact"]] <- adj_fact;
+
 Params[["ResNam"]]    = ResNam
 return(Params)
 }
