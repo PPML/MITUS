@@ -2,7 +2,7 @@
 ### it until I can decide the best place to move it into for final
 ### model run
 
-data("ParamInit_2018", package='MITUS')# ParamInit
+data("ParamInit_2018-08-06_final", package='MITUS')# ParamInit
 P  <- ParamInit[,1];
 names(P) <- rownames(ParamInit)
 ii <-  ParamInit[,5]==1
