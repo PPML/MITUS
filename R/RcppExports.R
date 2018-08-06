@@ -12,8 +12,8 @@ NULL
 #'@description this function calculates a matrix of transition probabilities for rebalancing in the model.
 #'@param IP dataframe of formatted parameters
 #'@return trans_mat_tot_ages
-reblncd <- function(mubt, can_go, RRmuHR, RRmuRF, HRdist, dist_gen_v) {
-    .Call('_MITUS_reblncd', PACKAGE = 'MITUS', mubt, can_go, RRmuHR, RRmuRF, HRdist, dist_gen_v)
+reblncd <- function(mubt, can_go, RRmuHR, RRmuRF, HRdist, dist_gen_v, adj_fact) {
+    .Call('_MITUS_reblncd', PACKAGE = 'MITUS', mubt, can_go, RRmuHR, RRmuRF, HRdist, dist_gen_v, adj_fact)
 }
 
 #'@title cSim
