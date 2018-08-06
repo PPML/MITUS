@@ -21,7 +21,8 @@ param <- function (P){
 ##########                PARAMETER DEFINITIONS                      ###########
 ##########                RISK FACTOR DISTRIBUTIONS   ##########################
 
-  adj_fact<-exp(.0001*(10:0)/11 + .0011*(0:10)/11)
+  # adj_fact<-exp(.0001*(10:0)/11 + .0011*(0:10)/11)
+  adj_fact <- exp(P[["adj_ag1"]]*(10:0)/11 + P[["adj_ag11"]]*(0:10)/11)
 
 #######################           BIRTHS                 #######################
 ####### INDEXED BY TIME, ABSOLUTE NUMBER OF NEW ADULT ENTRANTS OVER TIME #######

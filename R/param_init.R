@@ -37,8 +37,8 @@ names(InputParams) <- c("rDxt","TxQualt", "InitPop", "Mpfast", "ExogInf", "Mpfas
 if(Int5==1) {
   Int1 = Int2 = Int3 = Int4 = 1
 }
-adj_fact<-exp(.0001*(10:0)/11 + .0011*(0:10)/11)
-# adj_fact <- exp(P[["adj_ag1"]]*(10:0)/11 + P[["adj_ag11"]]*(0:10)/11)
+# adj_fact<-exp(.0001*(10:0)/11 + .0011*(0:10)/11)
+adj_fact <- exp(P[["adj_ag1"]]*(10:0)/11 + P[["adj_ag11"]]*(0:10)/11)
 InputParams[["adj_fact"]] <- adj_fact;
 
 #'params from general reblnc_pop:
