@@ -4,7 +4,7 @@
 \alias{reblncd}
 \title{reblncd}
 \usage{
-reblncd(mubt, can_go, RRmuHR, RRmuRF, HRdist, dist_gen_v)
+reblncd(mubt, can_go, RRmuHR, RRmuRF, HRdist, dist_gen_v, adj_fact)
 }
 \arguments{
 \item{IP}{dataframe of formatted parameters}
