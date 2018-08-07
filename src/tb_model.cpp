@@ -223,7 +223,7 @@ Rcpp::List cSim(
     for(int j=0; j<HrEntEx.ncol(); j++) {
       HrEntExN[i][j] = HrEntEx(i,j);
     } }
-  for(int i=0; i<5; i++) {
+  for(int i=0; i<6; i++) {
     TxVecZ[i] = 0.0;
   }
   for(int i=0; i<nYrs; i++) {
@@ -448,7 +448,7 @@ Rcpp::List cSim(
               }//close the tb loop
 
               ////////////////          MORTALITY WITH TB TREATMENT         ////////////////////
-              if ( (ag<8) |((RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][5 ])<5)){
+              if ( (ag<8) |((RRmuRFN[nm]*RRmuHR[rg])<5)){
                 V1[ag][5 ][0][im][nm][rg][na]  -= V0[ag][5 ][0][im][nm][rg][na]*(mubtN[0][ag]*RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][5 ]*pow(1.0-TxVecZ[1],TunTxMort)); //check the mortality in param
               } else {
                 V1[ag][5 ][0][im][nm][rg][na]  -= (V0[ag][5 ][0][im][nm][rg][na]*(mubtN[0][ag]*5));
@@ -718,21 +718,20 @@ Rcpp::List cSim(
 ////////           NOW FINALLY UPDATE THE DISTRIBUTION           ///////////
 if (reblnc==1){
 for(int ag=0; ag<11; ag++) {
-  for(int na=0; na<3; na++){
       for(int tb=0; tb<6; tb++) {
             for (int im=0; im<4; im++){
               for (int nm=0; nm<4; nm++){
                 for(int rg=0; rg<2; rg++) {
+                  for(int na=0; na<3; na++){
                   V2[ag][tb][0][im][nm][rg][na]=0;
                 } } } } }
+      for(int tb=0; tb<6; tb++) {
             for (int im=0; im<4; im++){
               for (int nm=0; nm<4; nm++){
-                  for (int m2=0; m2<4; m2++){
-                    for (int p2=0; p2<4; p2++){
-
-                      for(int tb=0; tb<6; tb++) {
                         for(int na=0; na<3; na++){
                           for(int rg=0; rg<2; rg++) {
+                            for (int m2=0; m2<4; m2++){
+                              for (int p2=0; p2<4; p2++){
 
                         // Rcout<< trans_mat_tot_agesN[m2+p2*4][(16*(ag+1))-(16-(nm+im*4))]<<"\n";
                       V2[ag][tb][0][im][nm][rg][na] += V1[ag][tb][0][p2][m2][rg][na] * (trans_mat_tot_agesN[m2+p2*4][(16*(ag+1))-(16-(nm+im*4))]);
@@ -740,11 +739,11 @@ for(int ag=0; ag<11; ag++) {
           } //end of age loop
 // } //end of reblncing loop
 for(int ag=0; ag<11; ag++) {
+  for(int tb=0; tb<6; tb++) {
   for(int im=0; im<4; im++) {
     for(int nm=0; nm<4; nm++){
       for(int rg=0; rg<2; rg++){
         for (int na=0; na<3; na++){
-          for(int tb=0; tb<6; tb++) {
             // if (reblnc==1){
               V1[ag][tb][0][im][nm][rg][na] = V2[ag][tb][0][im][nm][rg][na];
               V0[ag][tb][0][im][nm][rg][na] = V2[ag][tb][0][im][nm][rg][na];
@@ -776,7 +775,6 @@ for(int ag=0; ag<11; ag++) {
   for(int tb=0; tb<6; tb++) {
     for(int nm=0; nm<4; nm++) {
       for(int im=0; im<4; im++) {
-
         for(int rg=0; rg<2; rg++) {  // reset pop to InitPop
           V1[ag][tb][0][im][nm][rg][0]  = V1[ag][tb][0][im][nm][rg][0]*InitPopZ[ag][0];
           V1[ag][tb][0][im][nm][rg][1]  = V1[ag][tb][0][im][nm][rg][1]*InitPopZ[ag][1];
@@ -786,7 +784,6 @@ for(int ag=0; ag<11; ag++) {
   for(int tb=0; tb<6; tb++) {
     for(int nm=0; nm<4; nm++) {
       for(int im=0; im<4; im++) {
-
         for(int rg=0; rg<2; rg++) {
           for(int na=0; na<3; na++){
             V0[ag][tb][0][im][nm][rg][na] = V1[ag][tb][0][im][nm][rg][na];
