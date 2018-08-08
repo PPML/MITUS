@@ -883,15 +883,15 @@ for(int ag=0; ag<11; ag++) {
       // /////////////////////////////////////////////////////////////////////////////////
       // /////////////////////////////////////BIRTHS//////////////////////////////////////
       // ///////////////////////////////////////////////////////////////////////////////
-      // for (int im=0; im<4; im++) {
-      //   for (int nm=0; nm<4; nm++) {
-      //     /////LOW RISK GROUP BIRTHS//////////////////////////////////////////////////////
-      //     V1[0][0][0][im][nm][0][0]  += Birthst[s]*dist_genN[nm][im]*(1-p_HR);
-      //     /////HIGH RISK GROUP BIRTHS//////////////////////////////////////////////////////
-      //     V1[0][0][0][im][nm][1][0]  += Birthst[s]*dist_genN[nm][im]*(p_HR);
-      //   } }
-      //
-      // ///////////////////////////////// IMMIGRATION ///////////////////////////////////
+      for (int im=0; im<4; im++) {
+        for (int nm=0; nm<4; nm++) {
+          /////LOW RISK GROUP BIRTHS//////////////////////////////////////////////////////
+          V1[0][0][0][im][nm][0][0]  += Birthst[s]*dist_genN[nm][im]*(1-p_HR);
+          /////HIGH RISK GROUP BIRTHS//////////////////////////////////////////////////////
+          V1[0][0][0][im][nm][1][0]  += Birthst[s]*dist_genN[nm][im]*(p_HR);
+        } }
+
+      ///////////////////////////////// IMMIGRATION ///////////////////////////////////
       // for(int ag=0; ag<11; ag++) {
       //   for(int im=0; im<4; im++) {
       //     for(int nm=0; nm<4; nm++) {
@@ -988,24 +988,24 @@ for(int ag=0; ag<11; ag++) {
                 } } } } } }
       // } //end of age loop
       /////////////////////////////////////AGING///////////////////////////////////////
-      // for(int ag=0; ag<10; ag++) {
-      //   /////          IF AGE > 4, IT TAKES 120 MONTHS TO LEAVE AGE GROUP          /////
-      //   if(ag>0) {
-      //     temp2 = 120;
-      //     /////          IF AGE < 4, IT TAKES 60 MONTHS TO LEAVE AGE GROUP           /////
-      //   } else {
-      //     temp2 = 60;
-      //   }
-      //   for(int tb=0; tb<6; tb++) {
-      //     for(int lt=0; lt<2; lt++){
-      //       for (int im=0; im<4; im++){
-      //         for (int nm=0; nm<4; nm++){
-      //           for(int rg=0; rg<2; rg++) {
-      //             for(int na=0; na<3; na++){
-      //               temp = V0[ag  ][tb][lt][im][nm][rg][na]/temp2;
-      //               V1[ag  ][tb][lt][im][nm][rg][na]  -= temp;
-      //               V1[ag+1][tb][lt][im][nm][rg][na]  += temp;
-      //             } } } } } } }
+      for(int ag=0; ag<10; ag++) {
+        /////          IF AGE > 4, IT TAKES 120 MONTHS TO LEAVE AGE GROUP          /////
+        if(ag>0) {
+          temp2 = 120;
+          /////          IF AGE < 4, IT TAKES 60 MONTHS TO LEAVE AGE GROUP           /////
+        } else {
+          temp2 = 60;
+        }
+        for(int tb=0; tb<6; tb++) {
+          for(int lt=0; lt<2; lt++){
+            for (int im=0; im<4; im++){
+              for (int nm=0; nm<4; nm++){
+                for(int rg=0; rg<2; rg++) {
+                  for(int na=0; na<3; na++){
+                    temp = V0[ag  ][tb][lt][im][nm][rg][na]/temp2;
+                    V1[ag  ][tb][lt][im][nm][rg][na]  -= temp;
+                    V1[ag+1][tb][lt][im][nm][rg][na]  += temp;
+                  } } } } } } }
       // ///////////////////////// NEW FB -> ESTABLISHED FB ///////////////////////////////
       // for(int ag=0; ag<11; ag++) {
       //   for(int tb=0; tb<6; tb++) {
