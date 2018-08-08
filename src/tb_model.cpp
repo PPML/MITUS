@@ -891,34 +891,34 @@ for(int ag=0; ag<11; ag++) {
           V1[0][0][0][im][nm][1][0]  += Birthst[s]*dist_genN[nm][im]*(p_HR);
         } }
 
-      ///////////////////////////////// IMMIGRATION ///////////////////////////////////
-      // for(int ag=0; ag<11; ag++) {
-      //   for(int im=0; im<4; im++) {
-      //     for(int nm=0; nm<4; nm++) {
-      //
-      //       V1[ag][0][0][im][nm][0][1]   += ImmNonN[s][ag]*(1-p_HR)*dist_genN[nm][im];  // NO TB, low risk
-      //       V1[ag][0][0][im][nm][1][1]   += ImmNonN[s][ag]*(p_HR)*dist_genN[nm][im];    // NO TB, high risk
-      //
-      //       V1[ag][2][0][im][nm][0][1]   += ImmLatN[s][ag]*(1-p_HR)*dist_genN[nm][im]; // LATENT SLOW TB, low risk
-      //       V1[ag][2][0][im][nm][1][1]   += ImmLatN[s][ag]*(p_HR)*dist_genN[nm][im];   // LATENT SLOW TB, high risk
-      //
-      //       V1[ag][3][0][im][nm][0][1]   += ImmFstN[s][ag]*(1-p_HR)*dist_genN[nm][im];   // LATENT FAST, low risk
-      //       V1[ag][3][0][im][nm][1][1]   += ImmFstN[s][ag]*(p_HR)*dist_genN[nm][im];   // LATENT FAST, high risk
-      //
-      //       V1[ag][4][0][im][nm][0][1]   += ImmActN[s][ag]*(1-p_HR)*dist_genN[nm][im];   //ACTIVE TB, low risk
-      //       V1[ag][4][0][im][nm][1][1]   += ImmActN[s][ag]*(p_HR)*dist_genN[nm][im];   //ACTIVE TB, high risk
-      //     } } }
-      //
-      // /////////////////////////////////  EMMIGRATION ///////////////////////////////////
-      // for(int ag=0; ag<11; ag++) {
-      //   for(int tb=0; tb<6; tb++) {
-      //     for(int lt=0; lt<2; lt++){
-      //       for(int im=0; im<4; im++){
-      //         for(int nm=0; nm<4; nm++){
-      //           for(int rg=0; rg<2; rg++) {
-      //             V1[ag][tb][lt][im][nm][rg][1]  -= V0[ag][tb][lt][im][nm][rg][1]*rEmmigFB[0];      // FB1
-      //             V1[ag][tb][lt][im][nm][rg][2]  -= V0[ag][tb][lt][im][nm][rg][2]*rEmmigFB[1];      // FB2
-      //           } } } } } }
+      /////////////////////////////// IMMIGRATION ///////////////////////////////////
+      for(int ag=0; ag<11; ag++) {
+        for(int im=0; im<4; im++) {
+          for(int nm=0; nm<4; nm++) {
+
+            V1[ag][0][0][im][nm][0][1]   += ImmNonN[s][ag]*(1-p_HR)*dist_genN[nm][im];  // NO TB, low risk
+            V1[ag][0][0][im][nm][1][1]   += ImmNonN[s][ag]*(p_HR)*dist_genN[nm][im];    // NO TB, high risk
+
+            V1[ag][2][0][im][nm][0][1]   += ImmLatN[s][ag]*(1-p_HR)*dist_genN[nm][im]; // LATENT SLOW TB, low risk
+            V1[ag][2][0][im][nm][1][1]   += ImmLatN[s][ag]*(p_HR)*dist_genN[nm][im];   // LATENT SLOW TB, high risk
+
+            V1[ag][3][0][im][nm][0][1]   += ImmFstN[s][ag]*(1-p_HR)*dist_genN[nm][im];   // LATENT FAST, low risk
+            V1[ag][3][0][im][nm][1][1]   += ImmFstN[s][ag]*(p_HR)*dist_genN[nm][im];   // LATENT FAST, high risk
+
+            V1[ag][4][0][im][nm][0][1]   += ImmActN[s][ag]*(1-p_HR)*dist_genN[nm][im];   //ACTIVE TB, low risk
+            V1[ag][4][0][im][nm][1][1]   += ImmActN[s][ag]*(p_HR)*dist_genN[nm][im];   //ACTIVE TB, high risk
+          } } }
+
+      /////////////////////////////////  EMMIGRATION ///////////////////////////////////
+      for(int ag=0; ag<11; ag++) {
+        for(int tb=0; tb<6; tb++) {
+          for(int lt=0; lt<2; lt++){
+            for(int im=0; im<4; im++){
+              for(int nm=0; nm<4; nm++){
+                for(int rg=0; rg<2; rg++) {
+                  V1[ag][tb][lt][im][nm][rg][1]  -= V0[ag][tb][lt][im][nm][rg][1]*rEmmigFB[0];      // FB1
+                  V1[ag][tb][lt][im][nm][rg][2]  -= V0[ag][tb][lt][im][nm][rg][2]*rEmmigFB[1];      // FB2
+                } } } } } }
 
       /////////////////////////////////  MORTALITY  ///////////////////////////////////
 
@@ -1006,31 +1006,31 @@ for(int ag=0; ag<11; ag++) {
                     V1[ag  ][tb][lt][im][nm][rg][na]  -= temp;
                     V1[ag+1][tb][lt][im][nm][rg][na]  += temp;
                   } } } } } } }
-      // ///////////////////////// NEW FB -> ESTABLISHED FB ///////////////////////////////
-      // for(int ag=0; ag<11; ag++) {
-      //   for(int tb=0; tb<6; tb++) {
-      //     for(int lt=0; lt<2; lt++){
-      //       for(int im=0; im<4; im++) {
-      //         for(int nm=0; nm<4; nm++) {
-      //           for(int rg=0; rg<2; rg++) {
-      //             temp = V0[ag][tb][lt][im][nm][rg][1] / 24;
-      //             V1[ag][tb][lt][im][nm][rg][1]  -= temp;
-      //             V1[ag][tb][lt][im][nm][rg][2]  += temp;
-      //           } } } } } }
-      //
-      // //////////////////////////// HIGH-RISK ENTRY/EXIT ////////////////////////////////
-      // for(int ag=0; ag<11; ag++) {
-      //   for(int tb=0; tb<6; tb++) {
-      //     for(int lt=0; lt<2; lt++) {
-      //       for(int im=0; im<4; im++) {
-      //         for(int nm=0; nm<4; nm++) {
-      //           for(int na=0; na<3; na++) {
-      //             temp  = V0[ag][tb][lt][im][nm][0][na]*HrEntExN[ag][0];
-      //             temp2 = V0[ag][tb][lt][im][nm][1][na]*HrEntExN[ag][1];
-      //
-      //             V1[ag][tb][lt][im][nm][0][na]  += temp2-temp;
-      //             V1[ag][tb][lt][im][nm][1][na]  += temp-temp2;
-      //           } } } } } }
+      ///////////////////////// NEW FB -> ESTABLISHED FB ///////////////////////////////
+      for(int ag=0; ag<11; ag++) {
+        for(int tb=0; tb<6; tb++) {
+          for(int lt=0; lt<2; lt++){
+            for(int im=0; im<4; im++) {
+              for(int nm=0; nm<4; nm++) {
+                for(int rg=0; rg<2; rg++) {
+                  temp = V0[ag][tb][lt][im][nm][rg][1] / 24;
+                  V1[ag][tb][lt][im][nm][rg][1]  -= temp;
+                  V1[ag][tb][lt][im][nm][rg][2]  += temp;
+                } } } } } }
+
+      //////////////////////////// HIGH-RISK ENTRY/EXIT ////////////////////////////////
+      for(int ag=0; ag<11; ag++) {
+        for(int tb=0; tb<6; tb++) {
+          for(int lt=0; lt<2; lt++) {
+            for(int im=0; im<4; im++) {
+              for(int nm=0; nm<4; nm++) {
+                for(int na=0; na<3; na++) {
+                  temp  = V0[ag][tb][lt][im][nm][0][na]*HrEntExN[ag][0];
+                  temp2 = V0[ag][tb][lt][im][nm][1][na]*HrEntExN[ag][1];
+
+                  V1[ag][tb][lt][im][nm][0][na]  += temp2-temp;
+                  V1[ag][tb][lt][im][nm][1][na]  += temp-temp2;
+                } } } } } }
       //
       //
       // if (tb_dyn==1){
