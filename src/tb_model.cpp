@@ -873,15 +873,15 @@ for(int ag=0; ag<11; ag++) {
       ///// 5 = PROBABILITY OF TREATMENT COMPLETION                           ///////
       ///////////////////////////////////////////////////////////////////////////////
       //////// TREATMENT EFFICACY UPDATED FOR TREATMENT QUALITY //////////////////////
-      // TxVecZ[1] = TxVec[1]*TxQualt[s];
-      // ///////// RATE OF TREATMENT EXIT TO CURE (LS) //////////////////////////////////
-      // TxVecZ[2] = TxVec[0]*TxVecZ[1] + rDeft[s]*TxVecZ[1]*RRcurDef;
-      // ///////// RATE OF TREATMENT EXIT TO ACTIVE TB //////////////////////////////////
-      // TxVecZ[3] = TxVec[0]*(1-TxVecZ[1])*(1-pReTx[s]) + rDeft[s]*(1-TxVecZ[1]*RRcurDef);
-      // ///////// RATE OF TREATMENT EXIT TO RE TREATMENT////////////////////////////////
-      // TxVecZ[4] = TxVec[0]*(1-TxVecZ[1])*(pReTx[s]);
-      // ////////////////////// P(TREATMENT COMPLETION) /////////////////////////////////
-      // TxVecZ[5] = TxVec[0]*(1-(1.0-TxVecZ[1])*pReTx[s]);
+      TxVecZ[1] = TxVec[1]*TxQualt[s];
+      ///////// RATE OF TREATMENT EXIT TO CURE (LS) //////////////////////////////////
+      TxVecZ[2] = TxVec[0]*TxVecZ[1] + rDeft[s]*TxVecZ[1]*RRcurDef;
+      ///////// RATE OF TREATMENT EXIT TO ACTIVE TB //////////////////////////////////
+      TxVecZ[3] = TxVec[0]*(1-TxVecZ[1])*(1-pReTx[s]) + rDeft[s]*(1-TxVecZ[1]*RRcurDef);
+      ///////// RATE OF TREATMENT EXIT TO RE TREATMENT////////////////////////////////
+      TxVecZ[4] = TxVec[0]*(1-TxVecZ[1])*(pReTx[s]);
+      ////////////////////// P(TREATMENT COMPLETION) /////////////////////////////////
+      TxVecZ[5] = TxVec[0]*(1-(1.0-TxVecZ[1])*pReTx[s]);
       // /////////////////////////////////////////////////////////////////////////////////
       // /////////////////////////////////////BIRTHS//////////////////////////////////////
       // ///////////////////////////////////////////////////////////////////////////////
@@ -1001,21 +1001,21 @@ for(int ag=0; ag<11; ag++) {
                       ////////////////////////UNINFECTED, SUSCEPTIBLE//////////////////////////////////
                       VMort[ag][tb ][lt][im][nm][rg][na]  = V0[ag][tb][lt][im][nm][rg][na]*(mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]);
                     } else {
-                      VMort[ag][tb ][lt][im][nm][rg][na]  = (V0[ag][tb][lt][im][nm][rg][na]*(mubtN[0][ag]*5));}
+                      VMort[ag][tb ][lt][im][nm][rg][na]  = (V0[ag][tb][lt][im][nm][rg][na]*(mubtN[s][ag]*5));}
                   }//close the tb loop
                   ////////////////////////      ACTIVE TB         /////////////////////////////////
 
                   if ((ag<8) | ((RRmuRFN[nm]*RRmuHR[rg]) <5)){
                     VMort[ag][4 ][lt][im][nm][rg][na]  = V0[ag][4 ][lt][im][nm][rg][na]*
                       (mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][4 ]+temp );
-                  } else {VMort[ag][4 ][lt][im][nm][rg][na]  = (V0[ag][4 ][lt][im][nm][rg][na]*(mubtN[0][ag]*5+vTMortN[ag][4 ]+temp)); }
+                  } else {VMort[ag][4 ][lt][im][nm][rg][na]  = (V0[ag][4 ][lt][im][nm][rg][na]*(mubtN[s][ag]*5+vTMortN[ag][4 ]+temp)); }
 
                   ////////////////////////    TB TREATMENT        /// //////////////////////////////
                   if ((ag<8) | ((RRmuRFN[nm]*RRmuHR[rg])<5)){
                     VMort[ag][5 ][lt][im][nm][rg][na]  = V0[ag][5 ][lt][im][nm][rg][na]*
                       (mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]+(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort));
                   } else  {
-                    VMort[ag][5 ][lt][im][nm][rg][na]  = (V0[ag][5 ][lt][im][nm][rg][na]*(mubtN[0][ag]*5+(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort))); }
+                    VMort[ag][5 ][lt][im][nm][rg][na]  = (V0[ag][5 ][lt][im][nm][rg][na]*(mubtN[s][ag]*5+(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort))); }
 
                   ///////////// UPDATE THE PRIMARY VECTOR BY REMOVING MORTALITY /////////////////
                   for(int tb=0; tb<6; tb++) {
@@ -1133,281 +1133,372 @@ for(int ag=0; ag<11; ag++) {
  //               Rcout<< "V1 is neg @ na " << na << "ag = " << ag << "tb="<< tb << "rg = " << rg << "nm = "<<nm<< "im = "<< im<< "\n";
  //             } } } } } } } }
 
-      // if (tb_dyn==1){
-      //   ////////////////////////////  TRANSMISSION RISK  ////////////////////////////////
-      //   for(int i=0; i<2; i++) {
-      //     for(int j=0; j<2; j++) {
-      //       VNkl [i][j] = 0;
-      //       VGjkl[i][j] = 0;   // set to zero
-      //     } }
-      //   // Step 1
-      //   // take total population of mixing groups
-      //   for(int ag=0; ag<11; ag++) {
-      //     for(int tb=0; tb<6; tb++) {
-      //       for(int lt=0; lt<2; lt++) {
-      //       for(int im=0; im<4; im++) {
-      //         for(int nm=0; nm<4; nm++) {
-      //
-      //             // LOW RISK US BORN
-      //             VNkl[0][0]  += V0[ag][tb][lt][im][nm][0][0];
-      //             ///////// HIGH RISK US BORN
-      //             ///////// ranges under 1 every time step
-      //             VNkl[1][0]  += V0[ag][tb][lt][im][nm][1][0];
-      //             ///////// LOW RISK NON US BORN
-      //             ///////// ranges from .5 -10 people between time steps
-      //             VNkl[0][1]  += V0[ag][tb][lt][im][nm][0][1] + V0[ag][tb][lt][im][nm][0][2];
-      //             ///////// also ranges from .5 -10 people between time steps
-      //             ///////// HIGH RISK NON US BORN
-      //             VNkl[1][1]  += V0[ag][tb][lt][im][nm][1][1] + V0[ag][tb][lt][im][nm][1][2];
-      //           } } } } }
-      //
-      //   // for (int i=0; i<2; i++){
-      //   //   for (int j=0; j<2; j++){
-      //   //     Rcpp::Rcout <<"sums are " <<  VNkl[i][j] << "for i= " << i << " and j = " <<  j << "\n";
-      //   //   }
-      //   // }
-      //   // Step 2  (active TB)
-      //   // Number of active cases* relative infectiousness
-      //   for(int ag=0; ag<11; ag++) {
-      //     for(int tb=0; tb<6; tb++) {
-      //       for(int im=0; im<4; im++) {
-      //         for(int nm=0; nm<4; nm++) {
-      //           for(int lt=0; lt<2; lt++) {
-      //
-      //             /////////  LOW RISK US BORN
-      //             VGjkl[0][0]  +=  V0[ag][tb][lt][im][nm][0][0]                                *RelInf[tb];
-      //             ///////// HIGH RISK US BORN
-      //             VGjkl[1][0]  +=  V0[ag][tb][lt][im][nm][1][0]                                *RelInf[tb];
-      //             ///////// LOW RISK NON US BORN
-      //             VGjkl[0][1]  += (V0[ag][tb][lt][im][nm][0][1] + V0[ag][tb][lt][im][nm][0][2])*RelInf[tb];
-      //             /////////  HIGH RISK NON US BORN
-      //             VGjkl[1][1]  += (V0[ag][tb][lt][im][nm][1][1] + V0[ag][tb][lt][im][nm][1][2])*RelInf[tb];
-      //           } } } } }
-      //
-      //   // for (int i=0; i<2; i++){
-      //   //   for (int j=0; j<2; j++){
-      //   //     Rcpp::Rcout <<"VGs are " <<  VGjkl[i][j] << "for i= " << i << " and j = " <<  j << "\n";
-      //   //   }
-      //   // }
-      //   // Step 2 (treated TB)
-      //   // No contribution to force of infection
-      //
-      //   // Step 3
-      //   Vjaf[0]  =( RelInfRg[0]*VGjkl[0][0] +
-      //     RelInfRg[1]*VGjkl[1][0]*Vmix[0]+
-      //     RelInfRg[2]*VGjkl[0][1]*Vmix[1]+
-      //     RelInfRg[3]*VGjkl[1][1]*Vmix[1]*Vmix[0]) /
-      //       ((RelInfRg[0]*VNkl[0][0] +
-      //         RelInfRg[1]*VNkl[1][0]*Vmix[0]+
-      //         RelInfRg[2]*VNkl[0][1]*Vmix[1]+
-      //         RelInfRg[3]*VNkl[1][1]*Vmix[1]*Vmix[0]) + 1e-12);
-      //
-      //   Vjaf[1] = ((RelInfRg[1]*VGjkl[0][1]) + ( RelInfRg[3]*VGjkl[1][1]*Vmix[0])) /
-      //     ((RelInfRg[1]*VNkl[0][1])  +  (RelInfRg[3]*VNkl[1][1]*Vmix[0]) + 1e-12);
-      //
-      //   Vjaf[2] = ((RelInfRg[2]*VGjkl[1][0]) +  (RelInfRg[3]*VGjkl[1][1]*Vmix[1])) /
-      //     ((RelInfRg[2]*VNkl[1][1] ) +  (RelInfRg[3]*VNkl[1][1]*Vmix[1]) + 1e-12);
-      //
-      //   Vjaf[3] = VGjkl[1][1] / (VNkl[1][1] + 1e-12);
-      //
-      //
-      //   // for (int i=0; i<4; i++){
-      //   //   Rcpp::Rcout << "Vjaf is "<<  Vjaf[i] << "\n";
-      //   // }
-      //
-      //   // Step 4
-      //   /// LOW RISK US BORN
-      //   VLjkl[0 ][0 ]  = (RelInfRg[0]*Vjaf[0]);
-      //   ///////// HIGH RISK US BORN
-      //   VLjkl[1 ][0 ]  = (RelInfRg[1]*Vjaf[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]);
-      //   ///////// LOW RISK NON US BORN
-      //   VLjkl[0 ][1 ]  = ((RelInfRg[2]*Vjaf[2]*(1-Vmix[1]) + RelInfRg[0]*Vjaf[0]*Vmix[1])) + ExogInf[s];
-      //   ///////// HIGH RISK NON US BORN
-      //   ///check the use of RelInfRg here as beta, might need to be a combo param but unclear check the old param file
-      //   VLjkl[1 ][1 ]  = ((RelInfRg[3]*Vjaf[3]*(1-Vmix[0])*(1-Vmix[1]) + RelInfRg[2]*Vjaf[2]*Vmix[0]*(1-Vmix[1]) + RelInfRg[1]*Vjaf[1]*Vmix[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]*Vmix[1]) ) + ExogInf[s];
-      //
-      //
-      //   ///////////////////////////////INFECTION///////////////////////////////////////
-      //   ///////////////////////for all age groups, risk groups/////////////////////////
-      //   ///////INFECTION IS CALCULATED WITH THE FORCE OF INFECTION BY RISK GROUP///////
-      //   /////// THE TOTAL NUMBER OF INFECTED THEN ENTER BOTH THE LATENT SLOW &  ///////
-      //   ///////& LATENT FAST TB STATES DEPENDENT ON PROBABILITY OF FAST LATENCY ///////
-      //   ///////    PEOPLE ARE REMOVED FROM SUSCEPTIBLE, PARTIALLY IMMUNE &      ///////
-      //   ///////                   LATENT SLOW STATES                            ///////
-      //   ///////////////////////////////////////////////////////////////////////////////
-      //   for(int ag=0; ag<11; ag++) {
-      //     for(int lt=0; lt<2; lt++) {
-      //       for(int im=0; im<4; im++) {
-      //         for(int nm=0; nm<4; nm++) {
-      //           for(int rg=0; rg<2; rg++) {
-      //             for (int na=0; na<3; na++){
-      //
-      //               if (na==0){
-      //                 n2=na;
-      //               } else {n2=1;}
-      //               ///////////////////////////////   SUCEPTIBLE  /////////////////////////////////
-      //               temp = V0[ag][0][lt][im][nm][rg][na]*(VLjkl[rg][n2])*NixTrans[s];
-      //               //////////////////////////// REMOVE FROM SUSCEPTIBLE //////////////////////////
-      //               V1[ag][0][lt][im][nm][rg][na]  -= temp;
-      //               //////////////////////////////// LATENT TB SLOW ///////////////////////////////
-      //               V1[ag][2][lt][im][nm][rg][na]  += temp*MpslowN[ag][im];
-      //               //////////////////////////////// LATENT TB FAST ///////////////////////////////
-      //               V1[ag][3][lt][im][nm][rg][na]  += temp*MpfastN[ag][im];
-      //               ///////////////////////////////////////////////////////////////////////////////
-      //
-      //               /////////////////////////////// SUPER-INFECTION SP ////////////////////////////
-      //               temp = V0[ag][1][lt][im][nm][rg][na]*(VLjkl[rg][n2])*NixTrans[s];
-      //               V1[ag][1][lt][im][nm][rg][na] -= temp;
-      //               V1[ag][2][lt][im][nm][rg][na] += temp*MpslowPIN[ag][im];
-      //               V1[ag][3][lt][im][nm][rg][na] += temp*MpfastPIN[ag][im];
-      //               ///////////////////////////////////////////////////////////////////////////////
-      //
-      //               /////////////////////////////// SUPER-INFECTION LS ////////////////////////////
-      //               temp = V0[ag][2][lt][im][nm][rg][na]*(VLjkl[rg][n2])*NixTrans[s];
-      //               V1[ag][2][lt][im][nm][rg][na]  -= temp;
-      //               V1[ag][2][lt][im][nm][rg][na]  += temp*MpslowPIN[ag][im];
-      //               V1[ag][3][lt][im][nm][rg][na]  += temp*MpfastPIN[ag][im];
-      //
-      //             } } } } } }
-      //   ///////////////////////////////////BREAKDOWN///////////////////////////////////
-      //   ///////////////////////for all age groups, risk groups/////////////////////////
-      //   for(int ag=0; ag<11; ag++) {
-      //     for(int lt=0; lt<2 ; lt++) {
-      //       for(int im=0; im<4 ; im++) {
-      //         for(int nm=0; nm<4; nm++) {
-      //           for(int rg=0; rg<2; rg++) {
-      //             for(int na=0; na<3; na++) {
-      //               temp  = V0[ag][2][lt][im][nm][rg][na]*(MrslowN[ag][im])*rrSlowFB[na];  // Latent Slow
-      //               temp2 = V0[ag][3][lt][im][nm][rg][na]*(rfast);  // Latent Fast
-      //               //////REMOVE FROM LATENT SLOW AND LATENT FAST AND PLACE IN ACTIVE DISEASE
-      //               V1[ag][2][lt][im][nm][rg][na]  -= temp;  //REMOVE FROM LATENT SLOW
-      //               V1[ag][3][lt][im][nm][rg][na]  -= temp2; //REMOVE FROM LATENT FAST
-      //               V1[ag][4][lt][im][nm][rg][na]  += (temp+temp2); //PLACE IN ACTIVE DISEASE
-      //             } } } } } }
-      //   ///////////////////////////   LATENT SLOW TO SAFE   /////////////////////////////
-      //   for(int ag=0; ag<11; ag++) {
-      //     for(int lt=0; lt<2 ; lt++) {
-      //       for(int im=0; im<4 ; im++) {
-      //         for(int nm=0; nm<4; nm++) {
-      //           for(int rg=0; rg<2; rg++) {
-      //             for(int na=0; na<3; na++) {
-      //               temp  = V0[ag][2][lt][im][nm][rg][na]*rRecov;  // Ls
-      //               V1[ag][2][lt][im][nm][rg][na]  -= temp;
-      //               V1[ag][1][lt][im][nm][rg][na]  += temp;
-      //             } } } } } }
-      //   ////////////////////////////////// SELF CURE/////////////////////////////////////
-      //   for(int ag=0; ag<11; ag++) {
-      //     for(int lt=0; lt<2 ; lt++) {
-      //       for(int im=0; im<4 ; im++) {
-      //         for(int nm=0; nm<4; nm++) {
-      //           for(int rg=0; rg<2; rg++) {
-      //             for(int na=0; na<3; na++) {
-      //               temp  = V0[ag][4 ][lt][im][nm][rg][na]*rSlfCur;
-      //               V1[ag][4 ][lt][im][nm][rg][na]  -= temp;
-      //               V1[ag][2 ][lt][im][nm][rg][na]  += temp;
-      //             } } } } } }
-      //   /// LTBI SCREENING AND TLTBI INITIATION /// only for no previous TB or LTBI tx
-      //
-      //       for(int rg=0; rg<2; rg++) {
-      //         for(int na=0; na<3; na++) {
-      //           ////////////// US BORN, LOW RISK  //////////////////
-      //           if( rg==0 & na==0) {
-      //             rTbP = rLtScrt[s]*LtDxParN[0][0];
-      //             rTbN = rLtScrt[s]*LtDxParN[0][1];
-      //           }
-      //           //////////// NON US BORN  ////////////////
-      //           if(rg==0 & na > 0) {
-      //             rTbP = rLtScrt[s]*LtDxParN[2][0];
-      //             rTbN = rLtScrt[s]*LtDxParN[2][1];
-      //           }
-      //           ////////////// US BORN, HIGH RISK  /////////////////
-      //           if(rg==1) {
-      //             rTbP = rLtScrt[s]*LtDxParN[1][0];
-      //             rTbN = rLtScrt[s]*LtDxParN[1][1];
-      //           }
-      //           for(int ag=0; ag<11; ag++) {
-      //             for(int nm=0; nm<4; nm++) {
-      //               for(int im=0; im<4; im++) {
-      //             ////////////// Dont have LTBI
-      //             temp  = V0[ag][0][0][im][nm][rg][na]*rTbN;
-      //             temp2 = V0[ag][1][0][im][nm][rg][na]*rTbN;
-      //             V1[ag][0][0][im][nm][rg][na]  -= temp;
-      //             V1[ag][1][0][im][nm][rg][na]  -= temp2;
-      //             ///////moving to latent tx experienced as in last model -- is this correct?
-      //             V1[ag][0][1][im][nm][rg][na]  += temp;
-      //             V1[ag][1][1][im][nm][rg][na]  += temp2;
-      //           } } } } }
-      //   /// TLTBI: TX COMPLETION + DEFAULT /// only need to consider tx naive compartment
-      //   for(int rg=0; rg<2; rg++) {
-      //     for(int na=0; na<3; na++) {
-      //
-      //       if( rg==0 & na==0) {
-      //         rTbP = rLtScrt[s]*LtDxParN[0][0];
-      //         rTbN = rLtScrt[s]*LtDxParN[0][1];
-      //       }
-      //       //////////// NON US BORN  ////////////////
-      //       if(rg==0 & na > 0) {
-      //         rTbP = rLtScrt[s]*LtDxParN[2][0];
-      //         rTbN = rLtScrt[s]*LtDxParN[2][1];
-      //       }
-      //       ////////////// US BORN, HIGH RISK  /////////////////
-      //       if(rg==1) {
-      //         rTbP = rLtScrt[s]*LtDxParN[1][0];
-      //         rTbN = rLtScrt[s]*LtDxParN[1][1];
-      //       }
-      //
-      //       for(int ag=0; ag<11; ag++) {
-      //         for(int im=0; im<4 ; im++) {
-      //           for(int nm=0; nm<4; nm++) {
-      //             //N(latent)*r(posLTBIscreen)*p(TLTBI Initiation)*p(TLTBI completion)
-      //             temp  = V0[ag][2][0][im][nm][rg][na]*rTbP*LtTxPar[0]*(1-LtTxPar[1]); // tx completion
-      //             temp2 = V0[ag][3][0][im][nm][rg][na]*rTbP*LtTxPar[0]*(1-LtTxPar[1]); // tx completion
-      //
-      //             temp3 = V0[ag][2][0][im][nm][rg][na]*rTbP*LtTxPar[0]*LtTxPar[1]; // default
-      //             temp4 = V0[ag][3][0][im][nm][rg][na]*rTbP*LtTxPar[0]*LtTxPar[1]; // default
-      //
-      //             V1[ag][2][0][im][nm][rg][na]  -=  (temp+temp3); //remove from latent slow
-      //             V1[ag][3][0][im][nm][rg][na]  -=  (temp2+temp4);  //remove from latent fast
-      //
-      //             V1[ag][1][1][im][nm][rg][na]   += (temp+temp2)*LtTxPar[2]; //*EffLt0[s]; //exit to cure
-      //             V1[ag][2][1][im][nm][rg][na]   += (temp+temp2)*(1-LtTxPar[2]); //*(1-EffLt0[s]) //tx comp fail to latent slow
-      //
-      //             ///defaults are placed in tx naive because it is considered the same tb infection
-      //             V1[ag][2][0][im][nm][rg][na]  += (temp3+temp4); //latent tx default to latent slow
-      //           } } } } }
-      //   ///////////////////// TB DIAGNOSIS AND TX INITIATION  /////////////////////////
-      //   for(int ag=0; ag<11; ag++) {
-      //     for(int lt=0; lt<2; lt++) {
-      //       for(int im=0; im<4 ; im++) {
-      //         for(int nm=0; nm<4; nm++) {
-      //           for(int rg=0; rg<2; rg++) {
-      //             for(int na=0; na<3; na++) {
-      //               temp  = V0[ag][4][lt][im][nm][rg][na]*rDxtN[s][rg]/RRdxAge[ag];
-      //               V1[ag][4][lt][im][nm][rg][na]      -= temp;
-      //               V1[ag][5][lt][im][nm][rg][na]      += temp;
-      //               Vdx[ag][4][lt][im][nm][rg][na]      = temp;
-      //             } } } } } }
-      //   //////////////////////// TB TREATMENT OUTCOMES /////////////////////////////
-      //   for(int ag=0; ag<11; ag++) {
-      //     for(int lt=0; lt<2; lt++) {
-      //       for(int im=0; im<4; im++) {
-      //         for(int nm=0; nm<4; nm++) {
-      //           for(int rg=0; rg<2; rg++) {
-      //             for(int na=0; na<3; na++) {
-      //               // Cures back to Ls state (should this actually be into partially immune state?)
-      //               temp=V0[ag][5][lt][im][nm][rg][na]*TxVecZ[2];
-      //               V1[ag][5][lt][im][nm][rg][na]  -= temp;
-      //               V1[ag][2][lt][im][nm][rg][na]  += temp;
-      //               ///// EXIT TO ACTIVE DISEASE //////
-      //               temp=V0[ag][5][lt][im][nm][rg][na]*TxVecZ[3];
-      //               V1[ag][5][lt][im][nm][rg][na]  -= temp;
-      //               V1[ag][4][lt][im][nm][rg][na]  += temp;
-      //               ///// EXIT TO TB RETREATMENT //////
-      //               temp=V0[ag][5][lt][im][nm][rg][na]*TxVecZ[4];
-      //               V1[ag][5][lt][im][nm][rg][na]  -= temp;
-      //               V1[ag][5][lt][im][nm][rg][na]  += temp;
-      //             } } } } } }
-      // }//end of TB loop
+      if (tb_dyn==1){
+        ////////////////////////////  TRANSMISSION RISK  ////////////////////////////////
+        for(int i=0; i<2; i++) {
+          for(int j=0; j<2; j++) {
+            VNkl [i][j] = 0;
+            VGjkl[i][j] = 0;   // set to zero
+          } }
+        // Step 1
+        // take total population of mixing groups
+        for(int ag=0; ag<11; ag++) {
+          for(int tb=0; tb<6; tb++) {
+            for(int lt=0; lt<2; lt++) {
+            for(int im=0; im<4; im++) {
+              for(int nm=0; nm<4; nm++) {
+
+                  // LOW RISK US BORN
+                  VNkl[0][0]  += V0[ag][tb][lt][im][nm][0][0];
+                  ///////// HIGH RISK US BORN
+                  ///////// ranges under 1 every time step
+                  VNkl[1][0]  += V0[ag][tb][lt][im][nm][1][0];
+                  ///////// LOW RISK NON US BORN
+                  ///////// ranges from .5 -10 people between time steps
+                  VNkl[0][1]  += V0[ag][tb][lt][im][nm][0][1] + V0[ag][tb][lt][im][nm][0][2];
+                  ///////// also ranges from .5 -10 people between time steps
+                  ///////// HIGH RISK NON US BORN
+                  VNkl[1][1]  += V0[ag][tb][lt][im][nm][1][1] + V0[ag][tb][lt][im][nm][1][2];
+                } } } } }
+
+        // for (int i=0; i<2; i++){
+        //   for (int j=0; j<2; j++){
+        //     Rcpp::Rcout <<"sums are " <<  VNkl[i][j] << "for i= " << i << " and j = " <<  j << "\n";
+        //   }
+        // }
+        // Step 2  (active TB)
+        // Number of active cases* relative infectiousness
+        for(int ag=0; ag<11; ag++) {
+          for(int tb=0; tb<6; tb++) {
+            for(int im=0; im<4; im++) {
+              for(int nm=0; nm<4; nm++) {
+                for(int lt=0; lt<2; lt++) {
+
+                  /////////  LOW RISK US BORN
+                  VGjkl[0][0]  +=  V0[ag][tb][lt][im][nm][0][0]                                *RelInf[tb];
+                  ///////// HIGH RISK US BORN
+                  VGjkl[1][0]  +=  V0[ag][tb][lt][im][nm][1][0]                                *RelInf[tb];
+                  ///////// LOW RISK NON US BORN
+                  VGjkl[0][1]  += (V0[ag][tb][lt][im][nm][0][1] + V0[ag][tb][lt][im][nm][0][2])*RelInf[tb];
+                  /////////  HIGH RISK NON US BORN
+                  VGjkl[1][1]  += (V0[ag][tb][lt][im][nm][1][1] + V0[ag][tb][lt][im][nm][1][2])*RelInf[tb];
+                } } } } }
+
+        // for (int i=0; i<2; i++){
+        //   for (int j=0; j<2; j++){
+        //     Rcpp::Rcout <<"VGs are " <<  VGjkl[i][j] << "for i= " << i << " and j = " <<  j << "\n";
+        //   }
+        // }
+        // Step 2 (treated TB)
+        // No contribution to force of infection
+
+        // Step 3
+        Vjaf[0]  =( RelInfRg[0]*VGjkl[0][0] +
+          RelInfRg[1]*VGjkl[1][0]*Vmix[0]+
+          RelInfRg[2]*VGjkl[0][1]*Vmix[1]+
+          RelInfRg[3]*VGjkl[1][1]*Vmix[1]*Vmix[0]) /
+            ((RelInfRg[0]*VNkl[0][0] +
+              RelInfRg[1]*VNkl[1][0]*Vmix[0]+
+              RelInfRg[2]*VNkl[0][1]*Vmix[1]+
+              RelInfRg[3]*VNkl[1][1]*Vmix[1]*Vmix[0]) + 1e-12);
+
+        Vjaf[1] = ((RelInfRg[1]*VGjkl[0][1]) + ( RelInfRg[3]*VGjkl[1][1]*Vmix[0])) /
+          ((RelInfRg[1]*VNkl[0][1])  +  (RelInfRg[3]*VNkl[1][1]*Vmix[0]) + 1e-12);
+
+        Vjaf[2] = ((RelInfRg[2]*VGjkl[1][0]) +  (RelInfRg[3]*VGjkl[1][1]*Vmix[1])) /
+          ((RelInfRg[2]*VNkl[1][1] ) +  (RelInfRg[3]*VNkl[1][1]*Vmix[1]) + 1e-12);
+
+        Vjaf[3] = VGjkl[1][1] / (VNkl[1][1] + 1e-12);
+
+
+        // for (int i=0; i<4; i++){
+        //   Rcpp::Rcout << "Vjaf is "<<  Vjaf[i] << "\n";
+        // }
+
+        // Step 4
+        /// LOW RISK US BORN
+        VLjkl[0 ][0 ]  = (RelInfRg[0]*Vjaf[0]);
+        ///////// HIGH RISK US BORN
+        VLjkl[1 ][0 ]  = (RelInfRg[1]*Vjaf[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]);
+        ///////// LOW RISK NON US BORN
+        VLjkl[0 ][1 ]  = ((RelInfRg[2]*Vjaf[2]*(1-Vmix[1]) + RelInfRg[0]*Vjaf[0]*Vmix[1])) + ExogInf[s];
+        ///////// HIGH RISK NON US BORN
+        ///check the use of RelInfRg here as beta, might need to be a combo param but unclear check the old param file
+        VLjkl[1 ][1 ]  = ((RelInfRg[3]*Vjaf[3]*(1-Vmix[0])*(1-Vmix[1]) + RelInfRg[2]*Vjaf[2]*Vmix[0]*(1-Vmix[1]) + RelInfRg[1]*Vjaf[1]*Vmix[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]*Vmix[1]) ) + ExogInf[s];
+
+
+        ///////////////////////////////INFECTION///////////////////////////////////////
+        ///////////////////////for all age groups, risk groups/////////////////////////
+        ///////INFECTION IS CALCULATED WITH THE FORCE OF INFECTION BY RISK GROUP///////
+        /////// THE TOTAL NUMBER OF INFECTED THEN ENTER BOTH THE LATENT SLOW &  ///////
+        ///////& LATENT FAST TB STATES DEPENDENT ON PROBABILITY OF FAST LATENCY ///////
+        ///////    PEOPLE ARE REMOVED FROM SUSCEPTIBLE, PARTIALLY IMMUNE &      ///////
+        ///////                   LATENT SLOW STATES                            ///////
+        ///////////////////////////////////////////////////////////////////////////////
+        for(int ag=0; ag<11; ag++) {
+          for(int lt=0; lt<2; lt++) {
+            for(int im=0; im<4; im++) {
+              for(int nm=0; nm<4; nm++) {
+                for(int rg=0; rg<2; rg++) {
+                  for (int na=0; na<3; na++){
+
+                    if (na==0){
+                      n2=na;
+                    } else {n2=1;}
+                    ///////////////////////////////   SUCEPTIBLE  /////////////////////////////////
+                    temp = V0[ag][0][lt][im][nm][rg][na]*(VLjkl[rg][n2])*NixTrans[s];
+                    //////////////////////////// REMOVE FROM SUSCEPTIBLE //////////////////////////
+                    V1[ag][0][lt][im][nm][rg][na]  -= temp;
+                    //////////////////////////////// LATENT TB SLOW ///////////////////////////////
+                    V1[ag][2][lt][im][nm][rg][na]  += temp*MpslowN[ag][im];
+                    //////////////////////////////// LATENT TB FAST ///////////////////////////////
+                    V1[ag][3][lt][im][nm][rg][na]  += temp*MpfastN[ag][im];
+                    ///////////////////////////////////////////////////////////////////////////////
+
+                    /////////////////////////////// SUPER-INFECTION SP ////////////////////////////
+                    temp = V0[ag][1][lt][im][nm][rg][na]*(VLjkl[rg][n2])*NixTrans[s];
+                    V1[ag][1][lt][im][nm][rg][na] -= temp;
+                    V1[ag][2][lt][im][nm][rg][na] += temp*MpslowPIN[ag][im];
+                    V1[ag][3][lt][im][nm][rg][na] += temp*MpfastPIN[ag][im];
+                    ///////////////////////////////////////////////////////////////////////////////
+
+                    /////////////////////////////// SUPER-INFECTION LS ////////////////////////////
+                    temp = V0[ag][2][lt][im][nm][rg][na]*(VLjkl[rg][n2])*NixTrans[s];
+                    V1[ag][2][lt][im][nm][rg][na]  -= temp;
+                    V1[ag][2][lt][im][nm][rg][na]  += temp*MpslowPIN[ag][im];
+                    V1[ag][3][lt][im][nm][rg][na]  += temp*MpfastPIN[ag][im];
+
+                  } } } } } }
+
+        for(int ag=0; ag<11; ag++) {
+          for(int tb=0; tb<6; tb++) {
+            for(int lt=0; lt<2; lt++){
+              for(int im=0; im<4; im++){
+                for(int nm=0; nm<4; nm++){
+                  for(int rg=0; rg<2; rg++) {
+                    for(int na=0; na<3; na++) {
+                      if (V1[ag][tb][lt][im][nm][rg][na]<0){
+                        Rcpp::Rcout << "after infection pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+                        Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+
+                      }
+                    } } } } } } }
+        ///////////////////////////////////BREAKDOWN///////////////////////////////////
+        ///////////////////////for all age groups, risk groups/////////////////////////
+        for(int ag=0; ag<11; ag++) {
+          for(int lt=0; lt<2 ; lt++) {
+            for(int im=0; im<4 ; im++) {
+              for(int nm=0; nm<4; nm++) {
+                for(int rg=0; rg<2; rg++) {
+                  for(int na=0; na<3; na++) {
+                    temp  = V0[ag][2][lt][im][nm][rg][na]*(MrslowN[ag][im])*rrSlowFB[na];  // Latent Slow
+                    temp2 = V0[ag][3][lt][im][nm][rg][na]*(rfast);  // Latent Fast
+                    //////REMOVE FROM LATENT SLOW AND LATENT FAST AND PLACE IN ACTIVE DISEASE
+                    V1[ag][2][lt][im][nm][rg][na]  -= temp;  //REMOVE FROM LATENT SLOW
+                    V1[ag][3][lt][im][nm][rg][na]  -= temp2; //REMOVE FROM LATENT FAST
+                    V1[ag][4][lt][im][nm][rg][na]  += (temp+temp2); //PLACE IN ACTIVE DISEASE
+                  } } } } } }
+        for(int ag=0; ag<11; ag++) {
+          for(int tb=0; tb<6; tb++) {
+            for(int lt=0; lt<2; lt++){
+              for(int im=0; im<4; im++){
+                for(int nm=0; nm<4; nm++){
+                  for(int rg=0; rg<2; rg++) {
+                    for(int na=0; na<3; na++) {
+                      if (V1[ag][tb][lt][im][nm][rg][na]<0){
+                        Rcpp::Rcout << "after breakdown pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+                        Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+
+                      }
+                    } } } } } } }
+        ///////////////////////////   LATENT SLOW TO SAFE   /////////////////////////////
+        for(int ag=0; ag<11; ag++) {
+          for(int lt=0; lt<2 ; lt++) {
+            for(int im=0; im<4 ; im++) {
+              for(int nm=0; nm<4; nm++) {
+                for(int rg=0; rg<2; rg++) {
+                  for(int na=0; na<3; na++) {
+                    temp  = V0[ag][2][lt][im][nm][rg][na]*rRecov;  // Ls
+                    V1[ag][2][lt][im][nm][rg][na]  -= temp;
+                    V1[ag][1][lt][im][nm][rg][na]  += temp;
+                  } } } } } }
+        for(int ag=0; ag<11; ag++) {
+          for(int tb=0; tb<6; tb++) {
+            for(int lt=0; lt<2; lt++){
+              for(int im=0; im<4; im++){
+                for(int nm=0; nm<4; nm++){
+                  for(int rg=0; rg<2; rg++) {
+                    for(int na=0; na<3; na++) {
+                      if (V1[ag][tb][lt][im][nm][rg][na]<0){
+                        Rcpp::Rcout << "after lsts pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+                        Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+
+                      }
+                    } } } } } } }
+        ////////////////////////////////// SELF CURE/////////////////////////////////////
+        for(int ag=0; ag<11; ag++) {
+          for(int lt=0; lt<2 ; lt++) {
+            for(int im=0; im<4 ; im++) {
+              for(int nm=0; nm<4; nm++) {
+                for(int rg=0; rg<2; rg++) {
+                  for(int na=0; na<3; na++) {
+                    temp  = V0[ag][4 ][lt][im][nm][rg][na]*rSlfCur;
+                    V1[ag][4 ][lt][im][nm][rg][na]  -= temp;
+                    V1[ag][2 ][lt][im][nm][rg][na]  += temp;
+                  } } } } } }
+        for(int ag=0; ag<11; ag++) {
+          for(int tb=0; tb<6; tb++) {
+            for(int lt=0; lt<2; lt++){
+              for(int im=0; im<4; im++){
+                for(int nm=0; nm<4; nm++){
+                  for(int rg=0; rg<2; rg++) {
+                    for(int na=0; na<3; na++) {
+                      if (V1[ag][tb][lt][im][nm][rg][na]<0){
+                        Rcpp::Rcout << "after slfcur pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+                        Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+
+                      }
+                    } } } } } } }
+        /// LTBI SCREENING AND TLTBI INITIATION /// only for no previous TB or LTBI tx
+
+            for(int rg=0; rg<2; rg++) {
+              for(int na=0; na<3; na++) {
+                ////////////// US BORN, LOW RISK  //////////////////
+                if( rg==0 & na==0) {
+                  rTbP = rLtScrt[s]*LtDxParN[0][0];
+                  rTbN = rLtScrt[s]*LtDxParN[0][1];
+                }
+                //////////// NON US BORN  ////////////////
+                if(rg==0 & na > 0) {
+                  rTbP = rLtScrt[s]*LtDxParN[2][0];
+                  rTbN = rLtScrt[s]*LtDxParN[2][1];
+                }
+                ////////////// US BORN, HIGH RISK  /////////////////
+                if(rg==1) {
+                  rTbP = rLtScrt[s]*LtDxParN[1][0];
+                  rTbN = rLtScrt[s]*LtDxParN[1][1];
+                }
+                for(int ag=0; ag<11; ag++) {
+                  for(int nm=0; nm<4; nm++) {
+                    for(int im=0; im<4; im++) {
+                  ////////////// Dont have LTBI
+                  temp  = V0[ag][0][0][im][nm][rg][na]*rTbN;
+                  temp2 = V0[ag][1][0][im][nm][rg][na]*rTbN;
+                  V1[ag][0][0][im][nm][rg][na]  -= temp;
+                  V1[ag][1][0][im][nm][rg][na]  -= temp2;
+                  ///////moving to latent tx experienced as in last model -- is this correct?
+                  V1[ag][0][1][im][nm][rg][na]  += temp;
+                  V1[ag][1][1][im][nm][rg][na]  += temp2;
+                } } } } }
+            for(int ag=0; ag<11; ag++) {
+              for(int tb=0; tb<6; tb++) {
+                for(int lt=0; lt<2; lt++){
+                  for(int im=0; im<4; im++){
+                    for(int nm=0; nm<4; nm++){
+                      for(int rg=0; rg<2; rg++) {
+                        for(int na=0; na<3; na++) {
+                          if (V1[ag][tb][lt][im][nm][rg][na]<0){
+                            Rcpp::Rcout << "after screen pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+                            Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+
+                          }
+                        } } } } } } }
+        /// TLTBI: TX COMPLETION + DEFAULT /// only need to consider tx naive compartment
+
+
+            for(int ag=0; ag<11; ag++) {
+              for(int im=0; im<4 ; im++) {
+                for(int nm=0; nm<4; nm++) {
+                  for(int rg=0; rg<2; rg++) {
+                    for(int na=0; na<3; na++) {
+                  //N(latent)*r(posLTBIscreen)*p(TLTBI Initiation)*p(TLTBI completion)
+                  temp  = V0[ag][2][0][im][nm][rg][na]*rTbP*LtTxPar[0]*(1-LtTxPar[1]); // tx completion
+                  temp2 = V0[ag][3][0][im][nm][rg][na]*rTbP*LtTxPar[0]*(1-LtTxPar[1]); // tx completion
+
+                  temp3 = V0[ag][2][0][im][nm][rg][na]*rTbP*LtTxPar[0]*LtTxPar[1]; // default
+                  temp4 = V0[ag][3][0][im][nm][rg][na]*rTbP*LtTxPar[0]*LtTxPar[1]; // default
+
+                  V1[ag][2][0][im][nm][rg][na]  -=  (temp+temp3); //remove from latent slow
+                  V1[ag][3][0][im][nm][rg][na]  -=  (temp2+temp4);  //remove from latent fast
+
+                  V1[ag][1][1][im][nm][rg][na]   += (temp+temp2)*LtTxPar[2]; //*EffLt0[s]; //exit to cure
+                  V1[ag][2][1][im][nm][rg][na]   += (temp+temp2)*(1-LtTxPar[2]); //*(1-EffLt0[s]) //tx comp fail to latent slow
+
+                  ///defaults are placed in tx naive because it is considered the same tb infection
+                  V1[ag][2][0][im][nm][rg][na]  += (temp3+temp4); //latent tx default to latent slow
+                } } } } }
+        for(int ag=0; ag<11; ag++) {
+          for(int tb=0; tb<6; tb++) {
+            for(int lt=0; lt<2; lt++){
+              for(int im=0; im<4; im++){
+                for(int nm=0; nm<4; nm++){
+                  for(int rg=0; rg<2; rg++) {
+                    for(int na=0; na<3; na++) {
+                      if (V1[ag][tb][lt][im][nm][rg][na]<0){
+                        Rcpp::Rcout << "after tltbi pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+                        Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+
+                      }
+                    } } } } } } }
+        ///////////////////// TB DIAGNOSIS AND TX INITIATION  /////////////////////////
+        for(int ag=0; ag<11; ag++) {
+          for(int lt=0; lt<2; lt++) {
+            for(int im=0; im<4 ; im++) {
+              for(int nm=0; nm<4; nm++) {
+                for(int rg=0; rg<2; rg++) {
+                  for(int na=0; na<3; na++) {
+                    temp  = V0[ag][4][lt][im][nm][rg][na]*rDxtN[s][rg]/RRdxAge[ag];
+                    V1[ag][4][lt][im][nm][rg][na]      -= temp;
+                    V1[ag][5][lt][im][nm][rg][na]      += temp;
+                    Vdx[ag][4][lt][im][nm][rg][na]      = temp;
+                  } } } } } }
+        for(int ag=0; ag<11; ag++) {
+          for(int tb=0; tb<6; tb++) {
+            for(int lt=0; lt<2; lt++){
+              for(int im=0; im<4; im++){
+                for(int nm=0; nm<4; nm++){
+                  for(int rg=0; rg<2; rg++) {
+                    for(int na=0; na<3; na++) {
+                      if (V1[ag][tb][lt][im][nm][rg][na]<0){
+                        Rcpp::Rcout << "after tbdx pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+                        Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+
+                      }
+                    } } } } } } }
+        //////////////////////// TB TREATMENT OUTCOMES /////////////////////////////
+        for(int ag=0; ag<11; ag++) {
+          for(int lt=0; lt<2; lt++) {
+            for(int im=0; im<4; im++) {
+              for(int nm=0; nm<4; nm++) {
+                for(int rg=0; rg<2; rg++) {
+                  for(int na=0; na<3; na++) {
+                    // Cures back to Ls state (should this actually be into partially immune state?)
+                    temp=V0[ag][5][lt][im][nm][rg][na]*TxVecZ[2];
+                    V1[ag][5][lt][im][nm][rg][na]  -= temp;
+                    V1[ag][2][lt][im][nm][rg][na]  += temp;
+                    ///// EXIT TO ACTIVE DISEASE //////
+                    temp=V0[ag][5][lt][im][nm][rg][na]*TxVecZ[3];
+                    V1[ag][5][lt][im][nm][rg][na]  -= temp;
+                    V1[ag][4][lt][im][nm][rg][na]  += temp;
+                    ///// EXIT TO TB RETREATMENT //////
+                    temp=V0[ag][5][lt][im][nm][rg][na]*TxVecZ[4];
+                    V1[ag][5][lt][im][nm][rg][na]  -= temp;
+                    V1[ag][5][lt][im][nm][rg][na]  += temp;
+                  } } } } } }
+        for(int ag=0; ag<11; ag++) {
+          for(int tb=0; tb<6; tb++) {
+            for(int lt=0; lt<2; lt++){
+              for(int im=0; im<4; im++){
+                for(int nm=0; nm<4; nm++){
+                  for(int rg=0; rg<2; rg++) {
+                    for(int na=0; na<3; na++) {
+                      if (V1[ag][tb][lt][im][nm][rg][na]<0){
+                        Rcpp::Rcout << "after txout pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+                        Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+
+                      }
+                    } } } } } } }
+      }//end of TB loop
       //
       // // temp=0;
       // //   temp2=0;
