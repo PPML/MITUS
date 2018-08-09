@@ -1,4 +1,4 @@
-#'This script creates a function that loops over the log-likelihood
+#'This scrprmst creates a function that loops over the log-likelihood
 #'functions found in calib_functions.R and updates the
 #'this is the function that goes into the optimizer
 #'load the necessary libraries
@@ -29,28 +29,28 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
   P <- P
 
   jj <- tryCatch({
-    # IP <-list()
-    # IP <- param(P)
-    IP <- list()
-    IP <- param_init(P)
-    trans_mat_tot_ages<<-reblncd(mubt = IP$mubt,can_go = can_go,RRmuHR = IP$RRmuHR[2], RRmuRF = IP$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, IP$adj_fact)
+    prms <-list()
+    prms <- param(P)
+    # prms <- list()
+    # prms <- param_init(P)
+    trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, prms$adj_fact)
 
-    zz <- cSim(  nYrs       =   2050-1950         , nRes      = length(IP[["ResNam"]]), rDxt     = IP[["rDxt"]]  , TxQualt    = IP[["TxQualt"]]   , InitPop  = IP[["InitPop"]]    ,
-                 Mpfast     = IP[["Mpfast"]]    , ExogInf   = IP[["ExogInf"]]       , MpfastPI = IP[["MpfastPI"]], Mrslow     = IP[["Mrslow"]]    , rrSlowFB = IP[["rrSlowFB"]]    ,
-                 rfast      = IP[["rfast"]]     , RRcurDef  = IP[["RRcurDef"]]      , rSlfCur  = IP[["rSlfCur"]] , p_HR       = IP[["p_HR"]]      , dist_gen = IP[["dist_gen"]]    ,
-                 vTMort     = IP[["vTMort"]]    , RRmuRF    = IP[["RRmuRF"]]        , RRmuHR   = IP[["RRmuHR"]]  , muTbRF     = IP[["muTbRF"]]    , Birthst  = IP[["Birthst"]]    ,
-                 HrEntEx    = IP[["HrEntEx"]]   , ImmNon    = IP[["ImmNon"]]        , ImmLat   = IP[["ImmLat" ]] , ImmAct     = IP[["ImmAct"]]    , ImmFst   = IP[["ImmFst" ]]    ,
-                 mubt       = IP[["mubt"]]      , RelInf    = IP[["RelInf"]]        , RelInfRg = IP[["RelInfRg"]], Vmix       = IP[["Vmix"]]      , rEmmigFB = IP [["rEmmigFB"]]  ,
-                 TxVec      = IP[["TxVec"]]     , TunTxMort = IP[["TunTxMort"]]     , rDeft    = IP[["rDeft"]]   , pReTx      = IP[["pReTx"]]     , LtTxPar  = IP[["LtTxPar"]]    ,
-                 LtDxPar    = IP[["LtDxPar"]]   , rLtScrt   = IP[["rLtScrt"]]       , RRdxAge  = IP[["RRdxAge"]] , rRecov     = IP[["rRecov"]]    , pImmScen = IP[["pImmScen"]]   ,
-                 EarlyTrend = IP[["EarlyTrend"]], NixTrans  = IP[["NixTrans"]]        , trans_mat_tot_ages = trans_mat_tot_ages)
+    zz <- cSim(  nYrs       = 2016-1950         , nRes      = length(prms[["ResNam"]]), rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
+                 Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]    ,
+                 rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
+                 vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , muTbRF     = prms[["muTbRF"]]    , Birthst  = prms[["Birthst"]]    ,
+                 HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat" ]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst" ]]    ,
+                 mubt       = prms[["mubt"]]      , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
+                 TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
+                 LtDxPar    = prms[["LtDxPar"]]   , rLtScrt   = prms[["rLtScrt"]]       , RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
+                 EarlyTrend = prms[["EarlyTrend"]], trans_mat_tot_ages = trans_mat_tot_ages)
 #'if any output is missing or negative or if any model state population is negative
 #'set the likelihood to a hugely negative number (penalized)
     if(sum(is.na(zz$Outputs[65,]))>0 | min(zz$Outputs[65,])<0 | min(zz$V1)<0 ) {
       lLik <- -10^12
   } else {
       M <- zz$Outputs
-      colnames(M) <- IP[["ResNam"]]
+      colnames(M) <- prms[["ResNam"]]
       lLik <- 0
       #' TOTAL DIAGNOSED CASES 1953-2016 - index is same
       v1   <- M[4:67,"NOTIF_ALL"]+M[4:67,"NOTIF_MORT_ALL"]
@@ -127,7 +127,7 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
 
       #' LIKELIHOOD FOR BORGDORFF, FEREBEE & SUTHERLAND ESTIMATES
 
-      v2456  <- list(IP[["Mpfast"]],IP[["Mrslow"]], IP[["rfast"]],IP[["rRecov"]])
+      v2456  <- list(prms[["Mpfast"]],prms[["Mrslow"]], prms[["rfast"]],prms[["rRecov"]])
       addlik <- borgdorff_lLik( Par=v2456); addlik
       lLik <- lLik + addlik
       addlik <- ferebee_lLik(Par=v2456); addlik
@@ -136,7 +136,7 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
       lLik <- lLik + addlik
 
       # ### ### ### LIKELIHOOD FOR TIEMERSMA ESTS ### ### ### ### ### ### ~~~
-      v35   <- c(P["rSlfCur"],P["muIp"])
+      v35   <- c(P["rSlfCur"],P["muprms"])
       addlik <- tiemersma_lLik(Par=v35); addlik
       lLik <- lLik + addlik
 
