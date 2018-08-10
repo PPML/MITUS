@@ -4,8 +4,6 @@
 #'These llikelihood functions are called in IMIS_functions.R
 #'takes in the outputs and calibration data and creates likelihood functions
 
-#'load the necessary calibration data
-data("CalibDat_2018-07-12", package='MITUS') # CalibDat
 
 #'Dirichlet multinomial density function
 #'@name dDirMult
@@ -22,10 +20,7 @@ dDirMult <- function(M,n,Rho) {
   rowSums(lgamma(n+M/Rho))-rowSums(lgamma(M/Rho))
 }
 
-#'Log-likelihood functions
-#'Assign the calibration importance weights from CalibDat
-#'These weights are based on year of the simulation.
-wts <- CalibDat[["ImptWeights"]]
+
 
 #'Total Diagnosed Cases 1953-2016
 #'Motivation: Normal, mean centered with CI = +/- 5% of the mean
