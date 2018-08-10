@@ -11,7 +11,13 @@ library(lhs)
 #'@param ParMatrix matrix of parameters  # Par = par_1
 #'@return lLik
 llikelihoodZ <-  function(samp_i,ParMatrix) {
-
+  #'load the necessary calibration data
+  data("CalibDat_2018-07-12", package='MITUS') # CalibDat
+  #'Log-likelihood functions
+  #'Assign the calibration importance weights from CalibDat
+  #'These weights are based on year of the simulation.
+  wts <- CalibDat[["ImptWeights"]]
+  #'format P
   data("ParamInitUS_2018-08-06_final", package='MITUS')# ParamInit
   P  <- ParamInit[,1];
   names(P) <- rownames(ParamInit)
