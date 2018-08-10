@@ -5,12 +5,22 @@
 library(mnormt)
 library(parallel)
 library(lhs)
-source("R/define_P.R")
+#source("R/define_P.R")
 #'@name llikelihoodZ
 #'@param samp_i sample id
 #'@param ParMatrix matrix of parameters  # Par = par_1
 #'@return lLik
 llikelihoodZ <-  function(samp_i,ParMatrix) {
+
+  data("ParamInitUS_2018-08-06_final", package='MITUS')# ParamInit
+  P  <- ParamInit[,1];
+  names(P) <- rownames(ParamInit)
+  ii <-  ParamInit[,5]==1
+  ParamInitZ <- ParamInit[ParamInit$Calib==1,]
+  idZ0 <- ParamInitZ[,4]==0
+  idZ1 <- ParamInitZ[,4]==1
+  idZ2 <- ParamInitZ[,4]==2
+
   if(min(dim(as.data.frame(ParMatrix)))==1) {
     Par <- as.numeric(ParMatrix);
     names(Par) <- names(ParMatrix)
@@ -31,11 +41,11 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
   jj <- tryCatch({
     prms <-list()
     prms <- param(P)
-    # prms <- list()
-    # prms <- param_init(P)
+    IP <- list()
+    IP <- param_init(P)
     trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, prms$adj_fact)
 
-    zz <- cSim(  nYrs       = 2016-1950         , nRes      = length(prms[["ResNam"]]), rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
+    zz <- cSim(  nYrs       = 2018-1950         , nRes      = length(prms[["ResNam"]]), rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
                  Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]    ,
                  rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
                  vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , muTbRF     = prms[["muTbRF"]]    , Birthst  = prms[["Birthst"]]    ,
@@ -43,7 +53,7 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
                  mubt       = prms[["mubt"]]      , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
                  TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
                  LtDxPar    = prms[["LtDxPar"]]   , rLtScrt   = prms[["rLtScrt"]]       , RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
-                 EarlyTrend = prms[["EarlyTrend"]], trans_mat_tot_ages = trans_mat_tot_ages)
+                 EarlyTrend = prms[["EarlyTrend"]], NixTrans = IP[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)
 #'if any output is missing or negative or if any model state population is negative
 #'set the likelihood to a hugely negative number (penalized)
     if(sum(is.na(zz$Outputs[65,]))>0 | min(zz$Outputs[65,])<0 | min(zz$V1)<0 ) {
@@ -136,7 +146,7 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
       lLik <- lLik + addlik
 
       # ### ### ### LIKELIHOOD FOR TIEMERSMA ESTS ### ### ### ### ### ### ~~~
-      v35   <- c(P["rSlfCur"],P["muprms"])
+      v35   <- c(P["rSlfCur"],P["muIp"])
       addlik <- tiemersma_lLik(Par=v35); addlik
       lLik <- lLik + addlik
 
