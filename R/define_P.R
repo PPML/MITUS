@@ -2,12 +2,12 @@
 ### it until I can decide the best place to move it into for final
 ### model run
 
-data("ParamInitUS_2018-08-06_final", package='MITUS')# ParamInit
-P  <- ParamInit[,1];
-names(P) <- rownames(ParamInit)
-ii <-  ParamInit[,5]==1
-ParamInitZ <- ParamInit[ParamInit$Calib==1,]
-idZ0 <- ParamInitZ[,4]==0
-idZ1 <- ParamInitZ[,4]==1
-idZ2 <- ParamInitZ[,4]==2
+# data("ParamInitUS_2018-08-06_final", package='MITUS')# ParamInit
+# P  <- ParamInit[,1];
+# names(P) <- rownames(ParamInit)
+# ii <-  ParamInit[,5]==1
+# ParamInitZ <- ParamInit[ParamInit$Calib==1,]
+# idZ0 <- ParamInitZ[,4]==0
+# idZ1 <- ParamInitZ[,4]==1
+# idZ2 <- ParamInitZ[,4]==2
 
