@@ -175,6 +175,22 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
 #'@return lLik
 #'@export
 llikelihood <- function(ParMatrix,n_cores=1) {
+
+  data("CalibDat_2018-07-12", package='MITUS') # CalibDat
+  #'Log-likelihood functions
+  #'Assign the calibration importance weights from CalibDat
+  #'These weights are based on year of the simulation.
+  wts <- CalibDat[["ImptWeights"]]
+  #'format P
+  data("ParamInitUS_2018-08-06_final", package='MITUS')# ParamInit
+  P  <- ParamInit[,1];
+  names(P) <- rownames(ParamInit)
+  ii <-  ParamInit[,5]==1
+  ParamInitZ <- ParamInit[ParamInit$Calib==1,]
+  idZ0 <- ParamInitZ[,4]==0
+  idZ1 <- ParamInitZ[,4]==1
+  idZ2 <- ParamInitZ[,4]==2
+
   if(dim(as.data.frame(ParMatrix))[2]==1) {
     lLik <- llikelihoodZ(1,t(as.data.frame(ParMatrix)))
   } else {
