@@ -2090,40 +2090,7 @@ for(int ag=0; ag<11; ag++) {
   //
   //     } } }
   //
-  for(int ag=0; ag<11; ag++) {
 
-      for (int i=0; i<4; i++){
-
-          temp_vec2[i]=0; }
-      mat_sum=0;
-      ////make a count of # of ppl in each mortality group
-      // for(int ag=0; ag<11; ag++) {
-      for(int tb=0; tb<6; tb++) {
-        for(int im=0; im<4; im++) {
-          for(int lt=0; lt<2; lt++){
-            for(int na=0; na<3; na++){
-
-          for(int nm=0; nm<4; nm++){
-            for(int rg=0; rg<2; rg++){
-              if (V1[ag][tb][lt][im][nm][rg][na]<0){
-                Rcout<< "V1 is neg @ na " << na << "ag = " << ag << "tb="<< tb << "rg = " << rg << "nm = "<<nm<< "im = "<< im<< "\n";
-              }
-              temp_vec2[nm] += V1[ag][tb][lt][im][nm][rg][na];
-            } } } } } }
-      ////create a population total at this time point
-      // for(int ag=0; ag<11; ag++) {
-      for(int nm=0; nm<4; nm++){
-
-          mat_sum+=temp_vec2[nm];
-          // Rcpp::Rcout << "mat sum is" << mat_sum << "at ag = "<< ag<<"\n";
-        }
-
-      ///calculate the mortality
-      for(int nm=0; nm<4; nm++){
-          temp_vec[nm] = temp_vec2[nm]/mat_sum;
-          Rcpp::Rcout << "mort dist is" << temp_vec[nm] << "at ag = "<< ag<<"\n";
-      }
-  }
 
   ////////////////   RE-CHECK THAT NO STATES HAVE BECOME NEGATIVE    ////////////////
   Rcpp::NumericVector  CheckV(12672);
