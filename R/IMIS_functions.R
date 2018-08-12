@@ -51,14 +51,7 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
     #'These weights are based on year of the simulation.
     wts <- CalibDat[["ImptWeights"]]
     #'format P
-    data("ParamInitUS_2018-08-06_final", package='MITUS')# ParamInit
-    P  <- ParamInit[,1];
-    names(P) <- rownames(ParamInit)
-    ii <-  ParamInit[,5]==1
-    ParamInitZ <- ParamInit[ParamInit$Calib==1,]
-    idZ0 <- ParamInitZ[,4]==0
-    idZ1 <- ParamInitZ[,4]==1
-    idZ2 <- ParamInitZ[,4]==2
+
     prms <-list()
     prms <- param(P)
     IP <- list()
@@ -79,6 +72,14 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
     if(sum(is.na(zz$Outputs[65,]))>0 | min(zz$Outputs[65,])<0 | min(zz$V1)<0 ) {
       lLik <- -10^12
   } else {
+    data("ParamInitUS_2018-08-06_final", package='MITUS')# ParamInit
+    P  <- ParamInit[,1];
+    names(P) <- rownames(ParamInit)
+    ii <-  ParamInit[,5]==1
+    ParamInitZ <- ParamInit[ParamInit$Calib==1,]
+    idZ0 <- ParamInitZ[,4]==0
+    idZ1 <- ParamInitZ[,4]==1
+    idZ2 <- ParamInitZ[,4]==2
       M <- zz$Outputs
       colnames(M) <- prms[["ResNam"]]
       lLik <- 0
