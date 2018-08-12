@@ -866,7 +866,7 @@ for(int ag=0; ag<11; ag++) {
     for(int m=0; m<12; m++) {
       /////////////////////CREATE A COUNTER OF MONTHS SINCE START////////////////////
       s = y*12+m;
-      Rcpp::Rcout << s <<"\n";
+      // Rcpp::Rcout << s <<"\n";
       /////////////////////////UPDATING TREATMENT PARAMETERS/////////////////////////
       ///// TxMatZ: 0=completion rate, 1 = tx success, 2 = RATE OF EXIT TO CURE /////
       ///// 3 = RATE OF EXIT TO ACTIVE TB, 4 = RATE OF EXIT TO RETREATMENT      /////
@@ -892,19 +892,19 @@ for(int ag=0; ag<11; ag++) {
           /////HIGH RISK GROUP BIRTHS//////////////////////////////////////////////////////
           V1[0][0][0][im][nm][1][0]  += Birthst[s]*dist_genN[nm][im]*(p_HR);
         } }
-      for(int ag=0; ag<11; ag++) {
-        for(int tb=0; tb<6; tb++) {
-          for(int lt=0; lt<2; lt++){
-            for(int im=0; im<4; im++){
-              for(int nm=0; nm<4; nm++){
-                for(int rg=0; rg<2; rg++) {
-                  for(int na=0; na<3; na++) {
-                    if (V1[ag][tb][lt][im][nm][rg][na]<0){
-                      Rcpp::Rcout << "After Births pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
-                      Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-
-                    }
-                  } } } } } } }
+      // for(int ag=0; ag<11; ag++) {
+      //   for(int tb=0; tb<6; tb++) {
+      //     for(int lt=0; lt<2; lt++){
+      //       for(int im=0; im<4; im++){
+      //         for(int nm=0; nm<4; nm++){
+      //           for(int rg=0; rg<2; rg++) {
+      //             for(int na=0; na<3; na++) {
+      //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
+      //                 Rcpp::Rcout << "After Births pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+      //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+      //
+      //               }
+      //             } } } } } } }
 
       /////////////////////////////// IMMIGRATION ///////////////////////////////////
       for(int ag=0; ag<11; ag++) {
@@ -923,19 +923,19 @@ for(int ag=0; ag<11; ag++) {
             V1[ag][4][0][im][nm][0][1]   += ImmActN[s][ag]*(1-p_HR)*dist_genN[nm][im];   //ACTIVE TB, low risk
             V1[ag][4][0][im][nm][1][1]   += ImmActN[s][ag]*(p_HR)*dist_genN[nm][im];   //ACTIVE TB, high risk
           } } }
-      for(int ag=0; ag<11; ag++) {
-        for(int tb=0; tb<6; tb++) {
-          for(int lt=0; lt<2; lt++){
-            for(int im=0; im<4; im++){
-              for(int nm=0; nm<4; nm++){
-                for(int rg=0; rg<2; rg++) {
-                  for(int na=0; na<3; na++) {
-                    if (V1[ag][tb][lt][im][nm][rg][na]<0){
-                      Rcpp::Rcout << "after immigration pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
-                      Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-
-                    }
-                  } } } } } } }
+      // for(int ag=0; ag<11; ag++) {
+      //   for(int tb=0; tb<6; tb++) {
+      //     for(int lt=0; lt<2; lt++){
+      //       for(int im=0; im<4; im++){
+      //         for(int nm=0; nm<4; nm++){
+      //           for(int rg=0; rg<2; rg++) {
+      //             for(int na=0; na<3; na++) {
+      //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
+      //                 Rcpp::Rcout << "after immigration pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+      //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+      //
+      //               }
+      //             } } } } } } }
       /////////////////////////////////  EMMIGRATION ///////////////////////////////////
       for(int ag=0; ag<11; ag++) {
         for(int tb=0; tb<6; tb++) {
@@ -946,19 +946,19 @@ for(int ag=0; ag<11; ag++) {
                   V1[ag][tb][lt][im][nm][rg][1]  -= V0[ag][tb][lt][im][nm][rg][1]*rEmmigFB[0];      // FB1
                   V1[ag][tb][lt][im][nm][rg][2]  -= V0[ag][tb][lt][im][nm][rg][2]*rEmmigFB[1];      // FB2
                 } } } } } }
-      for(int ag=0; ag<11; ag++) {
-        for(int tb=0; tb<6; tb++) {
-          for(int lt=0; lt<2; lt++){
-            for(int im=0; im<4; im++){
-              for(int nm=0; nm<4; nm++){
-                for(int rg=0; rg<2; rg++) {
-                  for(int na=0; na<3; na++) {
-                    if (V1[ag][tb][lt][im][nm][rg][na]<0){
-                      Rcpp::Rcout << "after emigration pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
-                      Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-
-                    }
-                  } } } } } } }
+      // for(int ag=0; ag<11; ag++) {
+      //   for(int tb=0; tb<6; tb++) {
+      //     for(int lt=0; lt<2; lt++){
+      //       for(int im=0; im<4; im++){
+      //         for(int nm=0; nm<4; nm++){
+      //           for(int rg=0; rg<2; rg++) {
+      //             for(int na=0; na<3; na++) {
+      //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
+      //                 Rcpp::Rcout << "after emigration pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+      //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+      //
+      //               }
+      //             } } } } } } }
       /////////////////////////////////  MORTALITY  ///////////////////////////////////
 
       // for (int i=0; i<4; i++){
@@ -1027,19 +1027,19 @@ for(int ag=0; ag<11; ag++) {
                 } } } } } }
       // } //end of age loop
 
-      for(int ag=0; ag<11; ag++) {
-        for(int tb=0; tb<6; tb++) {
-          for(int lt=0; lt<2; lt++){
-            for(int im=0; im<4; im++){
-              for(int nm=0; nm<4; nm++){
-                for(int rg=0; rg<2; rg++) {
-                  for(int na=0; na<3; na++) {
-                    if (V1[ag][tb][lt][im][nm][rg][na]<0){
-                      Rcpp::Rcout << "after mort pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
-                      Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-
-                    }
-                  } } } } } } }
+      // for(int ag=0; ag<11; ag++) {
+      //   for(int tb=0; tb<6; tb++) {
+      //     for(int lt=0; lt<2; lt++){
+      //       for(int im=0; im<4; im++){
+      //         for(int nm=0; nm<4; nm++){
+      //           for(int rg=0; rg<2; rg++) {
+      //             for(int na=0; na<3; na++) {
+      //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
+      //                 Rcpp::Rcout << "after mort pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+      //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+      //
+      //               }
+      //             } } } } } } }
       /////////////////////////////////////AGING///////////////////////////////////////
       for(int ag=0; ag<10; ag++) {
         /////          IF AGE > 4, IT TAKES 120 MONTHS TO LEAVE AGE GROUP          /////
@@ -1059,19 +1059,19 @@ for(int ag=0; ag<11; ag++) {
                     V1[ag  ][tb][lt][im][nm][rg][na]  -= temp;
                     V1[ag+1][tb][lt][im][nm][rg][na]  += temp;
                   } } } } } } }
-      for(int ag=0; ag<11; ag++) {
-        for(int tb=0; tb<6; tb++) {
-          for(int lt=0; lt<2; lt++){
-            for(int im=0; im<4; im++){
-              for(int nm=0; nm<4; nm++){
-                for(int rg=0; rg<2; rg++) {
-                  for(int na=0; na<3; na++) {
-                    if (V1[ag][tb][lt][im][nm][rg][na]<0){
-                      Rcpp::Rcout << "after aging pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
-                      Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-
-                    }
-                  } } } } } } }
+      // for(int ag=0; ag<11; ag++) {
+      //   for(int tb=0; tb<6; tb++) {
+      //     for(int lt=0; lt<2; lt++){
+      //       for(int im=0; im<4; im++){
+      //         for(int nm=0; nm<4; nm++){
+      //           for(int rg=0; rg<2; rg++) {
+      //             for(int na=0; na<3; na++) {
+      //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
+      //                 Rcpp::Rcout << "after aging pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+      //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+      //
+      //               }
+      //             } } } } } } }
       ///////////////////////// NEW FB -> ESTABLISHED FB ///////////////////////////////
       for(int ag=0; ag<11; ag++) {
         for(int tb=0; tb<6; tb++) {
@@ -1083,19 +1083,19 @@ for(int ag=0; ag<11; ag++) {
                   V1[ag][tb][lt][im][nm][rg][1]  -= temp;
                   V1[ag][tb][lt][im][nm][rg][2]  += temp;
                 } } } } } }
-      for(int ag=0; ag<11; ag++) {
-        for(int tb=0; tb<6; tb++) {
-          for(int lt=0; lt<2; lt++){
-            for(int im=0; im<4; im++){
-              for(int nm=0; nm<4; nm++){
-                for(int rg=0; rg<2; rg++) {
-                  for(int na=0; na<3; na++) {
-                    if (V1[ag][tb][lt][im][nm][rg][na]<0){
-                      Rcpp::Rcout << "after fb trans pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
-                      Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-
-                    }
-                  } } } } } } }
+      // for(int ag=0; ag<11; ag++) {
+      //   for(int tb=0; tb<6; tb++) {
+      //     for(int lt=0; lt<2; lt++){
+      //       for(int im=0; im<4; im++){
+      //         for(int nm=0; nm<4; nm++){
+      //           for(int rg=0; rg<2; rg++) {
+      //             for(int na=0; na<3; na++) {
+      //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
+      //                 Rcpp::Rcout << "after fb trans pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+      //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+      //
+      //               }
+      //             } } } } } } }
       //////////////////////////// HIGH-RISK ENTRY/EXIT ////////////////////////////////
       //is there ever a way for high risk exit to be greater than high risk entry
       for(int ag=0; ag<11; ag++) {
@@ -1109,19 +1109,19 @@ for(int ag=0; ag<11; ag++) {
                   V1[ag][tb][lt][im][nm][0][na]  += (temp2-temp);
                   V1[ag][tb][lt][im][nm][1][na]  += (temp-temp2);
                 } } } } } }
-      for(int ag=0; ag<11; ag++) {
-        for(int tb=0; tb<6; tb++) {
-          for(int lt=0; lt<2; lt++){
-            for(int im=0; im<4; im++){
-              for(int nm=0; nm<4; nm++){
-                for(int rg=0; rg<2; rg++) {
-                  for(int na=0; na<3; na++) {
-                    if (V1[ag][tb][lt][im][nm][rg][na]<0){
-                      Rcpp::Rcout << "after hrentex pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
-                      Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-
-                    }
-                  } } } } } } }
+      // for(int ag=0; ag<11; ag++) {
+      //   for(int tb=0; tb<6; tb++) {
+      //     for(int lt=0; lt<2; lt++){
+      //       for(int im=0; im<4; im++){
+      //         for(int nm=0; nm<4; nm++){
+      //           for(int rg=0; rg<2; rg++) {
+      //             for(int na=0; na<3; na++) {
+      //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
+      //                 Rcpp::Rcout << "after hrentex pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+      //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+      //
+      //               }
+      //             } } } } } } }
 // for(int ag=0; ag<11; ag++) {
  // for(int tb=0; tb<6; tb++) {
  //   for(int im=0; im<4; im++) {
@@ -1270,19 +1270,19 @@ for(int ag=0; ag<11; ag++) {
 
                   } } } } } }
 
-        for(int ag=0; ag<11; ag++) {
-          for(int tb=0; tb<6; tb++) {
-            for(int lt=0; lt<2; lt++){
-              for(int im=0; im<4; im++){
-                for(int nm=0; nm<4; nm++){
-                  for(int rg=0; rg<2; rg++) {
-                    for(int na=0; na<3; na++) {
-                      if (V1[ag][tb][lt][im][nm][rg][na]<0){
-                        Rcpp::Rcout << "after infection pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
-                        Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-
-                      }
-                    } } } } } } }
+        // for(int ag=0; ag<11; ag++) {
+        //   for(int tb=0; tb<6; tb++) {
+        //     for(int lt=0; lt<2; lt++){
+        //       for(int im=0; im<4; im++){
+        //         for(int nm=0; nm<4; nm++){
+        //           for(int rg=0; rg<2; rg++) {
+        //             for(int na=0; na<3; na++) {
+        //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
+        //                 Rcpp::Rcout << "after infection pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+        //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+        //
+        //               }
+        //             } } } } } } }
         ///////////////////////////////////BREAKDOWN///////////////////////////////////
         ///////////////////////for all age groups, risk groups/////////////////////////
         for(int ag=0; ag<11; ag++) {
@@ -1298,19 +1298,19 @@ for(int ag=0; ag<11; ag++) {
                     V1[ag][3][lt][im][nm][rg][na]  -= temp2; //REMOVE FROM LATENT FAST
                     V1[ag][4][lt][im][nm][rg][na]  += (temp+temp2); //PLACE IN ACTIVE DISEASE
                   } } } } } }
-        for(int ag=0; ag<11; ag++) {
-          for(int tb=0; tb<6; tb++) {
-            for(int lt=0; lt<2; lt++){
-              for(int im=0; im<4; im++){
-                for(int nm=0; nm<4; nm++){
-                  for(int rg=0; rg<2; rg++) {
-                    for(int na=0; na<3; na++) {
-                      if (V1[ag][tb][lt][im][nm][rg][na]<0){
-                        Rcpp::Rcout << "after breakdown pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
-                        Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-
-                      }
-                    } } } } } } }
+        // for(int ag=0; ag<11; ag++) {
+        //   for(int tb=0; tb<6; tb++) {
+        //     for(int lt=0; lt<2; lt++){
+        //       for(int im=0; im<4; im++){
+        //         for(int nm=0; nm<4; nm++){
+        //           for(int rg=0; rg<2; rg++) {
+        //             for(int na=0; na<3; na++) {
+        //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
+        //                 Rcpp::Rcout << "after breakdown pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+        //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+        //
+        //               }
+        //             } } } } } } }
         ///////////////////////////   LATENT SLOW TO SAFE   /////////////////////////////
         for(int ag=0; ag<11; ag++) {
           for(int lt=0; lt<2 ; lt++) {
@@ -1322,19 +1322,19 @@ for(int ag=0; ag<11; ag++) {
                     V1[ag][2][lt][im][nm][rg][na]  -= temp;
                     V1[ag][1][lt][im][nm][rg][na]  += temp;
                   } } } } } }
-        for(int ag=0; ag<11; ag++) {
-          for(int tb=0; tb<6; tb++) {
-            for(int lt=0; lt<2; lt++){
-              for(int im=0; im<4; im++){
-                for(int nm=0; nm<4; nm++){
-                  for(int rg=0; rg<2; rg++) {
-                    for(int na=0; na<3; na++) {
-                      if (V1[ag][tb][lt][im][nm][rg][na]<0){
-                        Rcpp::Rcout << "after lsts pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
-                        Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-
-                      }
-                    } } } } } } }
+        // for(int ag=0; ag<11; ag++) {
+        //   for(int tb=0; tb<6; tb++) {
+        //     for(int lt=0; lt<2; lt++){
+        //       for(int im=0; im<4; im++){
+        //         for(int nm=0; nm<4; nm++){
+        //           for(int rg=0; rg<2; rg++) {
+        //             for(int na=0; na<3; na++) {
+        //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
+        //                 Rcpp::Rcout << "after lsts pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+        //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+        //
+        //               }
+        //             } } } } } } }
         ////////////////////////////////// SELF CURE/////////////////////////////////////
         for(int ag=0; ag<11; ag++) {
           for(int lt=0; lt<2 ; lt++) {
@@ -1346,19 +1346,19 @@ for(int ag=0; ag<11; ag++) {
                     V1[ag][4 ][lt][im][nm][rg][na]  -= temp;
                     V1[ag][2 ][lt][im][nm][rg][na]  += temp;
                   } } } } } }
-        for(int ag=0; ag<11; ag++) {
-          for(int tb=0; tb<6; tb++) {
-            for(int lt=0; lt<2; lt++){
-              for(int im=0; im<4; im++){
-                for(int nm=0; nm<4; nm++){
-                  for(int rg=0; rg<2; rg++) {
-                    for(int na=0; na<3; na++) {
-                      if (V1[ag][tb][lt][im][nm][rg][na]<0){
-                        Rcpp::Rcout << "after slfcur pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
-                        Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-
-                      }
-                    } } } } } } }
+        // for(int ag=0; ag<11; ag++) {
+        //   for(int tb=0; tb<6; tb++) {
+        //     for(int lt=0; lt<2; lt++){
+        //       for(int im=0; im<4; im++){
+        //         for(int nm=0; nm<4; nm++){
+        //           for(int rg=0; rg<2; rg++) {
+        //             for(int na=0; na<3; na++) {
+        //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
+        //                 Rcpp::Rcout << "after slfcur pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+        //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+        //
+        //               }
+        //             } } } } } } }
         /// LTBI SCREENING AND TLTBI INITIATION /// only for no previous TB or LTBI tx
 
             for(int rg=0; rg<2; rg++) {
@@ -1390,19 +1390,19 @@ for(int ag=0; ag<11; ag++) {
                   V1[ag][0][1][im][nm][rg][na]  += temp;
                   V1[ag][1][1][im][nm][rg][na]  += temp2;
                 } } } } }
-            for(int ag=0; ag<11; ag++) {
-              for(int tb=0; tb<6; tb++) {
-                for(int lt=0; lt<2; lt++){
-                  for(int im=0; im<4; im++){
-                    for(int nm=0; nm<4; nm++){
-                      for(int rg=0; rg<2; rg++) {
-                        for(int na=0; na<3; na++) {
-                          if (V1[ag][tb][lt][im][nm][rg][na]<0){
-                            Rcpp::Rcout << "after screen pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
-                            Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-
-                          }
-                        } } } } } } }
+            // for(int ag=0; ag<11; ag++) {
+            //   for(int tb=0; tb<6; tb++) {
+            //     for(int lt=0; lt<2; lt++){
+            //       for(int im=0; im<4; im++){
+            //         for(int nm=0; nm<4; nm++){
+            //           for(int rg=0; rg<2; rg++) {
+            //             for(int na=0; na<3; na++) {
+            //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
+            //                 Rcpp::Rcout << "after screen pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+            //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+            //
+            //               }
+            //             } } } } } } }
         /// TLTBI: TX COMPLETION + DEFAULT /// only need to consider tx naive compartment
 
 
@@ -1427,19 +1427,19 @@ for(int ag=0; ag<11; ag++) {
                   ///defaults are placed in tx naive because it is considered the same tb infection
                   V1[ag][2][0][im][nm][rg][na]  += (temp3+temp4); //latent tx default to latent slow
                 } } } } }
-        for(int ag=0; ag<11; ag++) {
-          for(int tb=0; tb<6; tb++) {
-            for(int lt=0; lt<2; lt++){
-              for(int im=0; im<4; im++){
-                for(int nm=0; nm<4; nm++){
-                  for(int rg=0; rg<2; rg++) {
-                    for(int na=0; na<3; na++) {
-                      if (V1[ag][tb][lt][im][nm][rg][na]<0){
-                        Rcpp::Rcout << "after tltbi pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
-                        Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-
-                      }
-                    } } } } } } }
+        // for(int ag=0; ag<11; ag++) {
+        //   for(int tb=0; tb<6; tb++) {
+        //     for(int lt=0; lt<2; lt++){
+        //       for(int im=0; im<4; im++){
+        //         for(int nm=0; nm<4; nm++){
+        //           for(int rg=0; rg<2; rg++) {
+        //             for(int na=0; na<3; na++) {
+        //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
+        //                 Rcpp::Rcout << "after tltbi pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+        //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+        //
+        //               }
+        //             } } } } } } }
         ///////////////////// TB DIAGNOSIS AND TX INITIATION  /////////////////////////
         for(int ag=0; ag<11; ag++) {
           for(int lt=0; lt<2; lt++) {
@@ -1452,19 +1452,19 @@ for(int ag=0; ag<11; ag++) {
                     V1[ag][5][lt][im][nm][rg][na]      += temp;
                     Vdx[ag][4][lt][im][nm][rg][na]      = temp;
                   } } } } } }
-        for(int ag=0; ag<11; ag++) {
-          for(int tb=0; tb<6; tb++) {
-            for(int lt=0; lt<2; lt++){
-              for(int im=0; im<4; im++){
-                for(int nm=0; nm<4; nm++){
-                  for(int rg=0; rg<2; rg++) {
-                    for(int na=0; na<3; na++) {
-                      if (V1[ag][tb][lt][im][nm][rg][na]<0){
-                        Rcpp::Rcout << "after tbdx pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
-                        Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-
-                      }
-                    } } } } } } }
+        // for(int ag=0; ag<11; ag++) {
+        //   for(int tb=0; tb<6; tb++) {
+        //     for(int lt=0; lt<2; lt++){
+        //       for(int im=0; im<4; im++){
+        //         for(int nm=0; nm<4; nm++){
+        //           for(int rg=0; rg<2; rg++) {
+        //             for(int na=0; na<3; na++) {
+        //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
+        //                 Rcpp::Rcout << "after tbdx pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+        //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+        //
+        //               }
+        //             } } } } } } }
         //////////////////////// TB TREATMENT OUTCOMES /////////////////////////////
         for(int ag=0; ag<11; ag++) {
           for(int lt=0; lt<2; lt++) {
@@ -1485,19 +1485,19 @@ for(int ag=0; ag<11; ag++) {
                     V1[ag][5][lt][im][nm][rg][na]  -= temp;
                     V1[ag][5][lt][im][nm][rg][na]  += temp;
                   } } } } } }
-        for(int ag=0; ag<11; ag++) {
-          for(int tb=0; tb<6; tb++) {
-            for(int lt=0; lt<2; lt++){
-              for(int im=0; im<4; im++){
-                for(int nm=0; nm<4; nm++){
-                  for(int rg=0; rg<2; rg++) {
-                    for(int na=0; na<3; na++) {
-                      if (V1[ag][tb][lt][im][nm][rg][na]<0){
-                        Rcpp::Rcout << "after txout pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
-                        Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-
-                      }
-                    } } } } } } }
+        // for(int ag=0; ag<11; ag++) {
+        //   for(int tb=0; tb<6; tb++) {
+        //     for(int lt=0; lt<2; lt++){
+        //       for(int im=0; im<4; im++){
+        //         for(int nm=0; nm<4; nm++){
+        //           for(int rg=0; rg<2; rg++) {
+        //             for(int na=0; na<3; na++) {
+        //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
+        //                 Rcpp::Rcout << "after txout pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+        //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+        //
+        //               }
+        //             } } } } } } }
       }//end of TB loop
       //
       // // temp=0;
