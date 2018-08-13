@@ -286,7 +286,7 @@ tbdyn_graphs <-function(df){
 
   V  <- df[50:65,88:98]+df[50:65,99:109]
   V2 <- V[,-11]; V2[,10] <- V[,10]+V[,11]
-  V3 <- colSums(V2)
+  V3 <- colSums(V2)*1e6
 
   #'format the plot
   plot(0,0,ylim=c(0,max(range(V3))+500),xlim=c(0.6,10.4),xlab="",ylab="",axes=F)
