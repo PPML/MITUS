@@ -136,9 +136,9 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
       addlik <- ltbi_fb_11_lLik(V=v16a)*2; addlik
       lLik <- lLik + addlik
       #' TOTAL POP EACH DECADE, BY US/FB - index updated (maybe)
-      # v17  <- M[,30]+(M[,31]+M[,32])
-      # addlik <- tot_pop_yr_fb_lLik(V=v17); addlik
-      # lLik <- lLik + addlik
+       v17  <- M[,30]+(M[,31]+M[,32])
+       addlik <- tot_pop_yr_fb_lLik(V=v17); addlik
+       lLik <- lLik + addlik
       #' TOTAL POP AGE DISTRIBUTION 2016 index updated
       v18  <- cbind(M[67,33:43],M[67,44:54])
       addlik <- tot_pop16_ag_fb_lLik(V=v18); addlik
