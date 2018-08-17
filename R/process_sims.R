@@ -48,8 +48,9 @@ OutputsZint <-  function(samp_i=1,ParMatrix,endyr=2050,Int1=0,Int2=0,Int3=0,Int4
                            LtDxPar    = IP[["LtDxPar"]]   , rLtScrt   = IP[["rLtScrt"]]       , RRdxAge  = IP[["RRdxAge"]] , rRecov     = IP[["rRecov"]]    , pImmScen = IP[["pImmScen"]]   ,
                            EarlyTrend = IP[["EarlyTrend"]], NixTrans  = IP[["NixTrans"]]      , trans_mat_tot_ages = trans_mat_tot_ages
                            )$Outputs
-   colnames(m) <- IP[["ResNam"]];
-   results<<-as.data.frame(m)
+  results<<-as.data.frame(m)
+
+   colnames(results) <- IP[["ResNam"]];
 
    return(results)
 }
