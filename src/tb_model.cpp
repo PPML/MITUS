@@ -1,5 +1,5 @@
 #include <Rcpp.h>
-
+#include <algorithm>
 using namespace Rcpp;
 //'@title cSim
 //'@description runs a simulation of the tb model
@@ -849,10 +849,11 @@ for(int ag=0; ag<11; ag++) {
           for(int nm=0; nm<4; nm++){
             for(int rg=0; rg<2; rg++) {
               for(int na=0; na<3; na++) {
-                if (V1[ag][tb][lt][im][nm][rg][na]<0){
-                 Rcpp::Rcout << "After burn in pop is negative at ag = " << ag << " tb = "<< tb << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
-                Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-                }
+//                 if (std::any_of(V1[ag][tb][lt][im][nm][rg][na]<0)){
+// // Rcpp::Rcout << "After burn in pop is negative at ag = " << ag << " tb = "<< tb << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+//  Rcpp::Rcout << "After burn in pop is negative /n" ;
+//
+//                 }
                 CheckV0(ag+tb*11+lt*66+im*132+nm*528+rg*2112+na*4224) = V1[ag][tb][lt][im][nm][rg][na];
               } } } } } } }
   // Rcpp::Rcout << "pop is" << temp << "\n";
@@ -1995,19 +1996,19 @@ for(int ag=0; ag<11; ag++) {
                   }
                   } } } } } }
 
-          for(int ag=0; ag<11; ag++) {
-            for(int tb=0; tb<6; tb++) {
-              for(int lt=0; lt<2; lt++){
-                for(int im=0; im<4; im++){
-                  for(int nm=0; nm<4; nm++){
-                    for(int rg=0; rg<2; rg++) {
-                      for(int na=0; na<3; na++) {
-                        if (V1[ag][tb][lt][im][nm][rg][na]<0){
-                          Rcpp::Rcout << "after rblnc pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
-                          Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-
-                        }
-                      } } } } } } }
+          // for(int ag=0; ag<11; ag++) {
+          //   for(int tb=0; tb<6; tb++) {
+          //     for(int lt=0; lt<2; lt++){
+          //       for(int im=0; im<4; im++){
+          //         for(int nm=0; nm<4; nm++){
+          //           for(int rg=0; rg<2; rg++) {
+          //             for(int na=0; na<3; na++) {
+          //               if (std::any_of(V1[ag][tb][lt][im][nm][rg][na]<0)){
+          //                 //Rcpp::Rcout << "after rblnc pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+          //              //   Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+          //              Rcpp::Rcout << "after rblnc pop is negative /n";
+          //               }
+          //             } } } } } } }
     }//end of age loop
 
 
