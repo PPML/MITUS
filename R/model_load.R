@@ -11,5 +11,5 @@ library(MASS)
 #'Model Input
 data("ModelInputs_9-2-16", package = 'MITUS')
 data("ParamInitUS_2018-08-06_final", package='MITUS')# ParamInit
-data("StartVal_2018-08-06", package='MITUS')# ParamInit
+data("StartVal_2018-08-23", package='MITUS')# ParamInit
 data("CalibDat_2018-07-12", package='MITUS')# ParamInit
