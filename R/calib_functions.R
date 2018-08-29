@@ -226,7 +226,7 @@ tb_dth_age_lLik <- function(V,rho=0.01) {
 #'@param rho correlation parameter
 #'@return likelihood
 tot_dth_age_lLik <- function(V,rho=0.01) {
-  CalibDat$US_mort_age <- read.csv(file="inst/extdata/US_mort_age.csv", header = TRUE)
+  CalibDat$US_mort_age <- read.csv(system.file("extdata","US_mort_age.csv", package="MITUS"))
   tot_deaths_age  <- CalibDat[["US_mort_age"]][,-1]
   tot_deaths_age <-tot_deaths_age/1e6
   adj_19b        <- sum(dDirMult(M=tot_deaths_age+0.1,n=tot_deaths_age+0.1,Rho=0.01)*wts[50:67])
