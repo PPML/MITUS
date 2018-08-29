@@ -1,7 +1,7 @@
 #include <Rcpp.h>
 #include <algorithm>
 using namespace Rcpp;
-//'@title cSim
+//'@title cSim_noTB
 //'@description runs a simulation of the tb model
 //'@param nYrs number of years to run the model.
 //'@param nRes number of results of the model
@@ -48,7 +48,7 @@ using namespace Rcpp;
 //'@return a list of outputs
 //[[Rcpp::export]]
 
-Rcpp::List cSim(
+Rcpp::List cSim_noTB(
     int                 nYrs,
     int                 nRes,
     Rcpp::NumericMatrix rDxt,
