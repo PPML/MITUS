@@ -150,7 +150,10 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
       #' TB DEATHS 1999-2014 BY AGE - index updated above
       addlik <- tb_dth_age_lLik(V=v19); addlik
       lLik <- lLik + addlik
-
+      #' Total DEATHS 1999-2016 BY AGE
+      v20  <- M[50:67,255:265]+M[50:67,266:276]
+      addlik <- tot_dth_age_lLik(V=v20); addlik
+      lLik <- lLik + addlik
       #' HOMELESS POP 2010 - index updated
       v23b  <- M[61,29]
       addlik <- homeless_10_lLik(V=v23b); addlik
