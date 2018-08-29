@@ -3,24 +3,18 @@
 \name{calib_graphs}
 \alias{calib_graphs}
 \title{load the parameter data set & model inputs
-Define the Posterior Function}
-\usage{
-calib_graphs(dataset)
-}
-\value{
-posterior
-load the optimized data set
-Name and Open a .pdf file to which the plots will be written.
 graph of total diagnosed cases
 by total population, US born population, and non-US born population
-1953-2013
 format the plot
 plot the model data
+multiply raw output by 1,000 to convert from millions to thousands
 reported data for comparison
 plot text
-2000-2014
+graph of total diagnosed cases
+by total population, US born population, and non-US born population
 format the plot
 plot the model data
+multiply raw output by 1,000 to convert from millions to thousands
 reported data for comparison
 plot text
 Percent of Total Cases Non-US Born Population
@@ -40,24 +34,41 @@ plot the model data
 reported data for comparison
 plot text
 Age Distribution of TB Cases in Percentages
-0-24 yrs, 25-44 yrs, 45-64 yrs, 65+ yrs
+0-24 yrs, 25-44 yrs, 45-64 yrs, 65+ yrs}
+\usage{
+calib_graphs(df)
+}
+\description{
+V   <- (df[51:65,136:146]+df[51:65,189:199])
+  V2  <- V[,-11]
+  V2[,10] <- V2[,10]+V[,11]
+}
+\details{
+#'format the plot
+  plot(0,0,ylim=c(0,max(range(V2))),xlim=c(0.6,10.4),xlab="",ylab="",axes=F,col=NA)
+  axis(1,1:10,paste(c("0-4",paste(0:7*10+5,1:8*10+4,sep="-"),"85+"),"\nyears",sep=""),
+       tick=F,cex.axis=0.6)
+  axis(1,1:11-0.5,rep("",11))
+  axis(2,las=2);box()
+  abline(h=axTicks(2),col="grey85")
 
+#'plot the model data
+  for(i in 1:10) polygon(i+c(-.5,.5,.5,-.5),c(0,0,V2[i],V2[i]),border="white",col="lightblue")
+
+#'reported data for comparison
+  points(1:10,colSums(notif_age[7:21,])/sum(notif_age[7:21,])*100,pch=19,cex=1.2)
+
+#'plot text
+  mtext("Age Group",1,2.5,cex=0.9)
+  mtext("Age Distribution of TB Cases (%), 2000-14",3,.8,font=2,cex=0.8)
+  legend("topright",c("Reported data","Model"),pch=c(19,15),lwd=NA,
+         pt.cex=c(1,2),col=c("black","lightblue"),bg="white")
+Distribution of Cases across the TB Progression Categories
 format the plot
 plot the model data
 reported data for comparison
 plot text
-Are we interested in the distribution of cases across latent tx history?
-Distribution of TB Cases Across High/Low Risk Cateogries 1993-2015
-format the plot
-plot the model data
-reported data for comparison
-plot text
-Treatment Outcomes 1993-2011
-format the plot
-plot the model data
-reported data for comparison
-plot text
-LTBI Initiations 1992-2011 Distribution
+Treatment Outcomes 1993-2014
 format the plot
 plot the model data
 reported data for comparison
@@ -77,108 +88,4 @@ format the plot
 plot the model data
 reported data for comparison
 plot text
-Begin Demographic Plots
-Total Population Each Decade
-US and non-US born
-format the plot
-plot the model data
-reported data for comparison
-plot text
-Total Population Age Distribution 2014
-format the plot
-plot the model data
-reported data for comparison
-plot text
-Recent TB infection 2014 (indices have been updated. )
-format the plot
-plot the model data
-plot text
-Other TB things! comparisons to published estimates
-Reactivation Rates vs. Ferebee and Sutherland estimates
-source in param_init.R or param.R (will need to finalize)
-calculate the joint probability of pfast/pslow & not progressing to active disease & not recovering
-#' format the plot
-plot(1:nrow(datF)-.5,datF[,3]/datF[,2]*1000,type="l",lwd=2,xlim=c(0,15),ylim=c(0,60),las=1,xlab="",ylab="")
-
-#' plot the model data
-lines(1:n_yr_Z-.5,r2*1000,col=4,lwd=2, col=)
-lines(1:n_yr_Z-.5,r2*1000,col=4,lwd=2, col=)
-
-#' reported data for comparison
-lines(1:nrow(datF)-.5,datF[,3]/datF[,2]*1000,lwd=2)
-lines(1:nrow(datS)-.5,datS[,3]/datS[,2]*1000,lwd=2,lty=2)
-
-#' plot text
-mtext("Years since infection",1,2.5,cex=0.9)
-mtext("Reactivation rate per 1000 PY",2,3,cex=0.8)
-legend("topright",c("Ferebee 1970","Sutherland 1968","Fitted model"),
-       col=c(1,1,4),lty=c(1,2,1),lwd=2,cex=0.9)
-mtext("Reactivation rate vs. Ferebee, Sutherland estimates",3,0.8,cex=0.8,font=2)
-################################################################################
-#'Reactivation Rates vs. Ferebee and Sutherland estimates on Log Scale
-
-#'format the plot
-plot(1:nrow(datF)-.5,datF[,3]/datF[,2]*1000,type="l",lwd=2,xlim=c(0,20),ylim=c(0.2,55),las=1,xlab="",ylab="",log="y")
-
-#' plot the model data
-lines(1:n_yr_Z-.5,r2*1000,col=4,lwd=2, col=)
-lines(1:n_yr_Z-.5,r2*1000,col=4,lwd=2, col=)
-
-#' reported data for comparison
-lines(1:nrow(datF)-.5,datF[,3]/datF[,2]*1000,lwd=2)
-lines(1:nrow(datS)-.5,datS[,3]/datS[,2]*1000,lwd=2,lty=2)
-
-#' plot text
-mtext("Years since infection",1,2.5,cex=0.9)
-mtext("Reactivation rate per 1000 PY (log scale)",2,3,cex=0.8)
-legend("topright",c("Ferebee 1970","Sutherland 1968","Fitted model"),
-       col=c(1,1,4),lty=c(1,2,1),lwd=2,cex=0.9)
-mtext("Reactivation rate vs Ferebee & Sutherland estimates, log-scale",3,0.8,cex=0.8,font=2)
-################################################################################
-#'Fraction without active TB (of those progressing <15yrs)
-
-#'format the plot
-plot(datB[,1:2],type="l",lwd=1,lty=3,las=1,xlab="",ylab="")
-
-#' plot the model data
-points(datB[,1:2],cex=0.8,pch=19, col=)
-lines(datB[,1],p,col=4,lwd=2, col=)
-points(datB[,1:2],cex=0.8,pch=19, col=)
-lines(datB[,1],p,col=4,lwd=2, col=)
-
-
-#' plot text
-mtext("Years since infection",1,2.5,cex=0.9)
-mtext("Fraction without active TB",2,3,cex=0.8)
-legend("topright",c("Borgdorff 2011","Fitted model"), col=c(1,4),lwd=3,cex=0.9)
-mtext("Fraction without active TB (of those progressing <15yrs)",3,0.8,cex=0.8,font=2)
-
-################################################################################
-#'Cumulative incidence of active TB following M.tb infection at age 15 (%)
-#'needs to be updated!!!
-vec <- rep(0,3);
-names(vec) <- c("safe","slow","fast")
-survM15 <- NULL
-for(i in 1:(50*12)) {
-  if(i==1) {
-    vec <- c(0,1-P[["pfast"]][3,1],P[["pfast"]][3,1]) #need to update these values
-  } else {
-    vec[1] <- vec[1]+vec[2]*P[["rRecov"]]
-    vec[4] <- vec[4]+vec[3]*P[["rfast"]]+vec[2]*rep(P[["rslow"]][3:11,1],each=10*12)[i]
-    vec[2] <- vec[2]-vec[2]*P[["rRecov"]]-vec[2]*rep(P[["rslow"]][3:11,1],each=10*12)[i]
-    vec[3] <- vec[3]-vec[3]*P[["rfast"]]  }
-  survM15[i] <- 1- vec[4]  }
-
-#'format the plot
-plot(-1,-1,col=0,las=1,ylim=c(0,10),xlim=c(0,50),xlab="",ylab="")
-abline(h=axTicks(2),col="grey90");box()
-#'plot the model data
-lines(seq(0,50*12)/12,c(0,(1-survM15)*100),col=4,lwd=2)
-#' plot text
-mtext("Years since infection",1,2.5,cex=0.9)
-mtext("Cumulative incidence of active TB following M.tb infection at age 15 (%)",3,0.8,cex=0.8,font=2)
-}
-\description{
-load the parameter data set & model inputs
-Define the Posterior Function
 }

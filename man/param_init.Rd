@@ -4,11 +4,11 @@
 \alias{param_init}
 \title{This function takes the same inputs as the Outputs}
 \usage{
-param_init(ParVector, Int1 = 0, Int2 = 0, Int3 = 0, Int4 = 0,
-  Int5 = 0, Scen1 = 0, Scen2 = 0, Scen3 = 0)
+param_init(PV, Int1 = 0, Int2 = 0, Int3 = 0, Int4 = 0, Int5 = 0,
+  Scen1 = 0, Scen2 = 0, Scen3 = 0)
 }
 \arguments{
-\item{ParVector}{vector of Inputs to format}
+\item{PV}{vector of Inputs to format}
 
 \item{Int1}{boolean for intervention 1}
 

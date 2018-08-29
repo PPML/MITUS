@@ -2,7 +2,12 @@
 % Please edit documentation in R/calib_functions.R
 \name{dDirMult}
 \alias{dDirMult}
-\title{Dirichlet multinomial density function}
+\title{Calibration Functions for use with the tb_model.cpp model
+This script creates several individual log likelihood functions
+for the calibration of the State Level TB model in tb_model.cpp
+These llikelihood functions are called in IMIS_functions.R
+takes in the outputs and calibration data and creates likelihood functions
+Dirichlet multinomial density function}
 \usage{
 dDirMult(M, n, Rho)
 }
@@ -17,5 +22,10 @@ dDirMult(M, n, Rho)
 M density
 }
 \description{
+Calibration Functions for use with the tb_model.cpp model
+This script creates several individual log likelihood functions
+for the calibration of the State Level TB model in tb_model.cpp
+These llikelihood functions are called in IMIS_functions.R
+takes in the outputs and calibration data and creates likelihood functions
 Dirichlet multinomial density function
 }
