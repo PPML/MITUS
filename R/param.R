@@ -150,7 +150,7 @@ param <- function (PV){
 ######################       TB TRANSMISSION           #######################
 
   CR           <- PV["CR"]/12
-  RelInfRg     <- c(1.0,PV["RelCrHr"])*CR
+  RelInfRg     <- c(1.0,PV["RelCrHr"],1.0,1.0)*CR
   TunTbTransTx <- 0#PV["TunTbTransTx"]  # set to zero?
   Vmix         <- 1-c(PV["sigmaHr"],PV["sigmaFb"])
   RelInf       <- rep(0,6)
