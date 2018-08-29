@@ -220,6 +220,22 @@ tb_dth_age_lLik <- function(V,rho=0.01) {
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
   sum(dDirMult(M=V2,n=tb_deaths_age,Rho=rho)*wts[50:65]) - adj_19b  }
 
+#' TOTAL DEATHS AGE DISTRIBUTION 1999-2014
+#' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
+#'@param V table of deaths by age 1999-2014 (row=16 years, col=11 ages)
+#'@param rho correlation parameter
+#'@return likelihood
+tot_dth_age_lLik <- function(V,rho=0.01) {
+  CalibDat$US_mort_age <- read.csv(file="inst/extdata/US_mort_age.csv", header = TRUE)
+  tot_deaths_age  <- CalibDat[["US_mort_age"]][,-1]
+  tot_deaths_age <-tot_deaths_age/1e6
+  adj_19b        <- sum(dDirMult(M=tot_deaths_age+0.1,n=tot_deaths_age+0.1,Rho=0.01)*wts[50:67])
+  V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
+  V2 <- V2[,-5]; V2[,4]  <- V2[,4]+V[,5]
+  V2 <- V2[,-3]; V2[,2]  <- V2[,2]+V[,3]
+
+  sum(dDirMult(M=V2,n=tot_deaths_age,Rho=rho)*wts[50:67]) - adj_19b  }
+
 #'Homeless Population in 2010
 #'Motivation: normally distributed, mean centered with CI = +/- 25% of mean
 #'@param V scalar value of homeless pop in 2010
