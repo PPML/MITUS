@@ -84,8 +84,8 @@ llikelihoodZ_noTB <-  function(samp_i,ParMatrix) {
       colnames(M) <- prms[["ResNam"]]
       lLik <- 0
 
-      #' TOTAL POP EACH DECADE, BY US/FB - index updated (maybe)
-      v17  <- M[,30]+(M[,31]+M[,32])
+      #' TOTAL POP EACH DECADE, BY US/FB
+      v17  <- M[,31]+M[,32]
       addlik <- tot_pop_yr_fb_lLik(V=v17); addlik
       lLik <- lLik + addlik
       #' TOTAL POP AGE DISTRIBUTION 2016 index updated

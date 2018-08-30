@@ -136,7 +136,7 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
       addlik <- ltbi_fb_11_lLik(V=v16a)*2; addlik
       lLik <- lLik + addlik
       #' TOTAL POP EACH DECADE, BY US/FB - index updated (maybe)
-       v17  <- M[,30]+(M[,31]+M[,32])
+       v17  <- M[,31]+M[,32]
        addlik <- tot_pop_yr_fb_lLik(V=v17); addlik
        lLik <- lLik + addlik
       #' TOTAL POP AGE DISTRIBUTION 2016 index updated
@@ -193,7 +193,6 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
 #'@return lLik
 #'@export
 llikelihood <- function(ParMatrix,n_cores=1) {
-
   data("CalibDat_2018-07-12", package='MITUS') # CalibDat
   #'Log-likelihood functions
   #'Assign the calibration importance weights from CalibDat
