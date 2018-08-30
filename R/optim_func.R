@@ -17,10 +17,7 @@ optim_b <- function(df, samp_i=1){
 
 
 posterior = function(theta) {
-
-
    -lprior(theta) - llikelihood(theta,n_cores)
-
  }
 
 if(min(dim(as.data.frame(df)))==1) {
@@ -46,7 +43,7 @@ b<-samp_i
   save(o6,file=paste("Opt_US_r6_", b,"_", Sys.Date(),".rda",sep=""))
   o7  <- optim(o6$par, posterior, method ="BFGS", control=list(maxit=400,trace=5,reltol=sqrt(.Machine$double.eps)/5)) ; o7$value
   save(o7,file=paste("Opt_US_r7_", b,"_", Sys.Date(),".rda",sep=""))
-  o8 <- UnivOptim(o7$par) ; o8$value
-  save(o8,file=paste("Opt_US_r8_", b,"_", Sys.Date(),".rda",sep=""))
+  # o8 <- UnivOptim(o7$par) ; o8$value
+  # save(o8,file=paste("Opt_US_r8_", b,"_", Sys.Date(),".rda",sep=""))
 # }
 }
