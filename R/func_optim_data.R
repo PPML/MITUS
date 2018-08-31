@@ -1,0 +1,28 @@
+#'The function requires the use of the ParamInit Rdata file and the
+#'StartValues Rdata file.
+#'@name optim_data
+#'@param batches dataframe or matrix of starting values data frame
+#'@return datafile of all the optimized data parameters
+#'@export
+
+
+optim_data <- function(batches){
+
+opt_all<-matrix(NA,batches,65)
+cnames<-c(rownames(ParamInitZ), "post_val")
+colnames(opt_all)<-cnames
+rnames<-rep(NA,batches)
+for (j in 1:batches){
+rnames[j]<-paste("b_no_", j, sep="")
+}
+rownames(opt_all)<-rnames
+
+for (i in 1:batches){
+  load(paste("Opt_US_r7_",i,"_2018-08-31.rda", sep=""))
+  opt_all[i,1:64] <- o7$par
+  opt_all[i,65]<- o7$value
+}
+save(opt_all, file=paste("Optim_all_", batches, "_", Sys.Date(),".rda", sep = ""))
+
+}
+
