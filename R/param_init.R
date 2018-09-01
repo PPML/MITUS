@@ -214,7 +214,7 @@ InputParams[["HrEntEx"]]  <- cbind(HR_entry,HR_exit)/12
 
 CR           <- PV["CR"]/12
 TrIn         <- PV["TrIn"]	# Contact rate for In as a fraction of Ip
-InputParams[["RelInfRg"]]    <- c(1.0,PV["RelCrHr"], 1.0, PV["RelCrHr"])*CR
+InputParams[["RelInfRg"]]    <- c(1.0,PV["RelCrHr"], 1.0, 1.0)*CR
 TunTbTransTx <- 0 #PV["TunTbTransTx"]  # set to zero?
 InputParams[["Vmix"]]         <- 1-c(PV["sigmaHr"],PV["sigmaFb"])
 RelInf <- rep(0,6)
