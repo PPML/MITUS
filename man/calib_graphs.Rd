@@ -2,8 +2,7 @@
 % Please edit documentation in R/graphs_calib.R
 \name{calib_graphs}
 \alias{calib_graphs}
-\title{load the parameter data set & model inputs
-graph of total diagnosed cases
+\title{graph of total diagnosed cases
 by total population, US born population, and non-US born population
 format the plot
 plot the model data
