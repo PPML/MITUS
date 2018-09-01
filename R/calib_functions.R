@@ -220,6 +220,18 @@ tb_dth_age_lLik <- function(V,rho=0.01) {
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
   sum(dDirMult(M=V2,n=tb_deaths_age,Rho=rho)*wts[50:65]) - adj_19b  }
 
+#' TOTAL US DEATHS
+#' 1970,1975,1980,1985,1990-2007
+#' Motivation: norm, mean centered with CI = +/- 5% of mean
+#'@param V
+#'@return likelihood
+US_dth_tot_lLik <- function(V) {
+  CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
+  US_deaths_tot   <- CalibDat[["US_tot_mort"]][,-1]
+  adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.25/1.96,log=T)*wts[c(21,26,31,36,41:58)])
+  sum(dnorm(US_deaths_tot,V*1e6,US_deaths_tot*0.2/1.96,log=T)*wts[c(21,26,31,36,41:58)]) - adj_20a
+  }
+
 #' TOTAL DEATHS AGE DISTRIBUTION 1999-2014
 #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
 #'@param V table of deaths by age 1999-2014 (row=16 years, col=11 ages)
@@ -229,12 +241,12 @@ tot_dth_age_lLik <- function(V,rho=0.01) {
   CalibDat$US_mort_age <- read.csv(system.file("extdata","US_mort_age.csv", package="MITUS"))
   tot_deaths_age  <- CalibDat[["US_mort_age"]][,-1]
   tot_deaths_age <-tot_deaths_age/1e6
-  adj_19b        <- sum(dDirMult(M=tot_deaths_age+0.1,n=tot_deaths_age+0.1,Rho=0.01)*wts[50:67])
+  adj_20b        <- sum(dDirMult(M=tot_deaths_age+0.1,n=tot_deaths_age+0.1,Rho=0.01)*wts[50:67])
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
   V2 <- V2[,-5]; V2[,4]  <- V2[,4]+V[,5]
   V2 <- V2[,-3]; V2[,2]  <- V2[,2]+V[,3]
 
-  sum(dDirMult(M=V2,n=tot_deaths_age,Rho=rho)*wts[50:67]) - adj_19b  }
+  sum(dDirMult(M=V2,n=tot_deaths_age,Rho=rho)*wts[50:67]) - adj_20b  }
 
 #'Homeless Population in 2010
 #'Motivation: normally distributed, mean centered with CI = +/- 25% of mean
