@@ -9,10 +9,10 @@ library(MASS)
 
 #'lazy load necessary datasets
 #'Model Input
-data("ModelInputs_9-2-16", package = 'MITUS')
-data("ParamInitUS_2018-08-06_final", package='MITUS')# ParamInit
-data("StartVal_2018-08-30", package='MITUS')# ParamInit
-data("CalibDat_2018-09-01", package='MITUS')# ParamInit
+data("US_ModelInputs_9-2-16", package = 'MITUS')
+data("US_ParamInit_2018-08-06_final", package='MITUS')# ParamInit
+data("US_StartVal_2018-08-30", package='MITUS')# ParamInit
+data("US_CalibDat_2018-09-01", package='MITUS')# ParamInit
 
 #'creation of background parameters
 #'elements of P will be replaced from either the StartVals in the case
