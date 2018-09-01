@@ -11,22 +11,6 @@ library(lhs)
 #'@param ParMatrix matrix of parameters  # Par = par_1
 #'@return lLik
 llikelihoodZ <-  function(samp_i,ParMatrix) {
-  #'load the necessary calibration data
-  data("CalibDat_2018-07-12", package='MITUS') # CalibDat
-  #'Log-likelihood functions
-  #'Assign the calibration importance weights from CalibDat
-  #'These weights are based on year of the simulation.
-  wts <- CalibDat[["ImptWeights"]]
-  #'format P
-  data("ParamInitUS_2018-08-06_final", package='MITUS')# ParamInit
-  P  <- ParamInit[,1];
-  names(P) <- rownames(ParamInit)
-  ii <-  ParamInit[,5]==1
-  ParamInitZ <- ParamInit[ParamInit$Calib==1,]
-  idZ0 <- ParamInitZ[,4]==0
-  idZ1 <- ParamInitZ[,4]==1
-  idZ2 <- ParamInitZ[,4]==2
-
   if(min(dim(as.data.frame(ParMatrix)))==1) {
     Par <- as.numeric(ParMatrix);
     names(Par) <- names(ParMatrix)
@@ -45,13 +29,6 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
   P <- P
 
   jj <- tryCatch({
-    data("CalibDat_2018-07-12", package='MITUS') # CalibDat
-    #'Log-likelihood functions
-    #'Assign the calibration importance weights from CalibDat
-    #'These weights are based on year of the simulation.
-    wts <- CalibDat[["ImptWeights"]]
-    #'format P
-
     prms <-list()
     prms <- param(P)
     IP <- list()
@@ -72,14 +49,6 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
     if(sum(is.na(zz$Outputs[65,]))>0 | min(zz$Outputs[65,])<0 | min(zz$V1)<0 ) {
       lLik <- -10^12
   } else {
-    data("ParamInitUS_2018-08-06_final", package='MITUS')# ParamInit
-    P  <- ParamInit[,1];
-    names(P) <- rownames(ParamInit)
-    ii <-  ParamInit[,5]==1
-    ParamInitZ <- ParamInit[ParamInit$Calib==1,]
-    idZ0 <- ParamInitZ[,4]==0
-    idZ1 <- ParamInitZ[,4]==1
-    idZ2 <- ParamInitZ[,4]==2
       M <- zz$Outputs
       colnames(M) <- prms[["ResNam"]]
       lLik <- 0
@@ -150,6 +119,10 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
       #' TB DEATHS 1999-2014 BY AGE - index updated above
       addlik <- tb_dth_age_lLik(V=v19); addlik
       lLik <- lLik + addlik
+      #' Total DEATHS 1970,75,80,85,90-07
+      v20  <- M[c(21,26,31,36,41:58),255:265]+M[c(21,26,31,36,41:58),266:276]
+      addlik <- US_dth_tot_lLik(V=rowSums(v20)); addlik
+      lLik <- lLik + addlik
       #' Total DEATHS 1999-2016 BY AGE
       v20  <- M[50:67,255:265]+M[50:67,266:276]
       addlik <- tot_dth_age_lLik(V=v20); addlik
@@ -193,21 +166,6 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
 #'@return lLik
 #'@export
 llikelihood <- function(ParMatrix,n_cores=1) {
-  data("CalibDat_2018-07-12", package='MITUS') # CalibDat
-  #'Log-likelihood functions
-  #'Assign the calibration importance weights from CalibDat
-  #'These weights are based on year of the simulation.
-  wts <- CalibDat[["ImptWeights"]]
-  #'format P
-  data("ParamInitUS_2018-08-06_final", package='MITUS')# ParamInit
-  P  <- ParamInit[,1];
-  names(P) <- rownames(ParamInit)
-  ii <-  ParamInit[,5]==1
-  ParamInitZ <- ParamInit[ParamInit$Calib==1,]
-  idZ0 <- ParamInitZ[,4]==0
-  idZ1 <- ParamInitZ[,4]==1
-  idZ2 <- ParamInitZ[,4]==2
-
   if(dim(as.data.frame(ParMatrix))[2]==1) {
     lLik <- llikelihoodZ(1,t(as.data.frame(ParMatrix)))
   } else {
@@ -222,14 +180,6 @@ return((lLik))
 #'@return ldensity3
 
 lPrior2 <- function(Par,Par3) {
-  data("ParamInitUS_2018-08-06_final", package='MITUS')# ParamInit
-  P  <- ParamInit[,1];
-  names(P) <- rownames(ParamInit)
-  ii <-  ParamInit[,5]==1
-  ParamInitZ <- ParamInit[ParamInit$Calib==1,]
-  idZ0 <- ParamInitZ[,4]==0
-  idZ1 <- ParamInitZ[,4]==1
-  idZ2 <- ParamInitZ[,4]==2
   if(dim(as.matrix(Par))[2]==1) Par <- t(as.matrix(Par))
   ldensity <- dmnorm(Par,rep(0,nrow(ParamInitZ)),diag(nrow(ParamInitZ)),log=T)
   ldensity2 <- ldensity-sum(dnorm(Par,0,1,log=T))
@@ -245,14 +195,6 @@ lPrior2 <- function(Par,Par3) {
 #'@return lPri
 
 lprior <- function(ParMatrix = ParInit) { # Par = ParInit
-  data("ParamInitUS_2018-08-06_final", package='MITUS')# ParamInit
-  P  <- ParamInit[,1];
-  names(P) <- rownames(ParamInit)
-  ii <-  ParamInit[,5]==1
-  ParamInitZ <- ParamInit[ParamInit$Calib==1,]
-  idZ0 <- ParamInitZ[,4]==0
-  idZ1 <- ParamInitZ[,4]==1
-  idZ2 <- ParamInitZ[,4]==2
   if(dim(as.data.frame(ParMatrix))[2]==1) {
     ParMatrix <- t(as.data.frame(ParMatrix)) }
   lPri <- rep(0,nrow(ParMatrix))
