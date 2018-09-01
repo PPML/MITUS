@@ -12,7 +12,7 @@ library(MASS)
 data("ModelInputs_9-2-16", package = 'MITUS')
 data("ParamInitUS_2018-08-06_final", package='MITUS')# ParamInit
 data("StartVal_2018-08-30", package='MITUS')# ParamInit
-data("CalibDat_2018-07-12", package='MITUS')# ParamInit
+data("CalibDat_2018-09-01", package='MITUS')# ParamInit
 
 #'creation of background parameters
 #'elements of P will be replaced from either the StartVals in the case
@@ -27,5 +27,4 @@ idZ2 <- ParamInitZ[,4]==2
 
 #'format the calibration data
 wts <- CalibDat[["ImptWeights"]]
-CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
-CalibDat$US_mort_age <- read.csv(file="inst/extdata/US_mort_age.csv", header = TRUE)
+
