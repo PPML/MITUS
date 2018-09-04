@@ -1790,8 +1790,10 @@ for(int ag=0; ag<11; ag++) {
               for (int nm=0; nm<4; nm++){
                 for(int rg=0; rg<2; rg++) {
                   for(int na=0; na<3; na++){
-                    Outputs[y][226+ag]  += VMort[ag][4][lt][im][nm][rg][na];
-                  } } } } } }
+                    for(int tb=4; tb<6; tb++){
+
+                    Outputs[y][226+ag]  += VMort[ag][tb][lt][im][nm][rg][na];
+                    } } } } } } }
         ////////////     CREATE YEARLY VALUES FROM THE MONTH ESTIMATE     ////////////
         for(int i=226; i<237; i++) { Outputs[y][i] = Outputs[y][i]*12; }
 
