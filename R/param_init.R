@@ -19,7 +19,7 @@
 #'@export
 
 param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0){
-data("ModelInputs_9-2-16", package='MITUS')
+data("US_ModelInputs_9-2-16", package='MITUS')
 #'Create an empty list to hold the formatted intitial parameters
 InputParams <-vector("list", 43)
 names(InputParams) <- c("rDxt","TxQualt", "InitPop", "Mpfast", "ExogInf", "MpfastPI",
@@ -214,7 +214,7 @@ InputParams[["HrEntEx"]]  <- cbind(HR_entry,HR_exit)/12
 
 CR           <- PV["CR"]/12
 TrIn         <- PV["TrIn"]	# Contact rate for In as a fraction of Ip
-InputParams[["RelInfRg"]]    <- c(1.0,PV["RelCrHr"], 1.0, 1.0)*CR
+InputParams[["RelInfRg"]]    <- c(1.0,PV["RelCrHr"], 1.0, PV["RelCrHr"])*CR
 TunTbTransTx <- 0 #PV["TunTbTransTx"]  # set to zero?
 InputParams[["Vmix"]]         <- 1-c(PV["sigmaHr"],PV["sigmaFb"])
 RelInf <- rep(0,6)
