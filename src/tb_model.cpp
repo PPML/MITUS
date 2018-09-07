@@ -19,7 +19,6 @@ using namespace Rcpp;
 //'@param vTMort vector of TB mortality rates
 //'@param RRmuRF rate ratio of mortality across mortality risk group
 //'@param RRmuHR rate ratio of mortality across low/high risk dimension
-//'@param muTBRF comorbidity factor btw TB and mortality risk group
 //'@param Birthst Births over time
 //'@param HrEntEx Matrix of Entry and Exit rates into the High Risk population
 //'@param ImmNon Immigration with no TB
@@ -67,7 +66,6 @@ Rcpp::List cSim(
     std::vector<double> RRmuRF,
     std::vector<double> RRmuHR,
 
-    double              muTbRF,
     std::vector<double> Birthst,
     Rcpp::NumericMatrix       HrEntEx,
     Rcpp::NumericMatrix       ImmNon,
@@ -312,7 +310,6 @@ Rcpp::List cSim(
     //   vRFMortN[ag][nm] = 0;
     // } }
     // for(int rg=0; rg<2; rg++){RRmuHR[rg]=1; }
-    muTbRF =0;
     // for(int i=0; i < 11; i++)
     // {  temp_vec3[i]=0;
     //   temp_vec4[i]=0;
