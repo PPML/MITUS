@@ -14,8 +14,7 @@ Rcpp::NumericMatrix reblncd(
   double RRmuHR,
   std::vector<double> RRmuRF,
   std::vector<double> HRdist,
-  std::vector<double> dist_gen_v,
-  std::vector<double> adj_fact
+  std::vector<double> dist_gen_v
 ){
   double mubtN[11];
   double dist_i_v[16];
@@ -229,7 +228,7 @@ for(int ag=0; ag<11; ag++){
   } } }
   for(int i=0; i<16; i++){
     for(int j=0; j<16; j++){
-  trans_mat_tot[i][j]=trans_mat_tot[i][j]*adj_fact[ag];
+  trans_mat_tot[i][j]=trans_mat_tot[i][j];//*adj_fact[ag];
     } }
   for(int i=0; i<16; i++){
     for(int j=0; j<16; j++){
