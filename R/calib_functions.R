@@ -3,8 +3,9 @@
 #'for the calibration of the State Level TB model in tb_model.cpp
 #'These llikelihood functions are called in IMIS_functions.R
 #'takes in the outputs and calibration data and creates likelihood functions
-
-
+#
+# data("US_CalibDat_2018-09-01", package='MITUS')# ParamInit
+#  wts <- CalibDat[["ImptWeights"]]
 #'Dirichlet multinomial density function
 #'@name dDirMult
 #'@param M params of the dirichlet, i.e. model strain distribution
@@ -20,20 +21,14 @@ dDirMult <- function(M,n,Rho) {
   rowSums(lgamma(n+M/Rho))-rowSums(lgamma(M/Rho))
 }
 
-#'load the necessary calibration data
-data("CalibDat_2018-07-12", package='MITUS') # CalibDat
-#'Log-likelihood functions
-#'Assign the calibration importance weights from CalibDat
-#'These weights are based on year of the simulation.
-wts <- CalibDat[["ImptWeights"]]
-
 #'Total Diagnosed Cases 1953-2016
 #'Motivation: Normal, mean centered with CI = +/- 5% of the mean
 #'@param V vector of total notifications 1953-2014
 #'@return likelihood
-notif_tot     <- CalibDat[["tot_cases"]][,2]
-adj_1         <- sum(dnorm(notif_tot,notif_tot,notif_tot*0.1/1.96,log=T)*wts[4:67])
+
 notif_tot_lik <- function(V) {
+  notif_tot     <- CalibDat[["tot_cases"]][,2]
+  adj_1         <- sum(dnorm(notif_tot,notif_tot,notif_tot*0.1/1.96,log=T)*wts[4:67])
   sum(dnorm(notif_tot,V,notif_tot*0.1/1.96,log=T)*wts[4:67]) - adj_1  }
 
 #'US Cases Age Distribution 1993-2013
@@ -226,7 +221,7 @@ tb_dth_age_lLik <- function(V,rho=0.01) {
 #'@param V
 #'@return likelihood
 US_dth_tot_lLik <- function(V) {
-  CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
+  # CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
   US_deaths_tot   <- CalibDat[["US_tot_mort"]][,-1]
   adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.25/1.96,log=T)*wts[c(21,26,31,36,41:58)])
   sum(dnorm(US_deaths_tot,V*1e6,US_deaths_tot*0.2/1.96,log=T)*wts[c(21,26,31,36,41:58)]) - adj_20a
@@ -238,7 +233,7 @@ US_dth_tot_lLik <- function(V) {
 #'@param rho correlation parameter
 #'@return likelihood
 tot_dth_age_lLik <- function(V,rho=0.01) {
-  CalibDat$US_mort_age <- read.csv(system.file("extdata","US_mort_age.csv", package="MITUS"))
+  # CalibDat$US_mort_age <- read.csv(system.file("extdata","US_mort_age.csv", package="MITUS"))
   tot_deaths_age  <- CalibDat[["US_mort_age"]][,-1]
   tot_deaths_age <-tot_deaths_age/1e6
   adj_20b        <- sum(dDirMult(M=tot_deaths_age+0.1,n=tot_deaths_age+0.1,Rho=0.01)*wts[50:67])
