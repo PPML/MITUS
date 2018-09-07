@@ -50,11 +50,12 @@ InputParams[["dist_gen"]] <- dist_gen;
 # ################################################################################
 ###########################          INPUTS            #########################
 ################################################################################
-BgMort                   <- matrix(unlist(Inputs[["BgMort"]]),nrow=151,byrow=F)
-InputParams[["InitPop"]] <- matrix(unlist(Inputs[["InitPop"]]),nrow=11,byrow=F)
-Births                   <- matrix(unlist(Inputs[["Births"]]),nrow=151,byrow=F)
-ImmigInputs              <- Inputs[["ImmigInputs"]]
-TxInputs                 <- Inputs[["TxInputs"]]
+################################################################################
+BgMort           <- Inputs[["BgMort"]]
+InputParams[["InitPop"]]          <- Inputs[["InitPop"]]
+Births           <- Inputs[["Births"]]
+ImmigInputs      <- Inputs[["ImmigInputs"]]
+TxInputs         <- Inputs[["TxInputs"]]
 
 ##########                PARAMETER DEFINITIONS                      ###########
 #######################           BIRTHS                 #######################
@@ -643,3 +644,4 @@ return(InputParams)
 
 ###################################################
 }
+
