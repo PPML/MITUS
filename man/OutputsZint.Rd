@@ -6,8 +6,9 @@
 AND GENERATES AN ARRAY OF OUTPUTS
 function to run the model}
 \usage{
-OutputsZint(samp_i = 1, ParMatrix, endyr = 2050, Int1 = 0, Int2 = 0,
-  Int3 = 0, Int4 = 0, Int5 = 0, Scen1 = 0, Scen2 = 0, Scen3 = 0)
+OutputsZint(samp_i = 1, ParMatrix, startyr = 1950, endyr = 2050,
+  Int1 = 0, Int2 = 0, Int3 = 0, Int4 = 0, Int5 = 0, Scen1 = 0,
+  Scen2 = 0, Scen3 = 0)
 }
 \arguments{
 \item{samp_i}{how many samples}

@@ -82,7 +82,7 @@ format the plot
 plot the model data
 reported data for comparison
 plot text
-Age Distribution of TB Deaths 1999-2013
+Age Distribution of TB Deaths 1999-2014
 format the plot
 plot the model data
 reported data for comparison
