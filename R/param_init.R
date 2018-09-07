@@ -19,7 +19,7 @@
 #'@export
 
 param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0){
-data("US_ModelInputs_9-2-16", package='MITUS')
+load("~/MITUS/data/US_ModelInputs_9-6-18.rda")
 #'Create an empty list to hold the formatted intitial parameters
 InputParams <-vector("list", 42)
 names(InputParams) <- c("rDxt","TxQualt", "InitPop", "Mpfast", "ExogInf", "MpfastPI",
@@ -50,9 +50,9 @@ InputParams[["dist_gen"]] <- dist_gen;
 # ################################################################################
 ###########################          INPUTS            #########################
 ################################################################################
-BgMort                   <- Inputs[["BgMort"]]
-InputParams[["InitPop"]] <- Inputs[["InitPop"]]
-Births                   <- Inputs[["Births"]]
+BgMort                   <- matrix(unlist(Inputs[["BgMort"]]),nrow=151,byrow=F)
+InputParams[["InitPop"]] <- matrix(unlist(Inputs[["InitPop"]]),nrow=11,byrow=F)
+Births                   <- matrix(unlist(Inputs[["Births"]]),nrow=151,byrow=F)
 ImmigInputs              <- Inputs[["ImmigInputs"]]
 TxInputs                 <- Inputs[["TxInputs"]]
 
