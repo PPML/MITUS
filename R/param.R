@@ -21,7 +21,7 @@ param <- function (PV){
 ##########                PARAMETER DEFINITIONS                      ###########
 ##########                RISK FACTOR DISTRIBUTIONS   ##########################
 
-  # adj_fact<-exp(.0001*(10:0)/11 + .0011*(0:10)/11)
+  #adj_fact<-exp(.0001*(10:0)/11 + .0011*(0:10)/11)
   adj_fact <- exp(PV[["adj_ag1"]]*(10:0)/11 + PV[["adj_ag11"]]*(0:10)/11)
 
 #######################           BIRTHS                 #######################
@@ -50,10 +50,10 @@ param <- function (PV){
 ############ CONVERT ANNUAL RATES OF RF MORTALITY TO MONTHLY RATES ##########
 
 ############ THESE MUST BE UPDATED
-  muRF1      <- PV["muH1"]/12*.01
-  muRF2      <- (PV["muH2"]+PV["muH1"])/24 *.01
-  muRF3      <- PV["muH2"]/12*.01
-  muTbRF    <- PV["muTbH"]/12
+  # muRF1      <- PV["muH1"]/12*.01
+  # muRF2      <- (PV["muH2"]+PV["muH1"])/24 *.01
+  # muRF3      <- PV["muH2"]/12*.01
+  # muTbRF    <- PV["muTbH"]/12
 
 ###############  RATE RATIO OF MORTALITY INCREASE FOR HIGH RISK ###############
 
@@ -63,13 +63,13 @@ param <- function (PV){
   ############### CREATE A MATRIX OF RF MORTALITIES BY AGE GROUP ###############
   mort_dist<-rowSums(dist_gen)
 
-  RF_fact=20
+  RF_fact=PV[["RF_fact"]]
 
   RRmuRF    <- rep(NA,4);
   names(RRmuRF) <- c("RF1","RF2","RF3","RF4")
 
-    RRmuRF<-exp((0:3)/3*log(RF_fact))
-  # RRmuRF<-RRmuRF/sum(RRmuRF*mort_dist)
+  RRmuRF<-exp((0:3)/3*log(RF_fact))
+  RRmuRF<-RRmuRF/sum(RRmuRF*mort_dist)
  #check
   #RRmuRF%*%mort_dist
 
