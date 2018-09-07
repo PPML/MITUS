@@ -562,7 +562,6 @@ Params[["dist_gen"]]  = dist_gen
 Params[["vTMort"]]    = vTMort
 Params[["RRmuRF"]]    = RRmuRF
 Params[["RRmuHR"]]    = RRmuHR
-Params[["muTbRF"]]    = muTbRF
 Params[["Birthst"]]   = Birthst
 Params[["HrEntEx"]]   = HrEntEx
 Params[["ImmNon"]]    = ImmNon
