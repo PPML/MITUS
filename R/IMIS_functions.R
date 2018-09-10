@@ -120,11 +120,11 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
       addlik <- tb_dth_age_lLik(V=v19); addlik
       lLik <- lLik + addlik
       #' Total DEATHS 1970,75,80,85,90-07
-      v20  <- M[c(21,26,31,36,41:58),255:265]+M[c(21,26,31,36,41:58),266:276]
-      addlik <- US_dth_tot_lLik(V=rowSums(v20)); addlik
+      v20  <- M[c(21,26,31,36,41:58),121:131]
+      addlik <- US_dth_tot_lLik(V=v20); addlik
       lLik <- lLik + addlik
       #' Total DEATHS 1999-2016 BY AGE
-      v20  <- M[50:67,255:265]+M[50:67,266:276]
+      v20  <- M[50:67,121:131]
       addlik <- tot_dth_age_lLik(V=v20); addlik
       lLik <- lLik + addlik
       #' HOMELESS POP 2010 - index updated
