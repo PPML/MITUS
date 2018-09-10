@@ -41,6 +41,8 @@ gen_par_matrix<-function(startMat){
   P <- P
   ParMatrix[i,]<-P
   }
-return(ParMatrix)
+save(ParMatrix,file=paste("parAll",nrow(startMat),"_",Sys.Date(),".rda", sep=""))
+  return(ParMatrix)
+
 }
 
