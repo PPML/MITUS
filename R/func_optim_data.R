@@ -8,7 +8,7 @@
 
 optim_data <- function(batches){
 
-opt_all<-matrix(NA,batches,65)
+opt_all<-matrix(NA,batches,(nrow(ParamInitZ)+1))
 cnames<-c(rownames(ParamInitZ), "post_val")
 colnames(opt_all)<-cnames
 rnames<-rep(NA,batches)
@@ -18,9 +18,9 @@ rnames[j]<-paste("b_no_", j, sep="")
 rownames(opt_all)<-rnames
 
 for (i in 1:batches){
-  load(paste("Opt_US_r7_",i,"_2018-08-31.rda", sep=""))
-  opt_all[i,1:64] <- o7$par
-  opt_all[i,65]<- o7$value
+  load(paste("/Users/nis100/Desktop/7_fri/Opt_US_r7_",i,"_2018-09-08.rda", sep=""))
+  opt_all[i,1:nrow(ParamInitZ)] <- o7$par
+  opt_all[i,(nrow(ParamInitZ)+1)]<- o7$value
 }
 save(opt_all, file=paste("Optim_all_", batches, "_", Sys.Date(),".rda", sep = ""))
 
