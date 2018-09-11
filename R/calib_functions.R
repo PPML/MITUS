@@ -58,7 +58,8 @@ notif_age_fb_lLik <- function(V,rho=0.005) {
 }
 
 #' CASES FB DISTRIBUTION 1993-2014
-#' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases#'@param V table of notifications by fb 1993-2014 (row=22 years, col=fb then us)
+#' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
+#'@param V table of notifications by fb 1993-2014 (row=22 years, col=fb then us)
 #'@param rho correlation parameter
 #'@return likelihood
 notif_fb_lLik <- function(V,rho=0.005) {
@@ -224,7 +225,7 @@ US_dth_tot_lLik <- function(V) {
   # CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
   US_deaths_tot   <- CalibDat[["US_tot_mort"]][,-1]
   adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.25/1.96,log=T)*wts[c(21,26,31,36,41:58)])
-  sum(dnorm(US_deaths_tot,V*1e6,US_deaths_tot*0.2/1.96,log=T)*wts[c(21,26,31,36,41:58)]) - adj_20a
+  sum(dnorm(US_deaths_tot,V,US_deaths_tot*0.2/1.96,log=T)*wts[c(21,26,31,36,41:58)]) - adj_20a
   }
 
 #' TOTAL DEATHS AGE DISTRIBUTION 1999-2014
