@@ -125,9 +125,9 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
       addlik <- US_dth_tot_lLik(V=v20a); addlik
       lLik <- lLik + addlik
       #' Total DEATHS 1999-2016 BY AGE
-      # v20b  <- M[50:67,121:131]
-      # addlik <- tot_dth_age_lLik(V=v20b); addlik
-      # lLik <- lLik + addlik
+      v20b  <- M[50:67,121:131]
+      addlik <- tot_dth_age_lLik(V=v20b); addlik
+      lLik <- lLik + addlik
       #' HOMELESS POP 2010 - index updated
       v23b  <- M[61,29]
       addlik <- homeless_10_lLik(V=v23b); addlik
