@@ -489,8 +489,8 @@ ResNam <- c("Year",                                         # year
             paste("N_FB_LTBI",StatList[[1]],sep="_"),       # FB LTBI pop by ag cat
             paste("N_RF",StatList[[1]],sep="_"),            # RF pop by ag cat
             #############################    MORTALITY    ################################
-            paste("TBMORT_RFNEG",StatList[[1]],sep="_"),   # TB mort, HIV neg, by ag cat
-            paste("TBMORT_RFPOS",StatList[[1]],sep="_"),   # TB mort, HIV pos, by ag cat
+            paste("TBMORT_US",StatList[[1]],sep="_"),   # TB mort, HIV neg, by ag cat
+            paste("TBMORT_NUS",StatList[[1]],sep="_"),   # TB mort, HIV pos, by ag cat
             paste("RFMORT",StatList[[1]],sep="_"),         # RF mort, by ag cat
             paste("TOTMORT",StatList[[1]],sep="_"),         # total mort, by ag cat
             #### @object 131

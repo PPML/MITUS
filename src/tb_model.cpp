@@ -1582,7 +1582,7 @@ for(int ag=0; ag<11; ag++) {
                     for(int na=0; na<3; na++) {
                       Outputs[y][76+ag] += V1[ag][tb][lt][im][nm][rg][na];   // N_RF by age (11)
                     } } } } } } }
-        ///////////// TB MORTALITY COUNT BY AGE, RISK FACTOR OF INTEREST///////////////
+        ///////////// TB MORTALITY COUNT BY AGE, NATIVITY///////////////
         ///////////// This output will likely be updated but it is not calib'd
         for(int ag=0; ag<11; ag++) {
           for(int lt=0; lt<2; lt++) {
@@ -1590,7 +1590,7 @@ for(int ag=0; ag<11; ag++) {
               for(int nm=0; nm<4; nm++) {
                 for(int rg=0; rg<2; rg++) {
                   for(int na=0; na<3; na++) {
-                    if(im>0) {
+                    if(na>0) {
                       ti = 11;
                     } else { ti = 0; }
                     // if(im==3) {
