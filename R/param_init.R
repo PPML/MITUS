@@ -55,6 +55,7 @@ BgMort           <- Inputs[["BgMort"]]
 InputParams[["InitPop"]]          <- Inputs[["InitPop"]]
 Births           <- Inputs[["Births"]]
 ImmigInputs      <- Inputs[["ImmigInputs"]]
+#In order for proper scenario/Interventions, creation of a variable to limit the
 TxInputs         <- Inputs[["TxInputs"]]
 
 ##########                PARAMETER DEFINITIONS                      ###########
@@ -134,11 +135,13 @@ TunmuTbAg <- PV["TunmuTbAg"]
 #################                IMMIGRATION              #####################
  TotImmig1       <- c(ImmigInputs[[1]][1:65],(ImmigInputs[[1]][66:151]-ImmigInputs[[1]][66])*PV["ImmigVolFut"]+ImmigInputs[[1]][66])/12*PV["ImmigVol"]
  TotImmig0       <- (c(ImmigInputs[[1]][1:151])+c(rep(0,65),cumsum(rep(PV["ImmigVolFut"],86))))/12*PV["ImmigVol"]
-#set.seed( rand_seed)
+
+ #set.seed( rand_seed)
 # TotImmig1       <-   c(TotImmig0[1:66],exp(mvrnorm(1, log(TotImmig0[-(1:66)]), vcv_gp_l10_sd0.1))) # Add gaussian process noise
 TotImmig1       <-   TotImmig0
 TotImmig        <- SmoCurve(TotImmig1)
 TotImmAge       <- outer(TotImmig,ImmigInputs[["AgeDist"]])
+TotImmAge       <- TotImmAge[1:1201,1:11]
 #######################   IMMIGRATION WITH LATENT TB   #######################
 
 PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:65]^PV["TunLtbiTrend"]*ImmigInputs[["PrevTrend25_34"]][65]^(1-PV["TunLtbiTrend"]),
@@ -149,8 +152,11 @@ PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:65]^PV["TunLtbiTrend"]*I
 PrevTrend25_341l <-   PrevTrend25_340l
 PrevTrend25_34l  <- SmoCurve(PrevTrend25_341l)
 PrevTrend25_34_ls <- (PrevTrend25_34l); PrevTrend25_34_ls <- PrevTrend25_34_ls/PrevTrend25_34_ls[(2011-1950)*12+6]
+PrevTrend25_34_ls  <-PrevTrend25_34_ls[1:1201]
+
 InputParams[["ImmLat"]]        <- matrix(NA,length(PrevTrend25_34_ls),11)
 for(i in 1:11) InputParams[["ImmLat"]][,i] <- (1-exp((-(c(2.5,1:9*10,100)/100)[i]*PV["LtbiPar1"]-(c(2.5,1:9*10,100)/100)[i]^2*PV["LtbiPar2"])*PrevTrend25_34_ls))*TotImmAge[,i]
+InputParams[["ImmLat"]]    <-InputParams[["ImmLat"]][1:1201,1:11]
 
 #######################   IMMIGRATION WITH ACTIVE TB   #######################
 PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:65],ImmigInputs[["PrevTrend25_34"]][66:151]*(PV["ImmigPrevFutAct"]/0.99)^(1:86))
@@ -158,9 +164,16 @@ PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:65],ImmigInputs[["PrevTr
 # PrevTrend25_341a <-   c(PrevTrend25_340a[1:66],exp(mvrnorm(1, log(PrevTrend25_340a[-(1:66)]), vcv_gp_l10_sd0.1))) # Add gaussian process noise
 PrevTrend25_341a <-   PrevTrend25_340a
 PrevTrend25_34a  <- SmoCurve(PrevTrend25_341a)
+PrevTrend25_34a  <-PrevTrend25_34a[1:1201]
+
 ImDxChngV      <- SmoCurve(c(rep(1,57),seq(1,PV["ImDxChng"],length.out=6)[-1],rep(PV["ImDxChng"],89)))
+ImDxChngV      <-ImDxChngV[1:1201]
 InputParams[["ImmAct"]]        <- outer(PrevTrend25_34a*PV["RRtbprev"]*ImDxChngV,ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*PV["pImAct"]
 InputParams[["ImmFst"]]        <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*(1-PV["pImAct"])
+
+InputParams[["ImmAct"]]    <-InputParams[["ImmAct"]][1:1201,1:11]
+InputParams[["ImmFst"]]    <-InputParams[["ImmFst"]][1:1201,1:11]
+
 InputParams[["ImmNon"]]        <- TotImmAge-InputParams[["ImmAct"]]-InputParams[["ImmFst"]]-InputParams[["ImmLat"]]
 
 #### #### #### INT 1 #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
@@ -169,26 +182,30 @@ if(Int1==1) {
   for(i in 1:11) InputParams[["ImmLat"]][,i] <- InputParams[["ImmLat"]][,i]*(1-LgtCurve(2016,2021,1)*PV["SensLt"]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
   for(i in 1:11) InputParams[["ImmAct"]][,i] <- InputParams[["ImmAct"]][,i]*(1-LgtCurve(2016,2021,1)*PV["SensLt"]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
   for(i in 1:11) InputParams[["ImmFst"]][,i] <- InputParams[["ImmFst"]][,i]*(1-LgtCurve(2016,2021,1)*PV["SensLt"]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
-  InputParams["ImmNon"]         <- TotImmAge-InputParams[["ImmAct"]]-InputParams[["ImmFst"]]-InputParams[["ImmLat"]]   }
+   InputParams[["ImmNon"]]        <- TotImmAge-InputParams[["ImmAct"]]-InputParams[["ImmFst"]]-InputParams[["ImmLat"]]
+  }
 
 
 #### #### #### SCEN 2 #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
 if(Scen2==1) {
-  for(i in 1:11) InputParams["ImmLat"][,i] <- InputParams[["ImmLat"]][,i]*(1-LgtCurve(2016,2017,1))
-  for(i in 1:11) InputParams["ImmAct"][,i] <- InputParams[["ImmAct"]][,i]*(1-LgtCurve(2016,2017,1))
-  for(i in 1:11) InputParams["ImmFst"][,i] <- InputParams[["ImmFst"]][,i]*(1-LgtCurve(2016,2017,1))
-  InputParams[["ImmNon"]]         <- TotImmAge-InputParams[["ImmAct"]]-InputParams[["ImmFst"]]-InputParams[["ImmLat"]]    }
+  for(i in 1:11) InputParams[["ImmLat"]][,i] <- InputParams[["ImmLat"]][,i]*(1-LgtCurve(2016,2017,1))
+  for(i in 1:11) InputParams[["ImmAct"]][,i] <- InputParams[["ImmAct"]][,i]*(1-LgtCurve(2016,2017,1))
+  for(i in 1:11) InputParams[["ImmFst"]][,i] <- InputParams[["ImmFst"]][,i]*(1-LgtCurve(2016,2017,1))
+  InputParams[["ImmNon"]]         <- TotImmAge-InputParams[["ImmAct"]]-InputParams[["ImmFst"]]-InputParams[["ImmLat"]]
+
+  }
 
 
 #### #### #### SCEN 3 #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
 if(Scen3==1) {
-  adjf <- (1-0.5)^(1/10/12);  adjfV <- adjf^(0:1008)
-  for(i in 1:11) InputParams[["ImmLat"]][793:1801,i] <- InputParams[["ImmLat"]][793:1801,i]*adjfV
-  for(i in 1:11) InputParams[["ImmAct"]][793:1801,i] <- InputParams[["ImmAct"]][793:1801,i]*adjfV
-  for(i in 1:11) InputParams[["ImmFst"]][793:1801,i] <- InputParams[["ImmFst"]][793:1801,i]*adjfV
-  InputParams["ImmNon"]         <- TotImmAgeInputParams[["ImmAct"]]-InputParams[["ImmFst"]]-InputParams[["ImmLat"]] }
+  adjf <- (1-0.5)^(1/10/12);  adjfV <- adjf^(0:408)
+  for(i in 1:11) InputParams[["ImmLat"]][793:1201,i] <- InputParams[["ImmLat"]][793:1201,i]*adjfV
+  for(i in 1:11) InputParams[["ImmAct"]][793:1201,i] <- InputParams[["ImmAct"]][793:1201,i]*adjfV
+  for(i in 1:11) InputParams[["ImmFst"]][793:1201,i] <- InputParams[["ImmFst"]][793:1201,i]*adjfV
+  InputParams[["ImmNon"]]         <- TotImmAge-InputParams[["ImmAct"]]-InputParams[["ImmFst"]]-InputParams[["ImmLat"]]
+  }
 
 #######################__EXOGENEOUS INFECTION RISK    #######################
 
@@ -368,10 +385,10 @@ rDxt1          <- cbind(rDxt0,rDxt0)
 InputParams[["rDxt"]] <- 1/(1/rDxt1+DelaySp)*SensSp
 InputParams[["rDxt"]][,2]       <- (InputParams[["rDxt"]][,1]-min(InputParams[["rDxt"]][,1]))/PV["rrDxH"]+min(InputParams[["rDxt"]][,1]) #check this with Nick
 colnames(InputParams[["rDxt"]]) <- c("Active","Active_HighRisk")
-
+InputParams[["rDxt"]]<-InputParams[["rDxt"]][1:1201,1:2]
 #### #### #### INT 3 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
-if(Int3==1) { for(i in 1:4) { InputParams[["rDxt"]][,i] <- InputParams[["rDxt"]][,i]+ InputParams[["rDxt"]][,i]*LgtCurve(2016,2021,1)     }   }
+if(Int3==1) { for(i in 1:2) { InputParams[["rDxt"]][,i] <- InputParams[["rDxt"]][,i]+ InputParams[["rDxt"]][,i]*LgtCurve(2016,2021,1)     }   }
 
 #### #### #### INT 3 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
@@ -403,12 +420,12 @@ rDef0[44:63]  <- ORAdd(TxInputs[[1]][,2],PV["TunTxDef"])
 rDef0[64:151] <- rDef0[63]
 rDef1         <- predict(smooth.spline(x=c(1950:1979,1993:2100),y=rDef0[-(31:43)],spar=0.4),x=1950:2100)$y
 InputParams[["rDeft"]]         <- SmoCurve(rDef1)/12;
-# rDeftH        <- InputParams[["rDeft"]]*PV["RRdefHR"] # second col is HR default rate
-
+rDeftH        <- InputParams[["rDeft"]]*PV["RRdefHR"] # second col is HR default rate
+rDeftH        <-rDeftH[1:1201]
 #### #### #### INT 4 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
 if(Int4==1) {  rDeftH <- rDeftH*(1-LgtCurve(2016,2021,0.5))      }
-if(Int4==1) {  rDeft  <- rDeft* (1-LgtCurve(2016,2021,0.5))      }
+if(Int4==1) {  InputParams[["rDeft"]]<-InputParams[["rDeft"]][1:1201];InputParams[["rDeft"]]  <- InputParams[["rDeft"]] * (1-LgtCurve(2016,2021,0.5))      }
 
 #### #### #### INT 4 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
@@ -419,6 +436,7 @@ TxQual0[44:62]  <- ORAdd(TxInputs[[2]][,2],PV["TunTxQual"])
 TxQual0[63:151] <- TxQual0[62]
 TxQual1         <- predict(smooth.spline(x=c(1950:1979,1993:2100),y=TxQual0[-(31:43)],spar=0.4),x=1950:2100)$y
 InputParams[["TxQualt"]]         <- SmoCurve(TxQual1);
+InputParams[["TxQualt"]]         <-InputParams[["TxQualt"]][1:1201]
 InputParams[["RRcurDef"]]        <- PV["RRcurDef"]
 
 #### #### #### INT 4 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
