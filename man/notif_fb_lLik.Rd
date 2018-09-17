@@ -3,11 +3,13 @@
 \name{notif_fb_lLik}
 \alias{notif_fb_lLik}
 \title{CASES FB DISTRIBUTION 1993-2014
-Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases#'@param V table of notifications by fb 1993-2014 (row=22 years, col=fb then us)}
+Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases}
 \usage{
 notif_fb_lLik(V, rho = 0.005)
 }
 \arguments{
+\item{V}{table of notifications by fb 1993-2014 (row=22 years, col=fb then us)}
+
 \item{rho}{correlation parameter}
 }
 \value{
@@ -15,5 +17,5 @@ likelihood
 }
 \description{
 CASES FB DISTRIBUTION 1993-2014
-Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases#'@param V table of notifications by fb 1993-2014 (row=22 years, col=fb then us)
+Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
 }
