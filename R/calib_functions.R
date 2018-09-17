@@ -202,7 +202,7 @@ tb_deaths_lLik <- function(V,sgsq=50) {
 #'@return likelihood
 tb_dth_tot_lLik <- function(V) {
   tb_deaths_tot   <- rowSums(CalibDat[["tb_deaths"]][,-1])
-  adj_19a         <- sum(dnorm(tb_deaths_tot,tb_deaths_tot,tb_deaths_tot*0.25/1.96,log=T)*wts[50:65])
+  adj_19a         <- sum(dnorm(tb_deaths_tot,tb_deaths_tot,tb_deaths_tot*0.2/1.96,log=T)*wts[50:65])
   sum(dnorm(tb_deaths_tot,rowSums(V)*1e6,tb_deaths_tot*0.2/1.96,log=T)*wts[50:65]) - adj_19a  }
 
 #' TB DEATHS AGE DISTRIBUTION 1999-2014
@@ -221,11 +221,12 @@ tb_dth_age_lLik <- function(V,rho=0.01) {
 #' Motivation: norm, mean centered with CI = +/- 5% of mean
 #'@param V
 #'@return likelihood
+
 US_dth_tot_lLik <- function(V) {
   # CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
   US_deaths_tot   <- CalibDat[["US_tot_mort"]][,-1]
-  adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.25/1.96,log=T)*wts[c(21,26,31,36,41:58)])
-  sum(dnorm(US_deaths_tot,V*1e6,US_deaths_tot*0.2/1.96,log=T)*wts[c(21,26,31,36,41:58)]) - adj_20a
+  adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.1/1.96,log=T)*wts[c(21,26,31,36,41:58)])
+  sum(dnorm(US_deaths_tot,V*1e6,US_deaths_tot*0.1/1.96,log=T)*wts[c(21,26,31,36,41:58)]) - adj_20a
   }
 
 #' TOTAL DEATHS AGE DISTRIBUTION 1999-2014
