@@ -89,7 +89,7 @@ InputParams[["RRmuHR"]]    <- RRmuHR
 ############### CREATE A MATRIX OF RF MORTALITIES BY rf GROUP ###############
 mort_dist<-rowSums(InputParams[["dist_gen"]])
 
-RF_fact=PV[["RF_fact"]]
+RF_fact=PV["RF_fact"]
 #
 InputParams[["RRmuRF"]]   <- rep(NA,4);
 names(InputParams[["RRmuRF"]]) <- c("RF1","RF2","RF3","RF4")

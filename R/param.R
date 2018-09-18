@@ -63,7 +63,7 @@ param <- function (PV){
   ############### CREATE A MATRIX OF RF MORTALITIES BY AGE GROUP ###############
   mort_dist<-rowSums(dist_gen)
 
-  RF_fact=PV[["RF_fact"]]
+  RF_fact=PV["RF_fact"]
 
   RRmuRF    <- rep(NA,4);
   names(RRmuRF) <- c("RF1","RF2","RF3","RF4")
