@@ -77,9 +77,9 @@ OutputsInt <- function(ParMatrix,n_cores=1,endyr=2050,Int1=0,Int2=0,Int3=0,Int4=
     out <- OutputsZint(samp_i=1,ParMatrix=ParMatrix,endyr=endyr,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3)
 } else {
     out0 <- mclapply(X=1:nrow(ParMatrix),FUN=OutputsZint,mc.cores=n_cores,
-                       ParMatrix=ParMatrix,endyr=endyr,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3)
-    out <- array(NA,dim=c(dim(out0[[1]]),length(out0)))
-    for(i in 1:length(out0)) out[,,i] <- as.matrix(out0[[i]])
+                       ParMatrix=ParMatrix,endyr=2050,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3)
+    out <- array(NA,dim=c(length(out0),100,564))
+    for(i in 1:length(out0)) out[i,,] <- as.matrix(out0[[i]])
 }
   if (sum(Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3)==0) intv<-1;
   if(Int1==1) intv<-2;if(Int2==1) intv<-3;if(Int3==1) intv<-4;
