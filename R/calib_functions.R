@@ -41,8 +41,7 @@ notif_age_us_lLik <- function(V,rho=0.005) {
   notif_age_us      <- CalibDat[["age_cases_us"]][,-c(1,12)]*CalibDat[["age_cases_us"]][,12]
   #weighted sum across the years
   adj_2a            <- sum(dDirMult(M=notif_age_us,n=notif_age_us,Rho=0.005)*wts[44:67])
-  V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
-  sum(dDirMult(M=V2,n=notif_age_us,Rho=rho)*wts[44:67]) - adj_2a
+  sum(dDirMult(M=V,n=notif_age_us,Rho=rho)*wts[44:67]) - adj_2a
   }
 
 #' FB CASES AGE DISTRIBUTION 1993-2013
@@ -53,8 +52,7 @@ notif_age_us_lLik <- function(V,rho=0.005) {
 notif_age_fb_lLik <- function(V,rho=0.005) {
   notif_age_fb     <- CalibDat[["age_cases_fb"]][,-c(1,12)]*CalibDat[["age_cases_fb"]][,12]
   adj_2b           <- sum(dDirMult(M=notif_age_fb,n=notif_age_fb,Rho=0.005)*wts[44:67])
-  V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
-  sum(dDirMult(M=V2,n=notif_age_fb,Rho=rho)*wts[44:67]) - adj_2b
+  sum(dDirMult(M=V,n=notif_age_fb,Rho=rho)*wts[44:67]) - adj_2b
 }
 
 #' CASES FB DISTRIBUTION 1993-2014
@@ -104,7 +102,8 @@ notif_fb_rec_lLik <- function(V,rho=0.005) {
 tx_outcomes_lLik <- function(V,rho=0.005) {
   tx_outcomes      <- cbind(1-rowSums(CalibDat[["tx_outcomes"]][,2:3]),CalibDat[["tx_outcomes"]][,2],CalibDat[["tx_outcomes"]][,3])*CalibDat[["tx_outcomes"]][,4]
   adj_11           <- sum(dDirMult(M=tx_outcomes,n=tx_outcomes,Rho=0.005)*wts[44:65])
-  sum(dDirMult(M=V,n=tx_outcomes,Rho=rho)*wts[44:65]) - adj_11  }
+  sum(dDirMult(M=V,n=tx_outcomes,Rho=rho)*wts[44:65]) - adj_11
+  }
 
 #' TOTAL LTBI TREATMENT INITS 2002
 #' Motivation: norm, mean centered with CI = +/- 10% of mean
@@ -203,7 +202,7 @@ tb_deaths_lLik <- function(V,sgsq=50) {
 tb_dth_tot_lLik <- function(V) {
   tb_deaths_tot   <- rowSums(CalibDat[["tb_deaths"]][,-1])
   adj_19a         <- sum(dnorm(tb_deaths_tot,tb_deaths_tot,tb_deaths_tot*0.2/1.96,log=T)*wts[50:65])
-  sum(dnorm(tb_deaths_tot,rowSums(V)*1e6,tb_deaths_tot*0.2/1.96,log=T)*wts[50:65]) - adj_19a  }
+  sum(dnorm(tb_deaths_tot,V*1e6,tb_deaths_tot*0.2/1.96,log=T)*wts[50:65]) - adj_19a  }
 
 #' TB DEATHS AGE DISTRIBUTION 1999-2014
 #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases

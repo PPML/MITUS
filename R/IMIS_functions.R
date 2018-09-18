@@ -16,7 +16,7 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
     names(Par) <- names(ParMatrix)
   } else {  Par <- as.numeric(ParMatrix[samp_i,]);
   names(Par) <- colnames(ParMatrix) }  ##previously, the distribution of parameters were transformed to normal distribution in
-  ##to facilitate comparisons. These first two steps convert these parameters back to their
+##to facilitate comparisons. These first two steps convert these parameters back to their
   ##distributions
   # normal to uniform
   Par2 <- pnorm(Par,0,1)
@@ -57,11 +57,13 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
       addlik <- notif_tot_lik(V=v1); addlik
       lLik <- lLik + addlik
       #' US CASES AGE DISTRIBUTION 1993-2016 - index updated
-      v2a   <- M[44:67,205:215]+M[44:67,216:226]
+      v2   <- M[44:67,205:215]+M[44:67,216:226]
+      v2a <- v2[,-11]; v2a[,10] <- v2a[,10]+v2[,11]
       addlik <- notif_age_us_lLik(V=v2a); addlik
       lLik <- lLik + addlik
       #' FB CASES AGE DISTRIBUTION 1993-2016 - index updated
-      v2b   <- (M[44:67,136:146]+M[44:67,189:199]) - (M[44:67,205:215]+M[44:67,216:226])
+      v2   <- (M[44:67,136:146]+M[44:67,189:199]) - (M[44:67,205:215]+M[44:67,216:226])
+      v2b <- v2[,-11]; v2b[,10] <- v2b[,10]+v2[,11]
       addlik <- notif_age_fb_lLik(V=v2b); addlik
       lLik <- lLik + addlik
       #' CASES FB DISTRIBUTION 1993-2016 - index updated
@@ -114,12 +116,12 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
       lLik <- lLik + addlik
       #' TOTAL DEATHS WITH TB 1999-2014 - index updated
       v19  <- M[50:65,227:237]
-      addlik <- tb_dth_tot_lLik(V=v19); addlik
+      addlik <- tb_dth_tot_lLik(V=rowSums(v19)); addlik
       lLik <- lLik + addlik
       #' TB DEATHS 1999-2014 BY AGE - index updated above
       addlik <- tb_dth_age_lLik(V=v19); addlik
       lLik <- lLik + addlik
-      #' Total DEATHS 1970,75,80,85,90-07
+      #' Total DEATHS 1979-2016
       v20a  <- rowSums(M[30:67,121:131])
       addlik <- US_dth_tot_lLik(V=v20a); addlik
       lLik <- lLik + addlik
