@@ -251,7 +251,7 @@ InputParams[["EarlyTrend"]] <- c(rep(1+Early0,75*12),seq(1+Early0,1.0,length.out
 ######################     PROGRESSION TO DISEASE     ##########################
 
 pfast      <- PV["pfast"]
-pimmed    <- PV["pimmed"]
+# pimmed    <- PV["pimmed"]
 ORpfast1   <- PV["ORpfast1"] ## age group 1
 ORpfast2   <- PV["ORpfast2"] ## age group 2
 ORpfastRF  <- PV["ORpfastH"] ##riskfactor
@@ -260,7 +260,6 @@ rslow      <- PV["rslow"]/12
 rslowRF    <- PV["rslowH"]/12
 RRrslowRF  <- rslowRF/rslow
 InputParams[["rfast"]]    <- PV["rfast"]/12
-# rfast      <- ((1-pimmed)*rfast)+pimmed
 rrSlowFB0  <- PV["rrSlowFB"]
 InputParams[["rrSlowFB"]]   <- c(1,rrSlowFB0,rrSlowFB0)
 ##############            ORIGINAL Mpfast[ag][hv]             ################
@@ -278,7 +277,7 @@ InputParams[["MpfastPI"]]     <- InputParams[["Mpfast"]]
 
 #vector of ORpfastRF
 vORpfastPIRF<-vORpfastRF  <-c(1,1,1,1)
-vORpfastRF  <-  (exp((0:3)/3*log(ORpfastRF)))
+vORpfastRF  <- pfast*(exp((0:3)/3*log(ORpfastRF)))
 vORpfastPIRF  <- vORpfastRF*ORpfastPI
 
 ############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
