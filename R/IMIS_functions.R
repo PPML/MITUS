@@ -33,7 +33,7 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
     prms <- param(P)
     IP <- list()
     IP <- param_init(P)
-    trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v)
+    trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact= prms[["adj_fact"]])
 
     zz <- cSim(  nYrs       = 2018-1950         , nRes      = length(prms[["ResNam"]]), rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
                  Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]    ,
@@ -128,6 +128,10 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
       #' Total DEATHS 1999-2016 BY AGE
       v20b  <- M[50:67,121:131]
       addlik <- tot_dth_age_lLik(V=v20b); addlik
+      lLik <- lLik + addlik
+      #' Mort_dist 1999-2016
+      v21  <- rowSums(zz$dist_mat)
+      addlik <- tot_dth_age_lLik(V=v21); addlik
       lLik <- lLik + addlik
       #' HOMELESS POP 2010 - index updated
       v23b  <- M[61,29]

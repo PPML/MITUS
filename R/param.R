@@ -22,7 +22,7 @@ param <- function (PV){
 ##########                RISK FACTOR DISTRIBUTIONS   ##########################
 
   #adj_fact<-exp(.0001*(10:0)/11 + .0011*(0:10)/11)
-  # adj_fact <- exp(PV[["adj_ag1"]]*(10:0)/11 + PV[["adj_ag11"]]*(0:10)/11)
+  adj_fact <- exp(PV[["adj_ag1"]]*(10:0)/11 + PV[["adj_ag11"]]*(0:10)/11)
 
 #######################           BIRTHS                 #######################
 ####### INDEXED BY TIME, ABSOLUTE NUMBER OF NEW ADULT ENTRANTS OVER TIME #######
@@ -36,6 +36,7 @@ param <- function (PV){
   	mubt[,i] <- SmoCurve(BgMort[,i+1])*PV["TunMubt"]/12
   }
 
+  # TunmuAg <- PV["TunmuAg"]
 
 #########################     DISEASE SPECIFIC       ###########################
 #############    ACTIVE TB RATES DEFAULT TO THE SMEAR POS LEVELS   #############
@@ -589,7 +590,7 @@ Params[["EarlyTrend"]]= EarlyTrend
 # Params[["dist_goal"]] = dist_goal
 # Params[["diff_i_v"]]  = diff_i_v
 # Params[["dist_orig_v"]]=dist_orig_v
-# Params[["adj_fact"]] <- adj_fact;
+Params[["adj_fact"]] <- adj_fact;
 
 Params[["ResNam"]]    = ResNam
 return(Params)

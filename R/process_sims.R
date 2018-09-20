@@ -37,7 +37,7 @@ OutputsZint <-  function(samp_i=1,ParMatrix,startyr=1950, endyr=2050,Int1=0,Int2
    P <- Par
    IP <<- param_init(P,Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3)
    NY=(endyr-startyr)
-   trans_mat_tot_ages<<-reblncd(mubt = IP$mubt,can_go = can_go,RRmuHR = IP$RRmuHR[2], RRmuRF = IP$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v)
+   trans_mat_tot_ages<<-reblncd(mubt = IP$mubt,can_go = can_go,RRmuHR = IP$RRmuHR[2], RRmuRF = IP$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v,adj_fact= prms[["adj_fact"]])
 
   m <-       cSim(        nYrs     =   NY         , nRes      = length(IP[["ResNam"]]), rDxt     = IP[["rDxt"]]    , TxQualt    = IP[["TxQualt"]]   , InitPop  = IP[["InitPop"]]    ,
                            Mpfast     = IP[["Mpfast"]]    , ExogInf   = IP[["ExogInf"]]       , MpfastPI = IP[["MpfastPI"]], Mrslow     = IP[["Mrslow"]]    , rrSlowFB = IP[["rrSlowFB"]]    ,

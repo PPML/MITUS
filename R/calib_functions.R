@@ -243,6 +243,20 @@ tot_dth_age_lLik <- function(V,rho=0.01) {
 
   sum(dDirMult(M=(V2*1e6),n=tot_deaths_age+.1,Rho=rho)*wts[50:67]) - adj_20b  }
 
+
+#' Mortality Risk Group Distribution 1999-2014
+#' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
+#'@param V table of mort_dist 1999-2014 (row=16 years, col=11 ages)
+#'@param rho correlation parameter
+#'@return likelihood
+mort_dist_lLik <- function(V,rho=0.01) {
+  md     <- rowSums(dist_gen)
+  mort_dist     <-matrix(md,18,4,byrow=TRUE)
+  adj_21        <- sum(dDirMult(M=mort_dist,n=mort_dist,Rho=0.01)*wts[50:67])
+  sum(dDirMult(M=V,n=mort_dist,Rho=rho)*wts[50:67]) - adj_21
+  }
+
+
 #'Homeless Population in 2010
 #'Motivation: normally distributed, mean centered with CI = +/- 25% of mean
 #'@param V scalar value of homeless pop in 2010

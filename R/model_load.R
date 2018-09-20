@@ -15,9 +15,9 @@ model_load<-function(loc="US"){
 #'lazy load necessary datasets
 #'Model Input
 model_inputs<-paste0(loc,"_ModelInputs_9-6-18")
-par_init<-paste0(loc,"_ParamInit_09-7-2018")
+par_init<-paste0(loc,"_ParamInit_09-20-2018")
 start_val<-paste0(loc,"_StartVal_2018-09-07")
-calib_dat<-paste0(loc,"_CalibDat_2018-09-17")
+calib_dat<-paste0(loc,"_CalibDat_2018-09-20")
 
 data(list=model_inputs, package = 'MITUS')
 data(list=par_init, package = 'MITUS')
