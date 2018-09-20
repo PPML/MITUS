@@ -172,7 +172,7 @@ tot_pop_yr_fb_lLik <- function(V) {
 
 #' TOTAL POP AGE DISTRIBUTION 2014
 #' Motivation: reported estimates represent pseudo-data for a multinomial likelihood, with ESS = 500
-#'@param V US pop in 2016 (row=11 ages, col= us, fb)
+#'@param V US pop in 2016 (row=11 ages, col= rec fb, fb)
 #'@param ESS
 #'@return likelihood
 tot_pop16_ag_fb_lLik <- function(V,ESS=500) {
@@ -213,7 +213,7 @@ tb_dth_age_lLik <- function(V,rho=0.01) {
   tb_deaths_age  <- CalibDat[["tb_deaths"]][,-1]
   adj_19b        <- sum(dDirMult(M=tb_deaths_age+0.1,n=tb_deaths_age+0.1,Rho=0.01)*wts[50:65])
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
-  sum(dDirMult(M=V2,n=tb_deaths_age,Rho=rho)*wts[50:65]) - adj_19b  }
+  sum(dDirMult(M=V2,n=tb_deaths_age+.1,Rho=rho)*wts[50:65]) - adj_19b  }
 
 #' TOTAL US DEATHS
 #' 1970,1975,1980,1985,1990-2007
@@ -241,7 +241,7 @@ tot_dth_age_lLik <- function(V,rho=0.01) {
   V2 <- V2[,-5]; V2[,4]  <- V2[,4]+V[,5]
   V2 <- V2[,-3]; V2[,2]  <- V2[,2]+V[,3]
 
-  sum(dDirMult(M=(V2*1e6),n=tot_deaths_age,Rho=rho)*wts[50:67]) - adj_20b  }
+  sum(dDirMult(M=(V2*1e6),n=tot_deaths_age+.1,Rho=rho)*wts[50:67]) - adj_20b  }
 
 #'Homeless Population in 2010
 #'Motivation: normally distributed, mean centered with CI = +/- 25% of mean
