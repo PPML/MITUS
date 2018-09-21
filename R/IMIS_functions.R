@@ -129,7 +129,7 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
       v20b  <- M[50:67,121:131]
       addlik <- tot_dth_age_lLik(V=v20b); addlik
       lLik <- lLik + addlik
-      #' Mort_dist 1999-2016
+      #' Mort_dist 2016
       v21  <- rowSums(zz$dist_mat)
       addlik <- tot_dth_age_lLik(V=v21); addlik
       lLik <- lLik + addlik

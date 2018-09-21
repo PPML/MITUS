@@ -252,8 +252,8 @@ tot_dth_age_lLik <- function(V,rho=0.01) {
 mort_dist_lLik <- function(V,rho=0.01) {
   md     <- rowSums(dist_gen)
   mort_dist     <-matrix(md,18,4,byrow=TRUE)
-  adj_21        <- sum(dDirMult(M=mort_dist,n=mort_dist,Rho=0.01)*wts[50:67])
-  sum(dDirMult(M=V,n=mort_dist,Rho=rho)*wts[50:67]) - adj_21
+  adj_21        <- sum(dDirMult(M=mort_dist,n=mort_dist,Rho=0.01)*wts[67])
+  sum(dDirMult(M=V,n=mort_dist,Rho=rho)*wts[67]) - adj_21
   }
 
 
