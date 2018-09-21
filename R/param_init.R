@@ -70,6 +70,11 @@ InputParams[["mubt"]]    <- matrix(NA,1801,11)
 for(i in 1:11) {
   InputParams[["mubt"]][,i] <- SmoCurve(BgMort[,i+1])*PV["TunMubt"]/12
 }
+
+TunmuAg <- PV["TunmuAg"]
+for(i in 2:10) {
+  mubt[,i]<-mubt[,i]*exp(TunmuAg)
+}
 #########################     DISEASE SPECIFIC       ###########################
 #############    ACTIVE TB RATES DEFAULT TO THE SMEAR POS LEVELS   #############
 muIp  	  <- PV["muIp"]/12
