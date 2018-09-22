@@ -8,7 +8,7 @@ Motivation: reported estimates represent pseudo-data for a multinomial likelihoo
 tot_pop16_ag_fb_lLik(V, ESS = 500)
 }
 \arguments{
-\item{V}{US pop in 2016 (row=11 ages, col= us, fb)}
+\item{V}{US pop in 2016 (row=11 ages, col= rec fb, fb)}
 }
 \value{
 likelihood
