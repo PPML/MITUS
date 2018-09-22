@@ -67,13 +67,13 @@ InputParams[["Birthst"]]  <- SmoCurve(Births)*PV["TunBirths"]/12
 ##########################      MORTALITY RATES       ##########################
 ########################## BACKGROUND MORTALITY BY TIME ########################
 InputParams[["mubt"]]    <- matrix(NA,1801,11)
-for(i in 1:11) {
-  InputParams[["mubt"]][,i] <- SmoCurve(BgMort[,i+1])*PV["TunMubt"]/12
-}
 
 TunmuAg <- PV["TunmuAg"]
-for(i in 2:10) {
-  mubt[,i]<-mubt[,i]*exp(TunmuAg)
+RRmuAg <- exp(c(0,1:9,0)*TunmuAg)
+
+for(i in 1:11) {
+  InputParams[["mubt"]][,i] <- SmoCurve(BgMort[,i+1])*PV["TunMubt"]/12
+  # InputParams[["mubt"]][,i]<-InputParams[["mubt"]][,i]*RRmuAg[i]
 }
 #########################     DISEASE SPECIFIC       ###########################
 #############    ACTIVE TB RATES DEFAULT TO THE SMEAR POS LEVELS   #############
@@ -94,7 +94,7 @@ InputParams[["RRmuHR"]]    <- RRmuHR
 ############### CREATE A MATRIX OF RF MORTALITIES BY rf GROUP ###############
 mort_dist<-rowSums(InputParams[["dist_gen"]])
 
-RF_fact=PV["RF_fact"]
+RF_fact=20
 #
 InputParams[["RRmuRF"]]   <- rep(NA,4);
 names(InputParams[["RRmuRF"]]) <- c("RF1","RF2","RF3","RF4")

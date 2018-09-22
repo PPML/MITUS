@@ -32,14 +32,19 @@ param <- function (PV){
 ##########################      MORTALITY RATES       ##########################
 ########################## BACKGROUND MORTALITY BY TIME ########################
   mubt      <- matrix(NA,1801,11)
-  for(i in 1:11) {
-  	mubt[,i] <- SmoCurve(BgMort[,i+1])*PV["TunMubt"]/12
-  }
 
   TunmuAg <- PV["TunmuAg"]
-  for(i in 2:10) {
-    mubt[,i]<-mubt[,i]*exp(TunmuAg)
+  RRmuAg <- exp(c(0,1:9,0)*TunmuAg)
+  for(i in 1:11) {
+  	mubt[,i] <- SmoCurve(BgMort[,i+1])*PV["TunMubt"]/12
+  	# mubt[,i] <- mubt[,i]*RRmuAg[i]
   }
+
+
+
+  # for(i in 2:10) {
+  #   mubt[,i]<-mubt[,i]*exp(TunmuAg)
+  # }
 #########################     DISEASE SPECIFIC       ###########################
 #############    ACTIVE TB RATES DEFAULT TO THE SMEAR POS LEVELS   #############
 
@@ -66,7 +71,7 @@ param <- function (PV){
   ############### CREATE A MATRIX OF RF MORTALITIES BY AGE GROUP ###############
   mort_dist<-rowSums(dist_gen)
 
-  RF_fact=PV["RF_fact"]
+  RF_fact=20
 
   RRmuRF    <- rep(NA,4);
   names(RRmuRF) <- c("RF1","RF2","RF3","RF4")

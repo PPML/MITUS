@@ -59,8 +59,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // reblncd
-Rcpp::NumericMatrix reblncd(Rcpp::NumericMatrix mubt, Rcpp::NumericMatrix can_go, double RRmuHR, std::vector<double> RRmuRF, std::vector<double> HRdist, std::vector<double> dist_gen_v);
-RcppExport SEXP _MITUS_reblncd(SEXP mubtSEXP, SEXP can_goSEXP, SEXP RRmuHRSEXP, SEXP RRmuRFSEXP, SEXP HRdistSEXP, SEXP dist_gen_vSEXP) {
+Rcpp::NumericMatrix reblncd(Rcpp::NumericMatrix mubt, Rcpp::NumericMatrix can_go, double RRmuHR, std::vector<double> RRmuRF, std::vector<double> HRdist, std::vector<double> dist_gen_v, std::vector<double> adj_fact);
+RcppExport SEXP _MITUS_reblncd(SEXP mubtSEXP, SEXP can_goSEXP, SEXP RRmuHRSEXP, SEXP RRmuRFSEXP, SEXP HRdistSEXP, SEXP dist_gen_vSEXP, SEXP adj_factSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -70,7 +70,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::vector<double> >::type RRmuRF(RRmuRFSEXP);
     Rcpp::traits::input_parameter< std::vector<double> >::type HRdist(HRdistSEXP);
     Rcpp::traits::input_parameter< std::vector<double> >::type dist_gen_v(dist_gen_vSEXP);
-    rcpp_result_gen = Rcpp::wrap(reblncd(mubt, can_go, RRmuHR, RRmuRF, HRdist, dist_gen_v));
+    Rcpp::traits::input_parameter< std::vector<double> >::type adj_fact(adj_factSEXP);
+    rcpp_result_gen = Rcpp::wrap(reblncd(mubt, can_go, RRmuHR, RRmuRF, HRdist, dist_gen_v, adj_fact));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -129,7 +130,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_MITUS_cSim_noTB", (DL_FUNC) &_MITUS_cSim_noTB, 43},
-    {"_MITUS_reblncd", (DL_FUNC) &_MITUS_reblncd, 6},
+    {"_MITUS_reblncd", (DL_FUNC) &_MITUS_reblncd, 7},
     {"_MITUS_cSim", (DL_FUNC) &_MITUS_cSim, 42},
     {NULL, NULL, 0}
 };

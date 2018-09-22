@@ -1958,12 +1958,6 @@ for(int ag=0; ag<11; ag++) {
       // if (reblnc==1){
 
         for(int ag=0; ag<11; ag++) {
-
-          //update the
-
-
-
-
           for(int na=0; na<3; na++){
             for(int tb=0; tb<6; tb++) {
                for(int lt=0; lt<2; lt++){
@@ -2062,8 +2056,10 @@ for(int ag=0; ag<11; ag++) {
       // for(int nm=0; nm<4; nm++){
       //   for(int im=0; im<4; im++){
       // Rcpp::Rcout <<"at s "<<s <<"dist is = "<< temp_mat2[nm][im] << "at nm =" << nm <<" at im =" << im << "& ag = " <<ag<< "\n";
-        // } }
+      // } }
       // }
+
+
      } //// end of month loop!//////////////////////////////////////////////////////////
    } //// end of year loop!///////////////////////////////////////////////////////////
   // for(int ag=0; ag<11; ag++) {
@@ -2095,7 +2091,30 @@ for(int ag=0; ag<11; ag++) {
   //     } } }
   //
 
+  for (int i=0; i<4; i++){
+    for (int j=0; j<4; j++){
+      temp_mat[i][j]=0; } }
 
+  mat_sum=0;
+  for(int nm=0; nm<4; nm++){
+    for(int ag=0; ag<11; ag++) {
+      for(int tb=0; tb<6; tb++) {
+        for(int lt=0; lt<2; lt++){
+          for(int im=0; im<4; im++) {
+            for(int rg=0; rg<2; rg++){
+              for(int na=0; na<3; na++){
+                temp_mat[nm][im]  += V1[ag][tb][lt][im][nm][rg][na];
+              } } } } } }
+  }
+  for(int nm=0; nm<4; nm++){
+    for(int im=0; im<4; im++){
+      mat_sum+=temp_mat[nm][im];
+    } }
+  for(int nm=0; nm<4; nm++){
+    for(int im=0; im<4; im++){
+
+      dist_mat(nm,im) = temp_mat[nm][im]/mat_sum;
+    } }
   ////////////////   RE-CHECK THAT NO STATES HAVE BECOME NEGATIVE    ////////////////
   Rcpp::NumericVector  CheckV(12672);
   for(int ag=0; ag<11; ag++) {
@@ -2123,30 +2142,6 @@ for(int ag=0; ag<11; ag++) {
   // // } else {Rcout << "no negatives \n" ;
   // //        }
   // } }
-  for (int i=0; i<4; i++){
-          for (int j=0; j<4; j++){
-            temp_mat[i][j]=0; } }
-        mat_sum=0;
-        for(int nm=0; nm<4; nm++){
-          for(int ag=0; ag<11; ag++) {
-            for(int tb=0; tb<6; tb++) {
-              for(int lt=0; lt<2; lt++){
-
-                for(int im=0; im<4; im++) {
-                  for(int rg=0; rg<2; rg++){
-                    for(int na=0; na<3; na++){
-                      temp_mat[nm][im]  += V1[ag][tb][lt][im][nm][rg][na];
-                    } } } } } }
-        }
-        for(int nm=0; nm<4; nm++){
-          for(int im=0; im<4; im++){
-            mat_sum+=temp_mat[nm][im];
-          } }
-        for(int nm=0; nm<4; nm++){
-          for(int im=0; im<4; im++){
-
-            dist_mat(nm,im) = temp_mat[nm][im]/mat_sum;
-          } }
   ///////////////////////////////////////////////////////////////////////////////////
   //////                              RETURN STUFF                              /////
   ///////////////////////////////////////////////////////////////////////////////////
