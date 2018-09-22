@@ -50,19 +50,12 @@ cSim_noTB <- function(nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, Mpfas
     .Call('_MITUS_cSim_noTB', PACKAGE = 'MITUS', nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow, rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, muTbRF, Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, mubt, RelInf, RelInfRg, Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, LtTxPar, LtDxPar, RRdxAge, rRecov, pImmScen, EarlyTrend, pReTx, NixTrans, dist_gen, trans_mat_tot_ages)
 }
 
-#'Open the Age Loop to Calculate Age Specific Transition Matrices
-NULL
-
-#'Update the distribution vector
-#'it is supposed to be matrix multiplication
-NULL
-
 #'@title reblncd
 #'@description this function calculates a matrix of transition probabilities for rebalancing in the model.
 #'@param IP dataframe of formatted parameters
 #'@return trans_mat_tot_ages
-reblncd <- function(mubt, can_go, RRmuHR, RRmuRF, HRdist, dist_gen_v) {
-    .Call('_MITUS_reblncd', PACKAGE = 'MITUS', mubt, can_go, RRmuHR, RRmuRF, HRdist, dist_gen_v)
+reblncd <- function(mubt, can_go, RRmuHR, RRmuRF, HRdist, dist_gen_v, adj_fact) {
+    .Call('_MITUS_reblncd', PACKAGE = 'MITUS', mubt, can_go, RRmuHR, RRmuRF, HRdist, dist_gen_v, adj_fact)
 }
 
 #'@title cSim
