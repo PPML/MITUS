@@ -73,7 +73,7 @@ RRmuAg <- exp(c(0,1:9,0)*TunmuAg)
 
 for(i in 1:11) {
   InputParams[["mubt"]][,i] <- SmoCurve(BgMort[,i+1])*PV["TunMubt"]/12
-  # InputParams[["mubt"]][,i]<-InputParams[["mubt"]][,i]*RRmuAg[i]
+  InputParams[["mubt"]][,i]<-InputParams[["mubt"]][,i]*RRmuAg[i]
 }
 #########################     DISEASE SPECIFIC       ###########################
 #############    ACTIVE TB RATES DEFAULT TO THE SMEAR POS LEVELS   #############
