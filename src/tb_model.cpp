@@ -1965,7 +1965,7 @@ for(int ag=0; ag<11; ag++) {
                     for (int im=0; im<4; im++){
                       for (int nm=0; nm<4; nm++){
                     V2[ag][tb][lt][im][nm][rg][na]=0;
-                  } } } } }
+                      } } } } } }
 
               for (int im=0; im<4; im++){
                 for (int nm=0; nm<4; nm++){
@@ -2006,7 +2006,7 @@ for(int ag=0; ag<11; ag++) {
           //              Rcpp::Rcout << "after rblnc pop is negative /n";
           //               }
           //             } } } } } } }
-          } }//end of age loop
+           }//end of age loop
 
 
 
