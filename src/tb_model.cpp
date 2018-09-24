@@ -721,11 +721,11 @@ for(int ag=0; ag<11; ag++) {
                 for(int rg=0; rg<2; rg++) {
                   V2[ag][tb][0][im][nm][rg][na]=0;
                 } } } }
-      // }
+      }
       for(int tb=0; tb<6; tb++) {
             for (int im=0; im<4; im++){
               for (int nm=0; nm<4; nm++){
-                        // for(int na=0; na<3; na++){
+                        for(int na=0; na<3; na++){
                           for(int rg=0; rg<2; rg++) {
                             for (int m2=0; m2<4; m2++){
                               for (int p2=0; p2<4; p2++){
@@ -734,7 +734,7 @@ for(int ag=0; ag<11; ag++) {
                       V2[ag][tb][0][im][nm][rg][na] += V1[ag][tb][0][p2][m2][rg][na] * (trans_mat_tot_agesN[m2+p2*4][(16*(ag+1))-(16-(nm+im*4))]);
                       } } } } } } }
           } //end of age loop
-// } //end of reblncing loop
+} //end of reblncing loop
 for(int ag=0; ag<11; ag++) {
   for(int tb=0; tb<6; tb++) {
   for(int im=0; im<4; im++) {
@@ -746,7 +746,7 @@ for(int ag=0; ag<11; ag++) {
               V0[ag][tb][0][im][nm][rg][na] = V2[ag][tb][0][im][nm][rg][na];
             // } else {
               // V0[ag][tb][0][im][nm][rg][na] = V1[ag][tb][0][im][nm][rg][na];
-          }
+          // }
           } } } } } }
 /////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////RESET POPULATION SIZE/////////////////////////////
@@ -1974,14 +1974,14 @@ for(int ag=0; ag<11; ag++) {
                   for(int rg=0; rg<2; rg++) {
                     for(int tb=0; tb<6; tb++) {
                       for(int lt=0; lt<2; lt++){
-                        // for(int na=0; na<3; na++){
+                        for(int na=0; na<3; na++){
                         V2[ag][tb][lt][im][nm][rg][na] += V1[ag][tb][lt][p2][m2][rg][na] *((trans_mat_tot_agesN[(m2+p2*4)][(16*(ag+1))-(16-(nm+im*4))]));//*((mubtN[s][ag]/mubtN[0][ag])*.1));
                       } } } } } } }
-              // }
+              }
           for(int im=0; im<4; im++) {
             for(int nm=0; nm<4; nm++){
               for(int rg=0; rg<2; rg++){
-                // for (int na=0; na<3; na++){
+                for (int na=0; na<3; na++){
                   for(int lt=0; lt<2; lt++){
                   for(int tb=0; tb<6; tb++) {
                     if (reblnc==1){
@@ -1991,7 +1991,7 @@ for(int ag=0; ag<11; ag++) {
                     V0[ag][tb][lt][im][nm][rg][na] = V1[ag][tb][lt][im][nm][rg][na];
                   }
                   } } } } }
-          // }
+           }
 
           // for(int ag=0; ag<11; ag++) {
           //   for(int tb=0; tb<6; tb++) {
