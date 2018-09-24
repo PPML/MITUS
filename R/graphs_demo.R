@@ -12,9 +12,9 @@
 
 tb_graph_demo <- function(df){
 
-  CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
-  CalibDat$US_mort_age <- read.csv(file="inst/extdata/US_mort_age.csv", header = TRUE)
-  data("CalibDat_2018-07-12", package='MITUS')#  source("R/calib_functions.R")
+  # CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
+  # CalibDat$US_mort_age <- read.csv(file="inst/extdata/US_mort_age.csv", header = TRUE)
+  # data("CalibDat_2018-07-12", package='MITUS')#  source("R/calib_functions.R")
 
   pdf(file=paste("MITUS_results/graphs_demo",Sys.time(),".pdf"), width = 11, height = 8.5)
   par(mfrow=c(2,2),mar=c(4,4.5,3,1))
@@ -37,8 +37,8 @@ tb_graph_demo <- function(df){
   lines(1950:2015,rowSums(V),lwd=2,col="grey50")
 
   mtext("Year",1,2.5,cex=0.9)
-  mtext("Population: Total, US, and Foreign Born (mil, log-scale)",3,.8,font=2,cex=0.8)
-  legend("bottomright",c("Total","US born","Foreign born","Reported data","model"),cex=0.9,
+  mtext("Population: Total, US, and Non-US Born (mil, log-scale)",3,.8,font=2,cex=0.8)
+  legend("bottomright",c("Total","US born","Non-US Born","Reported data","model"),cex=0.9,
          pch=c(15,15,15,19,NA),lwd=c(NA,NA,NA,1,2),lty=c(NA,NA,NA,3,1),col=c("grey50",4,"red3",1,1),bg="white",pt.cex=c(1.8,1.8,1.8,0.3,NA))
 
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -53,10 +53,10 @@ tb_graph_demo <- function(df){
   V3 <- V2[-9,]
   V3[8,] <- V3[8,]+V2[9,]
 
-  plot(0,0,ylim=c(0.05,max(range(V3))),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA)
+  plot(1,1,ylim=c(0.05,75),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA,log="y" )
   axis(1,1:8,paste(c("0-4","5-24","25-44","45-54","55-64","65-74","75-84","85+"),"\nyears",sep=""),tick=F,cex.axis=0.75)
   axis(1,1:9-0.5,rep("",9))
-  axis(2,c(0,10,25,40,50,60,75,78 ),las=2);box()
+  axis(2,c(0,10,25,50,75 ),las=2);box()
   abline(h=axTicks(2),col="grey85")
 
   for(i in 1:8) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V3[i,1],V3[i,1]),border=NA,col="lightblue")
@@ -67,7 +67,7 @@ tb_graph_demo <- function(df){
 
   mtext("Age Group",1,2.5,cex=0.9)
   box()
-  mtext("Population by Age for FB (red) and US (blue), 2014 (mil)",3,.8,font=2,cex=0.8)
+  mtext("Population by Age for FB (red) and US (blue), 2014 (mil,log-scale)",3,.8,font=2,cex=0.8)
   legend("topright",c("Reported data","model"),pch=c(19,15),pt.cex=c(1,2),
          lwd=NA,col=c("grey30","grey80"),bg="white")
 
@@ -179,7 +179,7 @@ tb_graph_demo <- function(df){
 
   mtext("Year",1,2.5,cex=0.9)
   mtext("Percent High Risk Population for FB (red) and US (blue) 1993-2014 ",3,.8,font=2,cex=0.8)
-  legend("bottomright",c("Total","US born","Foreign born","model"),cex=0.9,
+  legend("bottomright",c("Total","US born","Non-US Born","model"),cex=0.9,
          pch=c(15,15,15,NA),lwd=c(NA,NA,NA,2),lty=c(NA,NA,NA,1),col=c("grey50",4,"red3",1),bg="white",pt.cex=c(1.8,1.8,1.8,NA))
 
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -198,12 +198,12 @@ tb_graph_demo <- function(df){
   lines(1950:2015,V[,2],lwd=2,col="red3")
   lines(1950:2015,V[,1],lwd=2,col="blue")
   lines(1950:2015,V1,lwd=2,col="grey50")
-  points(CalibDat$US_tot_mort[,1],CalibDat$US_tot_mort[,2],pch=19,cex=0.6,col="grey50")
-  lines(CalibDat$US_tot_mort[,1],CalibDat$US_tot_mort[,2],lty=3,col="grey50")
+  points(CalibDat$US_tot_mort[,1],(CalibDat$US_tot_mort[,2])/1e6,pch=19,cex=0.6,col="grey50")
+  lines(CalibDat$US_tot_mort[,1],(CalibDat$US_tot_mort[,2])/1e6,lty=3,col="grey50")
 
   mtext("Year",1,2.5,cex=0.9)
-  mtext("Mortality: Total, US, and Foreign Born",3,.8,font=2,cex=0.8)
-  legend("bottomright",c("Total","US born","Foreign born","Reported data","model"),cex=0.9,
+  mtext("Mortality: Total, US, and Non-US Born",3,.8,font=2,cex=0.8)
+  legend("bottomright",c("Total","US born","Non-US Born","Reported data","model"),cex=0.9,
          pch=c(15,15,15,19,NA),lwd=c(NA,NA,NA,1,2),lty=c(NA,NA,NA,3,1),col=c("grey50",4,"red3",1,1),bg="white",pt.cex=c(1.8,1.8,1.8,0.3,NA))
 
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -239,24 +239,23 @@ tb_graph_demo <- function(df){
   ### ### ### ### ### ###   TOTAL MORT RATE BY AGE DISTRIBUTION 1993-2014  ### ### ### ### ### ###
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
-  V  <- cbind((df[44:100,255:265])+(df[44:100,266:276]))
-
-  V1  <- df[44:100,3:13]
-  V2  <-  V/(V1+V)
-
-  plot(0,0,ylim=c(0,.2),xlim=c(1993,2049),xlab="",ylab="",axes=F)
-  axis(1);axis(2,las=2);box()
-  abline(h=axTicks(2),col="grey85")
-  color=c("red", "orange", "gold", "green", "blue", "purple", "darkred", "light blue", "pink", "darkblue", "light green")
-  for(i in 1:11) lines(1993:2049,V2[,i],lwd=2,col=color[i])
-  # for(i in 1:8) points(i+.2,(CalibDat$US_mort_age"[16,i+1])/1e6,pch=19,cex=1.2,col="black")
-
-
-  mtext("Year",1,2.5,cex=0.9)
-  box()
-  mtext("Mortality Rate by Age over Time, 1993-2014",3,.8,font=2,cex=0.8)
-  legend("topleft",c("Reported data","model"),pch=c(19,15),pt.cex=c(1,2),
-         lwd=NA,col=c("black","gray"),bg="white")
+  # V  <- cbind((df[44:100,255:265])+(df[44:100,266:276]))
+  # V1  <- df[44:100,3:13]
+  # V2  <-  V/(V1+V)
+  #
+  # plot(0,0,ylim=c(0,.2),xlim=c(1993,2049),xlab="",ylab="",axes=F)
+  # axis(1);axis(2,las=2);box()
+  # abline(h=axTicks(2),col="grey85")
+  # color=c("red", "orange", "gold", "green", "blue", "purple", "darkred", "light blue", "pink", "darkblue", "light green")
+  # for(i in 1:11) lines(1993:2049,V2[,i],lwd=2,col=color[i])
+  # # for(i in 1:8) points(i+.2,(CalibDat$US_mort_age"[16,i+1])/1e6,pch=19,cex=1.2,col="black")
+  #
+  #
+  # mtext("Year",1,2.5,cex=0.9)
+  # box()
+  # mtext("Mortality Rate by Age over Time, 1993-2014",3,.8,font=2,cex=0.8)
+  # legend("topleft",c("Reported data","model"),pch=c(19,15),pt.cex=c(1,2),
+  #        lwd=NA,col=c("black","gray"),bg="white")
 
 
    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -451,7 +450,7 @@ tb_graph_demo <- function(df){
 
   mtext("Year",1,2.5,cex=0.9)
   mtext("Percent of Total Mortality from High Risk Populations for FB (red) and US (blue) 1993-2014 ",3,.8,font=2,cex=0.8)
-  legend("bottomright",c("Total","US born","Foreign born","model"),cex=0.9,
+  legend("bottomright",c("Total","US born","Non-US Born","model"),cex=0.9,
          pch=c(15,15,15,NA),lwd=c(NA,NA,NA,2),lty=c(NA,NA,NA,1),col=c("grey50",4,"red3",1),bg="white",pt.cex=c(1.8,1.8,1.8,NA))
 
 
@@ -474,8 +473,8 @@ tb_graph_demo <- function(df){
 
   mtext("Year",1,2.5,cex=0.9)
   mtext("Age Specific Mortality Rates from 1950 to 2014",3,.8,font=2,cex=0.8)
-  #legend("topright",colnames(V),cex=0.9,
-       #  pch=rep(15,i),lwd=rep(NA,i),lty=rep(NA,i),col=col,bg="white",pt.cex=rep(1.8,i))
+  legend("topright",colnames(V),cex=0.9,
+         pch=rep(15,i),lwd=rep(NA,i),lty=rep(NA,i),col=col,bg="white",pt.cex=rep(1.8,i))
   }
 dev.off()
   }

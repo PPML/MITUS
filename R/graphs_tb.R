@@ -14,7 +14,7 @@
 tbdyn_graphs <-function(df){
 
 
-  data("CalibDat_2018-07-12", package='MITUS')
+  # data("CalibDat_2018-07-12", package='MITUS')
 
   pdf(file=paste("MITUS_results/graphs_tbdyn",Sys.time(),".pdf"), width = 11, height = 8.5)
   par(mfrow=c(2,2),mar=c(4,4.5,3,1))
@@ -285,7 +285,7 @@ tbdyn_graphs <-function(df){
   ################################################################################
   #' Age Distribution of TB Deaths 1999-2013
 
-  V  <- df[50:65,88:98]+df[50:65,99:109]
+  V  <- df[50:65,227:237]
   V2 <- V[,-11]; V2[,10] <- V[,10]+V[,11]
   V3 <- colSums(V2)*1e6
 
