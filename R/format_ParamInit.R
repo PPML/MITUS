@@ -30,7 +30,7 @@
 #'
 #' ########################
 #' ### Calc Normal values
-#' ParamInit <- as.data.frame(read.csv("~/MITUS/inst/extdata/ParamInitUS.csv")[,2:6]); rownames(ParamInit) <- read.csv("~/MITUS/inst/extdata/ParamInitUS.csv")[,1]
+#' ParamInit <- as.data.frame(read.csv("~/MITUS/inst/extdata/US/ParamInitUS.csv")[,2:6]); rownames(ParamInit) <- read.csv("~/MITUS/inst/extdata/US/ParamInitUS.csv")[,1]
 #'
 #' ParamInit <- cbind(ParamInit,NA,NA,NA)
 #' colnames(ParamInit) <- c(colnames(ParamInit)[1:5],"Par1","Par2","TransMean")
@@ -62,4 +62,4 @@
 #'
 #' #'save it all
 #' write.csv(ParamInit,file="ParamInitUS_final.csv")
-#' save(ParamInit,file="ParamInitUS_tab.rda")
+#' save(ParamInit,file=paste0("US_ParamInit_", Sys.Date(),".rda"))
