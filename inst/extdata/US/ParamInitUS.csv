@@ -1,7 +1,7 @@
 ,BcValue,Lower,Upper,B0_G1_N2,Calib
 TunBirths,1,0.9,1.1,1,0
-TunMubt,1,0.9,1.1,1,1
-TunmuAg,0,-0.01,0.01,2,1
+TunMubt,1,0.85,1.15,1,1
+TunmuAg,0,-0.01,0.01,2,0
 muIp,0.05,0.025,0.15,1,1
 TunmuTbAg,0.5,0.2,0.8,1,1
 RRmuHR,3.4,2.3,4.8,1,1
