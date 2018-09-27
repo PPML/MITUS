@@ -128,8 +128,10 @@ InputParams[["vTMort"]]  <- matrix(0,11,6);
 rownames(InputParams[["vTMort"]]) <- c("0_4",paste(0:8*10+5,1:9*10+4,sep="_"),"95p")
 colnames(InputParams[["vTMort"]]) <- c("Su","Sp","Ls","Lf","Ac","Tx")
 InputParams[["vTMort"]][,5:6] <- muIp #active disease rates default to smear positive
+RRmuTbAg<-rep(NA,11)
+RRmuTbAg <- exp(c(0,0,1:9)*TunmuTbAg)
 for(i in 1:11) {
-  InputParams[["vTMort"]][i,] <-  InputParams[["vTMort"]][i,]*c(3,1+0:9*TunmuTbAg)[i]
+  InputParams[["vTMort"]][i,] <-  InputParams[["vTMort"]][i,]*RRmuTbAg[i]
 }
 
 
@@ -424,6 +426,7 @@ rDef0[44:63]  <- ORAdd(TxInputs[[1]][,2],PV["TunTxDef"])
 rDef0[64:151] <- rDef0[63]
 rDef1         <- predict(smooth.spline(x=c(1950:1979,1993:2100),y=rDef0[-(31:43)],spar=0.4),x=1950:2100)$y
 InputParams[["rDeft"]]         <- SmoCurve(rDef1)/12;
+InputParams[["rDeft"]]         <- InputParams[["rDeft"]][1201]
 rDeftH        <- InputParams[["rDeft"]]*PV["RRdefHR"] # second col is HR default rate
 rDeftH        <-rDeftH[1:1201]
 #### #### #### INT 4 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####

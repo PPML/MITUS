@@ -99,9 +99,10 @@ param <- function (PV){
   rownames(vTMort) <- c("0_4",paste(0:8*10+5,1:9*10+4,sep="_"),"95p")
   colnames(vTMort) <- c("Su","Sp","Ls","Lf","Ac","Tx")
   vTMort[,5:6] <- muIp #active disease rates default to smear positive
+  RRmuTbAg<-rep(NA,11)
   RRmuTbAg <- exp(c(0,0,1:9)*TunmuTbAg)
   for(i in 1:ncol(vTMort)) {
-    vTMort[,i] <- vTMort[,i] * RRmuTbAg
+    vTMort[,i] <- vTMort[,i] * RRmuTbAg[i]
   }
 
 ######################         IMMIGRATION             ########################
@@ -111,6 +112,7 @@ param <- function (PV){
   TotImmig1       <- TotImmig0
   TotImmig        <- SmoCurve(TotImmig1)
   TotImmAge       <- outer(TotImmig,ImmigInputs[["AgeDist"]])
+  TotImmAge       <- TotImmAge[1:1201,1:11]
 
 ######################           LTBI IMM.             ########################
   PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:65]^PV["TunLtbiTrend"]*ImmigInputs[["PrevTrend25_34"]][65]^(1-PV["TunLtbiTrend"]),
@@ -122,18 +124,28 @@ param <- function (PV){
   PrevTrend25_34l  <- SmoCurve(PrevTrend25_341l)
   PrevTrend25_34_ls <- (PrevTrend25_34l);
   PrevTrend25_34_ls <- PrevTrend25_34_ls/PrevTrend25_34_ls[(2011-1950)*12+6]
+  PrevTrend25_34_ls  <-PrevTrend25_34_ls[1:1201]
+
   ImmLat          <- matrix(NA,length(PrevTrend25_34_ls),11)
   for(i in 1:11) ImmLat[,i] <- (1-exp((-(c(2.5,1:9*10,100)/100)[i]*PV["LtbiPar1"]-(c(2.5,1:9*10,100)/100)[i]^2*PV["LtbiPar2"])*PrevTrend25_34_ls))*TotImmAge[,i]
+  ImmLat    <-ImmLat[1:1201,1:11]
 
 ######################         ACTIVE TB IMM.           ########################
   PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:65],ImmigInputs[["PrevTrend25_34"]][66:151]*(PV["ImmigPrevFutAct"]/0.99)^(1:86))
 #  PrevTrend25_341a <-   c(PrevTrend25_340a[1:66],exp(mvrnorm(1, log(PrevTrend25_340a[-(1:66)]), vcv_gp_l10_sd0.1))) # Add gaussian process noise
   PrevTrend25_341a <-   PrevTrend25_340a
   PrevTrend25_34a  <- SmoCurve(PrevTrend25_341a)
+  PrevTrend25_34a  <-PrevTrend25_34a[1:1201]
+
   ImDxChngV      <- SmoCurve(c(rep(1,57),seq(1,PV["ImDxChng"],length.out=6)[-1],rep(PV["ImDxChng"],89)))
+  ImDxChngV      <-ImDxChngV[1:1201]
+
   ImmAct         <- outer(PrevTrend25_34a*PV["RRtbprev"]*ImDxChngV,ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*PV["pImAct"]
   ImmFst         <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*(1-PV["pImAct"])
-  ImmNon         <- TotImmAge-ImmAct-ImmFst-ImmLat
+  ImmAct    <-ImmAct[1:1201,1:11]
+  ImmFst    <-ImmFst[1:1201,1:11]
+
+   ImmNon         <- TotImmAge-ImmAct-ImmFst-ImmLat
 
 ######################   EXOGENEOUS INFECTION RISK      ########################
 
@@ -170,7 +182,7 @@ param <- function (PV){
 ######################        EARLY EPIDEMIC         ##########################
 
   Early0 <- PV["Early0"]
-  EarlyTrend <- c(rep(1+Early0,200*12),seq(1+Early0,1.0,length.out=50*12+2))
+  EarlyTrend<- c(rep(1+Early0,75*12),seq(1+Early0,1.0,length.out=25*12+2))
 
 ######################     PROGRESSION TO DISEASE     ##########################
 
@@ -218,12 +230,11 @@ param <- function (PV){
   MpfastPI[,]  <- MpfastPI[,]/(1+MpfastPI[,]);
 ############# CREATE A VECTOR FOR RATE OF SLOW PROGRESSION THAT WILL
 ############# VARY BASED ON LEVELS OF TB REACTIVATION RATES
-  Vrslow     <- rep(rslow,4)
-############# UPDATE LEVEL FOUR OF THE RATE OF SLOW BASED ON CALCULATED RR FROM
-############# USER INPUTTED RR FOR THE RISK FACTOR
-  for (i in 2:4){
-    Vrslow[i]=Vrslow[i]*RRrslowRF*((i-1)/3)
-  }
+  Vrslow     <- rep(NA,4)
+  ############# UPDATE LEVEL FOUR OF THE RATE OF SLOW BASED ON CALCULATED RR FROM
+  ############# USER INPUTTED RR FOR THE RISK FACTOR
+  Vrslow=rslow*exp((0:3)/3*log(RRrslowRF))
+
 
   TunrslowAge  <- PV["TunrslowAge"]
   rrReactAg       <- exp(c(0,0,0,0,0,0,0.5,1:4)*PV["TunrslowAge"])
@@ -303,7 +314,6 @@ param <- function (PV){
   rDxt           <- 1/(1/rDxt1+DelaySp)*SensSp
   rDxt[,2]       <- (rDxt[,1]-min(rDxt[,1]))/PV["rrDxH"]+min(rDxt[,1]) #check this with Nick
   colnames(rDxt) <- c("Active","Active_HighRisk")
-
 ################################################################################
 ###########################     TREATMENT OUTCOMES    ##########################
 ################################################################################
@@ -554,7 +564,9 @@ ResNam <- c("Year",                                         # year            1
 )
 
 Params<-list()
+rDxt<-rDxt[1:1201,1:2]
 Params[["rDxt"]]      = rDxt
+TxQualt<-TxQualt[1:1201]
 Params[["TxQualt"]]   = TxQualt
 Params[["InitPop"]]   = InitPop
 Params[["Mpfast"]]    = Mpfast
@@ -583,6 +595,8 @@ Params[["Vmix"]]      = Vmix
 Params[["rEmmigFB"]]  = rEmmigFB
 Params[["TxVec"]]     = TxVec
 Params[["TunTxMort"]] = TunTxMort
+rDeft    = rDeft[1:1201]
+
 Params[["rDeft"]]     = rDeft
 Params[["pReTx"]]     = pReTx
 Params[["LtTxPar"]]   = LtTxPar
