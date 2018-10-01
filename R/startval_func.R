@@ -12,7 +12,7 @@ gen_st_val <-function(n=10, samp="LHS"){
   if(identical(samp,"NORM")==TRUE) StartVal <-sample.prior1(n)
   if(identical(samp,"LHS") ==TRUE) StartVal <- sample.prior2(n)
   colnames(StartVal)<-rownames(ParamInitZ)
-  save(StartVal, file=paste("~/MITUS/data/StartVal_", Sys.Date(),".rda", sep=""))
+  save(StartVal, file=paste("~/MITUS/data/US_StartVal_", Sys.Date(),".rda", sep=""))
 
 }
 
@@ -42,7 +42,7 @@ gen_par_matrix<-function(startMat){
   P <- P
   ParMatrix[i,]<-P
   }
-save(ParMatrix,file=paste("parAll",nrow(startMat),"_",Sys.Date(),".rda", sep=""))
+save(ParMatrix,file=paste("parAll",nrow(startMat),"_",Sys.time(),".rda", sep=""))
   return(ParMatrix)
 
 }
