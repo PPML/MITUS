@@ -165,8 +165,8 @@
 #' CalibDat[["fb_recent_cases"]]  <- oldCalibDat[["fb_recent_cases"]]
 #' CalibDat[["homeless_pop"]]   <- c(1.6,1.1,2.1)
 #'
-#' CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
-#' CalibDat$US_mort_age <- read.csv(file="inst/extdata/US_mort_age.csv", header = TRUE)
+#' CalibDat$US_tot_mort <- read.csv(file="~/MITUS/inst/extdata/US/US_tot_mort.csv", header = FALSE)
+#' CalibDat$US_mort_age <- read.csv(file="~/MITUS/inst/extdata/US/US_mort_age.csv", header = TRUE)
 #'
 #' #'Save CalibDat to an .rData file
-#' save(CalibDat,file=paste("~/MITUS/data/CalibDat_", Sys.Date(),".rda",sep=""))
+#' save(CalibDat,file=paste("~/MITUS/data/US_CalibDat_", Sys.Date(),".rda",sep=""))
