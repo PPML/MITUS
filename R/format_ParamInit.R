@@ -62,4 +62,4 @@
 #'
 #' #'save it all
 #' write.csv(ParamInit,file="ParamInitUS_final.csv")
-#' save(ParamInit,file=paste0("US_ParamInit_", Sys.Date(),".rda"))
+#' save(ParamInit,file=paste0("~/MITUS/data/US_ParamInit_", Sys.Date(),".rda"))
