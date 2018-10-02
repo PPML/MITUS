@@ -21,6 +21,10 @@ if (loc=="US")
 
 } else {
   calib_dat<-paste0("CalibDatState_7-2-18")
+  wts <<- CalibDatState[["ImptWeights"]]
+  wtZ <- wts[44:67];  wtZ["2016"] <- 4
+  wtZ<<-wtZ
+
 }
 model_inputs<-paste0(loc,"_ModelInputs_9-6-18")
 par_init<-paste0("US_ParamInit_2018-09-25")
