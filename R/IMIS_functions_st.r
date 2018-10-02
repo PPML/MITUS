@@ -6,7 +6,7 @@ library(lhs)
 # Function for calculating likelihood
 
 
-  llikelihoodZ_st <-  function(samp_i,ParMatrix) { # ParMatrix = ParInit
+  llikelihoodZ_st <-  function(samp_i,ParMatrix,st) { # ParMatrix = ParInit
     Par <- ParMatrix[samp_i,]
     # norm2unif
     Par2 <- pnorm(Par,0,1)
@@ -42,7 +42,7 @@ library(lhs)
         lLik <- 0
         ### ### ### TOTAL DIAGNOSED CASES 1993-2016  ### ### ### ### ### ### D
       v1   <- M[44:67,"NOTIF_ALL"]+M[44:67,"NOTIF_MORT_ALL"]
-      addlik <- notif_tot_lLik_st(V=v1); addlik
+      addlik <- notif_tot_lLik_st(V=v1,st=st); addlik
       lLik <- lLik + addlik
       ### ### ### ANN DECLINE IN CASES 1953-2015  ### ### ### ### ### ### D
       v1b   <- M[4:44,"NOTIF_ALL"]+M[4:44,"NOTIF_MORT_ALL"]
@@ -50,26 +50,26 @@ library(lhs)
       lLik <- lLik + addlik
       ### ### ### US CASES AGE DISTRIBUTION 1993-2016  ### ### ### ### ### ### D
       v2a   <- M[44:67,205:215]+M[44:67,216:226]
-      addlik <- notif_age_us_lLik_st(V=v2a); addlik
+      addlik <- notif_age_us_lLik_st(V=v2a,st=st); addlik
       lLik <- lLik + addlik
       ### ### ### FB CASES AGE DISTRIBUTION 1993-2013  ### ### ### ### ### ### D
       v2b   <- (M[44:67,136:146]+M[44:67,189:199]) - (M[44:67,205:215]+M[44:67,216:226])
-      addlik <- notif_age_fb_lLik_st(V=v2b); addlik
+      addlik <- notif_age_fb_lLik_st(V=v2b,st=st); addlik
       lLik <- lLik + addlik
       ### ### ### CASES FB DISTRIBUTION 1993-2014  ### ### ### ### ### ### D
       v3   <-  cbind(M[44:67,148]+M[44:67,149]+(M[44:67,201]+M[44:67,202]),
                      M[44:67,147]+M[44:67,200])
-      addlik <- notif_fb_lLik_st(V=v3); addlik
+      addlik <- notif_fb_lLik_st(V=v3,st=st); addlik
       lLik <- lLik + addlik
       ### ### ### CASES FB, US 2010-2014  SLOPE ### ### ### ### ### ### D
       v3   <- cbind(M[62:67,148]+M[62:67,149]+(M[62:67,201]+M[62:67,202]),
                     M[62:67,147]+M[62:67,200])
-      addlik <- notif_fbus_slp_lLik_st(V=v3); addlik
+      addlik <- notif_fbus_slp_lLik_st(V=v3,st=st); addlik
       lLik <- lLik + addlik
 
       ### ### ### CASES HR DISTRIBUTION 1993-2014  ### ### ### ### ### ### D
       v5b   <- cbind(M[44:67,151],M[44:67,150]) + cbind(M[44:67,204],M[44:67,203])
-      addlik <- notif_us_hr_lLik_st(V=v5b); addlik
+      addlik <- notif_us_hr_lLik_st(V=v5b,st=st); addlik
       lLik <- lLik + addlik
       ### ### ### CASES FB RECENT ENTRY DISTRIBUTION 1993-2014  ### ### ### ### ### ### D
    #         v6   <- M[44:65,148:149]+M[44:65,201:202]
@@ -82,7 +82,7 @@ library(lhs)
       lLik <- lLik + addlik
       ### ### ### TOTAL LTBI TREATMENT INITS 2002  ### ### ### ### ### ### D
       v12  <- M[53,152]
-      addlik <- tltbi_tot_lLik_st(V=v12); addlik
+      addlik <- tltbi_tot_lLik_st(V=v12,st=st); addlik
       lLik <- lLik + addlik
       ### ### ### DIST LTBI TREATMENT INITS 2002  ### ### ### ### ### ### D
       v13  <- M[53,153:154]/M[53,152]
@@ -100,19 +100,19 @@ library(lhs)
       lLik <- lLik + addlik
       ### ### ### TOTAL POP EACH DECADE, FOR FB  ### ### ### ### ### ###  D
       v17  <- M[,31]+M[,32]
-      addlik <- tot_pop_yr_fb_lLik_st(V=v17); addlik
+      addlik <- tot_pop_yr_fb_lLik_st(V=v17,st=st); addlik
       lLik <- lLik + addlik
       ### ### ### TOTAL POP EACH DECADE, FOR US  ### ### ### ### ### ###  D ResNam
       v17b  <- M[,30]
-      addlik <- tot_pop_yr_us_lLik_st_00_10(V=v17b); addlik
+      addlik <- tot_pop_yr_us_lLik_st_00_10(V=v17b,st=st); addlik
       lLik <- lLik + addlik
       ### ### ### TOTAL POP AGE DISTRIBUTION 2014  ### ### ### ### ### ### D
       v18  <- cbind(M[65,33:43],M[65,44:54])
-      addlik <- tot_pop14_ag_fb_lLik_st(V=v18); addlik
+      addlik <- tot_pop14_ag_fb_lLik_st(V=v18,st=st); addlik
       lLik <- lLik + addlik
       ### ### ### TOTAL DEATHS WITH TB 1999-2016 ### ### ### ### ### ###  D
       v19  <- M[50:67,227:237]   ### THIS NOW ALL TB DEATHS
-      addlik <- tbdeaths_lLik_st(V=v19); addlik
+      addlik <- tbdeaths_lLik_st(V=v19,st=st); addlik
       lLik <- lLik + addlik
       ### ### ### TB DEATHS 1999-2016 BY AGE ### ### ### ### ### ###  D
       addlik <- tb_dth_age_lLik_st(V=v19); addlik
@@ -124,12 +124,12 @@ library(lhs)
 
       ### ### ### HOMELESS POP 2010  ### ### ### ### ### ###
       v23b  <- M[61,29]
-      addlik <- homeless_10_lLik_st(V=v23b); addlik
+      addlik <- homeless_10_lLik_st(V=v23b,st=st); addlik
       lLik <- lLik + addlik
 
       #' Total DEATHS 1979-2016
       v20a  <- rowSums(M[30:67,121:131])
-      addlik <- US_dth_tot_lLik(V=v20a); addlik
+      addlik <- dth_tot_lLik_st(V=v20a,st=st); addlik
       lLik <- lLik + addlik
       #' #' Total DEATHS 1999-2016 BY AGE
       #' v20b  <- M[50:67,121:131]
@@ -163,10 +163,11 @@ library(lhs)
 
 
   ###################### local parallelization via multicore
-  llikelihood_st <- function(ParMatrix,n_cores=1) {
+  llikelihood_st <- function(ParMatrix,st,n_cores=1) {
     if(dim(as.data.frame(ParMatrix))[2]==1) {
-      lLik <- llikelihoodZ(1,t(as.data.frame(ParMatrix)))  } else {
-      lLik <- unlist(mclapply(1:nrow(ParMatrix),llikelihoodZ_st,ParMatrix=ParMatrix,mc.cores=n_cores)) }
+      lLik <- llikelihoodZ_st(1,t(as.data.frame(ParMatrix)),st=st)  } else {
+      lLik <- unlist(mclapply(1:nrow(ParMatrix),llikelihoodZ_st,ParMatrix=ParMatrix,st=st,mc.cores=n_cores))
+      }
     return((lLik)) }
 
 
