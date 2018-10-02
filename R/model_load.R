@@ -14,10 +14,17 @@ library(MASS)
 model_load<-function(loc="US"){
 #'lazy load necessary datasets
 #'Model Input
+if (loc=="US")
+{
+  calib_dat<-paste0(loc,"_CalibDat_2018-09-17")
+  wts <<- CalibDat[["ImptWeights"]]
+
+} else {
+  calib_dat<-paste0("CalibDatState_7-2-18")
+}
 model_inputs<-paste0(loc,"_ModelInputs_9-6-18")
-par_init<-paste0(loc,"_ParamInit_2018-09-25")
-start_val<-paste0(loc,"_StartVal_2018-09-25")
-calib_dat<-paste0(loc,"_CalibDat_2018-09-17")
+par_init<-paste0("US_ParamInit_2018-09-25")
+start_val<-paste0("US_StartVal_2018-09-25")
 
 data(list=model_inputs, package = 'MITUS')
 data(list=par_init, package = 'MITUS')
@@ -38,7 +45,6 @@ idZ1 <<- ParamInitZ[,4]==1
 idZ2 <<- ParamInitZ[,4]==2
 
 #'format the calibration data
-wts <<- CalibDat[["ImptWeights"]]
 # targets[["ParamInitZ"]]<-ParamInitZ
 # targets[["idZ0"]]<-idZ0
 # targets[["idZ1"]]<-idZ1
