@@ -173,7 +173,7 @@ data("CalibDatState_7-2-18", package="MITUS")  # names(CalibDatState)
   ### ### ### Total TB DEATHS 1999-2016 ### ### ### ### ### ### D
   tb_deaths <- CalibDatState[["tbdeaths"]][[st]]$Deaths
   adj_19    <- sum((dnorm(tb_deaths,tb_deaths,tb_deaths*0.1/1.96,log=T)*wts[50:67])[is.na(tb_deaths)==F])
-  tbdeaths_lik <- function(V) { # V = vector of total notifications 1999-2016
+  tbdeaths_lLik_st <- function(V) { # V = vector of total notifications 1999-2016
     sum((dnorm(tb_deaths,rowSums(V)*1e6,tb_deaths*0.2/1.96,log=T)*wts[50:67])[is.na(tb_deaths)==F]) - adj_19 }
   ### ### ### ANN DECLINE IN TB DEATHS 1968-2015  ### ### ### ### ### ### D
   tbdeaths_decline      <- CalibDatState[["deaths_ann_decline_68_15"]]
@@ -189,6 +189,48 @@ data("CalibDatState_7-2-18", package="MITUS")  # names(CalibDatState)
     V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
     sum(dDirMult(M=V2,n=tb_deaths_age,Rho=rho)*wts[50:67]) - adj_19b  }
 
+  #' TOTAL US DEATHS
+  #' 1970,1975,1980,1985,1990-2007
+  #' Motivation: norm, mean centered with CI = +/- 5% of mean
+  #'@param V
+  #'@return likelihood
+
+  dth_tot_lLik_st <- function(V) {
+    CalibDatState$ST_tot_mort <- read.csv(file="inst/extdata/ST_mort_tot.csv", header = TRUE)
+    ST_deaths_tot   <- CalibDatState[["ST_tot_mort"]][,-1]
+    ST_deaths_tot   <- ST_deaths_tot[((st-1)*38)+(1:38),3]
+    adj_20a         <- sum(dnorm(ST_deaths_tot,ST_deaths_tot,ST_deaths_tot*0.1/1.96,log=T)*wts[30:67])
+    sum(dnorm(ST_deaths_tot,V*1e6,ST_deaths_tot*0.1/1.96,log=T)*wts[30:67]) - adj_20a
+  }
+
+  #'  #' TOTAL DEATHS AGE DISTRIBUTION 1999-2014
+  #' #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
+  #' #'@param V table of deaths by age 1999-2014 (row=16 years, col=11 ages)
+  #' #'@param rho correlation parameter
+  #' #'@return likelihood
+  #' tot_dth_age_lLik_st <- function(V,rho=0.01) {
+  #'   # CalibDat$US_mort_age <- read.csv(system.file("extdata","US_mort_age.csv", package="MITUS"))
+  #'   tot_deaths_age  <- CalibDat[["ST_mort_age"]][,-1]
+  #'   adj_20b        <- sum(dDirMult(M=tot_deaths_age+0.1,n=tot_deaths_age+0.1,Rho=0.01)*wts[50:67])
+  #'   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
+  #'   V2 <- V2[,-5]; V2[,4]  <- V2[,4]+V[,5]
+  #'   V2 <- V2[,-3]; V2[,2]  <- V2[,2]+V[,3]
+  #'
+  #'   sum(dDirMult(M=(V2*1e6),n=tot_deaths_age+.1,Rho=rho)*wts[50:67]) - adj_20b  }
+
+
+  #' Mortality Risk Group Distribution 1999-2014
+  #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
+  #'@param V table of mort_dist 1999-2014 (row=16 years, col=11 ages)
+  #'@param rho correlation parameter
+  #'@return likelihood
+  mort_dist_lLik_st <- function(V,rho=0.01) {
+    md     <- rowSums(dist_gen)
+    mort_dist     <-matrix(md,17,4, byrow = TRUE)
+    # V1     <-matrix(V,1,4)
+    adj_21        <- sum(dDirMult(M=mort_dist,n=mort_dist,Rho=0.01)*wts[67])
+    sum(dDirMult(M=V,n=mort_dist,Rho=rho)*wts[67]) - adj_21
+  }
   ### ### ### HOMELESS POP 2010  ### ### ### ### ### ### names(CalibDatState)
   # Motivation: norm, mean centered with CI = +/- 25% of mean
   homeless_pop      <- CalibDatState[["homeless_pop"]][[st]][1]
