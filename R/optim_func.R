@@ -64,7 +64,7 @@ b<-samp_i
 
 optim_b_st <- function(df, samp_i=1, st){
   # data("StartVal_2018-08-06", package = "MITUS")
-  stateID<-as.matrix(read.csv(file="inst/extdata/state_ID.csv", header = TRUE))
+data("stateID", package="MITUS")
   loc<-stateID[st,3]
 
   posterior_st = function(theta,st,n_cores) {
