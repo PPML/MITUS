@@ -64,7 +64,6 @@ b<-samp_i
 
 optim_b_st <- function(df, samp_i=1, st){
   # data("StartVal_2018-08-06", package = "MITUS")
-  load("~/Desktop/ModelInputsState_6-23-18.rData")
   stateID<-as.matrix(read.csv(file="inst/extdata/state_ID.csv", header = TRUE))
   loc<-stateID[i,3]
 
