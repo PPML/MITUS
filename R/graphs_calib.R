@@ -27,9 +27,9 @@ lines(1950:2015,V[,2],lwd=2,col="red3")
 lines(1950:2015,V[,1],lwd=2,col="blue")
 lines(1950:2015,rowSums(V),lwd=2,col="grey50")
 
-mtext("Year",1,2.5,cex=0.9)
-mtext("Population: Total, US, and Non-US Born (mil, log-scale)",3,.8,font=2,cex=0.8)
-legend("bottomright",c("Total","US born","Non-US Born","Reported data","model"),cex=0.9,
+mtext("Year",1,2.5,cex=1.2)
+mtext("Population: Total, US, and Non-US Born (mil, log-scale)",3,.8,font=2,cex=1)
+legend("bottomright",c("Total","US born","Non-US Born","Reported data","model"),cex=1,
        pch=c(15,15,15,19,NA),lwd=c(NA,NA,NA,1,2),lty=c(NA,NA,NA,3,1),col=c("grey50",4,"red3",1,1),bg="white",pt.cex=c(1.8,1.8,1.8,0.3,NA))
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -44,10 +44,10 @@ V2[3,] <- V2[3,]+V1[4,]
 V3 <- V2[-9,]
 V3[8,] <- V3[8,]+V2[9,]
 
-plot(1,1,ylim=c(0.05,75),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA,log="y" )
+plot(1,1,ylim=c(0.05,125),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA,log="y" )
 axis(1,1:8,paste(c("0-4","5-24","25-44","45-54","55-64","65-74","75-84","85+"),"\nyears",sep=""),tick=F,cex.axis=0.75)
 axis(1,1:9-0.5,rep("",9))
-axis(2,c(0,10,25,50,75 ),las=2);box()
+axis(2,c(0,5,10,25,50,75,125),las=2);box()
 abline(h=axTicks(2),col="grey85")
 
 for(i in 1:8) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V3[i,1],V3[i,1]),border=NA,col="lightblue")
@@ -56,11 +56,11 @@ for(i in 1:8) polygon(i+c(-.4,0,0,-.4),c(0.0001,0.0001,V3[i,2],V3[i,2]),border=N
 points(1:8+0.2,CalibDat[["tot_pop16_ag_fb"]][-9,3],pch=19,cex=1.2,col="blue")
 points(1:8-0.2,CalibDat[["tot_pop16_ag_fb"]][-9,4],pch=19,cex=1.2,col="red3")
 
-mtext("Age Group",1,2.5,cex=0.9)
+mtext("Age Group",1,2.5,cex=1.2)
 box()
-mtext("Population by Age for FB (red) and US (blue), 2014 (mil,log-scale)",3,.8,font=2,cex=0.8)
-legend("topright",c("Reported data","model"),pch=c(19,15),pt.cex=c(1,2),
-       lwd=NA,col=c("grey30","grey80"),bg="white")
+mtext("Total Population by Age Group 2014 (mil,log-scale)",3,.8,font=2,cex=1)
+legend("topright",c("US born","Non-US Born","Reported data"),cex=1,
+       pch=c(15,15,19),lwd=c(NA,NA,1),lty=c(NA,NA,3),col=c("lightblue","pink",1),bg="white",pt.cex=c(1.8,1.8,0.3))
 
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -78,12 +78,12 @@ abline(h=axTicks(2),col="grey85")
 for(i in 1:11) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V[i,1],V[i,1]),border=NA,col="lightblue")
 for(i in 1:11) polygon(i+c(-.4,0,0,-.4),c(0.0001,0.0001,V[i,2],V[i,2]),border=NA,col="pink")
 
-mtext("Age Group",1,2.5,cex=0.9)
-mtext("Millions",2,2.5,cex=0.9)
+mtext("Age Group",1,2.5,cex=1.2)
+mtext("Millions",2,2.5,cex=1.2)
 
 box()
-mtext("Total Population by Age Group 2014 (mil,log-scale)",3,.8,font=2,cex=0.8)
-legend("topright",c("US born","Non-US Born","Reported data"),cex=0.9,
+mtext("Total Population by Age Group 2014 (mil,log-scale)",3,.8,font=2,cex=1.2)
+legend("topright",c("US born","Non-US Born","Reported data"),cex=1.0,
        pch=c(15,15,19),lwd=c(NA,NA,1),lty=c(NA,NA,3),col=c("lightblue","pink",1),bg="white",pt.cex=c(1.8,1.8,0.3))
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -91,7 +91,7 @@ legend("topright",c("US born","Non-US Born","Reported data"),cex=0.9,
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 V  <- cbind(rowSums(df[1:66,255:265]), rowSums(df[1:66,266:276]))
 V1c <- rowSums(df[1:66,121:131])
-plot(1,1,ylim=c(0,max(range(V1c))),xlim=c(1950,2015),xlab="",ylab="",axes=F)
+plot(1,1,ylim=c(0,3.5),xlim=c(1950,2015),xlab="",ylab="",axes=F)
 axis(1);axis(2,las=2);box()
 abline(h=axTicks(2),col="grey85")
 
@@ -101,9 +101,9 @@ lines(1950:2015,V1c,lwd=2,col="grey50")
 points(CalibDat$US_tot_mort[,1],(CalibDat$US_tot_mort[,2])/1e6,pch=19,cex=0.6,col="grey50")
 lines(CalibDat$US_tot_mort[,1],(CalibDat$US_tot_mort[,2])/1e6,lty=3,col="grey50")
 
-mtext("Year",1,2.5,cex=0.9)
-mtext("Mortality: Total, US, and Non-US Born",3,.8,font=2,cex=0.8)
-legend("bottomleft",c("Total","US born","Non-US Born","Reported data","model"),cex=0.9,
+mtext("Year",1,2.5,cex=1.2)
+mtext("Mortality: Total, US, and Non-US Born (mil)",3,.8,font=2,cex=1.2)
+legend("topleft",c("Total","US born","Non-US Born","Reported data","model"),cex=1.0,
        pch=c(15,15,15,19,NA),lwd=c(NA,NA,NA,1,2),lty=c(NA,NA,NA,3,1),col=c("grey50",4,"red3",1,1),bg="white",pt.cex=c(1.8,1.8,1.8,0.3,NA))
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 ### ### ### ### ### ###   TOTAL MORT AGE DISTRIBUTION 2014  ### ### ### ### ### ###
@@ -118,7 +118,7 @@ V3 <- V2[,-9]
 V3[,8] <- V3[,8]+V2[,9]
 
 
-plot(0,0,ylim=c(0.05,max(range(V3))),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA)
+plot(0,0,ylim=c(0.05,max(range(V3))+.2),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA)
 axis(1,1:8,paste(c("0-4","5-24","25-44","45-54","55-64","65-74","75-84","85+"),"\nyears",sep=""),tick=F,cex.axis=0.75)
 axis(1,1:9-0.5,rep("",9))
 axis(2,c(0,.2,.4,.6,.8,1.0,1.2),las=2);box()
@@ -128,9 +128,9 @@ for(i in 1:8) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V3[1,i],V3[1,i]),border=NA,
 for(i in 1:8) points(i+.2,(CalibDat$US_mort_age[16,i+1])/1e6,pch=19,cex=1.2,col="black")
 
 
-mtext("Age Group",1,2.5,cex=0.9)
+mtext("Age Group",1,2.5,cex=1.2)
 box()
-mtext("Mortality by Age, 2014 (mil)",3,.8,font=2,cex=0.8)
+mtext("Mortality by Age, 2014 (mil)",3,.8,font=2,cex=1.2)
 legend("topleft",c("Reported data","model"),pch=c(19,15),pt.cex=c(1,2),
        lwd=NA,col=c("black","gray"),bg="white")
 
@@ -157,9 +157,9 @@ for (i in 1:11){
   lines(1950:2014,V[,i],lwd=3,col=col[i])
   lines(1950:2014,V2[,i],lty=3,lwd=2, col="black")
 
-  mtext("Year",1,2.5,cex=0.9)
-  mtext("Age Specific Mortality Rates from 1950 to 2014",3,.8,font=2,cex=0.8)
-  legend("bottomleft",colnames(V),cex=0.9,
+  mtext("Year",1,2.5,cex=1.2)
+  mtext("Age Specific Mortality Rates from 1950 to 2014",3,.8,font=2,cex=1.2)
+  legend("bottomleft",colnames(V),cex=1.0,
     pch=rep(15,i),lwd=rep(NA,i),lty=rep(NA,i),col=col,bg="white",pt.cex=rep(1.8,i))
 }
 
@@ -194,10 +194,10 @@ points(1993:2016,notif_fb[,1],pch=19,cex=0.3,col=3) #non-US born population
 lines(1993:2016,notif_fb[,1],lty=3,col=3)
 
 #'plot text
-mtext("Year",1,2.5,cex=0.9)
-mtext("Total TB Cases Identified (000s), 1953-2014",3,.8,font=2,cex=0.8)
-legend("topright",c("Reported data (all)","Reported data (US born)","Reported data (foreign born)",
-                    "Model (all)","Model (US born)","Model (foreign born)"),
+mtext("Year",1,2.5,cex=1.2)
+mtext("Total TB Cases Identified (000s), 1953-2014",3,.8,font=2,cex=1.2)
+legend("bottomleft",c("Reported data (all)","Reported data (US born)","Reported data (non-US born)",
+                    "Model (all)","Model (US born)","Model (non-US born)"),
        pch=c(19,19,19,NA,NA,NA),lwd=c(1,1,1,2,2,2),lty=c(3,3,3,1,1,1),col=c(1,4,3,1,4,3),bg="white",ncol=2,cex=.8,pt.cex=0.4)
 
 #' graph of total diagnosed cases
@@ -231,10 +231,10 @@ points(2000:2016,notif_fb[8:24,1],pch=19,cex=0.3,col=3) #non-US born population
 lines(2000:2016,notif_fb[8:24,1],lty=3,col=3)
 
 #'plot text
-mtext("Year",1,2.5,cex=0.9)
-mtext("Total TB Cases Identified (000s), 2000-2014",3,.8,font=2,cex=0.8)
-legend("topright",c("Reported data (all)","Reported data (US born)","Reported data (foreign born)",
-                    "Model (all)","Model (US born)","Model (foreign born)"),
+mtext("Year",1,2.5,cex=1.2)
+mtext("Total TB Cases Identified (000s), 2000-2014",3,.8,font=2,cex=1.2)
+legend("bottomleft",c("Reported data (all)","Reported data (US born)","Reported data (non-US born)",
+                    "Model (all)","Model (US born)","Model (non-US born)"),
        pch=c(19,19,19,NA,NA,NA),lwd=c(1,1,1,2,2,2),lty=c(3,3,3,1,1,1),col=c(1,4,3,1,4,3),bg="white",ncol=2,cex=.8,pt.cex=0.4)
 
 ################################################################################
@@ -258,8 +258,8 @@ points(1993:2016,notif_fb[,1]/rowSums(notif_fb)*100,pch=19,cex=0.6)
 lines(1993:2016,notif_fb[,1]/rowSums(notif_fb)*100,lty=3)
 
 #'plot text
-mtext("Year",1,2.5,cex=0.9)
-mtext("Percent of TB Cases Non-US-Born, 2000-14",3,.8,font=2,cex=0.8)
+mtext("Year",1,2.5,cex=1.2)
+mtext("Percent of TB Cases Non-US Born, 2000-14",3,.8,font=2,cex=1.2)
 legend("topleft",c("Reported data","Model"),pch=c(19,NA),lwd=c(1,2),col=c(1,4),lty=c(3,1),bg="white",pt.cex=0.6)
 
 ################################################################################
@@ -283,8 +283,8 @@ points(1993:2014,notif_fb_rec[,1]/rowSums(notif_fb_rec)*100,pch=19,cex=0.6)
 lines(1993:2014,notif_fb_rec[,1]/rowSums(notif_fb_rec)*100,lty=3)
 
 #'plot text
-mtext("Year",1,2.5,cex=0.9)
-mtext("Percent of Non-US Born Cases Arrived in Past 2 Yrs",3,.8,font=2,cex=0.8)
+mtext("Year",1,2.5,cex=1.2)
+mtext("Percent of Non-US Born Cases Arrived in Past 2 Yrs",3,.8,font=2,cex=1.2)
 legend("topright",c("Reported data","Model"),pch=c(19,NA),lwd=c(1,2),col=c(1,4),lty=c(3,1),bg="white",pt.cex=0.6)
 
 ################################################################################
@@ -320,8 +320,8 @@ points(1993:2016,rowSums(notif_age[,8:10])/1e3,pch=19,cex=0.6,col=cls[4]) #65+ y
 lines(1993:2016,rowSums(notif_age[,8:10])/1e3,col=cls[4],lty=3)
 
 #'plot text
-mtext("TB Cases By Age (000s), 2000-16",3,.8,font=2,cex=0.8)
-mtext("Year",1,2.5,cex=0.9)
+mtext("TB Cases By Age (000s), 2000-16",3,.8,font=2,cex=1.2)
+mtext("Year",1,2.5,cex=1.2)
 
 legend("topright",c("0-24 years","25-44 years","45-64 years","65+ years","Reported data","Model"),
        lwd=c(NA,NA,NA,NA,1,2),lty=c(NA,NA,NA,NA,3,1),col=c(cls,1,1),bg="white",
@@ -350,8 +350,8 @@ legend("topright",c("0-24 years","25-44 years","45-64 years","65+ years","Report
 #'   points(1:10,colSums(notif_age[7:21,])/sum(notif_age[7:21,])*100,pch=19,cex=1.2)
 #'
 #'   #'plot text
-#'   mtext("Age Group",1,2.5,cex=0.9)
-#'   mtext("Age Distribution of TB Cases (%), 2000-14",3,.8,font=2,cex=0.8)
+#'   mtext("Age Group",1,2.5,cex=1.2)
+#'   mtext("Age Distribution of TB Cases (%), 2000-14",3,.8,font=2,cex=1.2)
 #'   legend("topright",c("Reported data","Model"),pch=c(19,15),lwd=NA,
 #'          pt.cex=c(1,2),col=c("black","lightblue"),bg="white")
 ################################################################################
@@ -389,8 +389,8 @@ lines (1993:2014,tx_outcomes[,3]/rowSums(tx_outcomes)*100,lty=3,col="blue")
 
 #'plot text
 
-mtext("Year",1,2.5,cex=0.9)
-mtext("Treatment Outcomes: Discontinued and Died (%)",3,.8,font=2,cex=0.8)
+mtext("Year",1,2.5,cex=1.2)
+mtext("Treatment Outcomes: Discontinued and Died (%)",3,.8,font=2,cex=1.2)
 legend("topright",c("Discontinued","Died","Reported data","Model"),pch=c(15,15,19,NA),lwd=c(NA,NA,1,2),
        col=c("red3",4,1,1),lty=c(NA,NA,3,1),bg="white",pt.cex=c(1.8,1.8,0.6,NA))
 
@@ -407,7 +407,7 @@ V2 <- rep(NA,8)
 V2 <- V1[2:9,1]/rowSums(V1[2:9,])*100
 
 #'format the plot
-plot(0,0,ylim=c(0,max(range(V2))),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA)
+plot(0,0,ylim=c(0,8.5),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA)
 axis(1,1:8,paste(c(paste(0:6*10+5,1:7*10+4,sep="-"),"75+"),"\nyears",sep=""),tick=F,cex.axis=0.85)
 axis(1,1:8-0.5,rep("",8))
 axis(2,las=2);box()
@@ -424,8 +424,8 @@ points(1:8,ltbi_us_11[,2]/rowSums(ltbi_us_11[,2:3])*100,pch=19,cex=1.2)
 for(i in 1:8) lines((1:8)[c(i,i)],qbeta(c(1,39)/40,ltbi_us_11[i,2],ltbi_us_11[i,3])*100,pch=19,cex=1.2)
 
 #'plot text
-mtext("Age Group",1,2.5,cex=0.9)
-mtext("LTBI in US Born Population 2011 by Age (%)",3,.8,font=2,cex=0.8)
+mtext("Age Group",1,2.5,cex=1.2)
+mtext("LTBI in US Born Population 2011 by Age (%)",3,.8,font=2,cex=1.2)
 legend("topleft",c("Reported data","Model"),pch=c(19,15),lwd=c(0,NA),
        pt.cex=c(1,2),col=c("black","lightblue"),bg="white")
 
@@ -443,7 +443,7 @@ V2 <- rep(NA,8)
 V2 <- V1[2:9,1]/rowSums(V1[2:9,])*100
 
 #'format the plot
-plot(0,0,ylim=c(0,40),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA)
+plot(0,0,ylim=c(0,55),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA)
 axis(1,1:8,paste(c(paste(0:6*10+5,1:7*10+4,sep="-"),"75+"),"\nyears",sep=""),tick=F,cex.axis=0.85)
 axis(1,1:8-0.5,rep("",8))
 axis(2,las=2);box()
@@ -457,8 +457,8 @@ points(1:8,ltbi_fb_11[,2]/rowSums(ltbi_fb_11[,2:3])*100,pch=19,cex=1.2)
 for(i in 1:8) lines((1:8)[c(i,i)],qbeta(c(1,39)/40,ltbi_fb_11[i,2],ltbi_fb_11[i,3])*100,pch=19,cex=1.2)
 
 #'plot text
-mtext("Age Group",1,2.5,cex=0.9)
-mtext("LTBI in Non-US Born Population 2011 by Age (%)",3,.8,font=2,cex=0.8)
+mtext("Age Group",1,2.5,cex=1.2)
+mtext("LTBI in Non-US Born Population 2011 by Age (%)",3,.8,font=2,cex=1.2)
 legend("topleft",c("Reported data","Model"),pch=c(19,15),lwd=c(0,NA),
        pt.cex=c(1,2),col=c("black","lightblue"),bg="white")
 
@@ -472,7 +472,7 @@ V3 <- colSums(V2)*1e6
 tb_deaths      <- CalibDat[["tb_deaths"]][,-1]
 
 #'format the plot
-plot(0,0,ylim=c(0,max(range(V3),range(colSums(tb_deaths)))),xlim=c(0.6,10.4),xlab="",ylab="",axes=F)
+plot(0,0,ylim=c(0,max(range(V3),range(colSums(tb_deaths)))+1000),xlim=c(0.6,10.4),xlab="",ylab="",axes=F)
 axis(2,las=2);box()
 abline(h=axTicks(2),col="grey85")
 axis(1,1:10,paste(c("0-4","5-14","15-24","25-34","35-44","45-54","55-64","65-74","75-84","85+"),"\nyears",sep=""),tick=F,cex.axis=0.75)
@@ -484,8 +484,8 @@ for(i in 1:10) polygon(i+c(-.5,.5,.5,-.5),c(0,0,V3[i],V3[i]),border="white",col=
 points(1:10,colSums(tb_deaths),pch=19,cex=1.2,col="black")
 
 #'plot text
-mtext("Age Group",1,2.5,cex=0.9)
-mtext("Total TB Deaths by Age Group 1999-2014",3,.8,font=2,cex=0.8)
+mtext("Age Group",1,2.5,cex=1.2)
+mtext("Total TB Deaths by Age Group 1999-2014",3,.8,font=2,cex=1.2)
 legend("topleft",c("Reported data","Model"),pch=c(19,15),lwd=NA,
        pt.cex=c(1,2),col=c("black","lightblue"),bg="white")
 
