@@ -76,28 +76,16 @@ Rcpp::NumericMatrix reblncd(
     for (int nm=0; nm<4; nm++){
       for (int im=0; im<4; im++){
 
-        if ((RRmuRF[nm]*RRmuHR)<5){
-          if ((ag>5) & (ag<8)){
+          if ((ag<8) & ((RRmuRF[nm]*RRmuHR)<6)){
             dist_t1_v[nm+im*4]=dist_gen_v[nm+im*4]*(1-((mubtN[ag]*RRmuRF[nm]*RRmuHR*HRdist[ag])));
 
-          } else if (ag>7){
-            dist_t1_v[nm+im*4]=dist_gen_v[nm+im*4]*(1-((mubtN[ag]*RRmuRF[nm]*RRmuHR*HRdist[ag])));
+          } else {
+            dist_t1_v[nm+im*4]=dist_gen_v[nm+im*4]*(1-((mubtN[ag]*6*HRdist[ag])));
 
           }
-          else{
-            dist_t1_v[nm+im*4]=dist_gen_v[nm+im*4]*(1-((mubtN[ag]*RRmuRF[nm]*RRmuHR*HRdist[ag])));
-          }
-        } else {
-          if ((ag>5)& (ag<8)){
 
-            dist_t1_v[nm+im*4]=dist_gen_v[nm+im*4]*(1-((mubtN[ag]*5*HRdist[ag])));
-          } else if (ag>7){
-            dist_t1_v[nm+im*4]=dist_gen_v[nm+im*4]*(1-((mubtN[ag]*5*HRdist[ag])));
-          } else{
-            dist_t1_v[nm+im*4]=dist_gen_v[nm+im*4]*(1-(mubtN[ag]*5*HRdist[ag]));
-          }
         }
-      } }
+      }
 
     for (int i=0; i<16; i++){
       // Rcpp::Rcout <<"dist_t1_v at ag = "<< ag << "and index = "<< i << " is "<<  dist_t1_v[i]<< "\n";
