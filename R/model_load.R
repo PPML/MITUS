@@ -12,33 +12,41 @@ library(MASS)
 
 #'all other loads will be dependent on geography
 model_load<-function(loc="US"){
+  rm(Inputs)
+  rm(CalibDat)
 #'lazy load necessary datasets
 #'Model Input
 if (loc=="US")
 {
   calib_dat<-paste0(loc,"_CalibDat_2018-09-17")
-  wts <<- CalibDat[["ImptWeights"]]
 
 } else {
   calib_dat<-paste0("CalibDatState_7-2-18")
-  wts <<- CalibDatState[["ImptWeights"]]
-  wtZ <- wts[44:67];  wtZ["2016"] <- 4
-  wtZ<<-wtZ
 
 }
 model_inputs<-paste0(loc,"_ModelInputs_9-6-18")
-par_init<-paste0("US_ParamInit_2018-09-25")
-start_val<-paste0("US_StartVal_2018-09-25")
+par_init<-paste0("US_ParamInit_2018-10-15")
+start_val<-paste0("US_StartVal_2018-10-15")
 
 data(list=model_inputs, package = 'MITUS')
 data(list=par_init, package = 'MITUS')
 data(list=start_val, package = 'MITUS')
 data(list=calib_dat, package='MITUS')# ParamInit
 
+if (loc=="US")
+{
+  wts <<- CalibDat[["ImptWeights"]]
 
+} else {
+  wts <<- CalibDatState[["ImptWeights"]]
+  wtZ <- wts[44:67];  wtZ["2016"] <- 4
+  wtZ<<-wtZ
+
+}
 #'creation of background parameters
 #'elements of P will be replaced from either the StartVals in the case
 #'of optimization or the user inputted dataset
+#'
 P  <<- ParamInit[,1];
 names(P) <<- rownames(ParamInit)
 
