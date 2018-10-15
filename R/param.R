@@ -34,7 +34,7 @@ param <- function (PV){
   mubt      <- matrix(NA,1801,11)
 
   TunmuAg <- PV["TunmuAg"]
-  RRmuAg <- exp(c(0,1:9,0)*TunmuAg)
+  RRmuAg <- exp((1:11)*TunmuAg)
   for(i in 1:11) {
     mubt[,i] <- SmoCurve(BgMort[,i+1])*PV["TunMubt"]/12
     mubt[,i] <- mubt[,i]*RRmuAg[i]
