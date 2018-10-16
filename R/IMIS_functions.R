@@ -1,11 +1,6 @@
 #'This scrprmst creates a function that loops over the log-likelihood
 #'functions found in calib_functions.R and updates the
 #'this is the function that goes into the optimizer
-#'load the necessary libraries
-library(mnormt)
-library(parallel)
-library(lhs)
-#source("R/define_P.R")
 #'@name llikelihoodZ
 #'@param samp_i sample id
 #'@param ParMatrix matrix of parameters  # Par = par_1
@@ -17,6 +12,10 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
   } else {  Par <- as.numeric(ParMatrix[samp_i,]);
   names(Par) <- colnames(ParMatrix) }  ##previously, the distribution of parameters were transformed to normal distribution in
 ##to facilitate comparisons. These first two steps convert these parameters back to their
+  #'load the necessary libraries
+  library(mnormt)
+  library(parallel)
+  library(lhs)
   ##distributions
   # normal to uniform
   Par2 <- pnorm(Par,0,1)
@@ -180,45 +179,5 @@ llikelihood <- function(ParMatrix,n_cores=1) {
 return((lLik))
 }
 
-#'@name lPrior2 calculates the parameter prior with Jacobians
-#'@param Par
-#'@param Par3
-#'@return ldensity3
 
-lPrior2 <- function(Par,Par3) {
-  if(dim(as.matrix(Par))[2]==1) Par <- t(as.matrix(Par))
-  ldensity <- dmnorm(Par,rep(0,nrow(ParamInitZ)),diag(nrow(ParamInitZ)),log=T)
-  ldensity2 <- ldensity-sum(dnorm(Par,0,1,log=T))
-  lDensTrue <- rep(NA,nrow(ParamInitZ))
-  lDensTrue[idZ0] <- dbeta( Par3[idZ0], shape1  = ParamInitZ[idZ0,6], shape2 = ParamInitZ[idZ0,7],log=T)
-  lDensTrue[idZ1] <- dgamma(Par3[idZ1], shape   = ParamInitZ[idZ1,6], rate   = ParamInitZ[idZ1,7],log=T)
-  lDensTrue[idZ2] <- dnorm( Par3[idZ2], mean    = ParamInitZ[idZ2,6], sd     = ParamInitZ[idZ2,7],log=T)
-  ldensity3 <- ldensity2+sum(lDensTrue)
-  ldensity3  }
-
-#'@name lprior
-#'@param ParMatrix matrix of Initial parameters
-#'@return lPri
-
-lprior <- function(ParMatrix = ParInit) { # Par = ParInit
-  if(dim(as.data.frame(ParMatrix))[2]==1) {
-    ParMatrix <- t(as.data.frame(ParMatrix)) }
-  lPri <- rep(0,nrow(ParMatrix))
-  for(samp_i in 1:nrow(ParMatrix)) {
-    # norm2unif
-    Par <- ParMatrix[samp_i,]
-    Par2 <- pnorm(Par,0,1)
-    # unif2true
-    Par3 <- Par2
-    Par3[idZ0] <- qbeta( Par2[idZ0], shape1  = ParamInitZ[idZ0,6], shape2 = ParamInitZ[idZ0,7])
-    Par3[idZ1] <- qgamma(Par2[idZ1], shape   = ParamInitZ[idZ1,6], rate   = ParamInitZ[idZ1,7])
-    Par3[idZ2] <- qnorm( Par2[idZ2], mean    = ParamInitZ[idZ2,6], sd     = ParamInitZ[idZ2,7])
-    lPri[samp_i] <- lPrior2(Par,Par3)
-    if(is.na(lPri[samp_i]))         {
-      lPri[samp_i] <- -10^12 - sum((ParamInitZ[,8]-Par)^2) }
-    if(lPri[samp_i]%in%c(-Inf,Inf)) {
-      lPri[samp_i] <- -10^12 - sum((ParamInitZ[,8]-Par)^2) }
-  } # end inner loop
-  return(lPri)
-}
 

@@ -6,6 +6,15 @@
 \usage{
 bspline(x, k, i, m)
 }
+\arguments{
+\item{x}{param 1}
+
+\item{k}{knots}
+
+\item{i}{param 2}
+
+\item{m}{param 3}
+}
 \value{
 basis of a spline
 }

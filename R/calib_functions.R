@@ -6,20 +6,6 @@
 #
 # data("US_CalibDat_2018-09-01", package='MITUS')# ParamInit
 #  wts <- CalibDat[["ImptWeights"]]
-#'Dirichlet multinomial density function
-#'@name dDirMult
-#'@param M params of the dirichlet, i.e. model strain distribution
-#'@param rho correlation parameter = 1/sample size
-#'@param n category counts from the survey
-#'@return M density
-dDirMult <- function(M,n,Rho) {
-  if(dim(as.matrix(M))[2]==1) {
-    M <- M/sum(M)
-} else {
-    M <- M/rowSums(M)
-}
-  rowSums(lgamma(n+M/Rho))-rowSums(lgamma(M/Rho))
-}
 
 #'Total Diagnosed Cases 1953-2016
 #'Motivation: Normal, mean centered with CI = +/- 5% of the mean
@@ -126,6 +112,7 @@ tltbi_dist_lLik  <- function(V) {
 
 #' LTBI PREVALENCE BY AGE 2011, US
 #' Motivation: additional prior on LTBI, using beta densities parameterized to Miramontes/Hill results
+#'@name ltbi_us_11_lLik
 #'@param V LTBI in US pop 2011 (row=11 ages, col= ltbi, non-ltbi)
 #'@return likelihood
 ltbi_us_11_lLik <- function(V) {
@@ -134,6 +121,7 @@ ltbi_us_11_lLik <- function(V) {
   V[9,] <- colSums(V[9:11,])
   (sum( dbeta(V[2:9,1]/rowSums(V[2:9,]),ltbi_us_11[,2],ltbi_us_11[,3],log=T) ) - adj_15)*2  }
 
+#'@name ltbi_us_11_dp_lLik
 #'@param V LTBI in US pop 2011 (row=11 ages, col= ltbi, non-ltbi)
 #'@return likelihood
 ltbi_us_11_dp_lLik <- function(V) {
@@ -152,6 +140,7 @@ ltbi_fb_11_lLik <- function(V) {
   V[9,] <- colSums(V[9:11,])
   (sum( dbeta(V[2:9,1]/rowSums(V[2:9,]),ltbi_fb_11[,2],ltbi_fb_11[,3],log=T) ) - adj_16)*2  }
 
+#'@name ltbi_fb_11_dp_lLik
 #'@param V LTBI in FB pop 2011 (row=11 ages, col= ltbi, non-ltbi)
 #'@return likelihood
 ltbi_fb_11_dp_lLik <- function(V) {
@@ -173,7 +162,7 @@ tot_pop_yr_fb_lLik <- function(V) {
 #' TOTAL POP AGE DISTRIBUTION 2014
 #' Motivation: reported estimates represent pseudo-data for a multinomial likelihood, with ESS = 500
 #'@param V US pop in 2016 (row=11 ages, col= rec fb, fb)
-#'@param ESS
+#'@param ESS explained sum of squares
 #'@return likelihood
 tot_pop16_ag_fb_lLik <- function(V,ESS=500) {
   tot_pop16_ag_fb      <- cbind(CalibDat[["tot_pop16_ag_fb"]][-9,3]/sum(CalibDat[["tot_pop16_ag_fb"]][-9,3]),
@@ -197,7 +186,7 @@ tb_deaths_lLik <- function(V,sgsq=50) {
 
 #' TOTAL TB DEATHS 1999-2014
 #' Motivation: norm, mean centered with CI = +/- 5% of mean
-#'@param V
+#'@param V vector of TB deaths in fraction of millions
 #'@return likelihood
 tb_dth_tot_lLik <- function(V) {
   tb_deaths_tot   <- rowSums(CalibDat[["tb_deaths"]][,-1])
@@ -218,7 +207,7 @@ tb_dth_age_lLik <- function(V,rho=0.01) {
 #' TOTAL US DEATHS
 #' 1970,1975,1980,1985,1990-2007
 #' Motivation: norm, mean centered with CI = +/- 5% of mean
-#'@param V
+#'@param V vector of total deaths in US from 1971-2016, fraction of millions
 #'@return likelihood
 
 US_dth_tot_lLik <- function(V) {
@@ -308,7 +297,7 @@ borgdorff_lLik <- function(Par_list,N_red=1) {  # Par_list = list(Mpfast[,c(1,3,
 #'across the tb_progression groups
 #'average at the end
 #'@param Par_list list (pfast,rslow,rfast,rRecov)
-#'@param n_red
+#'@param n_red crude reductions the likelihood (allows non-sampling bias)
 #'@return likelihood
 ferebee_lLik <- function(Par_list,N_red=4) {
   datF         <- CalibDat[["ferebee_data"]]
@@ -344,7 +333,7 @@ ferebee_lLik <- function(Par_list,N_red=4) {
 #' #'across the tb_progression groups
 #' #'average at the end
 #' #'@param Par_list list (Mpfast,Mrslow,rfast,rRecov)
-#' #'@param n_red
+#' #'@param n_red crude reductions the likelihood (allows non-sampling bias)
 #' #'@return likelihood
 sutherland_lLik <- function(Par_list,N_red=4) {
   datS            <- CalibDat[["sutherland_data"]]

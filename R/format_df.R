@@ -1,5 +1,4 @@
 #' Formats Outputs to dataframe format for the TABBY2 interface
-
 #'@name format_df
 #'@param years vector of years
 #'@param loc location of results
@@ -9,26 +8,23 @@
 #'@param df dataframe of results
 #'@return csv of results formatted
 #'@export
-
-
 format_df<-function(year, loc, nat, scen, int, df){
-
 Date <- Sys.Date();
 
-#' pull the year from df data frame
+# pull the year from df data frame
 Year <- rep(NA,nrow(df)*(ncol(df)-1))
 Year <-rep(df[,1], (ncol(df)-1))
 
-#'location will need to be inputted from user
-#'for now we will input the national example
+#location will need to be inputted from user
+#for now we will input the national example
 Location <- "Nat"
 
-#'Nativity Selection will need to be input by the User
-#'for now, will input all;
+#Nativity Selection will need to be input by the User
+#for now, will input all;
 #update this so that it is just the nativity group of the outputs
 Nativity <- "all"
 
-#' fill in the scenario number
+# fill in the scenario number
 Scenario <-0
 
 if (Scen1==1)
@@ -38,7 +34,7 @@ if (Scen2==1)
 if (Scen3==1)
   Scenario <- 3
 
-#' fill in the Intervention Number
+# fill in the Intervention Number
 Intervention <-0
 
 if (Int1==1)
@@ -54,13 +50,13 @@ Intervention <- 5
 
 
 
-#' Input the Output Name from InputParams[["ResNam"]]
+# Input the Output Name from InputParams[["ResNam"]]
 Output <- rep(NA,(length(InputParams[["ResNam"]])-1)*nrow(df))
   for (i in 1:(length(InputParams[["ResNam"]])-1)){
       Output[(((i-1)*100)+1):(i*100)] <-InputParams[["ResNam"]][i+1]
  }
 
-#' Input the values from df dataframe
+# Input the values from df dataframe
 Value <- rep(NA,(nrow(df)*(ncol(df)-1)))
 
 for (i in 1:nrow(df)){

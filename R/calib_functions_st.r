@@ -1,33 +1,16 @@
-###  Calibration functions
+#'Calibration Functions for use with the tb_model.cpp model for state level
+#'This script creates several individual log likelihood functions
+#'for the calibration of the State Level TB model in tb_model.cpp
+#'These llikelihood functions are called in IMIS_functions.R
+#'takes in the outputs and calibration data and creates likelihood functions
+
   library(MCMCpack)
 
-########################  ########################  ########################
-###########################  CALIBRATION DATA  ########################
-########################  ########################  ########################
-# data("CalibDatState_7-2-18", package="MITUS")  # names(CalibDatState)
-
-########################  ########################  ########################
-###########################  HELPFUL FUNCTIONS  ########################
-########################  ########################  ########################
-
-### ### ### Dirichlet multinomial density ### ### ### ### ### ### ### ### ###
-  dDirMult <- function(M,n,Rho) {
-    # M= params of the dirichlet, i.e. model strain distribution
-    # Rho = correlation parameter = 1/ sample size
-    # n = category counts from the survey
-    if(dim(as.matrix(M))[2]==1) { M <- M/sum(M) } else {  M <- M/rowSums(M)  }
-    rowSums(lgamma(n+M/Rho))-rowSums(lgamma(M/Rho)) }
-
-########################  ########################  ########################
-########################  LOG_LIKELIHOOD FUNCTIONS  ########################
-########################  ########################  ########################
-
-### ### ### calibration importance weights  ### ### ### ### ### ### D
-
-### ### ### TOTAL DIAGNOSED CASES 1993-2016  ### ### ### ### ### ### D
-  ######THIS WILL NEED TO BE UPDATED FOR MITUS RM 1E6
-# Motivation: norm, mean centered with CI = +/- 5% of mean
-
+  #'Total Diagnosed Cases 1953-2016
+  #'Motivation: Normal, mean centered with CI = +/- 5% of the mean
+  #'@name notif_tot_lLik_st
+  #'@param V vector of total notifications 1953-2014
+  #'@return likelihood
   notif_tot_lLik_st <- function(V,st) { # V = vector of total notifications 1993-2016
     notif_tot     <- CalibDatState[["cases_yr_st"]][[st]][,2];
     adj_1         <- sum(dnorm(notif_tot,notif_tot,notif_tot*0.1/1.96,log=T)*wtZ)
@@ -212,6 +195,7 @@
   #' TOTAL US DEATHS
   #' 1970,1975,1980,1985,1990-2007
   #' Motivation: norm, mean centered with CI = +/- 5% of mean
+  #'@name dth_tot_lLik_st
   #'@param V
   #'@return likelihood
 
@@ -241,6 +225,7 @@
 
   #' Mortality Risk Group Distribution 1999-2014
   #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
+  #'@name mort_dist_lLik_st
   #'@param V table of mort_dist 1999-2014 (row=16 years, col=11 ages)
   #'@param rho correlation parameter
   #'@return likelihood
