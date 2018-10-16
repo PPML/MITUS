@@ -12,7 +12,7 @@
 #'@return 8 datasets from optimization loop
 #'@export
 
-optim_noTB <- function(df, samp_i=1){
+optim_noRB <- function(df, samp_i=1){
   # data("StartVal_2018-08-06", package = "MITUS")
 
 
