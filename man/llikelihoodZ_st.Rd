@@ -10,7 +10,7 @@ lLik <- lLik + addlik
 #' Mort_dist 2016
 LIKELIHOOD FOR BORGDORFF, FEREBEE & SUTHERLAND ESTIMATES}
 \usage{
-llikelihoodZ_st(samp_i, ParMatrix)
+llikelihoodZ_st(samp_i, ParMatrix, st)
 }
 \description{
 Total DEATHS 1979-2016

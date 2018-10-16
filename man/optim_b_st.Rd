@@ -11,7 +11,7 @@ optimization.
 The function requires the use of the ParamInit Rdata file and the
 StartValues Rdata file.}
 \usage{
-optim_b_st(df, samp_i = 1)
+optim_b_st(df, samp_i = 1, st)
 }
 \arguments{
 \item{df}{dataframe or matrix of starting values data frame}

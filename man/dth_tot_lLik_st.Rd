@@ -6,7 +6,7 @@
 1970,1975,1980,1985,1990-2007
 Motivation: norm, mean centered with CI = +/- 5% of mean}
 \usage{
-dth_tot_lLik_st(V)
+dth_tot_lLik_st(V, st)
 }
 \value{
 likelihood

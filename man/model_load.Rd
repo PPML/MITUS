@@ -8,18 +8,10 @@ lazy load necessary datasets
 Model Input
 creation of background parameters
 elements of P will be replaced from either the StartVals in the case
-of optimization or the user inputted dataset
-format the calibration data}
+of optimization or the user inputted dataset}
 \usage{
 model_load(loc = "US")
 }
 \description{
-Calibration Target Environment
-all other loads will be dependent on geography
-lazy load necessary datasets
-Model Input
-creation of background parameters
-elements of P will be replaced from either the StartVals in the case
-of optimization or the user inputted dataset
 format the calibration data
 }

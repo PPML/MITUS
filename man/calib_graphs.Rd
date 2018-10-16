@@ -58,8 +58,8 @@ V   <- (df[51:65,136:146]+df[51:65,189:199])
   points(1:10,colSums(notif_age[7:21,])/sum(notif_age[7:21,])*100,pch=19,cex=1.2)
 
 #'plot text
-  mtext("Age Group",1,2.5,cex=0.9)
-  mtext("Age Distribution of TB Cases (%), 2000-14",3,.8,font=2,cex=0.8)
+  mtext("Age Group",1,2.5,cex=1.2)
+  mtext("Age Distribution of TB Cases (%), 2000-14",3,.8,font=2,cex=1.2)
   legend("topright",c("Reported data","Model"),pch=c(19,15),lwd=NA,
          pt.cex=c(1,2),col=c("black","lightblue"),bg="white")
 Distribution of Cases across the TB Progression Categories
