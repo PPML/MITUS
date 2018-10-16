@@ -2,16 +2,23 @@
 % Please edit documentation in R/model_load.R
 \name{model_load}
 \alias{model_load}
-\title{Calibration Target Environment
-all other loads will be dependent on geography
+\title{loads data for the geography of interest}
+\usage{
+model_load(loc = "US")
+}
+\arguments{
+\item{loc}{two letter postal abbreviation for states; US for national}
+}
+\value{
+void
 lazy load necessary datasets
 Model Input
 creation of background parameters
 elements of P will be replaced from either the StartVals in the case
-of optimization or the user inputted dataset}
-\usage{
-model_load(loc = "US")
+of optimization or the user inputted dataset
+
+format the calibration data
 }
 \description{
-format the calibration data
+loads data for the geography of interest
 }

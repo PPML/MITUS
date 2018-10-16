@@ -7,6 +7,9 @@ Motivation: norm, mean centered with CI = +/- 5% of mean}
 \usage{
 tb_dth_tot_lLik(V)
 }
+\arguments{
+\item{V}{vector of TB deaths in fraction of millions}
+}
 \value{
 likelihood
 }

@@ -6,7 +6,7 @@
 #'across the tb_progression groups
 #'average at the end
 #'@param Par_list list (Mpfast,Mrslow,rfast,rRecov)
-#'@param n_red
+#'@param n_red crude reductions the likelihood (allows non-sampling bias)
 #'@return likelihood}
 \usage{
 sutherland_lLik(Par_list, N_red = 4)
@@ -16,6 +16,6 @@ sutherland_lLik(Par_list, N_red = 4)
 #'across the tb_progression groups
 #'average at the end
 #'@param Par_list list (Mpfast,Mrslow,rfast,rRecov)
-#'@param n_red
+#'@param n_red crude reductions the likelihood (allows non-sampling bias)
 #'@return likelihood
 }

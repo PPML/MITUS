@@ -1,7 +1,7 @@
 #include <Rcpp.h>
 #include <algorithm>
 using namespace Rcpp;
-//'@title cSim_noTB
+//'@name cSim_noTB
 //'@description runs a simulation of the tb model
 //'@param nYrs number of years to run the model.
 //'@param nRes number of results of the model
@@ -42,10 +42,10 @@ using namespace Rcpp;
 //'@param pImmScen lack of reactivitiy to IGRA for Sp
 //'@param EarlyTrend ramp down of TB in burn-in
 //'@param pReTx probability of re-treatment for TB
-//'@param NixTrans
+//'@param NixTrans reduction in TB transmission end of burn-in
 //'@param dist_gen general distribution across tb progression and mort
 //'@param trans_mat_tot_ages
-//'@return a list of outputs
+//'@return Outputs a list of outputs
 //[[Rcpp::export]]
 
 Rcpp::List cSim_noTB(

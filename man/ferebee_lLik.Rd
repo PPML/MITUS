@@ -10,6 +10,8 @@ ferebee_lLik(Par_list, N_red = 4)
 }
 \arguments{
 \item{Par_list}{list (pfast,rslow,rfast,rRecov)}
+
+\item{n_red}{crude reductions the likelihood (allows non-sampling bias)}
 }
 \value{
 likelihood

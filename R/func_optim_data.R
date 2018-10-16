@@ -18,7 +18,7 @@ rnames[j]<-paste("b_no_", j, sep="")
 rownames(opt_all)<-rnames
 
 for (i in 1:batches){
-  load(paste("/Users/nis100/Desktop/7_fri/Opt_US_r7_",i,"_2018-09-08.rda", sep=""))
+  load(paste("/Users/nis100/Desktop/16_tues/Opt_US_r7_",i,"_2018-10-16.rda", sep=""))
   opt_all[i,1:nrow(ParamInitZ)] <- o7$par
   opt_all[i,(nrow(ParamInitZ)+1)]<- o7$value
 }

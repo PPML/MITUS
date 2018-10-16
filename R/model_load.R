@@ -1,19 +1,14 @@
-#'load initial conditions
-#'load necessary libraries
-library(mnormt)
-library(parallel)
-library(lhs)
-library(Rcpp)
-library(MCMCpack)
-library(MASS)
-
-#' Calibration Target Environment
-# targets <- new.env()
-
-#'all other loads will be dependent on geography
+#'loads data for the geography of interest
+#'@name model_load
+#'@param loc two letter postal abbreviation for states; US for national
+#'@return void
 model_load<-function(loc="US"){
-  rm(Inputs)
-  rm(CalibDat)
+  library(mnormt)
+  library(parallel)
+  library(lhs)
+  library(Rcpp)
+  library(MCMCpack)
+  library(MASS)
 #'lazy load necessary datasets
 #'Model Input
 if (loc=="US")

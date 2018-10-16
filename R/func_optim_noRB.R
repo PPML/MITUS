@@ -1,21 +1,15 @@
 #'This function is used to run a optimization on the input parameters.
-#'The only input to the function is a "batch number" which will determine
-#'which row of the starting values dataframe the optimization will use.
-#'It will return 8 datasets of the optimized parameters --one from each
-#'optimization step. The final (8th) optimization step is an univariate
-#'optimization.
+#' when there is no rebalancing in the model.
+#'It will return 7 datasets of the optimized parameters --one from each
+#'optimization step.
 #'The function requires the use of the ParamInit Rdata file and the
 #'StartValues Rdata file.
 #'@name optim_noRB
 #'@param df dataframe or matrix of starting values data frame
 #'@param samp_i which rows of the data frame to use
-#'@return 8 datasets from optimization loop
+#'@return 7 datasets from optimization loop
 #'@export
-
 optim_noRB <- function(df, samp_i=1){
-  # data("StartVal_2018-08-06", package = "MITUS")
-
-
   posterior = function(theta) {
 
 

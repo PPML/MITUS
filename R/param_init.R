@@ -17,11 +17,8 @@
 #'@param Scen3 boolean for scenario 3
 #'@return InputParams list
 #'@export
-
 param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0){
-  # load("~/MITUS/data/US_ModelInputs_9-6-18.rda")
-  #'Create an empty list to hold the formatted intitial parameters
-  InputParams <-vector("list", 41)
+  InputParams <-vector("list", 41)   #Create an empty list to hold the formatted intitial parameters
   names(InputParams) <- c("rDxt","TxQualt", "InitPop", "Mpfast", "ExogInf", "MpfastPI",
                           "Mrslow", "rrSlowFB", "rfast"    ,"RRcurDef"      , "rSlfCur"  ,
                           "p_HR"        , "dist_gen" , "vTMort"   ,"RRmuRF"          , "RRmuHR",
@@ -41,7 +38,7 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
   adj_fact <- exp(PV[["adj_ag1"]]*(10:0)/11 + PV[["adj_ag11"]]*(0:10)/11)
   InputParams[["adj_fact"]] <- adj_fact;
 
-  #'params from general reblnc_pop:
+  #params from general reblnc_pop:
   InputParams[["dist_gen"]] <- dist_gen;
   # InputParams[["can_go"]] <- can_go;
   # InputParams[["dist_goal"]] <-dist_goal;

@@ -2,7 +2,12 @@
 % Please edit documentation in R/calib_functions.R
 \name{notif_tot_lik}
 \alias{notif_tot_lik}
-\title{Total Diagnosed Cases 1953-2016
+\title{Calibration Functions for use with the tb_model.cpp model
+This script creates several individual log likelihood functions
+for the calibration of the State Level TB model in tb_model.cpp
+These llikelihood functions are called in IMIS_functions.R
+takes in the outputs and calibration data and creates likelihood functions
+Total Diagnosed Cases 1953-2016
 Motivation: Normal, mean centered with CI = +/- 5% of the mean}
 \usage{
 notif_tot_lik(V)
@@ -14,6 +19,11 @@ notif_tot_lik(V)
 likelihood
 }
 \description{
+Calibration Functions for use with the tb_model.cpp model
+This script creates several individual log likelihood functions
+for the calibration of the State Level TB model in tb_model.cpp
+These llikelihood functions are called in IMIS_functions.R
+takes in the outputs and calibration data and creates likelihood functions
 Total Diagnosed Cases 1953-2016
 Motivation: Normal, mean centered with CI = +/- 5% of the mean
 }

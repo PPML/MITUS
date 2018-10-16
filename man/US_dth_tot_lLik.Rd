@@ -8,6 +8,9 @@ Motivation: norm, mean centered with CI = +/- 5% of mean}
 \usage{
 US_dth_tot_lLik(V)
 }
+\arguments{
+\item{V}{vector of total deaths in US from 1971-2016, fraction of millions}
+}
 \value{
 likelihood
 }

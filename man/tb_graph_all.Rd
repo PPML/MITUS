@@ -6,7 +6,9 @@
 This script plots a subset of the outputs of the model
 and writes these results to a .pdf file.
 This script is primarily useful for evaluating the model
-output for logic and for identifying potential bugs.}
+output for logic and for identifying potential bugs.
+Create a function to be run on a specific model run output to
+create simple graphs of all the output for a selected year range}
 \usage{
 tb_graph_all(start_yr, end_yr, df)
 }
@@ -21,6 +23,11 @@ tb_graph_all(start_yr, end_yr, df)
 .pdf of the graphs
 }
 \description{
+creates plots of various outputs of the model
+This script plots a subset of the outputs of the model
+and writes these results to a .pdf file.
+This script is primarily useful for evaluating the model
+output for logic and for identifying potential bugs.
 Create a function to be run on a specific model run output to
 create simple graphs of all the output for a selected year range
 }

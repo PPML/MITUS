@@ -1,16 +1,14 @@
 #'This scrprmst creates a function that loops over the log-likelihood
 #'functions found in calib_functions.R and updates the
 #'this is the function that goes into the optimizer
-#'load the necessary libraries
-library(mnormt)
-library(parallel)
-library(lhs)
-#source("R/define_P.R")
-#'@name llikelihoodZ
+#'@name llikelihoodZ_noTB
 #'@param samp_i sample id
 #'@param ParMatrix matrix of parameters  # Par = par_1
 #'@return lLik
 llikelihoodZ_noTB <-  function(samp_i,ParMatrix) {
+  library(mnormt)
+  library(parallel)
+  library(lhs)
   #'load the necessary calibration data
   data("CalibDat_2018-07-12", package='MITUS') # CalibDat
   #'Log-likelihood functions

@@ -9,6 +9,8 @@ tot_pop16_ag_fb_lLik(V, ESS = 500)
 }
 \arguments{
 \item{V}{US pop in 2016 (row=11 ages, col= rec fb, fb)}
+
+\item{ESS}{explained sum of squares}
 }
 \value{
 likelihood

@@ -6,7 +6,6 @@
 #'@param samp Which sampling method to use. "NORM" for random normal samples or "LHS" for latin hypercube sampling.
 #'@return rData file of starting values
 #'@export
-
 gen_st_val <-function(n=10, samp="LHS"){
   if(identical(samp,"LHS")==FALSE & identical(samp,"NORM")==FALSE) stop("'samp' must be either 'LHS' or 'NORM'")
   if(identical(samp,"NORM")==TRUE) StartVal <-sample.prior1(n)
@@ -17,9 +16,10 @@ gen_st_val <-function(n=10, samp="LHS"){
 }
 
 #makes a matrix of the Parameter Vectors generated from StartVals
+#or optimized data opt_all
 #'@name gen_par_matrix
-#'@param startMat
-#'@return matrix of Params
+#'@param startMat a matrix of values in the normal space
+#'@return matrix of Params in their original distributions
 gen_par_matrix<-function(startMat){
   ParMatrix<-matrix(NA,nrow(startMat),nrow(ParamInit))
   colnames(ParMatrix)<-rownames(ParamInit)

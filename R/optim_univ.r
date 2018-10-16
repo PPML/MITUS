@@ -1,7 +1,7 @@
 #'This function is for univariate optimization of the parameters
 #'used in tb_model.cpp
 #'@name UnivOptim
-#'@param parr
+#'@param parr parameter vector
 #'@return list
 #'@export
  UnivOptim <- function(parr) {

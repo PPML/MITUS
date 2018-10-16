@@ -7,6 +7,9 @@ used in tb_model.cpp}
 \usage{
 UnivOptim(parr)
 }
+\arguments{
+\item{parr}{parameter vector}
+}
 \value{
 list
 }
