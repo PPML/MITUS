@@ -47,7 +47,7 @@ if (loc=="US")
 #'elements of P will be replaced from either the StartVals in the case
 #'of optimization or the user inputted dataset
 #'
-P  <<- ParamInit[,1];
+P  <<- ParamInit[,1]
 names(P) <<- rownames(ParamInit)
 
 ii <<-  ParamInit[,5]==1
