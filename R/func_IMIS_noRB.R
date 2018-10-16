@@ -1,11 +1,6 @@
 #'This scrprmst creates a function that loops over the log-likelihood
 #'functions found in calib_functions.R and updates the
 #'this is the function that goes into the optimizer
-#'load the necessary libraries
-library(mnormt)
-library(parallel)
-library(lhs)
-#source("R/define_P.R")
 #'@name llikelihoodZ_noRB
 #'@param samp_i sample id
 #'@param ParMatrix matrix of parameters  # Par = par_1
@@ -18,6 +13,10 @@ llikelihoodZ_noRB <-  function(samp_i,ParMatrix) {
   names(Par) <- colnames(ParMatrix) }  ##previously, the distribution of parameters were transformed to normal distribution in
 ##to facilitate comparisons. These first two steps convert these parameters back to their
   ##distributions
+  #load the necessary libraries
+  library(mnormt)
+  library(parallel)
+  library(lhs)
   # normal to uniform
   Par2 <- pnorm(Par,0,1)
   # uniform to true
@@ -30,7 +29,7 @@ llikelihoodZ_noRB <-  function(samp_i,ParMatrix) {
 
   jj <- tryCatch({
     prms <-list()
-    prms <- param(P)
+    prms <- param_noRB(P)
     IP <- list()
     IP <- param_init(P)
     tm<-matrix(0,16,16)
