@@ -580,11 +580,11 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
               paste("N_US",StatList[[4]],sep="_"),               # pop by nat and im cat
               paste("N_NUS",StatList[[4]],sep="_"),               # pop by nat and im cat
 
-              paste("N_US",StatList[[5]],sep="_"),               # pop by nat and nm cat
-              paste("N_NUS",StatList[[5]],sep="_"),               # pop by nat and nm cat
-
               paste("N_US",StatList[[6]],sep="_"),               # pop by nat and hr cat
-              paste("N_NUS",StatList[[6]],sep="_"),              # pop by nat and hr cat
+              paste("N_NUS",StatList[[6]],sep="_"),               # pop by nat and hr cat
+
+              paste("N_US",StatList[[5]],sep="_"),               # pop by nat and nm cat
+              paste("N_NUS",StatList[[5]],sep="_"),              # pop by nat and nm cat
               paste("TOTMORT"),
 
               paste("N_NM1",StatList[[4]],sep="_"),

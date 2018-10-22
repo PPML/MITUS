@@ -69,17 +69,14 @@ param_noRB <- function (PV){
 
   ############### CREATE A MATRIX OF RF MORTALITIES BY AGE GROUP ###############
   ############### CREATE A MATRIX OF RF MORTALITIES BY AGE GROUP ###############
-  mort_dist<-c(1,0,0,0)
+
 
   RF_fact=20
 
   RRmuRF    <- rep(NA,4);
   names(RRmuRF) <- c("RF1","RF2","RF3","RF4")
+  RRmuRF<-c(1,1,1,1)
 
-  RRmuRF<-exp((0:3)/3*log(RF_fact))
-  RRmuRF<-RRmuRF/sum(RRmuRF*mort_dist)
-  #check
-  #RRmuRF%*%mort_dist
 
   # vRFMort    <- matrix(0,11,4);
   # rownames(vRFMort) <- c("0_4",paste(0:8*10+5,1:9*10+4,sep="_"),"95p")
@@ -472,11 +469,11 @@ param_noRB <- function (PV){
               paste("N_US",StatList[[4]],sep="_"),               # pop by nat and im cat
               paste("N_NUS",StatList[[4]],sep="_"),               # pop by nat and im cat
 
-              paste("N_US",StatList[[5]],sep="_"),               # pop by nat and nm cat
-              paste("N_NUS",StatList[[5]],sep="_"),               # pop by nat and nm cat
+              paste("N_US",StatList[[6]],sep="_"),               # pop by nat and nm cat
+              paste("N_NUS",StatList[[6]],sep="_"),               # pop by nat and nm cat
 
-              paste("N_US",StatList[[6]],sep="_"),               # pop by nat and hr cat
-              paste("N_NUS",StatList[[6]],sep="_"),              # pop by nat and hr cat
+              paste("N_US",StatList[[5]],sep="_"),               # pop by nat and hr cat
+              paste("N_NUS",StatList[[5]],sep="_"),              # pop by nat and hr cat
               paste("TOTMORT"),
 
               paste("N_NM1",StatList[[4]],sep="_"),
@@ -567,7 +564,7 @@ param_noRB <- function (PV){
   Params[["RRcurDef"]]  = RRcurDef
   Params[["rSlfCur"]]   = rSlfCur
   Params[["p_HR"]]      = p_HR
-  Params[["dist_gen"]]  = dist_gen
+  Params[["dist_gen"]]  = matrix(c(1,rep(0,15)),4,4)
   Params[["vTMort"]]    = vTMort
   Params[["RRmuRF"]]    = RRmuRF
   Params[["RRmuHR"]]    = RRmuHR
