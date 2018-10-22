@@ -1883,7 +1883,7 @@ for(int ag=0; ag<11; ag++) {
                 for(int nm=0; nm<4; nm++) {
                   for(int rg=0; rg<2; rg++) {
                     for(int na=0; na<3; na++) {
-                      if (na<1){
+                      if (na==0){
                         Outputs[y][296+im]  += V1[ag][tb][lt][im][nm][rg][na];
                         Outputs[y][304+rg]  += V1[ag][tb][lt][im][nm][rg][na];
                         Outputs[y][308+nm]  += V1[ag][tb][lt][im][nm][rg][na];
@@ -1924,11 +1924,12 @@ for(int ag=0; ag<11; ag++) {
         for(int ag=0; ag<11; ag++) {
           for(int tb=0; tb<6; tb++) {
             for(int lt=0; lt<2; lt++) {
-              for(int nm=0; nm<4; nm++) {
                 for(int im=0; im<4; im++) {
+                  for(int nm=0; nm<4; nm++) {
+
                   for(int rg=0; rg<2; rg++) {
                     for(int na=0; na<3; na++) {
-                      Outputs[y][333+ag+(nm*11)+(im*44)] += VMort[ag][tb][lt][im][nm][rg][na];
+                      Outputs[y][333+nm+(im*4)+(ag*16)] += VMort[ag][tb][lt][im][nm][rg][na];
                     } } } } } } }
 
         for(int i=333; i<509; i++) { Outputs[y][i] = Outputs[y][i]*12; }
@@ -1944,7 +1945,7 @@ for(int ag=0; ag<11; ag++) {
                 for(int im=0; im<4; im++) {
                   for(int rg=0; rg<2; rg++) {
                     for(int na=0; na<3; na++) {
-                      Outputs[y][520+ag+(nm*11)] += VMort[ag][tb][lt][im][nm][rg][na];
+                      Outputs[y][520+nm+(ag*4)] += VMort[ag][tb][lt][im][nm][rg][na];
                     } } } } } } }
       } ////end of mid-year results bracket
       ///////////////////////////////////////////////////////////////////////////////////
@@ -1965,7 +1966,8 @@ for(int ag=0; ag<11; ag++) {
                     for (int im=0; im<4; im++){
                       for (int nm=0; nm<4; nm++){
                     V2[ag][tb][lt][im][nm][rg][na]=0;
-                      } } } } } }
+                      } } } } } } }
+        for(int ag=0; ag<11; ag++) {
 
               for (int im=0; im<4; im++){
                 for (int nm=0; nm<4; nm++){
@@ -1976,8 +1978,10 @@ for(int ag=0; ag<11; ag++) {
                       for(int lt=0; lt<2; lt++){
                         for(int na=0; na<3; na++){
                         V2[ag][tb][lt][im][nm][rg][na] += V1[ag][tb][lt][p2][m2][rg][na] *((trans_mat_tot_agesN[(m2+p2*4)][(16*(ag+1))-(16-(nm+im*4))]));//*((mubtN[s][ag]/mubtN[0][ag])*.1));
-                      } } } } } } }
+                        }            } } } } } } }
               }
+        for(int ag=0; ag<11; ag++) {
+
           for(int im=0; im<4; im++) {
             for(int nm=0; nm<4; nm++){
               for(int rg=0; rg<2; rg++){
