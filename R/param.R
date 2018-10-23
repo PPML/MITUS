@@ -18,6 +18,10 @@ param <- function (PV){
   ImmigInputs      <- Inputs[["ImmigInputs"]]
   TxInputs         <- Inputs[["TxInputs"]]
 
+  ########## DEFINE A VARIABLE THAT WILL DETERMINE HOW LONG THE TIME DEPENDENT
+  ########## VARIABLES SHOULD BE (IN MONTHS)
+  month<-1201;
+
   ##########                PARAMETER DEFINITIONS                      ###########
   ##########                RISK FACTOR DISTRIBUTIONS   ##########################
 
@@ -28,6 +32,7 @@ param <- function (PV){
   ####### INDEXED BY TIME, ABSOLUTE NUMBER OF NEW ADULT ENTRANTS OVER TIME #######
 
   Birthst   <- SmoCurve(Births)*PV["TunBirths"]/12
+  Birthst   <- Birthst[1:month]
 
   ##########################      MORTALITY RATES       ##########################
   ########################## BACKGROUND MORTALITY BY TIME ########################
@@ -41,7 +46,7 @@ param <- function (PV){
   }
 
 
-
+  mubt<-mubt[1:month,]
   # for(i in 2:10) {
   #   mubt[,i]<-mubt[,i]*exp(TunmuAg)
   # }
@@ -134,12 +139,13 @@ param <- function (PV){
   ImmAct         <- outer(PrevTrend25_34a*PV["RRtbprev"]*ImDxChngV,ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*PV["pImAct"]
   ImmFst         <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*(1-PV["pImAct"])
   ImmNon         <- TotImmAge-ImmAct-ImmFst-ImmLat
-
+  ###################### TRUNCATE THESE VALS
+  ImmAct<-ImmAct[1:month,];ImmFst<-ImmFst[1:month,]; ImmLat<-ImmLat[1:month,]; ImmNon<-ImmNon[1:month,]
   ######################   EXOGENEOUS INFECTION RISK      ########################
 
   ExogInf        <- matrix(NA,length(PrevTrend25_34a),5)
   ExogInf        <- PV["ExogInf"]*PrevTrend25_34a/PrevTrend25_341a["2013"]/12
-
+  ExogInf        <- ExogInf[1:month]
   #removed *(ImmigInputs[[7]][4]*DrN[,i]+(1-ImmigInputs[[7]][4])*DrE[,i])
 
   ######################             EMIGRATION          #########################
@@ -304,7 +310,7 @@ param <- function (PV){
   rDxt           <- 1/(1/rDxt1+DelaySp)*SensSp
   rDxt[,2]       <- (rDxt[,1]-min(rDxt[,1]))/PV["rrDxH"]+min(rDxt[,1]) #check this with Nick
   colnames(rDxt) <- c("Active","Active_HighRisk")
-
+  rDxt<-rDxt[1:month,]
   ################################################################################
   ###########################     TREATMENT OUTCOMES    ##########################
   ################################################################################
@@ -328,7 +334,8 @@ param <- function (PV){
   rDef1         <- predict(smooth.spline(x=c(1950:1979,1993:2100),y=rDef0[-(31:43)],spar=0.4),x=1950:2100)$y
   rDeft         <- SmoCurve(rDef1)/12;
   rDeftH        <- rDeft*PV["RRdefHR"] # second col is HR default rate
-
+  rDeft<-rDeft[1:month]
+  rDeftH<-rDeftH[1:month]
   #########################        REGIMEN QUALITY       ##########################
 
   TxQual0         <- rep(NA,151)
@@ -337,23 +344,17 @@ param <- function (PV){
   TxQual0[63:151] <- TxQual0[62]
   TxQual1         <- predict(smooth.spline(x=c(1950:1979,1993:2100),y=TxQual0[-(31:43)],spar=0.4),x=1950:2100)$y
   TxQualt         <- SmoCurve(TxQual1);
+TxQualt<-TxQualt[1:month]
 
 
 
 
-
-  TxQual0         <- rep(NA,151)
-  TxQual0[1:30]   <- PV["TxQualEarly"]
-  TxQual0[44:62]  <- ORAdd(TxInputs[[2]][,2],PV["TunTxQual"])
-  TxQual0[63:151] <- TxQual0[62]
-  TxQual1         <- predict(smooth.spline(x=c(1950:1979,1993:2100),y=TxQual0[-(31:43)],spar=0.4),x=1950:2100)$y
-  TxQualt         <- SmoCurve(TxQual1);
   RRcurDef        <- PV["RRcurDef"]
 
   #########################         RETREATMENT         ##########################
 
   pReTx   <- LgtCurve(1985,2000,PV["pReTx"])   	# Probability Tx failure identified, patient initiated on tx experienced reg (may be same)
-
+  pReTx   <- pReTx[1:1201]
   #####################         NEW TB TREATMENT VECTOR       ####################
 
   TxVec           <- rep(NA,2)
