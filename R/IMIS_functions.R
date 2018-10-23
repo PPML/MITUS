@@ -129,8 +129,13 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
       addlik <- tot_dth_age_lLik(V=v20b); addlik
       lLik <- lLik + addlik
       #' #' Mort_dist 2016
-      v21  <- M[51:67,24:27]/M[51:67,2]
-      addlik <- mort_dist_lLik(V=v21); addlik
+      v21a<- v21  <- M[51:67,521:564]
+      for (i in 1:11){
+        denom<-M[51:67,2+i]
+        for (j in 1:ncol(v21)){
+        v21a[,(1:4)+4*(i-1)]<-v21[,(1:4)+4*(i-1)]/denom
+      } }
+      addlik <- mort_dist_lLik(V=v21a); addlik
       lLik <- lLik + addlik
       #' HOMELESS POP 2010 - index updated
       v23b  <- M[61,29]
