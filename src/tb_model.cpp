@@ -1945,8 +1945,10 @@ for(int ag=0; ag<11; ag++) {
                 for(int im=0; im<4; im++) {
                   for(int rg=0; rg<2; rg++) {
                     for(int na=0; na<3; na++) {
-                      Outputs[y][520+nm+(ag*4)] += VMort[ag][tb][lt][im][nm][rg][na];
+                      Outputs[y][520+nm+(ag*4)] += V1[ag][tb][lt][im][nm][rg][na];
                     } } } } } } }
+
+
       } ////end of mid-year results bracket
       ///////////////////////////////////////////////////////////////////////////////////
       //////////////////////////////END MIDYEAR RESULTS//////////////////////////////////

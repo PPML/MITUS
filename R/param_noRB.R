@@ -538,17 +538,17 @@ param_noRB <- function (PV){
 
               paste("mort_rate",StatList[[1]],sep="_" ),
 
-              paste("mort_rate ag 1",StatList[[5]],sep="_" ),
-              paste("mort_rate ag 2",StatList[[5]],sep="_" ),
-              paste("mort_rate ag 3",StatList[[5]],sep="_" ),
-              paste("mort_rate ag 4",StatList[[5]],sep="_" ),
-              paste("mort_rate ag 5",StatList[[5]],sep="_" ),
-              paste("mort_rate ag 6",StatList[[5]],sep="_" ),
-              paste("mort_rate ag 7",StatList[[5]],sep="_" ),
-              paste("mort_rate ag 8",StatList[[5]],sep="_" ),
-              paste("mort_rate ag 9",StatList[[5]],sep="_" ),
-              paste("mort_rate ag 10",StatList[[5]],sep="_" ),
-              paste("mort_rate ag 11",StatList[[5]],sep="_" )
+              paste("N_ag_1",StatList[[5]],sep="_" ),
+              paste("N_ag_2",StatList[[5]],sep="_" ),
+              paste("N_ag_3",StatList[[5]],sep="_" ),
+              paste("N_ag_4",StatList[[5]],sep="_" ),
+              paste("N_ag_5",StatList[[5]],sep="_" ),
+              paste("N_ag_6",StatList[[5]],sep="_" ),
+              paste("N_ag_7",StatList[[5]],sep="_" ),
+              paste("N_ag_8",StatList[[5]],sep="_" ),
+              paste("N_ag_9",StatList[[5]],sep="_" ),
+              paste("N_ag_10",StatList[[5]],sep="_" ),
+              paste("N_ag_11",StatList[[5]],sep="_" )
   )
 
   Params<-list()
