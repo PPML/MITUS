@@ -1,0 +1,95 @@
+---
+title: "Incorporating User-Specified Program Changes into MITUS Model Parameters"
+author: "Nicole A. B. Swartwood"
+
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+The MITUS model is able to incoroporate user-defined program changes into the model's parameters and investigate the effects of these changes on model outcomes. These changes will be applied across the model's total population.
+
+The Tabby2 user will have access to the following programatic features:
+
+#### LTBI Treatment Cascade
+
+* LTBI screening coverage
+* Fraction of these screens that will receive IGRA (the remainder will be assumed to receive TST)
+* Fraction of those testing positive who initiate treatment
+* Fraction of individuals who initiate treatment who complete treatment 
+* Treatment efficacy for individuals completing treatment
+
+#### Active TB Treatment Cascade
+
+* Average time to treatment for incident TB cases
+* Fraction discontinuing/defaulting from treatment 
+
+The nature of these programatic changes allows them to be easily incorporated into the parameter vector, P, which contains the unformatted parameters that are used in the param and param_init functions. Below is a brief description of which parameters are altered in the P vector. This process can be found in the function prgm_chngs(). 
+
+#### LTBI Screening Coverage
+* Proposed range: 1 to 5 times the model's background screening rate
+* Current default: 
+
+* we will need to display the default screening coverage to the user so they can adjust appropriately. 
+* will Tabby2 need to have a reactive error function to prevent user from specifying over 100% screening coverage?
+
+If the user specifies a value that is not equal to one, the *rLtScr* entry will be scaled by this number. 
+```r
+P["rLtScr"]*UI_prgm_chng$scrn_cov
+```
+
+#### Fraction Receiving IGRA
+* Proposed range: 0-100%
+* Current default: 100%
+
+* current model assumes 100% IGRA coverage; we will need to determine a baseline distribution for IGRA and TST testing, recalibrate the model, then allow the user to change this percentage.
+
+We assume the primary difference between LTBI testing technologies are the associated sensitivity and specificities. When the user changes the percent of the screening population that receives IGRA the *UI_prgm_chng* vector will store this value as a fraction of 1. Assuming that TST will be used in all other screenings, we will then construct a weighted average of sensitivity and specificity in the model. 
+```r
+P["IGRA_frc"]<-UI_prg_chng$IGRA_frc
+SensLt<-P["IGRA_frc"]*Sens_IGRA + (1-P["IGRA_frc"])*Sens_TST
+SpecLt<-P["IGRA_frc"]*Spec_IGRA + (1-P["IGRA_frc"])*Spec_TST
+```
+
+#### LTBI Treatment Initiation 
+* Proposed range: 0-100%
+* Current default: 80%
+
+```r
+    P["pTlInt"] <- UI_prgm_chng$ltbi_init_frc
+```
+
+#### LTBI Treatment Completion 
+* Proposed range: 0-100%
+* Current default: 
+
+```r
+    P["pDefLt"]<-1-(UI_prgm_chng$ltbi_comp_frc)
+```
+
+#### LTBI Treatment Efficacy 
+* Proposed range: 0-100%
+* Current default: 
+
+```r
+    P["EffLt"]<-1-(UI_prgm_chng$ltbi_eff_frc)
+```
+
+#### Time from Active TB Diagnosis to Treatment Initation
+* Proposed range: 0-100% model baseline
+* Current default:
+
+```r
+    P["rDxt"]<-P["rDxt"]*UI_prgm_chng$tb_tim2tx_frc
+```
+
+#### Active TB Treatment Completion
+* Proposed range: 0-100%
+* Current default:
+
+```r
+    P["pDeft"]<-1-(UI_prgm_chng$ltbi_txdef_frc)
+```
+ 
