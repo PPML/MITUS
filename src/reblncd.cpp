@@ -217,7 +217,7 @@ Rcpp::NumericMatrix reblncd(
         } } }
     for(int i=0; i<16; i++){
       for(int j=0; j<16; j++){
-        trans_mat_tot[i][j]=trans_mat_tot[i][j]*adj_fact[ag];
+        trans_mat_tot[i][j]=trans_mat_tot[i][j];//*adj_fact[ag];
       } }
     for(int i=0; i<16; i++){
       for(int j=0; j<16; j++){
