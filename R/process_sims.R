@@ -39,7 +39,7 @@ OutputsZint <-  function(samp_i=1,ParMatrix,startyr=1950, endyr=2050,Int1=0,Int2
    prms<-param(P)
    NY=(endyr-startyr)
    trans_mat_tot_ages<<-reblncd(mubt = IP$mubt,can_go = can_go,RRmuHR = IP$RRmuHR[2], RRmuRF = IP$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v,adj_fact= IP[["adj_fact"]])
-
+   try(if(max(trans_mat_tot_ages > 1)) stop("sum of transition probabilities are greater than 1."))
   m <-       cSim(        nYrs     =   NY         , nRes      = length(IP[["ResNam"]]), rDxt     = IP[["rDxt"]]    , TxQualt    = IP[["TxQualt"]]   , InitPop  = IP[["InitPop"]]    ,
                            Mpfast     = IP[["Mpfast"]]    , ExogInf   = IP[["ExogInf"]]       , MpfastPI = IP[["MpfastPI"]], Mrslow     = IP[["Mrslow"]]    , rrSlowFB = IP[["rrSlowFB"]]    ,
                            rfast      = IP[["rfast"]]     , RRcurDef  = IP[["RRcurDef"]]      , rSlfCur  = IP[["rSlfCur"]] , p_HR       = IP[["p_HR"]]      , dist_gen = IP[["dist_gen"]]    ,
