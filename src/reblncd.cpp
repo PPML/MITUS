@@ -205,7 +205,7 @@ Rcpp::NumericMatrix reblncd(
     for(int i=0; i<16; i++){
       row_sum[i]=0;
       for(int j=0; j<16; j++){
-        row_sum[i] +=trans_mat_tot[i][j]; ///calculate the number of total transitions from a state
+        row_sum[i] +=trans_mat_tot[i][j]*adj_fact[ag]; ///calculate the number of total transitions from a state
       } }
     for(int i=0; i<16; i++){
       if (row_sum[i]>1){
