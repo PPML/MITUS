@@ -76,7 +76,7 @@ Rcpp::NumericMatrix reblncd(
     for (int nm=0; nm<4; nm++){
       for (int im=0; im<4; im++){
 
-          if ((ag<8) & ((RRmuRF[nm]*RRmuHR)<4)){
+          if ((ag<9) & ((RRmuRF[nm]*RRmuHR)<4)){
             dist_t1_v[nm+im*4]=dist_gen_v[nm+im*4]*(1-((mubtN[ag]*RRmuRF[nm]*RRmuHR*HRdist[ag])));
 
           } else {
