@@ -20,8 +20,8 @@ if (loc=="US")
 
 }
 model_inputs<-paste0(loc,"_ModelInputs_9-6-18")
-par_init<-paste0("US_ParamInit_2018-10-29")
-start_val<-paste0("US_StartVal_2018-10-29")
+par_init<-paste0("US_ParamInit_2018-10-31")
+start_val<-paste0("US_StartVal_2018-10-31")
 
 data(list=model_inputs, package = 'MITUS')
 data(list=par_init, package = 'MITUS')
