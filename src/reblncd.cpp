@@ -76,11 +76,11 @@ Rcpp::NumericMatrix reblncd(
     for (int nm=0; nm<4; nm++){
       for (int im=0; im<4; im++){
 
-          if ((ag<9) & ((RRmuRF[nm]*RRmuHR)<4)){
+          if ((ag<9) & ((RRmuRF[nm]*RRmuHR)<5)){
             dist_t1_v[nm+im*4]=dist_gen_v[nm+im*4]*(1-((mubtN[ag]*RRmuRF[nm]*RRmuHR*HRdist[ag])));
 
           } else {
-            dist_t1_v[nm+im*4]=dist_gen_v[nm+im*4]*(1-((mubtN[ag]*4*HRdist[ag])));
+            dist_t1_v[nm+im*4]=dist_gen_v[nm+im*4]*(1-((mubtN[ag]*5*HRdist[ag])));
 
           }
 
