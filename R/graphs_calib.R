@@ -1,3 +1,4 @@
+#'
 #'This script creates graphs that compare model simulations
 #'versus calibration data.
 #'@name graphs_calib
@@ -7,7 +8,8 @@
 calib_graphs <- function(df){
   library(MCMCpack)
 df<-as.data.frame(df)
-pdf(file=paste("MITUS_results/calib_graphs",Sys.time(),".pdf"), width = 11, height = 8.5)
+pdfname<-paste("MITUS_results/calib_graphs",Sys.time(),".pdf")
+pdf(file=pdfname, width = 11, height = 8.5)
 par(mfrow=c(2,2),mar=c(4,4.5,3,1))
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -495,7 +497,7 @@ legend("topleft",c("Reported data","Model"),pch=c(19,15),lwd=NA,
 ################################################################################
 
 
-dev.off() # code for ma
+dev.off();  system(paste("open", pdfnam))# code for ma
 
 }
 
