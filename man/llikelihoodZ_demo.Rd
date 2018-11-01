@@ -15,15 +15,6 @@ llikelihoodZ_demo(samp_i, ParMatrix)
 }
 \value{
 lLik
-load the necessary calibration data
-Log-likelihood functions
-Assign the calibration importance weights from CalibDat
-These weights are based on year of the simulation.
-format P
-Log-likelihood functions
-Assign the calibration importance weights from CalibDat
-These weights are based on year of the simulation.
-format P
 if any output is missing or negative or if any model state population is negative
 set the likelihood to a hugely negative number (penalized)
 TOTAL POP EACH DECADE, BY US/FB
