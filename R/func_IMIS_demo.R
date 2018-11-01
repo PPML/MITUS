@@ -9,21 +9,6 @@ llikelihoodZ_demo <-  function(samp_i,ParMatrix) {
   library(mnormt)
   library(parallel)
   library(lhs)
-  #'load the necessary calibration data
-  data("CalibDat_2018-07-12", package='MITUS') # CalibDat
-  #'Log-likelihood functions
-  #'Assign the calibration importance weights from CalibDat
-  #'These weights are based on year of the simulation.
-  wts <- CalibDat[["ImptWeights"]]
-  #'format P
-  data("ParamInitUS_2018-08-06_final", package='MITUS')# ParamInit
-  P  <- ParamInit[,1];
-  names(P) <- rownames(ParamInit)
-  ii <-  ParamInit[,5]==1
-  ParamInitZ <- ParamInit[ParamInit$Calib==1,]
-  idZ0 <- ParamInitZ[,4]==0
-  idZ1 <- ParamInitZ[,4]==1
-  idZ2 <- ParamInitZ[,4]==2
 
   if(min(dim(as.data.frame(ParMatrix)))==1) {
     Par <- as.numeric(ParMatrix);
@@ -43,17 +28,11 @@ llikelihoodZ_demo <-  function(samp_i,ParMatrix) {
   P <- P
 
   jj <- tryCatch({
-    data("CalibDat_2018-07-12", package='MITUS') # CalibDat
-    #'Log-likelihood functions
-    #'Assign the calibration importance weights from CalibDat
-    #'These weights are based on year of the simulation.
-    wts <- CalibDat[["ImptWeights"]]
-    #'format P
 
     prms <-list()
     prms <- param(P)
 
-    dd <- cSim_demo(  nYrs       = 2018-1950         ,
+    dd <- cSim_demo_ag(  nYrs       = 2018-1950         ,
                       nRes      = 24,
                       InitPop  = prms[["InitPop"]]    ,
                       Birthst  = prms[["Birthst"]]    ,
@@ -65,7 +44,7 @@ llikelihoodZ_demo <-  function(samp_i,ParMatrix) {
     )
     #'if any output is missing or negative or if any model state population is negative
     #'set the likelihood to a hugely negative number (penalized)
-    if(sum(is.na(dd$Outputs[65,]))>0 | min(dd$Outputs[65,])<0 | min(dd$V1)<0 ) {
+    if(sum(is.na(dd$Outputs[65,]))>0 | min(dd$Outputs[65,])<0 ) {
       lLik <- -10^12
     } else {
       # data("ParamInitUS_2018-08-06_final", package='MITUS')# ParamInit
