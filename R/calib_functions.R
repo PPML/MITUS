@@ -158,18 +158,47 @@ tot_pop_yr_fb_lLik <- function(V) {
   adj_17             <- sum(dnorm(tot_pop_yr_fb[-1,4],tot_pop_yr_fb[-1,4],tot_pop_yr_fb[7,4]*0.1/1.96,log=T)*wts[1+1:6*10])
   sum(dnorm(tot_pop_yr_fb[-1,4],V[c(11,21,31,41,51,61)],tot_pop_yr_fb[7,4]*0.1/1.96,log=T)*wts[1+1:6*10]) - adj_17  } # CI = +/- 2mil
 
-
-#' TOTAL POP AGE DISTRIBUTION 2014
-#' Motivation: reported estimates represent pseudo-data for a multinomial likelihood, with ESS = 500
-#'@param V US pop in 2016 (row=11 ages, col= rec fb, fb)
-#'@param ESS explained sum of squares
-#'@return likelihood
+#' #' TOTAL POP AGE DISTRIBUTION 2014 by nativity
+#' #' Motivation: reported estimates represent pseudo-data for a multinomial likelihood, with ESS = 500
+#' #'@param V US pop in 2016 (row=11 ages, col= rec fb, fb)
+#' #'@param ESS explained sum of squares
+#' #'@return likelihood
 tot_pop16_ag_fb_lLik <- function(V,ESS=500) {
   tot_pop16_ag_fb      <- cbind(CalibDat[["tot_pop16_ag_fb"]][-9,3]/sum(CalibDat[["tot_pop16_ag_fb"]][-9,3]),
                                 CalibDat[["tot_pop16_ag_fb"]][-9,4]/sum(CalibDat[["tot_pop16_ag_fb"]][-9,4]))
   adj_18               <- sum(log(tot_pop16_ag_fb[,1])*tot_pop16_ag_fb[,1])+sum(log(tot_pop16_ag_fb[,2])*tot_pop16_ag_fb[,2])
   V1 <- rbind(V[1,],V[2,]+V[3,],V[4,]+V[5,],V[6,],V[7,],V[8,],V[9,],V[10,]+V[11,])
   (sum(log(V1[,1]/sum(V1[,1]))*tot_pop16_ag_fb[,1])+sum(log(V1[,2]/sum(V1[,2]))*tot_pop16_ag_fb[,2]))*ESS - adj_18*ESS  }
+
+#' TOTAL US POP No nativity (ONLY FOR USE IN DEMO MODEL)
+#' 1970,1975,1980,1985,1990-2007
+#' Motivation: norm, mean centered with CI = +/- 5% of mean
+#'@param V vector of total deaths in US from 1971-2016, fraction of millions
+#'@return likelihood
+
+US_pop_tot_lLik <- function(V) {
+  # CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
+  US_pop_tot  <- CalibDat[["tot_pop_yr_fb"]][-9,2]
+  adj_20a             <- sum(dnorm(US_pop_tot[-1],US_pop_tot[-1],US_pop_tot[7]*0.1/1.96,log=T)*wts[1+1:6*10])
+  sum(dnorm(US_pop_tot[-1],V[c(11,21,31,41,51,61)],US_pop_tot[7]*0.1/1.96,log=T)*wts[1+1:6*10]) - adj_20a  } # CI = +/- 2mil
+
+#'
+#' #' TOTAL POP AGE DISTRIBUTION  NO NATIVITY (ONLY FOR USE IN DEMO MODEL) 1999-2014
+#' #'@param V table of POP by age 2016 (row=16 years, col=11 ages)
+#' #'@param rho correlation parameter
+#' #'@return likelihood
+tot_pop_age_lLik <- function(V,ESS=500) {
+  # CalibDat$US_mort_age <- read.csv(system.file("extdata","US_mort_age.csv", package="MITUS"))
+  tot_pop16_ag  <- CalibDat[["tot_pop16_ag_fb"]][-9,2]/sum(CalibDat[["tot_pop16_ag_fb"]][-9,2])
+  V2 <- V[-11]; V2[10] <- V2[10]+V[11]
+  V2 <- V2[-5]; V2[4]  <- V2[4]+V[5]
+  V2 <- V2[-3]; V2[2]  <- V2[2]+V[3]
+
+  adj_18               <- sum(log(tot_pop16_ag[])*tot_pop16_ag[])
+  sum(log(V2/sum(V2))*tot_pop16_ag[1])*ESS - adj_18*ESS
+   }
+
+
 
 #' Total TB DEATHS 1999-2014
 #' Motivation: overdispersed poisson, modelled with negbin with overdispersion param = 100 *wts[50:65]
