@@ -26,7 +26,7 @@ llikelihoodZ_demo <-  function(samp_i,ParMatrix) {
   Par3[idZ2] <- qnorm( Par2[idZ2], mean    = ParamInitZ[idZ2,6], sd     = ParamInitZ[idZ2,7])
   P[ii] <- Par3
   P <- P
-
+ names(P)<-rownames(ParamInit)
   jj <- tryCatch({
 
     prms <-list()
