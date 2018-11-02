@@ -84,8 +84,8 @@ model_load_demo<-function(loc="US"){
 
   }
   model_inputs<-paste0(loc,"_ModelInputs_9-6-18")
-  par_init<-paste0("US_ParamInit_demo_2018-11-01")
-  start_val<-paste0("US_StartVal_demo_2018-11-01")
+  par_init<-paste0("US_ParamInit_demo")
+  start_val<-paste0("US_StartVal_demo")
 
   data(list=model_inputs, package = 'MITUS')
   data(list=par_init, package = 'MITUS')
@@ -106,11 +106,11 @@ model_load_demo<-function(loc="US"){
   #'elements of P will be replaced from either the StartVals in the case
   #'of optimization or the user inputted dataset
   #'
-  P  <<- ParamInit[,1]
-  names(P) <<- rownames(ParamInit)
+  P  <<- ParamInit_demo[,1]
+  names(P) <<- rownames(ParamInit_demo)
 
-  ii <<-  ParamInit[,5]==1
-  ParamInitZ <<- ParamInit[ParamInit$Calib==1,]
+  ii <<-  ParamInit_demo[,5]==1
+  ParamInitZ <<- ParamInit_demo[ParamInit_demo$Calib==1,]
   idZ0 <<- ParamInitZ[,4]==0
   idZ1 <<- ParamInitZ[,4]==1
   idZ2 <<- ParamInitZ[,4]==2
