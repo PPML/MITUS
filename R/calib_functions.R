@@ -170,22 +170,39 @@ tot_pop16_ag_fb_lLik <- function(V,ESS=500) {
   V1 <- rbind(V[1,],V[2,]+V[3,],V[4,]+V[5,],V[6,],V[7,],V[8,],V[9,],V[10,]+V[11,])
   (sum(log(V1[,1]/sum(V1[,1]))*tot_pop16_ag_fb[,1])+sum(log(V1[,2]/sum(V1[,2]))*tot_pop16_ag_fb[,2]))*ESS - adj_18*ESS  }
 
+# US_pop_tot_lLik_2<-function(X,ESS=500){
+#   #target data
+#   US_pop_tot  <- CalibDat[["tot_pop_yr_fb"]][-9,2]
+#   #calculate an adjustment factor
+#   adj_20s             <- sum(log(US_pop_tot[-1])*US_pop_tot[-1])
+#   sum(log(X*US_pop_tot[-1])*ESS - adj_20s*ESS)
+# }
+
+
+
 #' TOTAL US POP No nativity (ONLY FOR USE IN DEMO MODEL)
 #' 1970,1975,1980,1985,1990-2007
 #' Motivation: norm, mean centered with CI = +/- 5% of mean
-#'@param V vector of total deaths in US from 1971-2016, fraction of millions
-#'@return likelihood
+#'@param X vector of total deaths in US from 1971-2016, fraction of millions
+#'@return j likelihood
+#'
 
-US_pop_tot_lLik <- function(V) {
+US_pop_tot_lLik <- function(X) {
   # CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
   US_pop_tot  <- CalibDat[["tot_pop_yr_fb"]][-9,2]
-  adj_20a             <- sum(dnorm(US_pop_tot[-1],US_pop_tot[-1],US_pop_tot[7]*0.1/1.96,log=T)*wts[1+1:6*10])
-  sum(dnorm(US_pop_tot[-1],V[c(11,21,31,41,51,61)],US_pop_tot[7]*0.1/1.96,log=T)*wts[1+1:6*10]) - adj_20a  } # CI = +/- 2mil
-
+  # X1<-X[c(11,21,31,41,51,61)]
+  adj_20p             <- sum(dnorm(US_pop_tot[-1],US_pop_tot[-1],US_pop_tot[7]*0.01/1.96,log=T)*wts[1+1:6*10])
+ #this is the problematic line
+  # print(X)
+   j<-(sum(wts[1+1:6*10]))
+   return(j)
+   # } # CI = +/- 2mil *wts[1+1:6*10]) - adj_20p
+   #dnorm(US_pop_tot[-1], X ,US_pop_tot[7]*0.1/1.96,log=T)*
+}
 #'
 #' #' TOTAL POP AGE DISTRIBUTION  NO NATIVITY (ONLY FOR USE IN DEMO MODEL) 1999-2014
 #' #'@param V table of POP by age 2016 (row=16 years, col=11 ages)
-#' #'@param rho correlation parameter
+#' #'@param ESS correlation parameter
 #' #'@return likelihood
 tot_pop_age_lLik <- function(V,ESS=500) {
   # CalibDat$US_mort_age <- read.csv(system.file("extdata","US_mort_age.csv", package="MITUS"))

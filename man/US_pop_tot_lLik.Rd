@@ -6,10 +6,10 @@
 1970,1975,1980,1985,1990-2007
 Motivation: norm, mean centered with CI = +/- 5% of mean}
 \usage{
-US_pop_tot_lLik(V)
+US_pop_tot_lLik(X)
 }
 \arguments{
-\item{V}{vector of total deaths in US from 1971-2016, fraction of millions}
+\item{X}{vector of total deaths in US from 1971-2016, fraction of millions}
 }
 \value{
 likelihood

@@ -26,54 +26,44 @@ llikelihoodZ_demo <-  function(samp_i,ParMatrix) {
   Par3[idZ2] <- qnorm( Par2[idZ2], mean    = ParamInitZ[idZ2,6], sd     = ParamInitZ[idZ2,7])
   P[ii] <- Par3
   P <- P
- names(P)<-rownames(ParamInit)
+# names(P)<-rownames(ParamInit_demo)
   jj <- tryCatch({
-
     prms <-list()
     prms <- param(P)
-
-    dd <- cSim_demo_ag(  nYrs       = 2018-1950         ,
+    lLik <- 0
+    zz<-list()
+    zz <- cSim_demo_ag(nYrs       = 2018-1950         ,
                       nRes      = 24,
                       InitPop  = prms[["InitPop"]]    ,
                       Birthst  = prms[["Birthst"]]    ,
                       ImmNon    = prms[["ImmNon"]]    ,
                       ImmLat   = prms[["ImmLat" ]]    ,
-                      ImmAct     = prms[["ImmAct"]]   ,
+                      ImmAct  = prms[["ImmAct"]]   ,
                       ImmFst   = prms[["ImmFst" ]]    ,
-                      mubt       = prms[["mubt"]]
-    )
+                      mubt       = prms[["mubt"]])
     #'if any output is missing or negative or if any model state population is negative
     #'set the likelihood to a hugely negative number (penalized)
-    if(sum(is.na(dd$Outputs[65,]))>0 | min(dd$Outputs[65,])<0 ) {
+    if(sum(is.na(zz$Outputs[65,]))>0 | min(zz$Outputs[65,])<0 ) {
       lLik <- -10^12
     } else {
-      # data("ParamInitUS_2018-08-06_final", package='MITUS')# ParamInit
-      # P  <- ParamInit[,1];
-      # names(P) <- rownames(ParamInit)
-      # ii <-  ParamInit[,5]==1
-      # ParamInitZ <- ParamInit[ParamInit$Calib==1,]
-      # idZ0 <- ParamInitZ[,4]==0
-      # idZ1 <- ParamInitZ[,4]==1
-      # idZ2 <- ParamInitZ[,4]==2
-      D <- dd$Outputs
-      colnames(D) <- c(prms$ResNam[1:13],prms$ResNam[121:131])
+      M <- zz$Outputs
+      colnames(M) <- c(prms$ResNam[1:13],prms$ResNam[121:131]);
       lLik <- 0
-
       #' TOTAL POP EACH DECADE, BY US/FB
-      v17  <- D[,2]
-      addlik <-US_pop_tot_lLik(V=v17); addlik
+      v17  <- M[c(11,21,31,41,51,61),2]
+      addlik <-US_pop_tot_lLik(X=v17); addlik
       lLik <- lLik + addlik
-      #' TOTAL POP AGE DISTRIBUTION 2016 index updated
-      v18  <- D[65,3:13]
+      #' #' TOTAL POP AGE DISTRIBUTION 2016 index updated
+      v18  <- M[65,3:13]
       addlik <- tot_pop_age_lLik(V=v18); addlik
       lLik <- lLik + addlik
 
       #' Total DEATHS 1999-2016 BY AGE
-      v20  <- D[50:67,14:24]
+      v20  <- M[50:67,14:24]
       addlik <- tot_dth_age_lLik(V=v20); addlik
       lLik <- lLik + addlik
       #' Total DEATHS 1999-2016 BY AGE
-      v20b  <- D[50:67,14:24]
+      v20b  <- M[50:67,14:24]
       addlik <- tot_dth_age_lLik(V=v20b); addlik
       lLik <- lLik + addlik
 
