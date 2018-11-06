@@ -40,9 +40,10 @@ llikelihoodZ_demo <-  function(samp_i,ParMatrix) {
                       ImmLat   = prms[["ImmLat" ]]    ,
                       ImmAct  = prms[["ImmAct"]]      ,
                       ImmFst   = prms[["ImmFst" ]]    ,
-                      mubt       = prms[["mubt"]]     ,
-                      RRmuHR       = prms[["RRmuHR"]] ,
-                      p_HR       = prms[["p_HR"]])
+                      mubt       = prms[["mubt"]])
+
+    # RRmuHR       = prms[["RRmuHR"]] ,
+    # p_HR       = prms[["p_HR"]])
     #'if any output is missing or negative or if any model state population is negative
     #'set the likelihood to a hugely negative number (penalized)
     if(sum(is.na(zz$Outputs[65,]))>0 | min(zz$Outputs[65,])<0 ) {

@@ -10,8 +10,8 @@
 #'@param ImmTot Immigration over time
 #'@param mubt background mortality over time
 #'@return a list of outputs
-cSim_demo_ag <- function(nYrs, nRes, InitPop, Birthst, ImmNon, ImmLat, ImmAct, ImmFst, mubt, RRmuHR, p_HR) {
-    .Call('_MITUS_cSim_demo_ag', PACKAGE = 'MITUS', nYrs, nRes, InitPop, Birthst, ImmNon, ImmLat, ImmAct, ImmFst, mubt, RRmuHR, p_HR)
+cSim_demo_ag <- function(nYrs, nRes, InitPop, Birthst, ImmNon, ImmLat, ImmAct, ImmFst, mubt) {
+    .Call('_MITUS_cSim_demo_ag', PACKAGE = 'MITUS', nYrs, nRes, InitPop, Birthst, ImmNon, ImmLat, ImmAct, ImmFst, mubt)
 }
 
 #'@name cSim_demo_agna
