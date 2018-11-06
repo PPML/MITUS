@@ -189,32 +189,26 @@ tot_pop16_ag_fb_lLik <- function(V,ESS=500) {
 
 US_pop_tot_lLik <- function(X) {
   # CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
-  US_pop_tot  <- CalibDat[["tot_pop_yr_fb"]][-9,2]
+  US_pop_tot  <- CalibDat[["tot_pop_yr_fb"]][-9,2];
   # X1<-X[c(11,21,31,41,51,61)]
-  adj_20p             <- sum(dnorm(US_pop_tot[-1],US_pop_tot[-1],US_pop_tot[7]*0.01/1.96,log=T)*wts[1+1:6*10])
+  adj_20p             <- sum(dnorm(US_pop_tot[-1],US_pop_tot[-1],US_pop_tot[7]*0.01/1.96,log=T)*wts[1+1:6*10]);
  #this is the problematic line
   # print(X)
-   j<-(sum(wts[1+1:6*10]))
+   j<-(sum(dnorm(US_pop_tot[-1], X ,US_pop_tot[7]*0.1/1.96,log=T)*wts[1+1:6*10]) - adj_20p);
    return(j)
    # } # CI = +/- 2mil *wts[1+1:6*10]) - adj_20p
    #dnorm(US_pop_tot[-1], X ,US_pop_tot[7]*0.1/1.96,log=T)*
 }
-#'
 #' #' TOTAL POP AGE DISTRIBUTION  NO NATIVITY (ONLY FOR USE IN DEMO MODEL) 1999-2014
 #' #'@param V table of POP by age 2016 (row=16 years, col=11 ages)
 #' #'@param ESS correlation parameter
 #' #'@return likelihood
 tot_pop_age_lLik <- function(V,ESS=500) {
   # CalibDat$US_mort_age <- read.csv(system.file("extdata","US_mort_age.csv", package="MITUS"))
-  tot_pop16_ag  <- CalibDat[["tot_pop16_ag_fb"]][-9,2]/sum(CalibDat[["tot_pop16_ag_fb"]][-9,2])
-  V2 <- V[-11]; V2[10] <- V2[10]+V[11]
-  V2 <- V2[-5]; V2[4]  <- V2[4]+V[5]
-  V2 <- V2[-3]; V2[2]  <- V2[2]+V[3]
-
-  adj_18               <- sum(log(tot_pop16_ag[])*tot_pop16_ag[])
-  sum(log(V2/sum(V2))*tot_pop16_ag[1])*ESS - adj_18*ESS
+  tot_pop16_ag  <- CalibDat[["tot_pop16_ag_fb"]][-9,2]/sum(CalibDat[["tot_pop16_ag_fb"]][-9,2]);
+  adj_18               <- sum(log(tot_pop16_ag)*tot_pop16_ag);
+  sum(log(V[]/sum(V))*tot_pop16_ag[])*ESS - adj_18*ESS
    }
-
 
 
 #' Total TB DEATHS 1999-2014
@@ -260,7 +254,7 @@ US_dth_tot_lLik <- function(V) {
   # CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
   US_deaths_tot   <- CalibDat[["US_tot_mort"]][,-1]
   adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.01/1.96,log=T)*wts[30:67])
-  sum(dnorm(US_deaths_tot,V*1e6,US_deaths_tot*0.01/1.96,log=T)*wts[30:67]) - adj_20a
+  sum(dnorm(US_deaths_tot,V,US_deaths_tot*0.01/1.96,log=T)*wts[30:67]) - adj_20a
   }
 
 #' TOTAL DEATHS AGE DISTRIBUTION 1999-2014
