@@ -20,7 +20,10 @@ Rcpp::List cSim_demo_ag(
     Rcpp::NumericMatrix       ImmLat,
     Rcpp::NumericMatrix       ImmAct,
     Rcpp::NumericMatrix       ImmFst,
-    Rcpp::NumericMatrix       mubt
+    Rcpp::NumericMatrix       mubt,
+    std::vector<double>       RRmuHR,
+    double                    p_HR
+
 ){
   int           s;
   double        temp;
@@ -58,6 +61,10 @@ for(int ag=0; ag<11; ag++) {
               V1[ag] = 0;
               VMort[ag] = 0;
   }
+for(int i=0; i<nYrs; i++) {
+  for(int j=0; j<nRes; j++) {
+    Outputs[i][j] = 0;
+  }  }
 temp2=0; temp=0;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -90,7 +97,7 @@ for(int ag=0; ag<11; ag++) {
 // }
 // Mortality
 for(int ag=0; ag<11; ag++) {
-  VMort[ag] = V0[ag]*mubtN[s][ag];
+  VMort[ag] = ((1-p_HR)*V0[ag]*mubtN[s][ag])+(p_HR*V0[ag]*mubtN[s][ag]*RRmuHR[1]);
 }
 for(int ag=0; ag<11; ag++) {
 V1[ag]   -= VMort[ag];
