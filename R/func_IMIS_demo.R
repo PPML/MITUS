@@ -33,19 +33,22 @@ llikelihoodZ_demo <-  function(samp_i,ParMatrix) {
     lLik <- 0
     zz<-list()
     zz <- cSim_demo_ag(nYrs       = 2018-1950         ,
-                      nRes      = 24,
-                      InitPop  = prms[["InitPop"]]    ,
+                      nRes      = 24                  ,
+                      InitPop  = prms[["InitPop" ]]   ,
                       Birthst  = prms[["Birthst"]]    ,
                       ImmNon    = prms[["ImmNon"]]    ,
                       ImmLat   = prms[["ImmLat" ]]    ,
-                      ImmAct  = prms[["ImmAct"]]   ,
+                      ImmAct  = prms[["ImmAct"]]      ,
                       ImmFst   = prms[["ImmFst" ]]    ,
-                      mubt       = prms[["mubt"]])
+                      mubt       = prms[["mubt"]]     ,
+                      RRmuHR       = prms[["RRmuHR"]] ,
+                      p_HR       = prms[["p_HR"]])
     #'if any output is missing or negative or if any model state population is negative
     #'set the likelihood to a hugely negative number (penalized)
     if(sum(is.na(zz$Outputs[65,]))>0 | min(zz$Outputs[65,])<0 ) {
       lLik <- -10^12
     } else {
+      M<-0
       M <- zz$Outputs
       colnames(M) <- c(prms$ResNam[1:13],prms$ResNam[121:131]);
       lLik <- 0
@@ -55,12 +58,16 @@ llikelihoodZ_demo <-  function(samp_i,ParMatrix) {
       lLik <- lLik + addlik
       #' #' TOTAL POP AGE DISTRIBUTION 2016 index updated
       v18  <- M[65,3:13]
-      addlik <- tot_pop_age_lLik(V=v18); addlik
+      v18a <- v18[-11]; v18a[10] <- v18a[10]+v18[11]
+      v18a <- v18a[-5]; v18a[4]  <- v18a[4]+v18[5]
+      v18a <- v18a[-3]; v18a[2]  <- v18a[2]+v18[3]
+      addlik <- tot_pop_age_lLik(V=v18a); addlik
       lLik <- lLik + addlik
 
-      #' Total DEATHS 1999-2016 BY AGE
-      v20  <- M[50:67,14:24]
-      addlik <- tot_dth_age_lLik(V=v20); addlik
+      #' Total DEATHS
+      v20  <- rowSums(M[30:67,14:24])
+      v20a<-v20*1e6
+      addlik <- US_dth_tot_lLik(V=v20a); addlik
       lLik <- lLik + addlik
       #' Total DEATHS 1999-2016 BY AGE
       v20b  <- M[50:67,14:24]
