@@ -12,7 +12,7 @@ US_pop_tot_lLik(X)
 \item{X}{vector of total deaths in US from 1971-2016, fraction of millions}
 }
 \value{
-likelihood
+j likelihood
 }
 \description{
 TOTAL US POP No nativity (ONLY FOR USE IN DEMO MODEL)

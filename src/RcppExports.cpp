@@ -6,8 +6,8 @@
 using namespace Rcpp;
 
 // cSim_demo_ag
-Rcpp::List cSim_demo_ag(int nYrs, int nRes, Rcpp::NumericMatrix InitPop, std::vector<double> Birthst, Rcpp::NumericMatrix ImmNon, Rcpp::NumericMatrix ImmLat, Rcpp::NumericMatrix ImmAct, Rcpp::NumericMatrix ImmFst, Rcpp::NumericMatrix mubt);
-RcppExport SEXP _MITUS_cSim_demo_ag(SEXP nYrsSEXP, SEXP nResSEXP, SEXP InitPopSEXP, SEXP BirthstSEXP, SEXP ImmNonSEXP, SEXP ImmLatSEXP, SEXP ImmActSEXP, SEXP ImmFstSEXP, SEXP mubtSEXP) {
+Rcpp::List cSim_demo_ag(int nYrs, int nRes, Rcpp::NumericMatrix InitPop, std::vector<double> Birthst, Rcpp::NumericMatrix ImmNon, Rcpp::NumericMatrix ImmLat, Rcpp::NumericMatrix ImmAct, Rcpp::NumericMatrix ImmFst, Rcpp::NumericMatrix mubt, std::vector<double> RRmuHR, double p_HR);
+RcppExport SEXP _MITUS_cSim_demo_ag(SEXP nYrsSEXP, SEXP nResSEXP, SEXP InitPopSEXP, SEXP BirthstSEXP, SEXP ImmNonSEXP, SEXP ImmLatSEXP, SEXP ImmActSEXP, SEXP ImmFstSEXP, SEXP mubtSEXP, SEXP RRmuHRSEXP, SEXP p_HRSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -20,7 +20,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type ImmAct(ImmActSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type ImmFst(ImmFstSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type mubt(mubtSEXP);
-    rcpp_result_gen = Rcpp::wrap(cSim_demo_ag(nYrs, nRes, InitPop, Birthst, ImmNon, ImmLat, ImmAct, ImmFst, mubt));
+    Rcpp::traits::input_parameter< std::vector<double> >::type RRmuHR(RRmuHRSEXP);
+    Rcpp::traits::input_parameter< double >::type p_HR(p_HRSEXP);
+    rcpp_result_gen = Rcpp::wrap(cSim_demo_ag(nYrs, nRes, InitPop, Birthst, ImmNon, ImmLat, ImmAct, ImmFst, mubt, RRmuHR, p_HR));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -168,7 +170,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_MITUS_cSim_demo_ag", (DL_FUNC) &_MITUS_cSim_demo_ag, 9},
+    {"_MITUS_cSim_demo_ag", (DL_FUNC) &_MITUS_cSim_demo_ag, 11},
     {"_MITUS_cSim_demo_agna", (DL_FUNC) &_MITUS_cSim_demo_agna, 10},
     {"_MITUS_cSim_noTB", (DL_FUNC) &_MITUS_cSim_noTB, 43},
     {"_MITUS_reblncd", (DL_FUNC) &_MITUS_reblncd, 7},

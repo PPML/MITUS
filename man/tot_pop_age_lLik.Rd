@@ -4,7 +4,7 @@
 \alias{tot_pop_age_lLik}
 \title{#' TOTAL POP AGE DISTRIBUTION  NO NATIVITY (ONLY FOR USE IN DEMO MODEL) 1999-2014
 #'@param V table of POP by age 2016 (row=16 years, col=11 ages)
-#'@param rho correlation parameter
+#'@param ESS correlation parameter
 #'@return likelihood}
 \usage{
 tot_pop_age_lLik(V, ESS = 500)
@@ -12,6 +12,6 @@ tot_pop_age_lLik(V, ESS = 500)
 \description{
 #' TOTAL POP AGE DISTRIBUTION  NO NATIVITY (ONLY FOR USE IN DEMO MODEL) 1999-2014
 #'@param V table of POP by age 2016 (row=16 years, col=11 ages)
-#'@param rho correlation parameter
+#'@param ESS correlation parameter
 #'@return likelihood
 }
