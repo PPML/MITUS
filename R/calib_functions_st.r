@@ -24,7 +24,7 @@
 
   ### ### ### TOTAL DIAGNOSED CASES 1953-1993  ### ### ### ### ### ### D
 
-  notif_decline_lLik_st <- function(V) {
+  notif_decline_lLik_st <- function(V, st=st) {
     notif_tot     <- CalibDatState[["cases_yr_st"]][[st]][,2];
     # V = vector of total notifications 1953-1993
     notif_decline  <- CalibDatState[["cases_prop_change_53_94"]]
