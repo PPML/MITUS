@@ -16,7 +16,6 @@ Model Input
 creation of background parameters
 elements of P will be replaced from either the StartVals in the case
 of optimization or the user inputted dataset
-
 format the calibration data
 }
 \description{
