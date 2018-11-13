@@ -62,13 +62,12 @@ b<-samp_i
 #'@return 8 datasets from optimization loop
 #'@export
 
-optim_b_st <- function(df, samp_i=1, st){
-  # data("StartVal_2018-08-06", package = "MITUS")
-data("stateID", package="MITUS")
-  loc<-stateID[st,3]
 
-  posterior_st = function(theta,st,n_cores) {
-    -lprior(theta) - llikelihood_st(theta,st,n_cores)
+optim_b_st <- function(df, samp_i=1, loc){
+  # data("StartVal_2018-08-06", package = "MITUS")
+
+  posterior_st = function(theta,loc,n_cores) {
+    -lprior(theta) - llikelihood_st(theta,loc,n_cores)
   }
 
   if(min(dim(as.data.frame(df)))==1) {
