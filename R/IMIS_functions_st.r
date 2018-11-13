@@ -6,8 +6,8 @@ library(lhs)
 # Function for calculating likelihood
 
   llikelihoodZ_st <-  function(samp_i,ParMatrix,loc="CA") { # ParMatrix = ParInit
-    StateID<-as.data.frame(read.csv(file="inst/extdata/state_ID.csv", header = TRUE))
-
+      data("data/stateID.rda",package="MITUS")
+StateID<-as.data.frame(stateID)
     # model_inputs<-paste0(loc,"_ModelInputs_11-13-18")
     # data(list=model_inputs, package = 'MITUS')
 
