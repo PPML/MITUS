@@ -202,8 +202,8 @@
   #'@return likelihood
 
   dth_tot_lLik_st <- function(V,st) {
-    CalibDatState$ST_tot_mort <- read.csv(file="inst/extdata/ST_mort_tot.csv", header = TRUE)
-    ST_deaths_tot   <- CalibDatState[["ST_tot_mort"]][,-1]
+    data("ST_tot_mort",package="MITUS")
+    ST_deaths_tot   <- ST_tot_mort[,-1]
     ST_deaths_tot   <- ST_deaths_tot[((st-1)*38)+(1:38),3]
     adj_20a         <- sum(dnorm(ST_deaths_tot,ST_deaths_tot,ST_deaths_tot*0.1/1.96,log=T)*wts[30:67])
     sum(dnorm(ST_deaths_tot,V,ST_deaths_tot*0.1/1.96,log=T)*wts[30:67]) - adj_20a
