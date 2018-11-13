@@ -5,12 +5,11 @@ library(lhs)
 ###################### Par = par_1
 # Function for calculating likelihood
 
-  llikelihoodZ_st <-  function(samp_i,ParMatrix,loc="CA") { # ParMatrix = ParInit
-      data("data/stateID.rda",package="MITUS")
-StateID<-as.data.frame(stateID)
+  llikelihoodZ_st <-  function(samp_i,ParMatrix,loc) { # ParMatrix = ParInit
+      data("stateID",package="MITUS")
+      StateID<-as.data.frame(stateID)
     # model_inputs<-paste0(loc,"_ModelInputs_11-13-18")
     # data(list=model_inputs, package = 'MITUS')
-
     Par <- ParMatrix[samp_i,]
     # norm2unif
     Par2 <- pnorm(Par,0,1)
@@ -54,7 +53,7 @@ StateID<-as.data.frame(stateID)
       lLik <- lLik + addlik
       ### ### ### ANN DECLINE IN CASES 1953-2015  ### ### ### ### ### ### D
       v1b   <- M[4:44,"NOTIF_ALL"]+M[4:44,"NOTIF_MORT_ALL"]
-      addlik <- notif_decline_lLik_st(V=v1b); addlik
+      addlik <- notif_decline_lLik_st(V=v1b,st=st); addlik
       lLik <- lLik + addlik
       ### ### ### US CASES AGE DISTRIBUTION 1993-2016  ### ### ### ### ### ### D
       v2a   <- M[44:67,205:215]+M[44:67,216:226]
@@ -169,7 +168,8 @@ StateID<-as.data.frame(stateID)
       lLik <- lLik + addlik
       ### ### ###  ALL LIKELIHOODS DONE !!  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
-      } }, error = function(e) NA)
+      }
+      }, error = function(e) NA)
       if(is.na(jj))         { lLik <- -10^12 - sum((ParamInitZ[,8]-Par)^2) }
       if(jj%in%c(-Inf,Inf)) { lLik <- -10^12 - sum((ParamInitZ[,8]-Par)^2) }
 
@@ -177,10 +177,10 @@ StateID<-as.data.frame(stateID)
 
 
   ###################### local parallelization via multicore
-  llikelihood_st <- function(ParMatrix,st,n_cores=1) {
+  llikelihood_st <- function(ParMatrix,loc,n_cores=1) {
     if(dim(as.data.frame(ParMatrix))[2]==1) {
-      lLik <- llikelihoodZ_st(1,t(as.data.frame(ParMatrix)),st=st)  } else {
-      lLik <- unlist(mclapply(1:nrow(ParMatrix),llikelihoodZ_st,ParMatrix=ParMatrix,st=st,mc.cores=n_cores))
+      lLik <- llikelihoodZ_st(1,t(as.data.frame(ParMatrix)),loc=loc)  } else {
+      lLik <- unlist(mclapply(1:nrow(ParMatrix),llikelihoodZ_st,ParMatrix=ParMatrix,loc=loc,mc.cores=n_cores))
       }
     return((lLik)) }
 
