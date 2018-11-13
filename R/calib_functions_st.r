@@ -24,7 +24,9 @@
 
   ### ### ### TOTAL DIAGNOSED CASES 1953-1993  ### ### ### ### ### ### D
 
-  notif_decline_lLik_st <- function(V) { # V = vector of total notifications 1953-1993
+  notif_decline_lLik_st <- function(V) {
+    notif_tot     <- CalibDatState[["cases_yr_st"]][[st]][,2];
+    # V = vector of total notifications 1953-1993
     notif_decline  <- CalibDatState[["cases_prop_change_53_94"]]
     notif_tot2     <- cumprod(notif_decline)/prod(notif_decline)*notif_tot[1]
     adj_1b         <- sum(dnorm(notif_tot2,notif_tot2,notif_tot2*0.2/1.96,log=T)*wts[4:44])
@@ -204,7 +206,7 @@
     ST_deaths_tot   <- CalibDatState[["ST_tot_mort"]][,-1]
     ST_deaths_tot   <- ST_deaths_tot[((st-1)*38)+(1:38),3]
     adj_20a         <- sum(dnorm(ST_deaths_tot,ST_deaths_tot,ST_deaths_tot*0.1/1.96,log=T)*wts[30:67])
-    sum(dnorm(ST_deaths_tot,V*1e6,ST_deaths_tot*0.1/1.96,log=T)*wts[30:67]) - adj_20a
+    sum(dnorm(ST_deaths_tot,V,ST_deaths_tot*0.1/1.96,log=T)*wts[30:67]) - adj_20a
   }
 
   #'  #' TOTAL DEATHS AGE DISTRIBUTION 1999-2014
@@ -232,9 +234,14 @@
   mort_dist_lLik_st <- function(V,rho=0.01) {
     md     <- rowSums(dist_gen)
     mort_dist     <-matrix(md,17,4, byrow = TRUE)
-    # V1     <-matrix(V,1,4)
-    adj_21        <- sum(dDirMult(M=mort_dist,n=mort_dist,Rho=0.01)*wts[67])
-    sum(dDirMult(M=V,n=mort_dist,Rho=rho)*wts[67]) - adj_21
+    adj_21        <- sum(dDirMult(M=mort_dist,n=mort_dist,Rho=0.01)*wts[51:67])
+    tot_lik<-0
+    for(ag in 1:11){
+      V1<-V[,(1:4)+4*(ag-1)]
+      x<-sum(dDirMult(M=V1,n=mort_dist,Rho=rho)*wts[51:67]) - adj_21
+      tot_lik<-tot_lik+x
+    }
+    return(tot_lik)
   }
   ### ### ### HOMELESS POP 2010  ### ### ### ### ### ### names(CalibDatState)
   # Motivation: norm, mean centered with CI = +/- 25% of mean

@@ -5,8 +5,12 @@ library(lhs)
 ###################### Par = par_1
 # Function for calculating likelihood
 
+  llikelihoodZ_st <-  function(samp_i,ParMatrix,loc="CA") { # ParMatrix = ParInit
+    StateID<-as.data.frame(read.csv(file="inst/extdata/state_ID.csv", header = TRUE))
 
-  llikelihoodZ_st <-  function(samp_i,ParMatrix,st) { # ParMatrix = ParInit
+    # model_inputs<-paste0(loc,"_ModelInputs_11-13-18")
+    # data(list=model_inputs, package = 'MITUS')
+
     Par <- ParMatrix[samp_i,]
     # norm2unif
     Par2 <- pnorm(Par,0,1)
@@ -23,6 +27,9 @@ library(lhs)
       prms <- param(P)
       IP <- list()
       IP <- param_init(P)
+      # tm<-matrix(0,16,16)
+      # diag(tm)<-1
+      # trans_mat_tot_ages<<-matrix(tm,16,176)
       trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
 
       zz <- cSim(  nYrs       = 2018-1950         , nRes      = length(prms[["ResNam"]]), rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
@@ -40,6 +47,7 @@ library(lhs)
         M <- zz$Outputs
         colnames(M) <- prms[["ResNam"]]
         lLik <- 0
+        st<-which(StateID$USPS==loc)
         ### ### ### TOTAL DIAGNOSED CASES 1993-2016  ### ### ### ### ### ### D
       v1   <- M[44:67,"NOTIF_ALL"]+M[44:67,"NOTIF_MORT_ALL"]
       addlik <- notif_tot_lLik_st(V=v1,st=st); addlik
@@ -130,7 +138,6 @@ library(lhs)
       #' Total DEATHS 1979-2016
       v20a  <- rowSums(M[30:67,121:131])
       v20a<-v20a*1e6
-
       addlik <- dth_tot_lLik_st(V=v20a,st=st); addlik
       lLik <- lLik + addlik
       #' #' Total DEATHS 1999-2016 BY AGE
@@ -138,8 +145,13 @@ library(lhs)
       #' addlik <- tot_dth_age_lLik(V=v20b); addlik
       #' lLik <- lLik + addlik
       #' #' Mort_dist 2016
-      v21  <- M[51:67,24:27]/M[51:67,2]
-      addlik <- mort_dist_lLik(V=v21); addlik
+      v21a<- v21  <- M[51:67,521:564]
+      for (i in 1:11){
+        denom<-M[51:67,2+i]
+        for (j in 1:ncol(v21)){
+          v21a[,(1:4)+4*(i-1)]<-v21[,(1:4)+4*(i-1)]/denom
+        } }
+      addlik <- mort_dist_lLik(V=v21a); addlik
       lLik <- lLik + addlik
 
       #' LIKELIHOOD FOR BORGDORFF, FEREBEE & SUTHERLAND ESTIMATES
