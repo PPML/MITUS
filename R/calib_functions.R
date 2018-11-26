@@ -185,8 +185,6 @@ tot_pop16_ag_fb_lLik <- function(V,ESS=500) {
 #' Motivation: norm, mean centered with CI = +/- 5% of mean
 #'@param X vector of total deaths in US from 1971-2016, fraction of millions
 #'@return j likelihood
-#'
-
 US_pop_tot_lLik <- function(X) {
   # CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
   US_pop_tot  <- CalibDat[["tot_pop_yr_fb"]][-9,2];
@@ -194,7 +192,7 @@ US_pop_tot_lLik <- function(X) {
   adj_20p             <- sum(dnorm(US_pop_tot[-1],US_pop_tot[-1],US_pop_tot[7]*0.01/1.96,log=T)*wts[1+1:6*10]);
  #this is the problematic line
   # print(X)
-   j<-(sum(dnorm(US_pop_tot[-1], X ,US_pop_tot[7]*0.1/1.96,log=T)*wts[1+1:6*10]) - adj_20p);
+   j<-(sum(dnorm(US_pop_tot[-1], X ,US_pop_tot[7]*0.01/1.96,log=T)*wts[1+1:6*10]) - adj_20p);
    return(j)
    # } # CI = +/- 2mil *wts[1+1:6*10]) - adj_20p
    #dnorm(US_pop_tot[-1], X ,US_pop_tot[7]*0.1/1.96,log=T)*
@@ -205,7 +203,9 @@ US_pop_tot_lLik <- function(X) {
 #' #'@return likelihood
 tot_pop_age_lLik <- function(V,ESS=500) {
   # CalibDat$US_mort_age <- read.csv(system.file("extdata","US_mort_age.csv", package="MITUS"))
-  tot_pop16_ag  <- CalibDat[["tot_pop16_ag_fb"]][-9,2]/sum(CalibDat[["tot_pop16_ag_fb"]][-9,2]);
+  # tot_pop16_ag  <- CalibDat[["tot_pop16_ag_fb"]][-9,2]/sum(CalibDat[["tot_pop16_ag_fb"]][-9,2]);
+  data("wonder_pop",package="MITUS")
+  tot_pop16_ag<-wonder_pop/sum(wonder_pop)
   adj_18               <- sum(log(tot_pop16_ag)*tot_pop16_ag);
   sum(log(V[]/sum(V))*tot_pop16_ag[])*ESS - adj_18*ESS
    }
@@ -252,9 +252,9 @@ tb_dth_age_lLik <- function(V,rho=0.01) {
 
 US_dth_tot_lLik <- function(V) {
   # CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
-  US_deaths_tot   <- CalibDat[["US_tot_mort"]][,-1]
-  adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.01/1.96,log=T)*wts[30:67])
-  sum(dnorm(US_deaths_tot,V,US_deaths_tot*0.01/1.96,log=T)*wts[30:67]) - adj_20a
+  US_deaths_tot   <- CalibDat[["US_tot_mort"]][22:38,-1]
+  adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.01/1.96,log=T)*wts[51:67])
+  sum(dnorm(US_deaths_tot,V,US_deaths_tot*0.01/1.96,log=T)*wts[51:67]) - adj_20a
   }
 
 #' TOTAL DEATHS AGE DISTRIBUTION 1999-2014
@@ -262,15 +262,12 @@ US_dth_tot_lLik <- function(V) {
 #'@param V table of deaths by age 1999-2014 (row=16 years, col=11 ages)
 #'@param rho correlation parameter
 #'@return likelihood
-tot_dth_age_lLik <- function(V,rho=0.01) {
+tot_dth_age_lLik <- function(V,ESS=500) {
   # CalibDat$US_mort_age <- read.csv(system.file("extdata","US_mort_age.csv", package="MITUS"))
-  tot_deaths_age  <- CalibDat[["US_mort_age"]][,-1]
-  adj_20b        <- sum(dDirMult(M=tot_deaths_age+0.1,n=tot_deaths_age+0.1,Rho=0.01)*wts[50:67])
-  V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
-  V2 <- V2[,-5]; V2[,4]  <- V2[,4]+V[,5]
-  V2 <- V2[,-3]; V2[,2]  <- V2[,2]+V[,3]
-
-  sum(dDirMult(M=(V2*1e6),n=tot_deaths_age+.1,Rho=rho)*wts[50:67]) - adj_20b  }
+  data("mort_ag_16", package = 'MITUS');
+  mort_ag_16_d <-(mort_ag_16[]/sum(mort_ag_16[]))
+  adj_20b               <- sum(log(mort_ag_16_d)*mort_ag_16_d);
+  sum(log(V[]/sum(V))*mort_ag_16_d[])*ESS - adj_20b*ESS  }
 
 
 #' Mortality Risk Group Distribution 1999-2014
