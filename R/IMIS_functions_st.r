@@ -5,7 +5,7 @@ library(lhs)
 ###################### Par = par_1
 # Function for calculating likelihood
 
-  llikelihoodZ_st <-  function(samp_i,ParMatrix,loc) { # ParMatrix = ParInit
+  llikelihoodZ_st <-  function(samp_i,ParMatrix,loc="MA") { # ParMatrix = ParInit
       data("stateID",package="MITUS")
       StateID<-as.data.frame(stateID)
     # model_inputs<-paste0(loc,"_ModelInputs_11-13-18")
@@ -40,6 +40,7 @@ library(lhs)
                    TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
                    LtDxPar    = prms[["LtDxPar"]]   , rLtScrt   = prms[["rLtScrt"]]       , RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
                    EarlyTrend = prms[["EarlyTrend"]], NixTrans = IP[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)
+
       if(sum(is.na(zz$Outputs[66,]))>0 | min(zz$Outputs[66,])<0 | min(zz$V1)<0 ) { lLik <- -10^12  } else {
 
       ######  ####  ######  ######  ####  ######  ######  ####  ######
@@ -177,7 +178,7 @@ library(lhs)
 
 
   ###################### local parallelization via multicore
-  llikelihood_st <- function(ParMatrix,loc,n_cores=1) {
+  llikelihood_st <- function(ParMatrix,loc="MA",n_cores=1) {
     if(dim(as.data.frame(ParMatrix))[2]==1) {
       lLik <- llikelihoodZ_st(1,t(as.data.frame(ParMatrix)),loc=loc)  } else {
       lLik <- unlist(mclapply(1:nrow(ParMatrix),llikelihoodZ_st,ParMatrix=ParMatrix,loc=loc,mc.cores=n_cores))
