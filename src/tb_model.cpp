@@ -1,5 +1,5 @@
 #include <Rcpp.h>
-#include <algorithm>
+#include <math.h>
 using namespace Rcpp;
 //'@name cSim
 //'@description runs a simulation of the tb model
@@ -371,7 +371,7 @@ Rcpp::List cSim(
         V1[0][0][0][im][nm][0][0]  += Birthst[0]*dist_genN[nm][im]*(1-p_HR);
         V1[0][0][0][im][nm][1][0]  += Birthst[0]*dist_genN[nm][im]*(p_HR);
       } }
-    //////////////////////////////////IMMIGRATION///////////////////////////////////
+    // //////////////////////////////////IMMIGRATION///////////////////////////////////
     /////////////SINCE WE NO LONGER HAVE PREVIOUS TREATMENT AS A STATE SHOULD WE
     /////////////HAVE IMMIGRANTS IMMIGRATE STRAIGHT INTO PARTIALLY IMMUNE STATE
     /////////////QUESTION: CURRENTLY ACTIVE TX CURES TO LATENT DISEASE; IS THIS RIGHT?
@@ -1025,7 +1025,7 @@ for(int ag=0; ag<11; ag++) {
                   }
 
                 } } } } } }
-      // } //end of age loop
+      //} //end of age loop
 
       // for(int ag=0; ag<11; ag++) {
       //   for(int tb=0; tb<6; tb++) {
