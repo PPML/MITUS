@@ -456,7 +456,7 @@ calib_graphs_st <- function(df,loc){
   # total tb deaths over time 1999-2016
   V   <- rowSums(df[50:67,227:237])
   #format the plot
-  plot(0,0,ylim=c(0,40),xlim=c(1999,2016),xlab="",ylab="",axes=F)
+  plot(0,0,ylim=c(0,max(V*1e6,CalibDatState$tbdeaths[[st]][,c(-1,-2)])*1.2),xlim=c(1999,2016),xlab="",ylab="",axes=F)
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
 
