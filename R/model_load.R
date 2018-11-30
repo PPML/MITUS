@@ -13,20 +13,19 @@ model_load<-function(loc="US"){
 #'Model Input
 if (loc=="US"){
   calib_dat<-paste0(loc,"_CalibDat_2018-09-17")
-  par_init<-paste0("US_ParamInit_2018-10-29")
+  par_init<-paste0("US_ParamInit_2018-11-30")
   model_inputs<-paste0(loc,"_ModelInputs_11-13-18")
-  start_val<-paste0("US_StartVal_2018-10-29")
+  start_val<-paste0("US_StartVal_2018-11-30")
 } else {
   calib_dat<-paste0("CalibDatState_7-2-18")
   model_inputs<-paste0(loc,"_ModelInputs_11-13-18")
   par_init<-paste0("ParamInit_st_2018-11-14")
   start_val<-paste0("ST_StartVal_2018-11-14")
 }
-
 data(list=model_inputs, package = 'MITUS')
 data(list=par_init, package = 'MITUS')
 data(list=start_val, package = 'MITUS')
-data(list=calib_dat, package='MITUS')# ParamInit
+data(list=calib_dat, package='MITUS')
 
 if (loc=="US"){
   wts <<- CalibDat[["ImptWeights"]]
@@ -56,14 +55,6 @@ if (loc=="US"){
   idZ2 <<- ParamInitZ[,4]==2
   ParamInit<-ParamInit_st
 }
-
-#
-#'format the calibration data
-# targets[["ParamInitZ"]]<-ParamInitZ
-# targets[["idZ0"]]<-idZ0
-# targets[["idZ1"]]<-idZ1
-# targets[["idZ2"]]<-idZ2
-# targets[["P"]]<-P
 
 return(invisible(NULL))
 }
