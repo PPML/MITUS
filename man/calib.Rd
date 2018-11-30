@@ -5,7 +5,7 @@
 \title{if any output is missing or negative or if any model state population is negative
 set the likelihood to a hugely negative number (penalized)}
 \usage{
-calib(samp_i, ParMatrix)
+calib(samp_i, ParMatrix, loc)
 }
 \description{
 if any output is missing or negative or if any model state population is negative
