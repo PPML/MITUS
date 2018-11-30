@@ -172,35 +172,36 @@ calib_graphs_st <- function(df,loc){
 
   # graph of total diagnosed cases
   # by total population, US born population, and non-US born population
-  V0 <- df[44:67,"NOTIF_ALL"]+df[44:67,"NOTIF_MORT_ALL"] #total population
-  V1 <- df[44:67,"NOTIF_US"]+df[44:67,"NOTIF_MORT_US"]   #US born population
-  V2 <- df[44:67,"NOTIF_F1"]+df[44:67,"NOTIF_F2"]+df[44:67,"NOTIF_MORT_F1"]+df[44:67,"NOTIF_MORT_F2"]   #non-US born population
+  V0 <- df[57:67,"NOTIF_ALL"]+df[57:67,"NOTIF_MORT_ALL"] #total population
+  V1 <- df[57:67,"NOTIF_US"]+df[57:67,"NOTIF_MORT_US"]   #US born population
+  V2 <- df[57:67,"NOTIF_F1"]+df[57:67,"NOTIF_F2"]+df[57:67,"NOTIF_MORT_F1"]+df[57:67,"NOTIF_MORT_F2"]   #non-US born population
 
   tot_cases<-(CalibDatState$cases_yr_ag_nat_st[[st]][,12,1]+CalibDatState$cases_yr_ag_nat_st[[st]][,12,2])
+  # tot_cases<-tot_cases/100;
   #format the plot
-  plot(1,1,ylim=c(2,max(tot_cases)*1.5),xlim=c(1993,2015),xlab="",ylab="",axes=F, log = "y")
+  plot(0,0,ylim=c(0,max(tot_cases)*1.1),xlim=c(2006,2016),xlab="",ylab="",axes=F)
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
 
   #plot the model data
-  #multiply raw output by 1,000 to convert from millions to thousands
-  lines(1993:2016,V0*1e6,lwd=3,col="white"); lines(1993:2016,V0*1e6,lwd=2,col=1) #total population
-  lines(1993:2016,V1*1e6,lwd=3,col="white"); lines(1993:2016,V1*1e6,lwd=2,col=4) #US born population
-  lines(1993:2016,V2*1e6,lwd=3,col="white"); lines(1993:2016,V2*1e6,lwd=2,col=3) #non-US born population
+  #multiply raw output by 1,000 to convert from millions to hundredscali
+  lines(2006:2016,V0*1e6,lwd=3,col="white"); lines(2006:2016,V0*1e6,lwd=2,col=1) #total population
+  lines(2006:2016,V1*1e6,lwd=3,col="white"); lines(2006:2016,V1*1e6,lwd=2,col=4) #US born population
+  lines(2006:2016,V2*1e6,lwd=3,col="white"); lines(2006:2016,V2*1e6,lwd=2,col=3) #non-US born population
 
   #reported data for comparison
-  points(1993:2016,tot_cases,pch=19,cex=0.3) #total population
-  lines(1993:2016,tot_cases,lty=3,col=1)
+  points(2006:2016,tot_cases[14:24],pch=19,cex=0.3) #total population
+  lines(2006:2016,tot_cases[14:24],lty=3,col=1)
 
-  points(1993:2016,CalibDatState$cases_yr_ag_nat_st[[st]][,12,1],pch=19,cex=0.3,col=4) #US born population
-  lines(1993:2016,CalibDatState$cases_yr_ag_nat_st[[st]][,12,1],pch=19,lty=3,col=4)
+  points(2006:2016,CalibDatState$cases_yr_ag_nat_st[[st]][14:24,12,1],pch=19,cex=0.3,col=4) #US born population
+  lines(2006:2016,CalibDatState$cases_yr_ag_nat_st[[st]][14:24,12,1],pch=19,lty=3,col=4)
 
-  points(1993:2016,CalibDatState$cases_yr_ag_nat_st[[st]][,12,2],pch=19,cex=0.3,col=3) #non-US born population
-  lines(1993:2016,CalibDatState$cases_yr_ag_nat_st[[st]][,12,2],lty=3,col=3)
+  points(2006:2016,CalibDatState$cases_yr_ag_nat_st[[st]][14:24,12,2],pch=19,cex=0.3,col=3) #non-US born population
+  lines(2006:2016,CalibDatState$cases_yr_ag_nat_st[[st]][14:24,12,2],lty=3,col=3)
 
   #plot text
   mtext("Year",1,2.5,cex=1.2)
-  mtext("Total TB Cases Identified, 1993-2014",3,.8,font=2,cex=1.2)
+  mtext("Total TB Cases Identified, 2006-2016",3,.8,font=2,cex=1.2)
   legend("bottomleft",c("Reported data (all)","Reported data (US born)","Reported data (non-US born)",
                         "Model (all)","Model (US born)","Model (non-US born)"),
          pch=c(19,19,19,NA,NA,NA),lwd=c(1,1,1,2,2,2),lty=c(3,3,3,1,1,1),col=c(1,4,3,1,4,3),bg="white",ncol=2,cex=.8,pt.cex=0.4)
@@ -455,8 +456,11 @@ calib_graphs_st <- function(df,loc){
   ################################################################################
   # total tb deaths over time 1999-2016
   V   <- rowSums(df[50:67,227:237])
+  tb_death_tot<-CalibDatState$tbdeaths[[st]][,c(-1,-2)]
+    tb_death_tot[is.na(tb_death_tot)]<-0
+
   #format the plot
-  plot(0,0,ylim=c(0,max(V*1e6,CalibDatState$tbdeaths[[st]][,c(-1,-2)])*1.2),xlim=c(1999,2016),xlab="",ylab="",axes=F)
+  plot(0,0,ylim=c(0,max(V*1e6,tb_death_tot)*1.2),xlim=c(1999,2016),xlab="",ylab="",axes=F)
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
 
