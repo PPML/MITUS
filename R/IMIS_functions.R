@@ -136,9 +136,8 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
       v21a<- v21  <- M[67,521:564]
       for (i in 1:11){
         denom<-M[67,2+i]
-        for (j in 1:length(v21)){
         v21a[(1:4)+4*(i-1)]<-v21[(1:4)+4*(i-1)]/denom
-      } }
+      }
       addlik <- mort_dist_lLik(V=v21a); addlik
       lLik <- lLik + addlik
       #' HOMELESS POP 2010 - index updated

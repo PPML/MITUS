@@ -291,7 +291,7 @@ tot_dth_age_lLik <- function(V,ESS=500) {
 mort_dist_lLik<- function(V,ESS=500) {
   # CalibDat$US_mort_age <- read.csv(system.file("extdata","US_mort_age.csv", package="MITUS"))
     md     <- rowSums(dist_gen)
-    mort_dist     <-matrix(md,17,4, byrow = TRUE)
+    mort_dist     <-rep(md,11)
     adj_21               <- sum(log(mort_dist)*mort_dist);
     tot_lik<-0
     for(ag in 1:11){
