@@ -13,9 +13,9 @@ model_load<-function(loc="US"){
 #'Model Input
 if (loc=="US"){
   calib_dat<-paste0(loc,"_CalibDat_2018-09-17")
-  par_init<-paste0("US_ParamInit_2018-11-30")
-  model_inputs<-paste0(loc,"_ModelInputs_11-13-18")
-  start_val<-paste0("US_StartVal_2018-11-30")
+  par_init<-paste0("US_ParamInit_2018-12-05")
+  model_inputs<-paste0(loc,"_ModelInputs_12-05-2018")
+  start_val<-paste0("US_StartVal_2018-12-05")
 } else {
   calib_dat<-paste0("CalibDatState_7-2-18")
   model_inputs<-paste0(loc,"_ModelInputs_11-13-18")
