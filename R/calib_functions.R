@@ -270,24 +270,37 @@ tot_dth_age_lLik <- function(V,ESS=500) {
   sum(log(V[]/sum(V))*mort_ag_16_d[])*ESS - adj_20b*ESS  }
 
 
+#table of mort_dist 1999-2014 (row=16 years, col=11 ages)
+# mort_dist_lLik <- function(V,rho=0.01) {
+#   md     <- rowSums(dist_gen)
+#   mort_dist     <-matrix(md,17,4, byrow = TRUE)
+#   adj_21        <- sum(dDirMult(M=mort_dist,n=mort_dist,Rho=0.01)*wts[51:67])
+#   tot_lik<-0
+#   for(ag in 1:11){
+#   V1<-V[,(1:4)+4*(ag-1)]
+#   x<-sum(dDirMult(M=V1,n=mort_dist,Rho=rho)*wts[51:67]) - adj_21
+#   tot_lik<-tot_lik+x
+#   }
+#   return(tot_lik)
+#   }
 #' Mortality Risk Group Distribution 1999-2014
 #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
-#'@param V table of mort_dist 1999-2014 (row=16 years, col=11 ages)
-#'@param rho correlation parameter
+#'@param V 2016 distribution
+#'@param ESS correlation parameter
 #'@return likelihood
-mort_dist_lLik <- function(V,rho=0.01) {
-  md     <- rowSums(dist_gen)
-  mort_dist     <-matrix(md,17,4, byrow = TRUE)
-  adj_21        <- sum(dDirMult(M=mort_dist,n=mort_dist,Rho=0.01)*wts[51:67])
-  tot_lik<-0
-  for(ag in 1:11){
-  V1<-V[,(1:4)+4*(ag-1)]
-  x<-sum(dDirMult(M=V1,n=mort_dist,Rho=rho)*wts[51:67]) - adj_21
-  tot_lik<-tot_lik+x
-  }
-  return(tot_lik)
-  }
-
+mort_dist_lLik<- function(V,ESS=500) {
+  # CalibDat$US_mort_age <- read.csv(system.file("extdata","US_mort_age.csv", package="MITUS"))
+    md     <- rowSums(dist_gen)
+    mort_dist     <-matrix(md,17,4, byrow = TRUE)
+    adj_21               <- sum(log(mort_dist)*mort_dist);
+    tot_lik<-0
+    for(ag in 1:11){
+        V1<-V[(1:4)+4*(ag-1)]
+        x<-sum(log(V1[]/sum(V1))*mort_dist[])*ESS - adj_21*ESS
+        tot_lik<-tot_lik+x
+        }
+        return(tot_lik)
+}
 
 #'Homeless Population in 2010
 #'Motivation: normally distributed, mean centered with CI = +/- 25% of mean
