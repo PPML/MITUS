@@ -36,6 +36,7 @@ library(lhs)
                    rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
                    vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    ,
                    HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat" ]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst" ]]    ,
+                   net_mig_usb = prms[["net_mig_usb"]]      , net_mig_nusb    = prms[["net_mig_nusb"]]        ,
                    mubt       = prms[["mubt"]]      , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
                    TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
                    LtDxPar    = prms[["LtDxPar"]]   , rLtScrt   = prms[["rLtScrt"]]       , RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
@@ -106,11 +107,11 @@ library(lhs)
       v16a <- outer(v16[,1],c(P[["SensLt"]],1-P[["SensLt"]]))+outer(v16[,2],c(1-P[["SpecLt"]],P[["SpecLt"]]))
       addlik <- ltbi_fb_11_lLik_st(V=v16a)*2; addlik
       lLik <- lLik + addlik
-      ### ### ### TOTAL POP EACH DECADE, FOR FB  ### ### ### ### ### ###  D
+      ### ### ### TOTAL FB POP EACH DECADE, FOR FB  ### ### ### ### ### ###  D
       v17  <- M[,31]+M[,32]
       addlik <- tot_pop_yr_fb_lLik_st(V=v17,st=st); addlik
       lLik <- lLik + addlik
-      ### ### ### TOTAL POP EACH DECADE, FOR US  ### ### ### ### ### ###  D ResNam
+      ### ### ### TOTAL US POP EACH DECADE, FOR US  ### ### ### ### ### ###  D ResNam
       v17b  <- M[,30]
       addlik <- tot_pop_yr_us_lLik_st_00_10(V=v17b,st=st); addlik
       lLik <- lLik + addlik

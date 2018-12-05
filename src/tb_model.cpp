@@ -25,6 +25,8 @@ using namespace Rcpp;
 //'@param ImmLat Immigration with Latent TB
 //'@param ImmAct Immigration with Active TB
 //'@param ImmFst Immigration with Fast Progressing TB
+//'@param net_mig_usb net internal migration usb
+//'@param net_mig_nusb net internal migration nusb
 //'@param mubt background mortality over time
 //'@param RelInf beta
 //'@param RelInfRg beta based off of risk group
@@ -72,6 +74,8 @@ Rcpp::List cSim(
     Rcpp::NumericMatrix       ImmLat,
     Rcpp::NumericMatrix       ImmAct,
     Rcpp::NumericMatrix       ImmFst,
+    std::vector<double> net_mig_usb,
+    std::vector<double> net_mig_nusb,
     Rcpp::NumericMatrix       mubt,
     std::vector<double> RelInf,
     std::vector<double> RelInfRg,
@@ -959,6 +963,17 @@ for(int ag=0; ag<11; ag++) {
       //
       //               }
       //             } } } } } } }
+/////////////////////////////////  NET INTERNAL MIGRATION  ///////////////////////////////////
+for(int ag=0; ag<11; ag++) {
+  for(int tb=0; tb<6; tb++) {
+    for(int lt=0; lt<2; lt++){
+      for(int im=0; im<4; im++){
+        for(int nm=0; nm<4; nm++){
+          for(int rg=0; rg<2; rg++) {
+            V1[ag][tb][lt][im][nm][rg][0]  += V0[ag][tb][lt][im][nm][rg][0]*net_mig_usb[ag];      // US
+            V1[ag][tb][lt][im][nm][rg][1]  += V0[ag][tb][lt][im][nm][rg][1]*net_mig_nusb[ag];      // FB1
+            V1[ag][tb][lt][im][nm][rg][2]  += V0[ag][tb][lt][im][nm][rg][2]*net_mig_nusb[ag];      // FB2
+          } } } } } }
       /////////////////////////////////  MORTALITY  ///////////////////////////////////
 
       // for (int i=0; i<4; i++){

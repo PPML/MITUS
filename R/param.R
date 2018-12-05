@@ -17,6 +17,8 @@ param <- function (PV){
   Births           <- Inputs[["Births"]]
   ImmigInputs      <- Inputs[["ImmigInputs"]]
   TxInputs         <- Inputs[["TxInputs"]]
+  NetMig           <- Inputs[["NetMigrState"]]
+
 
   ########## DEFINE A VARIABLE THAT WILL DETERMINE HOW LONG THE TIME DEPENDENT
   ########## VARIABLES SHOULD BE (IN MONTHS)
@@ -154,6 +156,9 @@ param <- function (PV){
 
   rEmmigFB <- c(PV["rEmmigF1"],PV["rEmmigF2"])/12
 
+  ######################          NET MIGRATION          #########################
+  net_mig_usb  <- (NetMig[,"usb" ]*PV["TunNetMig"])^(1/12)-1
+  net_mig_nusb <- (NetMig[,"nusb"]*PV["TunNetMig"])^(1/12)-1
   ######################       HIGH-RISK ENTRY/EXIT      ########################
 
   p_HR     <- PV["pHR"]
@@ -596,6 +601,8 @@ TxQualt<-TxQualt[1:month]
   Params[["rRecov"]]    = rRecov
   Params[["pImmScen"]]  = pImmScen
   Params[["EarlyTrend"]]= EarlyTrend
+  Params[["net_mig_usb"]]  = net_mig_usb
+  Params[["net_mig_nusb"]]= net_mig_nusb
   # Params[["NixTrans"]]  = NixTrans
   # Params[["can_go"]]    = can_go
   # Params[["dist_goal"]] = dist_goal

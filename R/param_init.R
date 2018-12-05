@@ -18,7 +18,7 @@
 #'@return InputParams list
 #'@export
 param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0){
-  InputParams <-vector("list", 41)   #Create an empty list to hold the formatted intitial parameters
+  InputParams <-vector("list", 43)   #Create an empty list to hold the formatted intitial parameters
   names(InputParams) <- c("rDxt","TxQualt", "InitPop", "Mpfast", "ExogInf", "MpfastPI",
                           "Mrslow", "rrSlowFB", "rfast"    ,"RRcurDef"      , "rSlfCur"  ,
                           "p_HR"        , "dist_gen" , "vTMort"   ,"RRmuRF"          , "RRmuHR",
@@ -27,7 +27,7 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
                           "Vmix"       , "rEmmigFB" , "TxVec"    , "TunTxMort"    , "rDeft"    ,
                           "pReTx"      , "LtTxPar"  , "LtDxPar"  , "rLtScrt"      , "RRdxAge"  ,
                           "rRecov"      , "pImmScen"  ,   "EarlyTrend","adj_fact", "NixTrans"   ,
-                          "ResNam")
+                          "net_mig_usb", "net_mig_nusb", "ResNam")
   ################################################################################
   ##### INTERVENTION
   ################################################################################
@@ -54,6 +54,7 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
   ImmigInputs      <- Inputs[["ImmigInputs"]]
   #In order for proper scenario/Interventions, creation of a variable to limit the
   TxInputs         <- Inputs[["TxInputs"]]
+  NetMig           <- Inputs[["NetMigrState"]]
 
   ##########                PARAMETER DEFINITIONS                      ###########
   #######################           BIRTHS                 #######################
@@ -220,6 +221,10 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
 
   InputParams[["rEmmigFB"]] <- c(PV["rEmmigF1"],PV["rEmmigF2"])/12
 
+  ######################          NET MIGRATION          #########################
+
+  InputParams[["net_mig_usb"]]  <- (NetMig[,"usb" ]*PV["TunNetMig"])^(1/12)-1
+  InputParams[["net_mig_nusb"]] <- (NetMig[,"nusb"]*PV["TunNetMig"])^(1/12)-1
 
   ##########################  HIGH-RISK ENTRY/EXIT  #############################
 
