@@ -179,7 +179,7 @@ calib_graphs_st <- function(df,loc){
   tot_cases<-(CalibDatState$cases_yr_ag_nat_st[[st]][14:24,12,1]+CalibDatState$cases_yr_ag_nat_st[[st]][14:24,12,2])
   # tot_cases<-tot_cases/100;
   #format the plot
-  plot(0,0,ylim=c(0,max(tot_cases)*1.1),xlim=c(2006,2016),xlab="",ylab="",axes=F)
+  plot(0,0,ylim=c(0,max(tot_cases)*1.25),xlim=c(2006,2016),xlab="",ylab="",axes=F)
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
 
@@ -202,7 +202,7 @@ calib_graphs_st <- function(df,loc){
   #plot text
   mtext("Year",1,2.5,cex=1.2)
   mtext("Total TB Cases Identified, 2006-2016",3,.8,font=2,cex=1.2)
-  legend("bottomleft",c("Reported data (all)","Reported data (US born)","Reported data (non-US born)",
+  legend("topright",c("Reported data (all)","Reported data (US born)","Reported data (non-US born)",
                         "Model (all)","Model (US born)","Model (non-US born)"),
          pch=c(19,19,19,NA,NA,NA),lwd=c(1,1,1,2,2,2),lty=c(3,3,3,1,1,1),col=c(1,4,3,1,4,3),bg="white",ncol=2,cex=.8,pt.cex=0.4)
 
@@ -299,7 +299,7 @@ calib_graphs_st <- function(df,loc){
   ################################################################################
   #Age Distribution of TB Cases in Percentages
 
-    V   <- (df[58:67,136:146]+df[58:67,189:199])
+    V   <- (df[57:67,136:146]+df[57:67,189:199])
     V2  <- V[,-11]
     V2[,10] <- V2[,10]+V[,11]
     V2<-colSums(V2)
@@ -316,12 +316,12 @@ calib_graphs_st <- function(df,loc){
     for(i in 1:10) polygon(i+c(-.5,.5,.5,-.5),c(0,0,V2[i],V2[i]),border="white",col="lightblue")
 
     #reported data for comparison
-    notif_age_10<-colSums(notif_age[15:24,])
+    notif_age_10<-colSums(notif_age[,])
     points(1:10,notif_age_10[]/sum(notif_age_10[])*100,pch=19,cex=1.2)
 
     #plot text
     mtext("Age Group",1,2.5,cex=1.2)
-    mtext("Age Distribution of TB Cases (%), 2007-16",3,.8,font=2,cex=1.2)
+    mtext("Age Distribution of TB Cases (%), 2006-16",3,.8,font=2,cex=1.2)
     legend("topright",c("Reported data","Model"),pch=c(19,15),lwd=NA,
            pt.cex=c(1,2),col=c("black","lightblue"),bg="white")
   ###############################################################################
@@ -387,7 +387,7 @@ calib_graphs_st <- function(df,loc){
 
   #plot text
   mtext("Age Group",1,2.5,cex=1.2)
-  mtext("IGRA+ LTBI in US Born Population 2011 by Age (%) [NATIONAL]",3,.8,font=2,cex=1.2)
+  mtext("IGRA+ LTBI in US Born Population 2011 by Age (%) [NATIONAL]",3,.8,font=2,cex=.8)
   legend("topleft",c("Reported data","Model"),pch=c(19,15),lwd=c(0,NA),
          pt.cex=c(1,2),col=c("black","lightblue"),bg="white")
 
@@ -416,11 +416,11 @@ calib_graphs_st <- function(df,loc){
 
   #reported data for comparison
   points(1:8,ltbi_fb_11[,2]/rowSums(ltbi_fb_11[,2:3])*100,pch=19,cex=1.2)
-  for(i in 1:8) lines((1:8)[c(i,i)],qbeta(c(1,39)/40,ltbi_fb_11[i,2],ltbi_fb_11[i,3])*100,pch=19,cex=1.2)
+  for(i in 1:8) lines((1:8)[c(i,i)],qbeta(c(1,39)/40,ltbi_fb_11[i,2],ltbi_fb_11[i,3])*100,pch=19,cex=.8)
 
   #plot text
   mtext("Age Group",1,2.5,cex=1.2)
-  mtext("IGRA+ LTBI in Non-US Born Population 2011 by Age (%) [NATIONAL]",3,.8,font=2,cex=1.2)
+  mtext("IGRA+ LTBI in Non-US Born Population 2011 by Age (%) [NATIONAL]",3,.8,font=2,cex=.8)
   legend("topleft",c("Reported data","Model"),pch=c(19,15),lwd=c(0,NA),
          pt.cex=c(1,2),col=c("black","lightblue"),bg="white")
 
@@ -449,7 +449,7 @@ calib_graphs_st <- function(df,loc){
 
   #plot text
   mtext("Age Group",1,2.5,cex=1.2)
-  mtext("Total TB Deaths by Age Group 1999-2016 [NATIONAL]",3,.8,font=2,cex=1.2)
+  mtext("Total TB Deaths by Age Group 1999-2016 [NATIONAL]",3,.8,font=2,cex=.8)
   legend("topleft",c("Reported data","Model"),pch=c(19,15),lwd=NA,
          pt.cex=c(1,2),col=c("black","lightblue"),bg="white")
 
