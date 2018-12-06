@@ -122,14 +122,14 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
       addlik <- tb_dth_age_lLik(V=v19); addlik
       lLik <- lLik + addlik
       #' Total DEATHS 1979-2016
-      v20a  <- rowSums(M[51:67,121:131])
+      v20a  <- rowSums(M[30:67,121:131])
       v20a<-v20a*1e6
       addlik <- US_dth_tot_lLik(V=v20a); addlik
       lLik <- lLik + addlik
       #' Total DEATHS 1999-2016 BY AGE
-      v20b  <- M[50:67,121:131]
-      v20b[,10] <-v20b[,10]+v20b[,11]
-      v20b<-v20b[,-11]
+      v20b  <- M[67,121:131]
+      v20b[10] <-v20b[10]+v20b[11]
+      v20b<-v20b[-11]
       addlik <- tot_dth_age_lLik(V=v20b); addlik
       lLik <- lLik + addlik
       #' #' Mort_dist 2016
