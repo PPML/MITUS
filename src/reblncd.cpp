@@ -77,10 +77,10 @@ Rcpp::NumericMatrix reblncd(
       for (int im=0; im<4; im++){
 
           if ((ag<9) & ((RRmuRF[nm]*RRmuHR)<5)){
-            dist_t1_v[nm+im*4]=dist_gen_v[nm+im*4]*(1-((mubtN[ag]*RRmuRF[nm]*RRmuHR*HRdist[ag])));
+            dist_t1_v[nm+im*4]=dist_gen_v[nm+im*4]*(1-((mubtN[ag]*RRmuRF[nm]*RRmuHR*HRdist[ag]*adj_fact[ag])));
 
           } else {
-            dist_t1_v[nm+im*4]=dist_gen_v[nm+im*4]*(1-((mubtN[ag]*5*HRdist[ag])));
+            dist_t1_v[nm+im*4]=dist_gen_v[nm+im*4]*(1-((mubtN[ag]*5*HRdist[ag]*adj_fact[ag])));
 
           }
 
@@ -205,7 +205,7 @@ Rcpp::NumericMatrix reblncd(
     for(int i=0; i<16; i++){
       row_sum[i]=0;
       for(int j=0; j<16; j++){
-        row_sum[i] +=trans_mat_tot[i][j]*adj_fact[ag]; ///calculate the number of total transitions from a state
+        row_sum[i] +=trans_mat_tot[i][j]; ///calculate the number of total transitions from a state
       } }
     for(int i=0; i<16; i++){
       if (row_sum[i]>1){
