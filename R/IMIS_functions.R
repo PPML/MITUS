@@ -11,7 +11,7 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
     names(Par) <- names(ParMatrix)
   } else {  Par <- as.numeric(ParMatrix[samp_i,]);
   names(Par) <- colnames(ParMatrix) }  ##previously, the distribution of parameters were transformed to normal distribution in
-##to facilitate comparisons. These first two steps convert these parameters back to their
+  ##to facilitate comparisons. These first two steps convert these parameters back to their
   #'load the necessary libraries
   library(mnormt)
   library(parallel)
@@ -37,18 +37,18 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
     zz <- cSim(  nYrs       = 2018-1950         , nRes      = length(prms[["ResNam"]]), rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
                  Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]    ,
                  rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
-                 vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    ,
+                 vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    , net_mig_usb = prms[["net_mig_usb"]]    ,
+                 net_mig_nusb = prms[["net_mig_nusb"]]    ,
                  HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat" ]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst" ]]    ,
-                 net_mig_usb = prms[["net_mig_usb"]]      , net_mig_nusb    = prms[["net_mig_nusb"]]        ,
                  mubt       = prms[["mubt"]]      , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
                  TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
                  LtDxPar    = prms[["LtDxPar"]]   , rLtScrt   = prms[["rLtScrt"]]       , RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
                  EarlyTrend = prms[["EarlyTrend"]], NixTrans = IP[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)
-#'if any output is missing or negative or if any model state population is negative
-#'set the likelihood to a hugely negative number (penalized)
+    #'if any output is missing or negative or if any model state population is negative
+    #'set the likelihood to a hugely negative number (penalized)
     if(sum(is.na(zz$Outputs[65,]))>0 | min(zz$Outputs[65,])<0 | min(zz$V1)<0 ) {
       lLik <- -10^12
-  } else {
+    } else {
       M <- zz$Outputs
       colnames(M) <- prms[["ResNam"]]
       lLik <- 0
@@ -107,9 +107,9 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
       addlik <- ltbi_fb_11_lLik(V=v16a)*2; addlik
       lLik <- lLik + addlik
       #' TOTAL POP EACH DECADE, BY US/FB - index updated (maybe)
-       v17  <- M[,31]+M[,32]
-       addlik <- tot_pop_yr_fb_lLik(V=v17); addlik
-       lLik <- lLik + addlik
+      v17  <- M[,31]+M[,32]
+      addlik <- tot_pop_yr_fb_lLik(V=v17); addlik
+      lLik <- lLik + addlik
       #' TOTAL POP AGE DISTRIBUTION 2016 index updated
       v18  <- cbind(M[67,33:43],M[67,44:54])
       addlik <- tot_pop16_ag_fb_lLik(V=v18); addlik
@@ -123,21 +123,19 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
       lLik <- lLik + addlik
       #' Total DEATHS 1979-2016
       v20a  <- rowSums(M[30:67,121:131])
-      v20a<-v20a*1e6
       addlik <- US_dth_tot_lLik(V=v20a); addlik
       lLik <- lLik + addlik
       #' Total DEATHS 1999-2016 BY AGE
-      v20b  <- M[67,121:131]
-      v20b[10] <-v20b[10]+v20b[11]
-      v20b<-v20b[-11]
+      v20b  <- M[66:67,121:131]
       addlik <- tot_dth_age_lLik(V=v20b); addlik
       lLik <- lLik + addlik
       #' #' Mort_dist 2016
-      v21a<- v21  <- M[67,521:564]
+      v21a<- v21  <- M[66:67,521:564]
       for (i in 1:11){
-        denom<-M[67,2+i]
-        v21a[(1:4)+4*(i-1)]<-v21[(1:4)+4*(i-1)]/denom
-      }
+        denom<-M[66:67,2+i]
+        for (j in 1:ncol(v21)){
+          v21a[,(1:4)+4*(i-1)]<-v21[,(1:4)+4*(i-1)]/denom
+        } }
       addlik <- mort_dist_lLik(V=v21a); addlik
       lLik <- lLik + addlik
       #' HOMELESS POP 2010 - index updated
@@ -184,8 +182,5 @@ llikelihood <- function(ParMatrix,n_cores=1) {
   } else {
     lLik <- unlist(mclapply(1:nrow(ParMatrix),llikelihoodZ,ParMatrix=ParMatrix,mc.cores=n_cores))
   }
-return((lLik))
+  return((lLik))
 }
-
-
-
