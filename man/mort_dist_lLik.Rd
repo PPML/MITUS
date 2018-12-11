@@ -5,12 +5,12 @@
 \title{Mortality Risk Group Distribution 1999-2014
 Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases}
 \usage{
-mort_dist_lLik(V, ESS = 500)
+mort_dist_lLik(V, rho = 0.01)
 }
 \arguments{
-\item{V}{2016 distribution}
+\item{V}{table of mort_dist 1999-2014 (row=16 years, col=11 ages)}
 
-\item{ESS}{correlation parameter}
+\item{rho}{correlation parameter}
 }
 \value{
 likelihood
