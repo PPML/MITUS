@@ -40,5 +40,6 @@ optim_demo <- function(df, samp_i=1){
   save(o6,file=paste("Opt_US_r6_demo_", b,"_", Sys.Date(),".rda",sep=""))
   o7  <- optim(o6$par, posterior, method ="BFGS", control=list(maxit=400,trace=5,reltol=sqrt(.Machine$double.eps)/5)) ; o7$value
   save(o7,file=paste("Opt_US_r7_demo_", b,"_", Sys.Date(),".rda",sep=""))
-  # }
+
+  return(o7)
 }

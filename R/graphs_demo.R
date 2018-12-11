@@ -7,10 +7,11 @@
 #'Create a function to be run on a specific model run output to
 #'create simple graphs of all the output for a selected year range
 #'@param df dataframe of output for all years
+#'@param dist boolean, if you want generic risk group functions
 #'@return .pdf of the graphs
 #'@export
 
-tb_graph_demo <- function(df){
+tb_graph_demo <- function(df, dist=FALSE){
 
   # CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
   # CalibDat$US_mort_age <- read.csv(file="inst/extdata/US_mort_age.csv", header = TRUE)
@@ -18,7 +19,7 @@ tb_graph_demo <- function(df){
 
   pdf(file=paste("MITUS_results/graphs_demo",Sys.time(),".pdf"), width = 11, height = 8.5)
   par(mfrow=c(2,2),mar=c(4,4.5,3,1))
-
+  df<-as.data.frame(df)
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   ### ### ### ### ### ###   TOTAL POP EACH DECADE, BY US/FB   ### ### ### ### ### ###
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -94,93 +95,6 @@ tb_graph_demo <- function(df){
   legend("topleft",c("Model"),pch=15,pt.cex=2,
          lwd=NA,col=c("gray"),bg="white")
 
-  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-  ### ### ### ### ### ### TOTAL POP PROG RG DISTRIBUTION 2014  ### ### ### ### ### ###
-  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-  V  <- t(df[65,20:23])
-
-  plot(0,0,ylim=c(0,max(range(V))),xlim=c(0.6,4.4),xlab="",ylab="",axes=F,col=NA)
-  axis(1,1:4,paste(c("1st","2nd","3rd","4th"),"\ngroup",sep=""),tick=F,cex.axis=0.75)
-  axis(1,1:5-0.5,rep("",5))
-  axis(2,c(0.1,1,10,100),las=2);box()
-  abline(h=axTicks(2),col="grey85")
-  for(i in 1:4) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V[i,1],V[i,1]),border=NA,col="gray")
-  mtext("Risk Group",1,2.5,cex=0.9)
-  box()
-  mtext("Population by TB Progression Group, 2014 (mil)",3,.8,font=2,cex=0.8)
-  legend("topright",c("model"),pch=15,pt.cex=2,
-         lwd=NA,col="gray",bg="white")
-
-  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-  ### ### ### ### ### ### TOTAL POP, MORT RG DISTRIBUTION 2014 ### ### ### ### ### ###
-  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-
-  V  <- cbind(t(df[65,309:312]), t(df[65,313:316]))
-
-  plot(0,0,ylim=c(0,max(range(V))),xlim=c(0.6,4.4),xlab="",ylab="",axes=F,col=NA)
-  axis(1,1:4,paste(c("1st","2nd","3rd","4th"),"\ngroup",sep=""),tick=F,cex.axis=0.75)
-  axis(1,1:5-0.5,rep("",5))
-  axis(2,c(0,100,500,1000,1600),las=2);box()
-  abline(h=axTicks(2),col="grey85")
-  for(i in 1:4) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V[i,1],V[i,1]),border=NA,col="gray")
-  mtext("Risk Group",1,2.5,cex=0.9)
-  box()
-  mtext("Population by Mortality Group, 2014 (mil)",3,.8,font=2,cex=0.8)
-  legend("topright",c("model"),pch=15,pt.cex=2,lwd=NA,col="gray",bg="white")
-
-  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-  ### ### ### ### ### ### TOTAL POP JOINT DISTRIBUTION 2014 ### ### ### ### ### ###
-  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-
-  mTrsp <- function(cl,a)  { apply(col2rgb(cl), 2, function(x){ rgb(x[1],x[2],x[3],a,maxColorValue=255)}) }
-
-
-  V<-cbind(t(df[65,318:333]))
-  dist_mat <-matrix(V,4,4)
-  rownames(dist_mat) <-c("M1","M2","M3","M4")
-  colnames(dist_mat) <-c("P1","P2","P3","P4")
-  dist_mat <- dist_mat/sum(dist_mat)
-
-  plot(0:4,0:4,xlab="",ylab="",col=NA)
-
-  for(i in 1:4) points(1:4-0.5,rep(i-0.5,4),cex=dist_mat[i,]*50,pch=16,col="grey40")
-  for(i in 1:4) points(1:4-0.5,rep(i-0.5,4),cex=IP$dist_gen[i,]*50,pch=16,col=mTrsp(2,75))
-
-
-  mtext("TB Progression",1,2.5,cex=0.9)
-  mtext("Mortality",2,2.5,cex=0.9)
-
-  box()
-  mtext("Population by Joint Risk Factor Distribution, 2014 (mil)",3,.8,font=2,cex=0.8)
-  legend("topright",c("model", "Goal Distribution"),pch=19,pt.cex=1,
-         lwd=NA,col=c("grey40","darkred"),bg="white")
-
-  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-  ### ### ### ### ### ### TOTAL POP HR DISTRIBUTION 1993-2013 ### ### ### ### ### ###
-  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-
-  V   <- cbind(df[44:65,305],df[44:65,306],df[44:65,307],df[44:65,308] )
-  V[,1] <-V[,2]/(V[,1]+ V[,2]) #high risk percentage
-  V <- V[,-2]
-  V[,2] <-V[,3]/(V[,2]+ V[,3]) #high risk percentage
-  V <- V[,-3]
-
-  V4 <- cbind(df[44:65,305]+df[44:65,307], df[44:65,306]+df[44:65,08])
-  V4 <- V4[,2]/(V4[,1]+V4[,2])
-
-  plot(0,0,ylim=c(0,max(range(V4))*100),xlim=c(1993,2014),xlab="",ylab="",axes=F)
-  axis(1);axis(2,las=2);box()
-  abline(h=axTicks(2),col="grey85")
-  # points(1993:2014,CalibDat$notif_us_hr[,1]/rowSums(CalibDat$notif_us_hr)*100,pch=19,cex=0.6)
-  # lines(1993:2014,CalibDat$notif_us_hr[,1]/rowSums(CalibDat$notif_us_hr)*100,lty=3)
-  lines(1993:2014,V[,2]*100,lwd=2,col="red3")
-  lines(1993:2014,V[,1]*100,lwd=2,col="blue")
-  lines(1993:2014,V4*100,lwd=2,col="grey50")
-
-  mtext("Year",1,2.5,cex=0.9)
-  mtext("Percent High Risk Population for FB (red) and US (blue) 1993-2014 ",3,.8,font=2,cex=0.8)
-  legend("bottomright",c("Total","US born","Non-US Born","model"),cex=0.9,
-         pch=c(15,15,15,NA),lwd=c(NA,NA,NA,2),lty=c(NA,NA,NA,1),col=c("grey50",4,"red3",1),bg="white",pt.cex=c(1.8,1.8,1.8,NA))
 
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
@@ -313,7 +227,28 @@ tb_graph_demo <- function(df){
   mtext("Percent of Total Mortality by Age Group 2014 (mil)",3,.8,font=2,cex=0.8)
   legend("topleft",c("Model"),pch=15,pt.cex=2,
          lwd=NA,col=c("gray"),bg="white")
+  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+  ### ### ### ### ### ### TOTAL MORT RATE 1950-2013 ### ### ### ### ### ###
+  # ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+  V   <- cbind(df[1:65,510:520])
+  x<-seq(6,781,12)
+  V2  <-IP[["mubt"]][x,]
 
+  col<-rainbow(11)
+
+  plot(0,0,ylim=c(0,max(range(V), range(V2))),xlim=c(1950,2014),xlab="",ylab="",axes=F)
+  axis(1);axis(2,las=2);box()
+  abline(h=axTicks(2),col="grey85")
+  # points(1993:2014,CalibDat$notif_us_hr[,1]/rowSums(CalibDat$notif_us_hr)*100,pch=19,cex=0.6)
+  for (i in 1:11){
+    lines(1950:2014,V[,i],lwd=3,col=col[i])
+    lines(1950:2014,V2[,i],lty=3,lwd=2, col="black")
+
+    mtext("Year",1,2.5,cex=0.9)
+    mtext("Age Specific Mortality Rates from 1950 to 2014",3,.8,font=2,cex=0.8)
+    legend("topright",colnames(V),cex=0.9,
+           pch=rep(15,i),lwd=rep(NA,i),lty=rep(NA,i),col=col,bg="white",pt.cex=rep(1.8,i))
+  }
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   ### ### ### ### ### ###   TOTAL MORT AGE DISTRIBUTION % 2014  ### ### ### ### ### ###
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -344,7 +279,7 @@ tb_graph_demo <- function(df){
 #   mtext("Percent Mortality by Age for FB (red) and US (blue), 2014",3,.8,font=2,cex=0.8)
 #   legend("topleft",c("Reported data","model"),pch=c(19,15),pt.cex=c(1,2),
 #          lwd=NA,col=c("grey30","grey80"),bg="white")
-
+if(dist==TRUE){
    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   ### ### ### ### ### ### TOTAL MORT PROG DISTRIBUTION 2014 ### ### ### ### ### ### ###
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -453,29 +388,95 @@ tb_graph_demo <- function(df){
   legend("bottomright",c("Total","US born","Non-US Born","model"),cex=0.9,
          pch=c(15,15,15,NA),lwd=c(NA,NA,NA,2),lty=c(NA,NA,NA,1),col=c("grey50",4,"red3",1),bg="white",pt.cex=c(1.8,1.8,1.8,NA))
 
+  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+  ### ### ### ### ### ### TOTAL POP PROG RG DISTRIBUTION 2014  ### ### ### ### ### ###
+  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+  V  <- t(df[65,20:23])
+
+  plot(0,0,ylim=c(0,max(range(V))),xlim=c(0.6,4.4),xlab="",ylab="",axes=F,col=NA)
+  axis(1,1:4,paste(c("1st","2nd","3rd","4th"),"\ngroup",sep=""),tick=F,cex.axis=0.75)
+  axis(1,1:5-0.5,rep("",5))
+  axis(2,c(0.1,1,10,100),las=2);box()
+  abline(h=axTicks(2),col="grey85")
+  for(i in 1:4) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V[i,1],V[i,1]),border=NA,col="gray")
+  mtext("Risk Group",1,2.5,cex=0.9)
+  box()
+  mtext("Population by TB Progression Group, 2014 (mil)",3,.8,font=2,cex=0.8)
+  legend("topright",c("model"),pch=15,pt.cex=2,
+         lwd=NA,col="gray",bg="white")
 
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-  ### ### ### ### ### ### TOTAL MORT RATE 1950-2013 ### ### ### ### ### ###
-  # ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-  V   <- cbind(df[1:65,510:520])
-  x<-seq(6,781,12)
-  V2  <-IP[["mubt"]][x,]
+  ### ### ### ### ### ### TOTAL POP, MORT RG DISTRIBUTION 2014 ### ### ### ### ### ###
+  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
-  col<-rainbow(11)
+  V  <- cbind(t(df[65,309:312]), t(df[65,313:316]))
 
-  plot(0,0,ylim=c(0,max(range(V), range(V2))),xlim=c(1950,2014),xlab="",ylab="",axes=F)
+  plot(0,0,ylim=c(0,max(range(V))),xlim=c(0.6,4.4),xlab="",ylab="",axes=F,col=NA)
+  axis(1,1:4,paste(c("1st","2nd","3rd","4th"),"\ngroup",sep=""),tick=F,cex.axis=0.75)
+  axis(1,1:5-0.5,rep("",5))
+  axis(2,c(0,100,500,1000,1600),las=2);box()
+  abline(h=axTicks(2),col="grey85")
+  for(i in 1:4) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V[i,1],V[i,1]),border=NA,col="gray")
+  mtext("Risk Group",1,2.5,cex=0.9)
+  box()
+  mtext("Population by Mortality Group, 2014 (mil)",3,.8,font=2,cex=0.8)
+  legend("topright",c("model"),pch=15,pt.cex=2,lwd=NA,col="gray",bg="white")
+
+  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+  ### ### ### ### ### ### TOTAL POP JOINT DISTRIBUTION 2014 ### ### ### ### ### ###
+  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+
+  mTrsp <- function(cl,a)  { apply(col2rgb(cl), 2, function(x){ rgb(x[1],x[2],x[3],a,maxColorValue=255)}) }
+
+
+  V<-cbind(t(df[65,318:333]))
+  dist_mat <-matrix(V,4,4)
+  rownames(dist_mat) <-c("M1","M2","M3","M4")
+  colnames(dist_mat) <-c("P1","P2","P3","P4")
+  dist_mat <- dist_mat/sum(dist_mat)
+
+  plot(0:4,0:4,xlab="",ylab="",col=NA)
+
+  for(i in 1:4) points(1:4-0.5,rep(i-0.5,4),cex=dist_mat[i,]*50,pch=16,col="grey40")
+  for(i in 1:4) points(1:4-0.5,rep(i-0.5,4),cex=IP$dist_gen[i,]*50,pch=16,col=mTrsp(2,75))
+
+
+  mtext("TB Progression",1,2.5,cex=0.9)
+  mtext("Mortality",2,2.5,cex=0.9)
+
+  box()
+  mtext("Population by Joint Risk Factor Distribution, 2014 (mil)",3,.8,font=2,cex=0.8)
+  legend("topright",c("model", "Goal Distribution"),pch=19,pt.cex=1,
+         lwd=NA,col=c("grey40","darkred"),bg="white")
+
+  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+  ### ### ### ### ### ### TOTAL POP HR DISTRIBUTION 1993-2013 ### ### ### ### ### ###
+  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+
+  V   <- cbind(df[44:65,305],df[44:65,306],df[44:65,307],df[44:65,308] )
+  V[,1] <-V[,2]/(V[,1]+ V[,2]) #high risk percentage
+  V <- V[,-2]
+  V[,2] <-V[,3]/(V[,2]+ V[,3]) #high risk percentage
+  V <- V[,-3]
+
+  V4 <- cbind(df[44:65,305]+df[44:65,307], df[44:65,306]+df[44:65,08])
+  V4 <- V4[,2]/(V4[,1]+V4[,2])
+
+  plot(0,0,ylim=c(0,max(range(V4))*100),xlim=c(1993,2014),xlab="",ylab="",axes=F)
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
   # points(1993:2014,CalibDat$notif_us_hr[,1]/rowSums(CalibDat$notif_us_hr)*100,pch=19,cex=0.6)
-  for (i in 1:11){
-  lines(1950:2014,V[,i],lwd=3,col=col[i])
-  lines(1950:2014,V2[,i],lty=3,lwd=2, col="black")
+  # lines(1993:2014,CalibDat$notif_us_hr[,1]/rowSums(CalibDat$notif_us_hr)*100,lty=3)
+  lines(1993:2014,V[,2]*100,lwd=2,col="red3")
+  lines(1993:2014,V[,1]*100,lwd=2,col="blue")
+  lines(1993:2014,V4*100,lwd=2,col="grey50")
 
   mtext("Year",1,2.5,cex=0.9)
-  mtext("Age Specific Mortality Rates from 1950 to 2014",3,.8,font=2,cex=0.8)
-  legend("topright",colnames(V),cex=0.9,
-         pch=rep(15,i),lwd=rep(NA,i),lty=rep(NA,i),col=col,bg="white",pt.cex=rep(1.8,i))
-  }
+  mtext("Percent High Risk Population for FB (red) and US (blue) 1993-2014 ",3,.8,font=2,cex=0.8)
+  legend("bottomright",c("Total","US born","Non-US Born","model"),cex=0.9,
+         pch=c(15,15,15,NA),lwd=c(NA,NA,NA,2),lty=c(NA,NA,NA,1),col=c("grey50",4,"red3",1),bg="white",pt.cex=c(1.8,1.8,1.8,NA))
+
+ }
 dev.off()
   }
 

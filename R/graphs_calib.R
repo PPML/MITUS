@@ -230,8 +230,8 @@ notif_fb <-notif_fb/1000
 points(2006:2016,notif_fb[,2],pch=19,cex=0.3,col=4) #US born population
 lines(2006:2016,notif_fb[,2],pch=19,lty=3,col=4)
 
-points(2006:2016,notif_fb[14:24,1],pch=19,cex=0.3,col=3) #non-US born population
-lines(2006:2016,notif_fb[14:24,1],lty=3,col=3)
+points(2006:2016,notif_fb[,1],pch=19,cex=0.3,col=3) #non-US born population
+lines(2006:2016,notif_fb[,1],lty=3,col=3)
 
 #plot text
 mtext("Year",1,2.5,cex=1.2)
@@ -383,7 +383,7 @@ lines(2004:2014,Vdisc*100,lwd=2,col="red3")
 lines(2004:2014,Vdead*100,lwd=2,col="blue")
 
 #reported data for comparison
-tx_outcomes      <- cbind(1-rowSums(CalibDat[["tx_outcomes"]][12:22,2:3]),CalibDat[["tx_outcomes"]][12:22,2],CalibDat[["tx_outcomes"]][12:22,3])*CalibDat[["tx_outcomes"]][12:22,4]
+tx_outcomes      <- cbind((1-rowSums(CalibDat[["tx_outcomes"]][12:22,2:3])),CalibDat[["tx_outcomes"]][12:22,2],CalibDat[["tx_outcomes"]][12:22,3])*CalibDat[["tx_outcomes"]][12:22,4]
 
 points(2004:2014,tx_outcomes[,2]/rowSums(tx_outcomes)*100,pch=19,cex=0.6,col="red3")
 points(2004:2014,tx_outcomes[,3]/rowSums(tx_outcomes)*100,pch=19,cex=0.6,col="blue")

@@ -60,7 +60,7 @@ ParamInit[ParamInit[,4]==0,8] <- lgt(ParamInit[ParamInit[,4]==0,1])
 ParamInit[ParamInit[,4]==1,8] <- log(  ParamInit[ParamInit[,4]==1,1])
 ParamInit[ParamInit[,4]==2,8] <-       ParamInit[ParamInit[,4]==2,1]
 ParamInit[ParamInit[,8]==-Inf,8] <- -100;  ParamInit[ParamInit[,8]==Inf,8] <- 100
-
+# ParamInit_st<-ParamInit
 #'save it all
 write.csv(ParamInit,file="ParamInitUS_final.csv")
 save(ParamInit,file=paste0("~/MITUS/data/US_ParamInit_", Sys.Date(),".rda"))
