@@ -11,6 +11,9 @@ vignette: >
 
 The MITUS model is able to incoroporate user-defined program changes into the model's parameters and investigate the effects of these changes on model outcomes. These changes will be applied across the model's total population.
 
+Questions to answer:
+* will tabbyII provide a time indexed parameter or will MITUS need to generate that from the user-specified dates and 
+
 The Tabby2 user will have access to the following programatic features:
 
 #### LTBI Treatment Cascade
@@ -30,7 +33,7 @@ The nature of these programatic changes allows them to be easily incorporated in
 
 #### LTBI Screening Coverage
 * Proposed range: 1 to 5 times the model's background screening rate
-* Current default: 
+* Current default: calibrated; gamma distribution (0.025,0.0007,0.0907)
 
 * we will need to display the default screening coverage to the user so they can adjust appropriately. 
 * will Tabby2 need to have a reactive error function to prevent user from specifying over 100% screening coverage?
@@ -63,7 +66,7 @@ SpecLt<-P["IGRA_frc"]*Spec_IGRA + (1-P["IGRA_frc"])*Spec_TST
 
 #### LTBI Treatment Completion 
 * Proposed range: 0-100%
-* Current default: 
+* Current default: calibrated; beta distribution (0.33,0.29,0.37)  
 
 ```r
     P["pDefLt"]<-1-(UI_prgm_chng$ltbi_comp_frc)
@@ -71,7 +74,7 @@ SpecLt<-P["IGRA_frc"]*Spec_IGRA + (1-P["IGRA_frc"])*Spec_TST
 
 #### LTBI Treatment Efficacy 
 * Proposed range: 0-100%
-* Current default: 
+* Current default: calibrated; beta distribution (0.9,0.81,0.96)
 
 ```r
     P["EffLt"]<-1-(UI_prgm_chng$ltbi_eff_frc)
@@ -79,17 +82,22 @@ SpecLt<-P["IGRA_frc"]*Spec_IGRA + (1-P["IGRA_frc"])*Spec_TST
 
 #### Time from Active TB Diagnosis to Treatment Initation
 * Proposed range: 0-100% model baseline
-* Current default:
+* Current default: calibrated; gamma distribution (0.6,0.375,0.875)
 
 ```r
-    P["rDxt"]<-P["rDxt"]*UI_prgm_chng$tb_tim2tx_frc
+    P["DelaySp"]<-P["DelaySp"]*UI_prgm_chng$tb_tim2tx_frc
 ```
 
 #### Active TB Treatment Completion
 * Proposed range: 0-100%
-* Current default:
+* Current default: not yet clear
+
+* Model currently has a formatted, time-dependent input for the probability of default from treatment. 
+
+We will need to take the complement of the user input and then replace the percentage of treatment completion
+for the user-specified years.
 
 ```r
-    P["pDeft"]<-1-(UI_prgm_chng$ltbi_txdef_frc)
+    prms["pDeft"]<-1-(UI_prgm_chng$ltbi_txdef_frc)
 ```
  
