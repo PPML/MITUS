@@ -19,8 +19,8 @@ if (loc=="US"){
 } else {
   calib_dat<-paste0("CalibDatState_7-2-18")
   model_inputs<-paste0(loc,"_ModelInputs_11-13-18")
-  par_init<-paste0("ST_ParamInit_2018-12-10")
-  start_val<-paste0("ST_StartVal_2018-12-10")
+  par_init<-paste0("ST_ParamInit_2018-12-12")
+  start_val<-paste0("ST_StartVal_2018-12-12")
 }
 data(list=model_inputs, package = 'MITUS')
 data(list=par_init, package = 'MITUS')
