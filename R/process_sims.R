@@ -41,7 +41,7 @@ OutputsZint <-  function(samp_i=1,ParMatrix,startyr=1950, endyr=2050,Int1=0,Int2
    NY=(endyr-startyr)
    trans_mat_tot_ages<<-reblncd(mubt = IP$mubt,can_go = can_go,RRmuHR = IP$RRmuHR[2], RRmuRF = IP$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v,adj_fact= IP[["adj_fact"]])
    try(if(max(trans_mat_tot_ages > 1)) stop("sum of transition probabilities are greater than 1."))
-   m <- cSim(  nYrs       = 2018-1950         , nRes      = length(prms[["ResNam"]]), rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
+   m <- cSim(  nYrs       = NY         , nRes      = length(prms[["ResNam"]]), rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
                 Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]    ,
                 rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
                 vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    ,
@@ -74,7 +74,7 @@ OutputsZint <-  function(samp_i=1,ParMatrix,startyr=1950, endyr=2050,Int1=0,Int2
 #'@param Scen3 boolean for scenario 3
 #'@return out outputs
 #'@export
-OutputsInt <- function(ParMatrix,n_cores=1,endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0) {
+OutputsInt <- function(loc,ParMatrix,n_cores=1,endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0) {
   if(min(dim(as.data.frame(ParMatrix)))==1) {
     out <- OutputsZint(samp_i=1,ParMatrix=ParMatrix,endyr=endyr,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3)
 } else {
@@ -84,10 +84,10 @@ OutputsInt <- function(ParMatrix,n_cores=1,endyr=2050,Int1=0,Int2=0,Int3=0,Int4=
     for(i in 1:length(out0)) out[i,,] <- as.matrix(out0[[i]])
 }
   if (sum(Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3)==0) intv<-1;
-  if(Int1==1) intv<-2;if(Int2==1) intv<-3;if(Int3==1) intv<-4;
+  if(Int1==1) intv<-2;if(Int2==1) intv<-3; if(Int3==1) intv<-4;
   if(Int4==1) intv<-5; if(Int5==1) intv<-6; if(Scen1==1) intv<-7;
   if(Scen2==1) intv<-8;if(Scen3==1) intv<-9;
-  save(out,file=paste("/Users/nis100/MITUS/results_",intv,".rda",sep=""))
+  save(out,file=paste("/Users/nis100/MITUS/",loc,"_results_",intv,".rda",sep=""))
   return(out)
 }
 
