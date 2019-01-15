@@ -1,45 +1,8 @@
-# tabby_results <- function(loc,startyr=1950,endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0) {
-#   wt = parAll200[,"wt"]
-#   ## HELPER FUNCTIONS
-#   # l takes a vector of results, and weights, and calculates weighted mean, lower bound, and upper bound for q=1,2,3 respectively
-#   l <- function(x,w,q) {
-#     if(q==1) {
-#       wtd.mean(x,w)
-#     } else {
-#       if(q==2) {
-#         wtd.quantile(x,w,1/40)
-#       } else {
-#         wtd.quantile(x,w,39/40)
-#       }
-#     }
-#   }
-
-  ## PULL OUT SPECIFIC RESULTS (4) FOR EACH SCENARIO (8), FOR DIFFERENT POPS (3)
-  # OUTCOMES =
-  #           1. Incident M. tb Infection (per Mil)
-                  # -
-  #           2. LTBI Prevalence (%)
-                  #LTBI/total population
-                  #
-  #           3. New TB Cases (per Mil)
-        #       - this is 157-167 for all nativity;
-  #           4. TB-Related Deaths (per Mil)
-  #           Z. ADD MORE AS DESIRED!
-
-  # SCENARIOS = 1. Base case
-  #             2. Intervention scenario 1 --TLTBI for new immigrants
-  #             3. Intervention scenario 2 --Improved TLTBI in US
-  #             4. Intervention scenario 3 --Better case detection
-  #             5. Intervention scenario 4 --Better TB treatment
-  #             6. Intervention scenario 5 --All improvements together
-  #             7. Sensitivity analysis  1 --no transmission within the United States after 2016
-  #             8. Sensitivity analysis  2 --no LTBI among all immigrants after 2016
-
-  # POPULATIONS = 1. ALL
-  #               2. US-BORN
-  #               3. FOREIGN-BORN
-
-
+#'@name tabby_results
+#'@description reshapes output from OutputsInt to shape needed for Tabby2
+#'@param loc two digit postal abbreviation for location of interest
+#'@return res_tab2 large dataframe of results
+#'@export
 tabby_results<-function(loc){
   age_id = (2018:2049)-1949
   tt<-0
