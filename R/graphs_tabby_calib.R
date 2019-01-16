@@ -12,11 +12,13 @@ tabby_calib_graphs <- function(loc) {
   }
   data(list=calib_dat, package='MITUS')# calibration data
 
-  df <- out
+  df <- out[1,,]
+  colnames(df) <- readRDS(system.file('extdata/mitusnames.rds', package = 'MITUS'))
   df<-as.data.frame(df)
   if (loc=="US"){
   # Total Pop Each Decade by US/FB ------------------------------------------
   V  <- cbind(df[1:66,30], df[1:66,31]+df[1:66,32])
+  plot.new()
   dev.control(displaylist ="enable")
   plot.new() ## clean up device
   plot(1,1,ylim=c(2,500),xlim=c(1950,2015),xlab="",ylab="",axes=F,log="y")
@@ -72,7 +74,7 @@ tabby_calib_graphs <- function(loc) {
          lwd=NA,col=c("grey30","grey80"),bg="white")
 
   p <- recordPlot()
-  saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'age_distribution.rds'))
+  saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'/age_distribution.rds'))
 
   # Total Pop Age Distribution 2014 All Ages --------------------------------
   V  <- cbind(t(df[65,33:43]),t(df[65,44:54]))
@@ -97,7 +99,7 @@ tabby_calib_graphs <- function(loc) {
   legend("topright",c("US born","Non-US Born","Reported data"),cex=0.9,
          pch=c(15,15,19),lwd=c(NA,NA,1),lty=c(NA,NA,3),col=c("lightblue","pink",1),bg="white",pt.cex=c(1.8,1.8,0.3))
   p <- recordPlot()
-  saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'age_distribution_all_ages.rds'))
+  saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'/age_distribution_all_ages.rds'))
 
   # Total Mort Each Decade by US/FB -----------------------------------------
   V  <- cbind(rowSums(df[1:66,255:265]), rowSums(df[1:66,266:276]))
@@ -120,7 +122,7 @@ tabby_calib_graphs <- function(loc) {
   legend("bottomleft",c("Total","US born","Non-US Born","Reported data","model"),cex=0.9,
          pch=c(15,15,15,19,NA),lwd=c(NA,NA,NA,1,2),lty=c(NA,NA,NA,3,1),col=c("grey50",4,"red3",1,1),bg="white",pt.cex=c(1.8,1.8,1.8,0.3,NA))
   p <- recordPlot()
-  saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'US/mortality.rds'))
+  saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'/mortality.rds'))
 
 
   # Total Mort Age Distribution 2014 ----------------------------------------
@@ -151,7 +153,7 @@ tabby_calib_graphs <- function(loc) {
   legend("topleft",c("Reported data","model"),pch=c(19,15),pt.cex=c(1,2),
          lwd=NA,col=c("black","gray"),bg="white")
   p <- recordPlot()
-  saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'mortality_by_age.rds'))
+  saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'/mortality_by_age.rds'))
 
 
   # Total Diagnosed Cases from 2006-2016 ---------------------------------------------------
@@ -193,7 +195,7 @@ tabby_calib_graphs <- function(loc) {
                       "Model (all)","Model (US born)","Model (foreign born)"),
          pch=c(19,19,19,NA,NA,NA),lwd=c(1,1,1,2,2,2),lty=c(3,3,3,1,1,1),col=c(1,4,3,1,4,3),bg="white",ncol=2,cex=.8,pt.cex=0.4)
   p <- recordPlot()
-  saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'diagnosed_cases_1953.rds'))
+  saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'/diagnosed_cases_2006.rds'))
 
 #UNNECESSARY
   #' # diagnosed cases after 2000 ---------------------------------------------------
@@ -270,7 +272,7 @@ tabby_calib_graphs <- function(loc) {
   legend("topleft",c("Reported data","Model"),pch=c(19,NA),lwd=c(1,2),col=c(1,4),lty=c(3,1),bg="white",pt.cex=0.6)
   p <- recordPlot()
 
-  saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'percent_of_cases_in_non_usb.rds'))
+  saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'/percent_of_cases_in_non_usb.rds'))
 
   # Percent of Non-US Born Cases from Recent Immigrant Population -----------
 
@@ -300,7 +302,7 @@ tabby_calib_graphs <- function(loc) {
   legend("topright",c("Reported data","Model"),pch=c(19,NA),lwd=c(1,2),col=c(1,4),lty=c(3,1),bg="white",pt.cex=0.6)
   p <- recordPlot()
 
-  saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'percent-of-non-usb-cases-in-recent-immigrants.rds'))
+  saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'/percent-of-non-usb-cases-in-recent-immigrants.rds'))
 
   # age distribution of cases -----------------------------------------------
 
@@ -342,7 +344,7 @@ tabby_calib_graphs <- function(loc) {
          lwd=c(NA,NA,NA,NA,1,2),lty=c(NA,NA,NA,NA,3,1),col=c(cls,1,1),bg="white",
          pt.cex=c(1.8,1.8,1.8,1.8,0.6,NA),pch=c(15,15,15,15,19,NA))
   p <- recordPlot()
-  saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'age-distribution-of-cases.rds'))
+  saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'/age-distribution-of-cases.rds'))
 
 
   # treatment outcomes  ----------------------------------------
@@ -378,7 +380,7 @@ tabby_calib_graphs <- function(loc) {
          col=c("red3",4,1,1),lty=c(NA,NA,3,1),bg="white",pt.cex=c(1.8,1.8,0.6,NA))
   p <- recordPlot()
 
-  saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'treatment_outcomes.rds'))
+  saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'/treatment_outcomes.rds'))
 
 
   # LTBI Prevalance by Age in 2011, US born ---------------------------------
@@ -417,7 +419,7 @@ tabby_calib_graphs <- function(loc) {
   legend("topleft",c("Reported data","Model"),pch=c(19,15),lwd=c(0,NA),
          pt.cex=c(1,2),col=c("black","lightblue"),bg="white")
   p <- recordPlot()
-  saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'ltbi-prev-by-age-usb.rds'))
+  saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'/ltbi-prev-by-age-usb.rds'))
 
 
   # ltbi prev by age non-usb ------------------------------------------------
@@ -456,7 +458,7 @@ tabby_calib_graphs <- function(loc) {
          pt.cex=c(1,2),col=c("black","lightblue"),bg="white")
   p <- recordPlot()
 
-  saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'ltbi-prev-by-age-non-usb.rds'))
+  saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'/ltbi-prev-by-age-non-usb.rds'))
 
 
   # Age Distribution of TB Deaths 1999-2014 ---------------------------------
@@ -487,7 +489,7 @@ tabby_calib_graphs <- function(loc) {
   legend("topleft",c("Reported data","Model"),pch=c(19,15),lwd=NA,
          pt.cex=c(1,2),col=c("black","lightblue"),bg="white")
   p <- recordPlot()
-  saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'total-deaths-by-age.rds'))
+  saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'/total-deaths-by-age.rds'))
 
   }
   else{
@@ -551,7 +553,7 @@ tabby_calib_graphs <- function(loc) {
 
 
     p <- recordPlot()
-    saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'age_distribution.rds'))
+    saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'/age_distribution.rds'))
     #UNNECESSARY
     # Total Pop Age Distribution 2014 All Ages --------------------------------
     # V  <- cbind(t(df[65,33:43]),t(df[65,44:54]))
@@ -673,7 +675,7 @@ tabby_calib_graphs <- function(loc) {
            pch=c(19,19,19,NA,NA,NA),lwd=c(1,1,1,2,2,2),lty=c(3,3,3,1,1,1),col=c(1,4,3,1,4,3),bg="white",ncol=2,cex=.8,pt.cex=0.4)
 
     p <- recordPlot()
-    saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'diagnosed_cases_1953.rds'))
+    saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'/diagnosed_cases_2006.rds'))
 
     #UNECESSARY
     # diagnosed cases after 2000 ---------------------------------------------------
@@ -751,7 +753,7 @@ tabby_calib_graphs <- function(loc) {
 
     p <- recordPlot()
 
-    saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'percent_of_cases_in_non_usb.rds'))
+    saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'/percent_of_cases_in_non_usb.rds'))
 
     #UPDATED
     # Percent of Non-US Born Cases from Recent Immigrant Population -----------
@@ -781,7 +783,7 @@ tabby_calib_graphs <- function(loc) {
 
     p <- recordPlot()
 
-    saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'percent-of-non-usb-cases-in-recent-immigrants.rds'))
+    saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'/percent-of-non-usb-cases-in-recent-immigrants.rds'))
 
     #UPDATED
     # age distribution of cases -----------------------------------------------
@@ -825,7 +827,7 @@ tabby_calib_graphs <- function(loc) {
            pt.cex=c(1.8,1.8,1.8,1.8,0.6,NA),pch=c(15,15,15,15,19,NA))
 
     p <- recordPlot()
-    saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'age-distribution-of-cases.rds'))
+    saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'/age-distribution-of-cases.rds'))
 
     #UPDATED
     # treatment outcomes  ----------------------------------------
@@ -862,7 +864,7 @@ tabby_calib_graphs <- function(loc) {
            col=c("red3",4,1,1),lty=c(NA,NA,3,1),bg="white",pt.cex=c(1.8,1.8,0.6,NA))
     p <- recordPlot()
 
-    saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'treatment_outcomes.rds'))
+    saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'/treatment_outcomes.rds'))
 
     #UPDATED
     # LTBI Prevalance by Age in 2011, US born ---------------------------------
@@ -901,7 +903,7 @@ tabby_calib_graphs <- function(loc) {
     legend("topleft",c("Reported data","Model"),pch=c(19,15),lwd=c(0,NA),
            pt.cex=c(1,2),col=c("black","lightblue"),bg="white")
     p <- recordPlot()
-    saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'ltbi-prev-by-age-usb.rds'))
+    saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'/ltbi-prev-by-age-usb.rds'))
 
     #UPDATED
     # ltbi prev by age non-usb ------------------------------------------------
@@ -940,7 +942,7 @@ tabby_calib_graphs <- function(loc) {
            pt.cex=c(1,2),col=c("black","lightblue"),bg="white")
     p <- recordPlot()
 
-    saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'ltbi-prev-by-age-non-usb.rds'))
+    saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'/ltbi-prev-by-age-non-usb.rds'))
 
     #UPDATED
     # Age Distribution of TB Deaths 1999-2014 ---------------------------------
@@ -972,7 +974,7 @@ tabby_calib_graphs <- function(loc) {
     legend("topleft",c("Reported data","Model"),pch=c(19,15),lwd=NA,
            pt.cex=c(1,2),col=c("black","lightblue"),bg="white")
     p <- recordPlot()
-    saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'total-deaths-by-age.rds'))
+    saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'/total-deaths-by-age.rds'))
 
   }
 }
