@@ -493,7 +493,12 @@ tabby_calib_graphs <- function(loc) {
 
   }
   else{
-    ##STATE LEVEL PLOTS
+    data("stateID",package="MITUS")
+    StateID<-as.data.frame(stateID)
+
+    st<-which(StateID$USPS==loc)
+
+    ##state LEVEL PLOTS
     #UPDATED
     # Total Pop 1950-2015 -----------------------------------------
 
