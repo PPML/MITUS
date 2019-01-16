@@ -1,7 +1,7 @@
 tabby_calib_graphs <- function(loc) {
   require(MCMCpack)
   #load the results data file
-  bc_results<-paste0(loc,"_restab2")
+  bc_results<-paste0(loc,"_restab")
   data(list=bc_results, package = 'MITUS')
   #load appropriate calibration file
   if (loc=="US")
