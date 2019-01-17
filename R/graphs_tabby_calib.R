@@ -1,4 +1,4 @@
-tabby_calib_graphs <- function(loc) {
+tabby_calib_graphs <- function(loc, out_i) {
   require(MCMCpack)
   #load the results data file
   bc_results<-paste0(loc,"_restab")
@@ -12,7 +12,7 @@ tabby_calib_graphs <- function(loc) {
   }
   data(list=calib_dat, package='MITUS')# calibration data
 
-  df <- out[1,,]
+  df <- out[out_i,,]
   colnames(df) <- readRDS(system.file('extdata/mitusnames.rds', package = 'MITUS'))
   df<-as.data.frame(df)
   if (loc=="US"){
@@ -77,29 +77,29 @@ tabby_calib_graphs <- function(loc) {
   saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'/age_distribution.rds'))
 
   # Total Pop Age Distribution 2014 All Ages --------------------------------
-  V  <- cbind(t(df[65,33:43]),t(df[65,44:54]))
-
-  dev.control(displaylist ="enable")
-  plot.new() ## clean up device
-
-  plot(1,1,ylim=c(0.05,max(range(V))),xlim=c(0.6,11.4),xlab="",ylab="",axes=F,col=NA, log="y")
-  axis(1,1:11,paste(c("0-4","5-14","15-24","25-34","35-44","45-54","55-64","65-74","75-84","85-94", "95p"),"\nyears",sep=""),tick=F,cex.axis=0.75)
-  axis(1,1:12-0.5,rep("",12))
-  axis(2,c(0,.1,1,10,20,30,50),las=2);box()
-  abline(h=axTicks(2),col="grey85")
-
-  for(i in 1:11) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V[i,1],V[i,1]),border=NA,col="lightblue")
-  for(i in 1:11) polygon(i+c(-.4,0,0,-.4),c(0.0001,0.0001,V[i,2],V[i,2]),border=NA,col="pink")
-
-  mtext("Age Group",1,2.5,cex=0.9)
-  mtext("Millions",2,2.5,cex=0.9)
-
-  box()
-  mtext("Total Population by Age Group 2014 (mil,log-scale)",3,.8,font=2,cex=0.8)
-  legend("topright",c("US born","Non-US Born","Reported data"),cex=0.9,
-         pch=c(15,15,19),lwd=c(NA,NA,1),lty=c(NA,NA,3),col=c("lightblue","pink",1),bg="white",pt.cex=c(1.8,1.8,0.3))
-  p <- recordPlot()
-  saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'/age_distribution_all_ages.rds'))
+  # V  <- cbind(t(df[65,33:43]),t(df[65,44:54]))
+  #
+  # dev.control(displaylist ="enable")
+  # plot.new() ## clean up device
+  #
+  # plot(1,1,ylim=c(0.05,max(range(V))),xlim=c(0.6,11.4),xlab="",ylab="",axes=F,col=NA, log="y")
+  # axis(1,1:11,paste(c("0-4","5-14","15-24","25-34","35-44","45-54","55-64","65-74","75-84","85-94", "95p"),"\nyears",sep=""),tick=F,cex.axis=0.75)
+  # axis(1,1:12-0.5,rep("",12))
+  # axis(2,c(0,.1,1,10,20,30,50),las=2);box()
+  # abline(h=axTicks(2),col="grey85")
+  #
+  # for(i in 1:11) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V[i,1],V[i,1]),border=NA,col="lightblue")
+  # for(i in 1:11) polygon(i+c(-.4,0,0,-.4),c(0.0001,0.0001,V[i,2],V[i,2]),border=NA,col="pink")
+  #
+  # mtext("Age Group",1,2.5,cex=0.9)
+  # mtext("Millions",2,2.5,cex=0.9)
+  #
+  # box()
+  # mtext("Total Population by Age Group 2014 (mil,log-scale)",3,.8,font=2,cex=0.8)
+  # legend("topright",c("US born","Non-US Born","Reported data"),cex=0.9,
+  #        pch=c(15,15,19),lwd=c(NA,NA,1),lty=c(NA,NA,3),col=c("lightblue","pink",1),bg="white",pt.cex=c(1.8,1.8,0.3))
+  # p <- recordPlot()
+  # saveRDS(p, paste0('utilities/inst/calibration_plots/',loc,'/age_distribution_all_ages.rds'))
 
   # Total Mort Each Decade by US/FB -----------------------------------------
   V  <- cbind(rowSums(df[1:66,255:265]), rowSums(df[1:66,266:276]))
