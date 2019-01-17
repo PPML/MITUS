@@ -84,13 +84,14 @@ tabby_results_s<-function(loc){
 
   ################################################################################
   #take the mean for each of these
-  for (i in 1:length(age_id)){
+ for(l in 1:9){
+   for (i in 1:length(age_id)){
     for (j in 1:7){
       for (k in 1:11){
-        mResTab[,i,j,k]<-mean(na.omit(ResTab[,i,j,k]))
-        mResTabus[,i,j,k]<-mean(na.omit(ResTabus[,i,j,k]))
-        mResTabfb[,i,j,k]<-mean(na.omit(ResTabfb[,i,j,k]))
-      } } }
+        mResTab[l,i,j,k]<-mean(na.omit(ResTab[1:nr+((l-1)*10),i,j,k]))
+        mResTabus[l,i,j,k]<-mean(na.omit(ResTabus[1:nr+((l-1)*10),i,j,k]))
+        mResTabfb[l,i,j,k]<-mean(na.omit(ResTabfb[1:nr+((l-1)*10),i,j,k]))
+      } } }}
 
 
   ResTabC <- list(mResTab,mResTabus,mResTabfb)
@@ -190,9 +191,9 @@ tabby_results_b<-function(loc){
   age_id = (2018:2049)-1949
   tt<-0
   #create 3 lists to hold output
-  mResTabfb <- mResTabus <- mResTab <- array(NA,dim=c(9,length(age_id),7,3))
+  mResTabfb <- mResTabus <- mResTab <- array(NA,dim=c(9,length(age_id),7,4))
 
-  ResTabfb <- ResTabus <- ResTab <- array(NA,dim=c(90,length(age_id),7,3))
+  ResTabfb <- ResTabus <- ResTab <- array(NA,dim=c(90,length(age_id),7,4))
   for (intv in 1:9){
     #load the results for all the runs (need to make this dataset)
     load(paste0("~/MITUS/",loc,"_results_",intv,".rda"))
@@ -202,13 +203,13 @@ tabby_results_b<-function(loc){
     #define o as the results
     o<-out
     #gather the outputs from that model run
-    for (b_ag in 1:3){
+    for (b_ag in 1:4){
       ################################################################################
       #total population
       #dimensions are
       #scenarios; length age id;
       # print(1:nr+((intv-1)*10))
-      ag_vec<- switch(b_ag, c(1,2,3),c(4,5,6,7),c(8,9,10,11))
+      ag_vec<- switch(b_ag,1:11, c(1,2,3),c(4,5,6,7),c(8,9,10,11))
       ################################################################################
       for (ag in ag_vec){
         ResTab[1:nr+((intv-1)*10),,1,b_ag]<-o[,age_id,1]
@@ -271,13 +272,14 @@ tabby_results_b<-function(loc){
 
   ################################################################################
   #take the mean for each of these
-  for (i in 1:length(age_id)){
-    for (j in 1:7){
-      for (k in 1:11){
-        mResTab[,i,j,k]<-mean(na.omit(ResTab[,i,j,k]))
-        mResTabus[,i,j,k]<-mean(na.omit(ResTabus[,i,j,k]))
-        mResTabfb[,i,j,k]<-mean(na.omit(ResTabfb[,i,j,k]))
-      } } }
+  for(l in 1:9){
+    for (i in 1:length(age_id)){
+      for (j in 1:7){
+        for (k in 1:4){
+          mResTab[l,i,j,k]<-mean(na.omit(ResTab[1:nr+((l-1)*10),i,j,k]))
+          mResTabus[l,i,j,k]<-mean(na.omit(ResTabus[1:nr+((l-1)*10),i,j,k]))
+          mResTabfb[l,i,j,k]<-mean(na.omit(ResTabfb[1:nr+((l-1)*10),i,j,k]))
+        } } }}
 
 
   ResTabC <- list(mResTab,mResTabus,mResTabfb)
