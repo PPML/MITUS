@@ -4,8 +4,6 @@
 #'These llikelihood functions are called in IMIS_functions.R
 #'takes in the outputs and calibration data and creates likelihood functions
 
-library(MCMCpack)
-
 #'Total Diagnosed Cases 1953-2016
 #'Motivation: Normal, mean centered with CI = +/- 5% of the mean
 #'@name notif_tot_lLik_st
