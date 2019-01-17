@@ -3,14 +3,14 @@
 #'this is the function that goes into the optimizer
 #'@name llikelihoodZ
 #'@param samp_i sample id
-#'@param ParMatrix matrix of parameters  # Par = par_1
+#'@param start_mat matrix of parameters  # Par = par_1
 #'@return lLik
-llikelihoodZ <-  function(samp_i,ParMatrix) {
-  if(min(dim(as.data.frame(ParMatrix)))==1) {
-    Par <- as.numeric(ParMatrix);
-    names(Par) <- names(ParMatrix)
-  } else {  Par <- as.numeric(ParMatrix[samp_i,]);
-  names(Par) <- colnames(ParMatrix) }  ##previously, the distribution of parameters were transformed to normal distribution in
+llikelihoodZ <-  function(samp_i, start_mat) {
+  if(min(dim(as.data.frame(start_mat)))==1) {
+    Par <- as.numeric(start_mat);
+    names(Par) <- names(start_mat)
+  } else {  Par <- as.numeric(start_mat[samp_i,]);
+  names(Par) <- colnames(start_mat) }  ##previously, the distribution of parameters were transformed to normal distribution in
   ##to facilitate comparisons. These first two steps convert these parameters back to their
   #'load the necessary libraries
   library(mnormt)
@@ -122,13 +122,13 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
       addlik <- tb_dth_age_lLik(V=v19); addlik
       lLik <- lLik + addlik
       #' Total DEATHS 1979-2016
-      v20a  <- rowSums(M[30:67,121:131])
-      addlik <- US_dth_tot_lLik(V=v20a); addlik
-      lLik <- lLik + addlik
-      #' Total DEATHS 1999-2016 BY AGE
-      v20b  <- M[66:67,121:131]
-      addlik <- tot_dth_age_lLik(V=v20b); addlik
-      lLik <- lLik + addlik
+      #' v20a  <- rowSums(M[30:67,121:131])
+      #' addlik <- US_dth_tot_lLik(V=v20a); addlik
+      #' lLik <- lLik + addlik
+      #' #' Total DEATHS 1999-2016 BY AGE
+      #' v20b  <- M[66:67,121:131]
+      #' addlik <- tot_dth_age_lLik(V=v20b); addlik
+      #' lLik <- lLik + addlik
       #' #' Mort_dist 2016
       v21a<- v21  <- M[66:67,521:564]
       for (i in 1:11){
@@ -172,15 +172,15 @@ llikelihoodZ <-  function(samp_i,ParMatrix) {
   return((lLik))  }
 #'Local parallelization via multicore
 #'@name llikelihood
-#'@param ParMatrix matrix of parameters
+#'@param start_mat matrix of parameters
 #'@param n_cores number of cores to use on the cluster
 #'@return lLik
 #'@export
-llikelihood <- function(ParMatrix,n_cores=1) {
-  if(dim(as.data.frame(ParMatrix))[2]==1) {
-    lLik <- llikelihoodZ(1,t(as.data.frame(ParMatrix)))
+llikelihood <- function(start_mat,n_cores=1) {
+  if(dim(as.data.frame(start_mat))[2]==1) {
+    lLik <- llikelihoodZ(1,t(as.data.frame(start_mat)))
   } else {
-    lLik <- unlist(mclapply(1:nrow(ParMatrix),llikelihoodZ,ParMatrix=ParMatrix,mc.cores=n_cores))
+    lLik <- unlist(mclapply(1:nrow(start_mat),llikelihoodZ,start_mat=start_mat,mc.cores=n_cores))
   }
   return((lLik))
 }
