@@ -36,7 +36,7 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
   }
   # adj_fact<-exp(.0001*(10:0)/11 + .0011*(0:10)/11)
   adj_fact <- exp(PV[["adj_ag1"]]*(10:0)/11 + PV[["adj_ag11"]]*(0:10)/11)
-  InputParams[["adj_fact"]] <- adj_fact;
+  InputParams[["adj_fact"]] <- adj_fact
 
   #params from general reblnc_pop:
   InputParams[["dist_gen"]] <- dist_gen;
@@ -136,7 +136,7 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
   TunmuTbAg <- PV["TunmuTbAg"]
 
   #################                IMMIGRATION              #####################
-  TotImmig1       <- c(ImmigInputs[[1]][1:65],(ImmigInputs[[1]][66:151]-ImmigInputs[[1]][66])*PV["ImmigVolFut"]+ImmigInputs[[1]][66])/12*PV["ImmigVol"]
+  # TotImmig1       <- c(ImmigInputs[[1]][1:65],(ImmigInputs[[1]][66:151]-ImmigInputs[[1]][66])+ImmigInputs[[1]][66])/12*PV["ImmigVol"]
   TotImmig0       <- (c(ImmigInputs[[1]][1:151])+c(rep(0,65),cumsum(rep(PV["ImmigVolFut"],86))))/12*PV["ImmigVol"]
 
   #set.seed( rand_seed)
