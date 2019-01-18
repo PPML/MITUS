@@ -1,0 +1,57 @@
+---
+title: "Location Specific Data Files in MITUS Package"
+author: "Nicole A. B. Swartwood"
+
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+  
+The MITUS model requires a number of location specific data files to process simulations. These data are stored in the /data folder of the package. The name of each datafile begins with the two-digit postal abbreviation of the state to which it corresponds; in the case of the United States this abbreviation is "US". Additionally, several files are common across states, but differ from the national level, distinguished by a "ST" or "US" prefix, for State or United States, respectively. 
+
+Below is a description of each of these required files.
+
+#### State Specific Data Files 
+
+* Model Inputs 
+
+    Holds inputs for the model. 
+
+* optim_all
+
+    a dataset of numerous optimized parameter vectors. these are all on a normal scale.
+    
+* parAll 
+
+    a dataset of optimized parameter vectors that have been transformed back to their original distributions. 
+    this dataset is used to run the model. 
+#### State versus National Level Data Files 
+
+* ParamInit
+
+    Initial parameter values for the model.
+* StartVal
+
+    This is a randomly generated matrix of starting values for parameters that are allowed to calibrate. 
+* CalibDatState
+    
+    Various calibration data targets used in the Bayesian calibration of the model. 
+
+In addition to the files that are required for the model to run, there are also stored result files. Each of these files holds the following results: 
+
+* LTBI prevalence in thousands 
+* Percept of population with LTBI
+* TB incidence in 1000s 
+* TB incidence per million
+* TB mortality in thousands 
+* TB mortality per million 
+
+#### State Specific Result Data Files 
+* restab_b
+
+    This is the first of two stored results files. It includes larger age bands (0-24, 25-64, 65+) and a total population estimate. It also includes     stratification across nativity groups (all, US-born, non-US born.)
+* restab_s
+  
+    Identical to restab_b except it includes 10 year age bands (0-4 ,5-14, 15-24, 25-34, 35-44, 45-54, 55-64, 65-74, 75-84, 85-94, 95+)
