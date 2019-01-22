@@ -6,7 +6,7 @@ Authors@R: c(person("Nick", "Menzies", email="nmenzies@hsph.harvard.edu"),
              person("Nicole", "Swartwood", email="nswartwood@hsph.harvard.edu"))
 Author: Dr. Nick Menzies and Nicole Swartwood
 Maintainer: Nicole Swartwood <nswartwood@hsph.harvard.edu>
-Depends: Rcpp, mvtnorm, lhs, parallel, MCMCpack, RColorBrewer, mnormt, coda
+Depends: Rcpp, mvtnorm, lhs, parallel, MCMCpack, RColorBrewer, mnormt, coda, dplyr
 Description: Modeling Interventions for Tuberculosis in the United States in R. 
     The package allows users to input and explore effects policy interventions 
     on the burden of tuberculosis in each of United States. 

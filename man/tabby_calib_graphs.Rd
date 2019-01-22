@@ -9,7 +9,7 @@ reported data for comparison
 plot text
 # diagnosed cases after 2000 ---------------------------------------------------}
 \usage{
-tabby_calib_graphs(loc)
+tabby_calib_graphs(loc, out_i)
 }
 \description{
 #' graph of total diagnosed cases

@@ -6,12 +6,12 @@
 functions found in calib_functions.R and updates the
 this is the function that goes into the optimizer}
 \usage{
-llikelihoodZ(samp_i, ParMatrix)
+llikelihoodZ(samp_i, start_mat)
 }
 \arguments{
 \item{samp_i}{sample id}
 
-\item{ParMatrix}{matrix of parameters  # Par = par_1}
+\item{start_mat}{matrix of parameters  # Par = par_1}
 }
 \value{
 lLik
@@ -35,7 +35,13 @@ TOTAL POP AGE DISTRIBUTION 2016 index updated
 TOTAL DEATHS WITH TB 1999-2014 - index updated
 TB DEATHS 1999-2014 BY AGE - index updated above
 Total DEATHS 1979-2016
-Total DEATHS 1999-2016 BY AGE
+v20a  <- rowSums(M[30:67,121:131])
+addlik <- US_dth_tot_lLik(V=v20a); addlik
+lLik <- lLik + addlik
+#' Total DEATHS 1999-2016 BY AGE
+v20b  <- M[66:67,121:131]
+addlik <- tot_dth_age_lLik(V=v20b); addlik
+lLik <- lLik + addlik
 #' Mort_dist 2016
 HOMELESS POP 2010 - index updated
 LIKELIHOOD FOR BORGDORFF, FEREBEE & SUTHERLAND ESTIMATES
