@@ -9,23 +9,21 @@ model_load<-function(loc="US"){
   library(Rcpp)
   library(MCMCpack)
   library(MASS)
-#'lazy load necessary datasets
+#'load necessary datasets
 #'Model Input
 if (loc=="US"){
-  calib_dat<-paste0(loc,"_CalibDat_2018-09-17")
-  par_init<-paste0("US_ParamInit_2018-12-05")
-  model_inputs<-paste0(loc,"_ModelInputs_12-05-2018")
-  start_val<-paste0("US_StartVal_2018-12-05")
+  CalibDat<<-readRDS(system.file("US/US_CalibDat_01-24-19.rds", package="MITUS"))
+  ParamInit<<-readRDS(system.file("US/US_ParamInit_01-24-19.rds", package="MITUS"))
+  Inputs<<-readRDS(system.file("US/US_Inputs_01-24-19.rds", package="MITUS"))
+  StartVal<<-readRDS(system.file("US/US_StartVal_01-24-19.rds", package="MITUS"))
+
 } else {
-  calib_dat<-paste0("CalibDatState_7-2-18")
-  model_inputs<-paste0(loc,"_ModelInputs_11-13-18")
-  par_init<-paste0("ST_ParamInit_2019-01-22")
-  start_val<-paste0("ST_StartVal_2019-01-22")
+  CalibDatState<<-readRDS(system.file("ST/ST_CalibDat_01-24-19.rds", package="MITUS"))
+  ParamInit_st<<-ParamInit<-readRDS(system.file("ST/ST_ParamInit_01-24-19.rds", package="MITUS"))
+  StartVal_st<<-StartVal<-readRDS(system.file("ST/ST_StartVal_01-24-19.rds", package="MITUS"))
+  Inputs<<-readRDS(system.file(paste0(loc,"/",loc,"_ModelInputs_01-24-19.rds"), package="MITUS"))
+
 }
-data(list=model_inputs, package = 'MITUS')
-data(list=par_init, package = 'MITUS')
-data(list=start_val, package = 'MITUS')
-data(list=calib_dat, package='MITUS')
 
 if (loc=="US"){
   wts <<- CalibDat[["ImptWeights"]]
