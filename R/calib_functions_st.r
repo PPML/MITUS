@@ -206,24 +206,25 @@ dth_tot_lLik_st <- function(V,st) {
   ST_deaths_tot   <- ST_tot_mort[which(ST_tot_mort$State==StateID[st,1]),]
   ST_deaths_tot   <- ST_deaths_tot[,4]
   adj_20a         <- sum(dnorm(ST_deaths_tot,ST_deaths_tot,ST_deaths_tot*0.1/1.96,log=T)*wts[30:67])
+  #V is scaled in IMIS script
   sum(dnorm(ST_deaths_tot,V,ST_deaths_tot*0.1/1.96,log=T)*wts[30:67]) - adj_20a
 }
 
 #'  #' TOTAL DEATHS AGE DISTRIBUTION 1999-2014
-#' #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
-#' #'@param V table of deaths by age 1999-2014 (row=16 years, col=11 ages)
-#' #'@param rho correlation parameter
-#' #'@return likelihood
-#' tot_dth_age_lLik_st <- function(V,rho=0.01) {
-#'   # CalibDat$US_mort_age <- read.csv(system.file("extdata","US_mort_age.csv", package="MITUS"))
-#'   tot_deaths_age  <- CalibDat[["ST_mort_age"]][,-1]
-#'   adj_20b        <- sum(dDirMult(M=tot_deaths_age+0.1,n=tot_deaths_age+0.1,Rho=0.01)*wts[50:67])
-#'   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
-#'   V2 <- V2[,-5]; V2[,4]  <- V2[,4]+V[,5]
-#'   V2 <- V2[,-3]; V2[,2]  <- V2[,2]+V[,3]
-#'
-#'   sum(dDirMult(M=(V2*1e6),n=tot_deaths_age+.1,Rho=rho)*wts[50:67]) - adj_20b  }
-
+#' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
+#'@param V table of deaths by age 1999-2014 (row=16 years, col=11 ages)
+#'@param rho correlation parameter
+#'@return likelihood
+tot_dth_age_lLik_st <- function(V,rho=0.01) {
+  data("death_age_dist",package="MITUS")
+  tda <- tot_deaths_age/rowSums(tot_deaths_age)
+  tda<-tda[17:18,]
+  adj_20b        <- sum(dDirMult(M=tda+0.1,n=tda+0.1,Rho=0.01)*wts[66:67])
+  V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
+  V2 <- V2[,-5]; V2[,4]  <- V2[,4]+V[,5]
+  V2 <- V2[,-3]; V2[,2]  <- V2[,2]+V[,3]
+  sum(dDirMult(M=(V2*1e6),n=tda+.1,Rho=rho)*wts[66:67]) - adj_20b
+  }
 
 #' Mortality Risk Group Distribution 1999-2014
 #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases

@@ -137,14 +137,17 @@ library(lhs)
       lLik <- lLik + addlik
 
       #' Total DEATHS 1979-2016
-      # v20a  <- rowSums(M[30:67,121:131])
-      # v20a<-v20a*1e6
-      # addlik <- dth_tot_lLik_st(V=v20a,st=st); addlik
-      # lLik <- lLik + addlik
-      #' #' Total DEATHS 1999-2016 BY AGE
-      #' v20b  <- M[50:67,121:131]
-      #' addlik <- tot_dth_age_lLik(V=v20b); addlik
-      #' lLik <- lLik + addlik
+      v20a  <- rowSums(M[30:67,121:131])
+      v20a<-v20a*1e6
+      addlik <- dth_tot_lLik_st(V=v20a,st=st); addlik
+      lLik <- lLik + addlik
+      #' #' Total DEATHS 2015-2016 BY AGE
+      v20b  <- M[66:67,121:131]
+      v20b  <- v20b/rowSums(v20b)
+               #V is scaled in the calib script
+      addlik <- tot_dth_age_lLik_st(V=v20b); addlik
+      lLik <- lLik + addlik
+
       #' #' Mort_dist 2016
       v21a<- v21  <- M[66:67,521:564]
       for (i in 1:11){
