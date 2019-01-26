@@ -19,8 +19,8 @@ if (loc=="US"){
 
 } else {
   CalibDatState<<-readRDS(system.file("ST/ST_CalibDat_01-24-19.rds", package="MITUS"))
-  ParamInit_st<<-ParamInit<-readRDS(system.file("ST/ST_ParamInit_01-24-19.rds", package="MITUS"))
-  StartVal_st<<-StartVal<-readRDS(system.file("ST/ST_StartVal_01-24-19.rds", package="MITUS"))
+  ParamInit_st<<-ParamInit<<-readRDS(system.file("ST/ST_ParamInit_01-25-19.rds", package="MITUS"))
+  StartVal_st<<-StartVal<<-readRDS(system.file("ST/ST_StartVal_01-25-19.rds", package="MITUS"))
   Inputs<<-readRDS(system.file(paste0(loc,"/",loc,"_ModelInputs_01-24-19.rds"), package="MITUS"))
 
 }
