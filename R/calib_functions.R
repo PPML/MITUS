@@ -17,7 +17,7 @@ notif_tot_lik <- function(V) {
   adj_1         <- sum(dnorm(notif_tot,notif_tot,notif_tot*0.1/1.96,log=T)*wts[4:67])
   sum(dnorm(notif_tot,V,notif_tot*0.1/1.96,log=T)*wts[4:67]) - adj_1  }
 
-#'US Cases Age Distribution 1993-2013
+#'US Cases Age Distribution 1993-2016
 #'Motivation: dirichlet-multinomial data with additional non-sampling biases
 #'@param V table of us notifications by age 1993-2013 (row=21 years, col=11 ages)
 #'@param rho correlation parameter
@@ -248,6 +248,7 @@ mort_dist_lLik <- function(V,rho=0.01) {
     x<-sum(dDirMult(M=V1,n=mort_dist,Rho=rho)*wts[66:67]) - adj_21
     tot_lik<-tot_lik+x
   }
+  tot_lik<-tot_lik*5
   return(tot_lik)
 }
 

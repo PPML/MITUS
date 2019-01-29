@@ -232,16 +232,18 @@ tot_dth_age_lLik_st <- function(V,rho=0.01) {
 #'@param V table of mort_dist 1999-2014 (row=16 years, col=11 ages)
 #'@param rho correlation parameter
 #'@return likelihood
-mort_dist_lLik_st <- function(V,rho=0.01) {
+mort_dist_lLik_st <- function(V,rho=0.1) {
   md     <- rowSums(dist_gen)
   mort_dist     <-matrix(md,2,4, byrow = TRUE)
-  adj_21        <- sum(dDirMult(M=mort_dist,n=mort_dist,Rho=0.01)*wts[66:67])
+  adj_21        <- sum(dDirMult(M=mort_dist,n=mort_dist,Rho=0.1)*wts[66:67])
   tot_lik<-0
   for(ag in 1:11){
     V1<-V[,(1:4)+4*(ag-1)]
     x<-sum(dDirMult(M=V1,n=mort_dist,Rho=rho)*wts[66:67]) - adj_21
     tot_lik<-tot_lik+x
+    print(x)
   }
+  tot_lik<-tot_lik*5
   return(tot_lik)
 }
 ### ### ### HOMELESS POP 2010  ### ### ### ### ### ### names(CalibDatState)
