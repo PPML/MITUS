@@ -11,12 +11,14 @@ optimization.
 The function requires the use of the ParamInit Rdata file and the
 StartValues Rdata file.}
 \usage{
-optim_noTB(df, samp_i = 1)
+optim_noTB(df, samp_i = 1, loc = "US")
 }
 \arguments{
 \item{df}{dataframe or matrix of starting values data frame}
 
 \item{samp_i}{which rows of the data frame to use}
+
+\item{loc}{two digit code of location}
 }
 \value{
 8 datasets from optimization loop

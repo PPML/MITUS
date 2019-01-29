@@ -2,7 +2,7 @@
 % Please edit documentation in R/calib_functions.R
 \name{notif_age_us_lLik}
 \alias{notif_age_us_lLik}
-\title{US Cases Age Distribution 1993-2013
+\title{US Cases Age Distribution 1993-2016
 Motivation: dirichlet-multinomial data with additional non-sampling biases}
 \usage{
 notif_age_us_lLik(V, rho = 0.005)
@@ -16,6 +16,6 @@ notif_age_us_lLik(V, rho = 0.005)
 likelihood
 }
 \description{
-US Cases Age Distribution 1993-2013
+US Cases Age Distribution 1993-2016
 Motivation: dirichlet-multinomial data with additional non-sampling biases
 }

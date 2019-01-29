@@ -4,10 +4,12 @@
 \alias{llikelihood_noRB}
 \title{Local parallelization via multicore}
 \usage{
-llikelihood_noRB(ParMatrix, n_cores = 1)
+llikelihood_noRB(opt_mat, loc, n_cores = 1)
 }
 \arguments{
-\item{ParMatrix}{matrix of parameters}
+\item{opt_mat}{matrix of parameters}
+
+\item{loc}{two digit code of location}
 
 \item{n_cores}{number of cores to use on the cluster}
 }

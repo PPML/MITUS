@@ -6,12 +6,12 @@
 functions found in calib_functions.R and updates the
 this is the function that goes into the optimizer}
 \usage{
-llikelihoodZ_noRB(samp_i, ParMatrix)
+llikelihoodZ_noRB(samp_i, opt_mat)
 }
 \arguments{
 \item{samp_i}{sample id}
 
-\item{ParMatrix}{matrix of parameters  # Par = par_1}
+\item{opt_mat}{matrix of parameters  # Par = par_1}
 }
 \value{
 lLik

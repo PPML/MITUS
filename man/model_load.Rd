@@ -11,7 +11,7 @@ model_load(loc = "US")
 }
 \value{
 void
-lazy load necessary datasets
+load necessary datasets
 Model Input
 }
 \description{

@@ -3,10 +3,7 @@
 \name{llikelihoodZ_st}
 \alias{llikelihoodZ_st}
 \title{Total DEATHS 1979-2016
-#' Total DEATHS 1999-2016 BY AGE
-v20b  <- M[50:67,121:131]
-addlik <- tot_dth_age_lLik(V=v20b); addlik
-lLik <- lLik + addlik
+#' Total DEATHS 2015-2016 BY AGE
 #' Mort_dist 2016
 LIKELIHOOD FOR BORGDORFF, FEREBEE & SUTHERLAND ESTIMATES}
 \usage{
@@ -14,10 +11,7 @@ llikelihoodZ_st(samp_i, ParMatrix, loc = "MA")
 }
 \description{
 Total DEATHS 1979-2016
-#' Total DEATHS 1999-2016 BY AGE
-v20b  <- M[50:67,121:131]
-addlik <- tot_dth_age_lLik(V=v20b); addlik
-lLik <- lLik + addlik
+#' Total DEATHS 2015-2016 BY AGE
 #' Mort_dist 2016
 LIKELIHOOD FOR BORGDORFF, FEREBEE & SUTHERLAND ESTIMATES
 }
