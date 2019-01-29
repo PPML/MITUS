@@ -9,6 +9,7 @@
 #'@name optim_noTB
 #'@param df dataframe or matrix of starting values data frame
 #'@param samp_i which rows of the data frame to use
+#'@param loc two digit code of location
 #'@return 8 datasets from optimization loop
 #'@export
 
