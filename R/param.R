@@ -27,8 +27,12 @@ param <- function (PV){
   ##########                PARAMETER DEFINITIONS                      ###########
   ##########                RISK FACTOR DISTRIBUTIONS   ##########################
 
-  #adj_fact<-exp(.0001*(10:0)/11 + .0011*(0:10)/11)
-  adj_fact <- exp(PV[["adj_ag1"]]*(10:0)/11 + PV[["adj_ag11"]]*(0:10)/11)
+  # adj_fact<-exp(.0001*(10:0)/11 + .0011*(0:10)/11)
+
+  # adj_fact<-exp(0.20025446*(10:0)/11 + 0.8708557*(0:10)/11)
+  # adj_fact<-exp(0.20025446*(10:0)/11 + 2*(0:10)/11)
+
+    adj_fact <- exp(PV[["adj_ag1"]]*(10:0)/11 + PV[["adj_ag11"]]*(0:10)/11)
 
   #######################           BIRTHS                 #######################
   ####### INDEXED BY TIME, ABSOLUTE NUMBER OF NEW ADULT ENTRANTS OVER TIME #######
@@ -46,7 +50,6 @@ param <- function (PV){
     mubt[,i] <- SmoCurve(BgMort[,i+1])*PV["TunMubt"]/12
     mubt[,i] <- mubt[,i]*RRmuAg[i]
   }
-
 
   mubt<-mubt[1:month,]
   # for(i in 2:10) {
@@ -139,8 +142,7 @@ param <- function (PV){
   PrevTrend25_34a  <- SmoCurve(PrevTrend25_341a)
    # ImDxChngV      <- SmoCurve(c(rep(1,57),seq(1,PV["ImDxChng"],length.out=6)[-1],rep(PV["ImDxChng"],89)))
    # ImmAct         <- outer(PrevTrend25_34a*PV["RRtbprev"]*ImDxChngV,ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*PV["pImAct"]
- ImmAct         <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*PV["pImAct"]
-
+  ImmAct         <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*PV["pImAct"]
   ImmFst         <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*(1-PV["pImAct"])
   ImmNon         <- TotImmAge-ImmAct-ImmFst-ImmLat
   ###################### TRUNCATE THESE VALS
@@ -208,9 +210,12 @@ param <- function (PV){
 
   #vector of ORpfastRF
   vORpfastPIRF<-vORpfastRF  <-c(1,1,1,1)
-  vORpfastRF  <-pfast*(exp((0:3)/3*log(ORpfastRF)))
+  vORpfastRF  <-(exp((0:3)/3*log(ORpfastRF)))
   vORpfastPIRF  <- vORpfastRF*ORpfastPI
 
+  ############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
+  Mpfast[,1]   <- vORpfastRF[1]*Mpfast[,1]
+  MpfastPI[,1]   <- vORpfastPIRF[1]*Mpfast[,1]
   ############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
   Mpfast[,2]   <- vORpfastRF[2]*Mpfast[,2]
   MpfastPI[,2]   <- vORpfastPIRF[2]*Mpfast[,2]
