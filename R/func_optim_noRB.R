@@ -7,13 +7,14 @@
 #'@name optim_noRB
 #'@param df dataframe or matrix of starting values data frame
 #'@param samp_i which rows of the data frame to use
+#'@param loc two digit code of location
 #'@return 7 datasets from optimization loop
 #'@export
-optim_noRB <- function(df, samp_i=1){
+optim_noRB <- function(df, samp_i=1, loc="US"){
+  if (loc=="US"){
   posterior = function(theta) {
 
-
-    -lprior(theta) - llikelihood_noRB(theta,n_cores)
+    -lprior(theta) - llikelihood_noRB(theta,loc,n_cores)
 
   }
 
@@ -41,4 +42,35 @@ optim_noRB <- function(df, samp_i=1){
   o7  <- optim(o6$par, posterior, method ="BFGS", control=list(maxit=400,trace=5,reltol=sqrt(.Machine$double.eps)/5)) ; o7$value
   save(o7,file=paste("Opt_US_r7_noRB_", b,"_", Sys.Date(),".rda",sep=""))
   # }
+  } else {
+
+    posterior_st = function(theta) {
+      -lprior(theta) - llikelihood_noRB(theta,loc,n_cores)
+    }
+
+    if(min(dim(as.data.frame(df)))==1) {
+      df1 <- as.numeric(df)
+      names(df1) <- names(df)
+    } else{
+      df1 <- as.numeric(df[samp_i,])
+    }
+
+    b<-samp_i
+    # for (i in min(b, nrow(StartVal))){
+    o1  <- optim(df1, posterior_st, method ="BFGS", control=list(maxit=400,trace=5,reltol=sqrt(.Machine$double.eps)/5)) ; o1$value
+    save(o1,file=paste("Opt_",loc,"_r1_", b,"_", Sys.Date(),".rda",sep=""))
+    o2  <- optim(o1$par,posterior_st, method ="Nelder-Mead", control=list(maxit=1000,trace=1,reltol=sqrt(.Machine$double.eps)/5));  o2$value
+    save(o2,file=paste("Opt_",loc,"_r2_", b,"_", Sys.Date(),".rda",sep=""))
+    o3  <- optim(o2$par, posterior_st, method ="BFGS", control=list(maxit=400,trace=5,reltol=sqrt(.Machine$double.eps)/5)) ; o3$value
+    save(o3,file=paste("Opt_",loc,"_r3_", b,"_", Sys.Date(),".rda",sep=""))
+    o4  <- optim(o3$par ,posterior_st, method ="Nelder-Mead", control=list(maxit=1000,trace=1,reltol=sqrt(.Machine$double.eps)/5));  o4$value
+    save(o4,file=paste("Opt_",loc,"_r4_", b,"_", Sys.Date(),".rda",sep=""))
+    o5  <- optim(o4$par, posterior_st, method ="BFGS", control=list(maxit=400,trace=5,reltol=sqrt(.Machine$double.eps)/5)) ; o5$value
+    save(o5,file=paste("Opt_",loc,"_r5_", b,"_", Sys.Date(),".rda",sep=""))
+    o6  <- optim(o5$par ,posterior_st, method ="Nelder-Mead", control=list(maxit=1000,trace=1,reltol=sqrt(.Machine$double.eps)/5));  o6$value
+    save(o6,file=paste("Opt_",loc,"_r6_", b,"_", Sys.Date(),".rda",sep=""))
+    o7  <- optim(o6$par, posterior_st, method ="BFGS", control=list(maxit=400,trace=5,reltol=sqrt(.Machine$double.eps)/5)) ; o7$value
+    save(o7,file=paste("Opt_",loc,"_r7_", b,"_", Sys.Date(),".rda",sep=""))
+}
+
 }
