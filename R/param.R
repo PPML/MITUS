@@ -239,10 +239,10 @@ param <- function (PV){
 
   ############# CREATE A VECTOR FOR RATE OF SLOW PROGRESSION THAT WILL
   ############# VARY BASED ON LEVELS OF TB REACTIVATION RATES
-  Vrslow     <- rep(rslow,4)
+  Vrslow     <- rep(1,4)
   ############# UPDATE LEVEL FOUR OF THE RATE OF SLOW BASED ON CALCULATED RR FROM
   ############# USER INPUTTED RR FOR THE RISK FACTOR
-  Vrslow=rslow*exp((0:3)/3*log(RRrslowRF))
+  Vrslow<-rslow*exp((0:3)/3*log(RRrslowRF))
 
   TunrslowAge  <- PV["TunrslowAge"]
   rrReactAg       <- exp(c(0,0,0,0,0,0,0.5,1:4)*PV["TunrslowAge"])
