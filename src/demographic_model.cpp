@@ -19,13 +19,14 @@ using namespace Rcpp;
 //'@param vTMort vector of TB mortality rates
 //'@param RRmuRF rate ratio of mortality across mortality risk group
 //'@param RRmuHR rate ratio of mortality across low/high risk dimension
-//'@param muTBRF comorbidity factor btw TB and mortality risk group
 //'@param Birthst Births over time
 //'@param HrEntEx Matrix of Entry and Exit rates into the High Risk population
 //'@param ImmNon Immigration with no TB
 //'@param ImmLat Immigration with Latent TB
 //'@param ImmAct Immigration with Active TB
 //'@param ImmFst Immigration with Fast Progressing TB
+//'@param net_mig_usb net internal migration usb
+//'@param net_mig_nusb net internal migration nusb
 //'@param mubt background mortality over time
 //'@param RelInf beta
 //'@param RelInfRg beta based off of risk group
@@ -66,14 +67,14 @@ Rcpp::List cSim_noTB(
     Rcpp::NumericMatrix       vTMort,
     std::vector<double> RRmuRF,
     std::vector<double> RRmuHR,
-
-    double              muTbRF,
     std::vector<double> Birthst,
     Rcpp::NumericMatrix       HrEntEx,
     Rcpp::NumericMatrix       ImmNon,
     Rcpp::NumericMatrix       ImmLat,
     Rcpp::NumericMatrix       ImmAct,
     Rcpp::NumericMatrix       ImmFst,
+    std::vector<double> net_mig_usb,
+    std::vector<double> net_mig_nusb,
     Rcpp::NumericMatrix       mubt,
     std::vector<double> RelInf,
     std::vector<double> RelInfRg,
@@ -312,7 +313,7 @@ Rcpp::List cSim_noTB(
     //   vRFMortN[ag][nm] = 0;
     // } }
     // for(int rg=0; rg<2; rg++){RRmuHR[rg]=1; }
-    muTbRF =0;
+    // muTbRF =0;
     // for(int i=0; i < 11; i++)
     // {  temp_vec3[i]=0;
     //   temp_vec4[i]=0;
@@ -404,6 +405,7 @@ Rcpp::List cSim_noTB(
               V1[ag][tb][0][im][nm][rg][1]  -= V0[ag][tb][0][im][nm][rg][1]*rEmmigFB[0];   // FB1
               V1[ag][tb][0][im][nm][rg][2]  -= V0[ag][tb][0][im][nm][rg][2]*rEmmigFB[1];   // FB2
             } } } } }
+
     ////////////////////////////////MORTALITY//////////////////////////////////////
     // for (int i=0; i<4; i++){
     //   temp_vec2[i]=0; }
@@ -960,6 +962,17 @@ Rcpp::List cSim_noTB(
       //
       //               }
       //             } } } } } } }
+      /////////////////////////////////  NET INTERNAL MIGRATION  ///////////////////////////////////
+      for(int ag=0; ag<11; ag++) {
+        for(int tb=0; tb<6; tb++) {
+          for(int lt=0; lt<2; lt++){
+            for(int im=0; im<4; im++){
+              for(int nm=0; nm<4; nm++){
+                for(int rg=0; rg<2; rg++) {
+                  V1[ag][tb][lt][im][nm][rg][0]  += V0[ag][tb][lt][im][nm][rg][0]*net_mig_usb[ag];      // US
+                  V1[ag][tb][lt][im][nm][rg][1]  += V0[ag][tb][lt][im][nm][rg][1]*net_mig_nusb[ag];      // FB1
+                  V1[ag][tb][lt][im][nm][rg][2]  += V0[ag][tb][lt][im][nm][rg][2]*net_mig_nusb[ag];      // FB2
+                } } } } } }
       /////////////////////////////////  MORTALITY  ///////////////////////////////////
 
       // for (int i=0; i<4; i++){

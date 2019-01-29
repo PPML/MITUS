@@ -130,7 +130,7 @@ llikelihoodZ_noTB_st <-  function(samp_i,opt_mat,loc) {
     zz <- cSim_noTB(  nYrs       = 2018-1950         , nRes      = length(prms[["ResNam"]]), rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
                       Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]    ,
                       rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
-                      vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , muTbRF     = prms[["muTbRF"]]    , Birthst  = prms[["Birthst"]]    ,
+                      vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  ,  Birthst  = prms[["Birthst"]]    ,
                       HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat" ]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst" ]]    ,
                       net_mig_usb = prms[["net_mig_usb"]]      , net_mig_nusb    = prms[["net_mig_nusb"]]        ,
                       mubt       = prms[["mubt"]]      , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
@@ -193,7 +193,7 @@ llikelihoodZ_noTB_st <-  function(samp_i,opt_mat,loc) {
   return((lLik))  }
 
 #'Local parallelization via multicore
-#'@name llikelihood
+#'@name llikelihood_noTB
 #'@param start_mat matrix of parameters
 #'@param loc two digit postal code of location
 #'@param n_cores number of cores to use on the cluster
@@ -203,15 +203,15 @@ llikelihoodZ_noTB_st <-  function(samp_i,opt_mat,loc) {
 llikelihood_noTB <- function(start_mat,loc="US",n_cores=1) {
   if(loc=="US"){
     if(dim(as.data.frame(start_mat))[2]==1) {
-      lLik <- llikelihoodZ(1,t(as.data.frame(start_mat)))
+      lLik <- llikelihoodZ_noTB(1,t(as.data.frame(start_mat)))
     } else {
-      lLik <- unlist(mclapply(1:nrow(start_mat),llikelihoodZ,start_mat=start_mat,mc.cores=n_cores))
+      lLik <- unlist(mclapply(1:nrow(start_mat),llikelihoodZ_noTB,opt_mat=start_mat,mc.cores=n_cores))
     }
   } else {
-  if(dim(as.data.frame(ParMatrix))[2]==1) {
-    lLik <- llikelihoodZ_st(1,t(as.data.frame(ParMatrix)),loc=loc)
+  if(dim(as.data.frame(start_mat))[2]==1) {
+    lLik <- llikelihoodZ_noTB_st(1,t(as.data.frame(start_mat)),loc=loc)
     } else {
-      lLik <- unlist(mclapply(1:nrow(ParMatrix),llikelihoodZ_st,ParMatrix=ParMatrix,loc=loc,mc.cores=n_cores))
+      lLik <- unlist(mclapply(1:nrow(start_mat),llikelihoodZ_noTB_st,opt_mat=start_mat,loc=loc,mc.cores=n_cores))
     }}
   return((lLik)) }
 
