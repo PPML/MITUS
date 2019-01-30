@@ -4,9 +4,10 @@
 #'@return dataset
 #'@export
 fixed_vals<-function(samp_i){
+  library(dplyr)
 #load the most up to date national optimized data set
 # and format the data back to their original distributions
-load("~/MITUS/data/US_opt_all_2018-12-10.rda")
+load("~/MITUS/US_Optim_all_10_2019-01-20.rda")
 Par<-US_opt_all[samp_i,-(ncol(US_opt_all)-1)]
 Par2 <- pnorm(Par,0,1)
 # uniform to true
@@ -62,6 +63,6 @@ for (i in seq_along(fixed_vals)) {
 }
 
 ParamInit_st[,]<-newparaminitst[,]
-save(ParamInit_st,file=paste0("~/MITUS/data/ST_ParamInit_", Sys.Date() ,"rda"))
+saveRDS(ParamInit_st,file=paste0("~/MITUS/inst/ST/ST_ParamInit_", Sys.Date() ,".rds"))
 
 }
