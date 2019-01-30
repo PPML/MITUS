@@ -18,11 +18,12 @@ rnames[j]<-paste("b_no_", j, sep="")
 rownames(opt_all)<-rnames
 
 for (i in 1:batches){
-  load(paste("/Users/nis100/Desktop/10_mon/Opt_US_r7_",i,"_2018-12-10.rda", sep=""))
+  load(paste("/Users/nis100/Desktop/27_sun_CA/Opt_CA_r7_",i,"_2019-01-27.rda", sep=""))
   opt_all[i,1:nrow(ParamInitZ)] <- o7$par
   opt_all[i,nrow(ParamInitZ)+1]<- o7$value
 }
-save(opt_all, file=paste("Optim_all_", batches,"_", Sys.Date(),".rda", sep = ""))
+CA_opt_all<-opt_all
+saveRDS(CA_opt_all, file=paste("~/MITUS/inst/CA/CA_Optim_all_", batches,"_", Sys.Date(),".rds", sep = ""))
 
 }
 
