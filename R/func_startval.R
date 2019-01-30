@@ -11,7 +11,7 @@ gen_st_val <-function(n=10, samp="LHS"){
   if(identical(samp,"NORM")==TRUE) StartVal <-sample.prior1(n)
   if(identical(samp,"LHS") ==TRUE) StartVal <- sample.prior2(n)
   colnames(StartVal)<-rownames(ParamInitZ)
-  save(StartVal, file=paste("~/MITUS/data/US_StartVal_", Sys.Date(),".rda", sep=""))
+  saveRDS(StartVal, file=paste("~/MITUS/inst/US/US_StartVal_", Sys.Date(),".rds", sep=""))
 
 }
 
@@ -26,7 +26,7 @@ gen_st_val_st <-function(n=10, samp="LHS"){
   if(identical(samp,"LHS") ==TRUE) StartVal <- sample.prior2(n)
   colnames(StartVal)<-rownames(ParamInitZ)
   StartVal_st<-StartVal
-  save(StartVal_st, file=paste("~/MITUS/data/ST_StartVal_", Sys.Date(),".rda", sep=""))
+  saveRDS(StartVal_st, file=paste("~/MITUS/inst/ST/ST_StartVal_", Sys.Date(),".rds", sep=""))
 
 }
 
@@ -37,8 +37,8 @@ gen_st_val_st <-function(n=10, samp="LHS"){
 #'@param startMat a matrix of values in the normal space
 #'@return matrix of Params in their original distributions
 gen_par_matrix<-function(startMat){
-  ParMatrix<-matrix(NA,nrow(startMat),nrow(ParamInit))
-  colnames(ParMatrix)<-rownames(ParamInit)
+  parAll<-matrix(NA,nrow(startMat),nrow(ParamInit))
+  colnames(parAll)<-rownames(ParamInit)
   for(i in 1:nrow(startMat)){
   if(min(dim(as.data.frame(startMat)))==1) {
     Par <- as.numeric(startMat);
@@ -56,10 +56,10 @@ gen_par_matrix<-function(startMat){
   Par3[idZ2] <- qnorm( Par2[idZ2], mean    = ParamInitZ[idZ2,6], sd     = ParamInitZ[idZ2,7])
   P[ii] <- Par3
   P <- P
-  ParMatrix[i,]<-P
+  parAll[i,]<-P
   }
-save(ParMatrix,file=paste("parAll",nrow(startMat),"_",Sys.time(),".rda", sep=""))
-  return(ParMatrix)
+saveRDS(parAll,file=paste("parAll",nrow(startMat),"_",Sys.time(),".rds", sep=""))
+  return(parAll)
 
 }
 
