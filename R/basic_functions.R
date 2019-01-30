@@ -96,11 +96,11 @@ dDirMult <- function(M,n,Rho) {
   }
   rowSums(lgamma(n+M/Rho))-rowSums(lgamma(M/Rho))
 }
-#'@name Mode
-#'@param x some object
+#'@name getmode
+#'@param x some vector (character or numeric)
 #'@return mode
 #'@export
-Mode <- function(x) {
-  ux <- unique(x)
-  ux[which.max(tabulate(match(x, ux)))]
+getmode <- function(v) {
+  uniqv <- unique(v)
+  uniqv[which.max(tabulate(match(v, uniqv)))]
 }
