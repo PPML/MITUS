@@ -1,14 +1,14 @@
 #'@name run_model
-#'@param samp_i which row of the ParMatrix to use
-#'@param ParMatrix a matrix of optimized parameter vectors which should be same length as ParamInitZ
+#'@param samp_i which row of the opt_mat to use
+#'@param opt_mat a matrix of optimized parameter vectors which should be same length as ParamInitZ
 #'@return M of results
 #'@export
-run_model<-function(samp_i, ParMatrix){
-if(min(dim(as.data.frame(ParMatrix)))==1) {
-  Par <- as.numeric(ParMatrix);
-  names(Par) <- names(ParMatrix)
-} else {  Par <- as.numeric(ParMatrix[samp_i,]);
-names(Par) <- colnames(ParMatrix) }  ##previously, the distribution of parameters were transformed to normal distribution in
+run_model<-function(samp_i, opt_mat){
+if(min(dim(as.data.frame(opt_mat)))==1) {
+  Par <- as.numeric(opt_mat);
+  names(Par) <- names(opt_mat)
+} else {  Par <- as.numeric(opt_mat[samp_i,]);
+names(Par) <- colnames(opt_mat) }  ##previously, the distribution of parameters were transformed to normal distribution in
 ##to facilitate comparisons. These first two steps convert these parameters back to their
 #'load the necessary libraries
 library(mnormt)
