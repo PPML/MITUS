@@ -1,8 +1,14 @@
-graphs_pub<-function(Par_list){
+graphs_pub<-function(Par_list, loc="US"){
   ##get data from the calibdat
-  datF         <- CalibDatState[["ferebee_data"]]
-  datB         <- CalibDatState[["borgdorff_data"]]
-  datS         <- CalibDatState[["sutherland_data"]]
+  if (loc=="US"){
+  datF         <- CalibDat[["ferebee_data"]]
+  datB         <- CalibDat[["borgdorff_data"]]
+  datS         <- CalibDat[["sutherland_data"]]
+  } else {
+    datF         <- CalibDatState[["ferebee_data"]]
+    datB         <- CalibDatState[["borgdorff_data"]]
+    datS         <- CalibDatState[["sutherland_data"]]
+  }
   datSz        <- datS; datSz[datS[,3]==0,3] <- 0.01
 ####################################
 ## Borgdo

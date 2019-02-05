@@ -5,7 +5,7 @@
 #'@param df dataframe of results
 #'@return .pdf of calibration graphs
 #'@export
-calib_graphs <- function(df){
+calib_graphs <- function(df, Par_list){
   library(MCMCpack)
 df<-as.data.frame(df)
 pdfname<-paste("MITUS_results/calib_graphs",Sys.time(),".pdf")
@@ -519,6 +519,7 @@ legend("topright",c("Reported data","Model"),pch=c(19,NA),lwd=c(1,2),
        col=c("black","blue"),lty=c(3,1),bg="white",pt.cex=c(0.6,NA))################################################################################
 
 ################################################################################
+graphs_pub(Par_list=Par_list)
 
 
 dev.off()
