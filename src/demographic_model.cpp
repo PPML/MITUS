@@ -313,7 +313,6 @@ Rcpp::List cSim_noTB(
     //   vRFMortN[ag][nm] = 0;
     // } }
     // for(int rg=0; rg<2; rg++){RRmuHR[rg]=1; }
-    // muTbRF =0;
     // for(int i=0; i < 11; i++)
     // {  temp_vec3[i]=0;
     //   temp_vec4[i]=0;
@@ -724,7 +723,8 @@ Rcpp::List cSim_noTB(
               for(int rg=0; rg<2; rg++) {
                 for(int na=0; na<3; na++){
                   V2[ag][tb][0][im][nm][rg][na]=0;
-                } } } } }
+                } } } } } }
+      for(int ag=0; ag<11; ag++) {
         for(int tb=0; tb<6; tb++) {
           for (int im=0; im<4; im++){
             for (int nm=0; nm<4; nm++){
@@ -735,8 +735,7 @@ Rcpp::List cSim_noTB(
 
                       // Rcout<< trans_mat_tot_agesN[m2+p2*4][(16*(ag+1))-(16-(nm+im*4))]<<"\n";
                       V2[ag][tb][0][im][nm][rg][na] += V1[ag][tb][0][p2][m2][rg][na] * (trans_mat_tot_agesN[m2+p2*4][(16*(ag+1))-(16-(nm+im*4))]);
-                    } } } } } } }
-      } //end of age loop
+                    } } } } } } } }
       // } //end of reblncing loop
       for(int ag=0; ag<11; ag++) {
         for(int tb=0; tb<6; tb++) {
@@ -1598,7 +1597,7 @@ Rcpp::List cSim_noTB(
                     for(int na=0; na<3; na++) {
                       Outputs[y][76+ag] += V1[ag][tb][lt][im][nm][rg][na];   // N_RF by age (11)
                     } } } } } } }
-        ///////////// TB MORTALITY COUNT BY AGE, RISK FACTOR OF INTEREST///////////////
+        ///////////// TB MORTALITY COUNT BY AGE, NATIVITY///////////////
         ///////////// This output will likely be updated but it is not calib'd
         for(int ag=0; ag<11; ag++) {
           for(int lt=0; lt<2; lt++) {
@@ -1606,7 +1605,7 @@ Rcpp::List cSim_noTB(
               for(int nm=0; nm<4; nm++) {
                 for(int rg=0; rg<2; rg++) {
                   for(int na=0; na<3; na++) {
-                    if(im>0) {
+                    if(na>0) {
                       ti = 11;
                     } else { ti = 0; }
                     // if(im==3) {
@@ -1803,8 +1802,10 @@ Rcpp::List cSim_noTB(
               for (int nm=0; nm<4; nm++){
                 for(int rg=0; rg<2; rg++) {
                   for(int na=0; na<3; na++){
-                    Outputs[y][226+ag]  += VMort[ag][4][lt][im][nm][rg][na];
-                  } } } } } }
+                    for(int tb=4; tb<6; tb++){
+
+                      Outputs[y][226+ag]  += VMort[ag][tb][lt][im][nm][rg][na];
+                    } } } } } } }
         ////////////     CREATE YEARLY VALUES FROM THE MONTH ESTIMATE     ////////////
         for(int i=226; i<237; i++) { Outputs[y][i] = Outputs[y][i]*12; }
 
@@ -1895,7 +1896,7 @@ Rcpp::List cSim_noTB(
                 for(int nm=0; nm<4; nm++) {
                   for(int rg=0; rg<2; rg++) {
                     for(int na=0; na<3; na++) {
-                      if (na<1){
+                      if (na==0){
                         Outputs[y][296+im]  += V1[ag][tb][lt][im][nm][rg][na];
                         Outputs[y][304+rg]  += V1[ag][tb][lt][im][nm][rg][na];
                         Outputs[y][308+nm]  += V1[ag][tb][lt][im][nm][rg][na];
@@ -1936,11 +1937,12 @@ Rcpp::List cSim_noTB(
         for(int ag=0; ag<11; ag++) {
           for(int tb=0; tb<6; tb++) {
             for(int lt=0; lt<2; lt++) {
-              for(int nm=0; nm<4; nm++) {
-                for(int im=0; im<4; im++) {
+              for(int im=0; im<4; im++) {
+                for(int nm=0; nm<4; nm++) {
+
                   for(int rg=0; rg<2; rg++) {
                     for(int na=0; na<3; na++) {
-                      Outputs[y][333+ag+(nm*11)+(im*44)] += VMort[ag][tb][lt][im][nm][rg][na];
+                      Outputs[y][333+nm+(im*4)+(ag*16)] += VMort[ag][tb][lt][im][nm][rg][na];
                     } } } } } } }
 
         for(int i=333; i<509; i++) { Outputs[y][i] = Outputs[y][i]*12; }
@@ -1956,8 +1958,10 @@ Rcpp::List cSim_noTB(
                 for(int im=0; im<4; im++) {
                   for(int rg=0; rg<2; rg++) {
                     for(int na=0; na<3; na++) {
-                      Outputs[y][520+ag+(nm*11)] += VMort[ag][tb][lt][im][nm][rg][na];
+                      Outputs[y][520+nm+(ag*4)] += V1[ag][tb][lt][im][nm][rg][na];
                     } } } } } } }
+
+
       } ////end of mid-year results bracket
       ///////////////////////////////////////////////////////////////////////////////////
       //////////////////////////////END MIDYEAR RESULTS//////////////////////////////////
@@ -1967,15 +1971,9 @@ Rcpp::List cSim_noTB(
       //////////////////////////////////////////////////////////////////////////////////
 
       ////// need to define the current distribution of persons across the RG at this timestep
-      // if (reblnc==1){
+      if (reblnc==1){
 
       for(int ag=0; ag<11; ag++) {
-
-        //update the
-
-
-
-
         for(int na=0; na<3; na++){
           for(int tb=0; tb<6; tb++) {
             for(int lt=0; lt<2; lt++){
@@ -1983,8 +1981,8 @@ Rcpp::List cSim_noTB(
                 for (int im=0; im<4; im++){
                   for (int nm=0; nm<4; nm++){
                     V2[ag][tb][lt][im][nm][rg][na]=0;
-                  } } } } } }
-
+                  } } } } } } }
+        for(int ag=0; ag<11; ag++) {
         for (int im=0; im<4; im++){
           for (int nm=0; nm<4; nm++){
             for (int m2=0; m2<4; m2++){
@@ -1994,7 +1992,9 @@ Rcpp::List cSim_noTB(
                     for(int lt=0; lt<2; lt++){
                       for(int na=0; na<3; na++){
                         V2[ag][tb][lt][im][nm][rg][na] += V1[ag][tb][lt][p2][m2][rg][na] *((trans_mat_tot_agesN[(m2+p2*4)][(16*(ag+1))-(16-(nm+im*4))]));//*((mubtN[s][ag]/mubtN[0][ag])*.1));
-                      } } } } } } } }
+                      } } } } } } } } }
+      } //end of rebalancing loop
+      for(int ag=0; ag<11; ag++) {
         for(int im=0; im<4; im++) {
           for(int nm=0; nm<4; nm++){
             for(int rg=0; rg<2; rg++){
@@ -2007,7 +2007,7 @@ Rcpp::List cSim_noTB(
                     } else {
                       V0[ag][tb][lt][im][nm][rg][na] = V1[ag][tb][lt][im][nm][rg][na];
                     }
-                  } } } } } }
+                }   } } } } } }
 
         // for(int ag=0; ag<11; ag++) {
         //   for(int tb=0; tb<6; tb++) {
@@ -2022,7 +2022,6 @@ Rcpp::List cSim_noTB(
         //              Rcpp::Rcout << "after rblnc pop is negative /n";
         //               }
         //             } } } } } } }
-      }//end of age loop
 
 
 
