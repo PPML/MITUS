@@ -130,9 +130,9 @@ llikelihoodZ <-  function(samp_i, start_mat) {
       addlik <- tot_dth_age_lLik(V=v20b); addlik
       lLik <- lLik + addlik
       #' #' Mort_dist 2016
-      v21a<- v21  <- M[66:67,521:564]
+      v21a<- v21  <- M[51:67,521:564]
       for (i in 1:11){
-        denom<-M[66:67,2+i]
+        denom<-M[51:67,2+i]
         for (j in 1:ncol(v21)){
           v21a[,(1:4)+4*(i-1)]<-v21[,(1:4)+4*(i-1)]/denom
         } }

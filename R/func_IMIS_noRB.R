@@ -175,6 +175,11 @@ llikelihoodZ_noRB_st <-  function(samp_i,opt_mat,loc="MA") { # opt_mat = ParInit
   StateID<-as.data.frame(stateID)
   # model_inputs<-paste0(loc,"_ModelInputs_11-13-18")
   # data(list=model_inputs, package = 'MITUS')
+  if(min(dim(as.data.frame(opt_mat)))==1) {
+    Par <- as.numeric(opt_mat);
+    names(Par) <- names(opt_mat)
+  } else {  Par <- as.numeric(opt_mat[samp_i,]);
+  names(Par) <- colnames(opt_mat) }
   Par <- opt_mat[samp_i,]
   # norm2unif
   Par2 <- pnorm(Par,0,1)
