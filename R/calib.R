@@ -56,9 +56,10 @@ P <- P
         v21a[,(1:4)+4*(i-1)]<-v21[,(1:4)+4*(i-1)]/denom
       } }
     print(v21a)
+    pub_list<-list(prms[["Mpfast"]],prms[["Mrslow"]], prms[["rfast"]],prms[["rRecov"]])
     if (loc=="US"){
-    calib_graphs(M)
-    } else calib_graphs_st(M,loc)
+    calib_graphs(M, pub_list)
+    } else calib_graphs_st(M,loc, pub_list)
     return(M)
 }
 

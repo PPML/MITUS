@@ -173,17 +173,16 @@ llikelihoodZ_noTB_st <-  function(samp_i,opt_mat,loc) {
       #V is scaled in the calib script
       addlik <- tot_dth_age_lLik_st(V=v20b); addlik
       lLik <- lLik + addlik
-
       #' #' Mort_dist 2016
-      v21a<- v21  <- M[66:67,521:564]
+      v21a<- v21  <- M[51:67,521:564]
       for (i in 1:11){
-        denom<-M[66:67,2+i]
+        denom<-M[51:67,2+i]
         for (j in 1:ncol(v21)){
           v21a[,(1:4)+4*(i-1)]<-v21[,(1:4)+4*(i-1)]/denom
         } }
-      addlik <- mort_dist_lLik(V=v21a); addlik
+      # v21a<-v21a[,c(1:4,41:44)]
+      addlik <- mort_dist_lLik_st(V=v21a); addlik
       lLik <- lLik + addlik
-
 
 
     } }, error = function(e) NA)
