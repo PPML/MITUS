@@ -5,10 +5,14 @@
 #'@export
 fixed_vals<-function(samp_i){
   library(dplyr)
+  model_load("US")
+  fixed_prior<-c("SensLt","SpecLt","EffLt","SensSp","pCurPs")
+  pr_x<-filter(ParamInit, rownames(ParamInit) %in% fixed_prior)
+  pr_x<-as.vector(unlist(pr_x[,1]))
 #load the most up to date national optimized data set
 # and format the data back to their original distributions
-load("~/MITUS/US_Optim_all_10_2019-01-20.rda")
-Par<-US_opt_all[samp_i,-(ncol(US_opt_all)-1)]
+US_opt_all<-readRDS(system.file("US/US_Optim_all_10_2019-01-25.rds", package="MITUS"))
+Par<-US_opt_all[samp_i,-(ncol(US_opt_all))]
 Par2 <- pnorm(Par,0,1)
 # uniform to true
 Par3 <- Par2
@@ -23,20 +27,9 @@ US_opt <- as.data.frame(P)
 ###FILL IT WITH THE VALUES SET TO EITHER THE PRIOR OR THE
 ###NATIONAL CALIBRATIONS
 ###THIS CALL IS NOT STATE DEPENDENT --USING CA FOR CONVENIENCE
-model_load("CA")
-Inputs<-CA_Inputs
-rm(CA_Inputs)
-ParamInit<-ParamInit_st
-fixed_prior<-c("SensLt","SpecLt","EffLt","SensSp","pCurPs")
-
 fixed_national<-c("muIp","TunmuTbAg","RRmuHR","pfast","ORpfast1","ORpfast2",
-                  "ORpfastH","ORpfastPI","rfast","rslow","rslowH","TunrslowAge",
+                  "ORpfastH","ORpfastPI","rslow","rslowH","TunrslowAge", "rfast",
                   "rRecov","rSlfCur","TxQualEarly","TunTxQual","RRcurDef")
-
-pr_x<-filter(ParamInit_st, rownames(ParamInit_st) %in% fixed_prior)
-pr_x<-as.vector(unlist(pr_x[,1]))
-
-# US_opt<-as.data.frame(US_opt_all[10,])
 
 nat_x<-filter(US_opt, rownames(US_opt) %in% fixed_national)
 nat_x<-as.vector(unlist(nat_x))
@@ -46,6 +39,7 @@ names(fixed_vals)<-c(fixed_prior,fixed_national)
 
 ###LOAD IN THE STATE DATA TO CREATE A NEW PARAM_INIT,
 ###START_VAL DATA SETS FOR A NEW OPTIMIZATION RUN
+model_load("CA")
 newparaminitst<-ParamInit_st[,]
 #IF THE COLNAME OF PARAM INIT IS IN THE fixed_vals
 #VECTOR THEN MAKE SURE THAT ParamInit_st$Calib <-0
