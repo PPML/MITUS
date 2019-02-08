@@ -67,6 +67,7 @@ Rcpp::List cSim(
     Rcpp::NumericMatrix       vTMort,
     std::vector<double> RRmuRF,
     std::vector<double> RRmuHR,
+
     std::vector<double> Birthst,
     Rcpp::NumericMatrix       HrEntEx,
     Rcpp::NumericMatrix       ImmNon,
@@ -290,9 +291,9 @@ Rcpp::List cSim(
   for(int i=0; i<4; i++) {
     for(int j=0; j<4; j++) {
       temp_mat2[i][j] = 0;
-  //     trans_mat[i][j] = 0;
-  //     trans_mat_tot[i][j] = 0;
-  //     trans_mat_fin(i,j)=0;
+      //     trans_mat[i][j] = 0;
+      //     trans_mat_tot[i][j] = 0;
+      //     trans_mat_fin(i,j)=0;
     } }
   //
   // for(int i=0; i<16; i++) {
@@ -712,82 +713,81 @@ Rcpp::List cSim(
 
     } //end of tb dynamics loop
 
-///////                 REBALANCE THE POPULATION
-////////           NOW FINALLY UPDATE THE DISTRIBUTION           ///////////
-if (reblnc==1){
-for(int ag=0; ag<11; ag++) {
-  for(int na=0; na<3; na++){
+    ///////                 REBALANCE THE POPULATION
+    ////////           NOW FINALLY UPDATE THE DISTRIBUTION           ///////////
+    if (reblnc==1){
+      for(int ag=0; ag<11; ag++) {
+        for(int na=0; na<3; na++){
 
-      for(int tb=0; tb<6; tb++) {
+          for(int tb=0; tb<6; tb++) {
             for (int im=0; im<4; im++){
               for (int nm=0; nm<4; nm++){
                 for(int rg=0; rg<2; rg++) {
                   V2[ag][tb][0][im][nm][rg][na]=0;
-                } } } } } }
-for(int ag=0; ag<11; ag++) {
-  for(int na=0; na<3; na++){
+                } } } }
+        }
+        for(int tb=0; tb<6; tb++) {
+          for (int im=0; im<4; im++){
+            for (int nm=0; nm<4; nm++){
+              for(int na=0; na<3; na++){
+                for(int rg=0; rg<2; rg++) {
+                  for (int m2=0; m2<4; m2++){
+                    for (int p2=0; p2<4; p2++){
 
-      for(int tb=0; tb<6; tb++) {
-            for (int im=0; im<4; im++){
-              for (int nm=0; nm<4; nm++){
-                          for(int rg=0; rg<2; rg++) {
-                            for (int m2=0; m2<4; m2++){
-                              for (int p2=0; p2<4; p2++){
-
-                        // Rcout<< trans_mat_tot_agesN[m2+p2*4][(16*(ag+1))-(16-(nm+im*4))]<<"\n";
+                      // Rcout<< trans_mat_tot_agesN[m2+p2*4][(16*(ag+1))-(16-(nm+im*4))]<<"\n";
                       V2[ag][tb][0][im][nm][rg][na] += V1[ag][tb][0][p2][m2][rg][na] * (trans_mat_tot_agesN[m2+p2*4][(16*(ag+1))-(16-(nm+im*4))]);
-                      } } } } } } }
-          } //end of age loop
-} //end of reblncing loop
-for(int ag=0; ag<11; ag++) {
-  for(int tb=0; tb<6; tb++) {
-  for(int im=0; im<4; im++) {
-    for(int nm=0; nm<4; nm++){
-      for(int rg=0; rg<2; rg++){
-        for (int na=0; na<3; na++){
-            if (reblnc==1){
-              V1[ag][tb][0][im][nm][rg][na] = V2[ag][tb][0][im][nm][rg][na];
-              V0[ag][tb][0][im][nm][rg][na] = V2[ag][tb][0][im][nm][rg][na];
-          } else {
-          V0[ag][tb][0][im][nm][rg][na] = V1[ag][tb][0][im][nm][rg][na];
-          }
-          } } } } } }
-/////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////RESET POPULATION SIZE/////////////////////////////
+                    } } } } } } }
+      } //end of age loop
+    } //end of reblncing loop
+    for(int ag=0; ag<11; ag++) {
+      for(int tb=0; tb<6; tb++) {
+        for(int im=0; im<4; im++) {
+          for(int nm=0; nm<4; nm++){
+            for(int rg=0; rg<2; rg++){
+              for (int na=0; na<3; na++){
+                // if (reblnc==1){
+                V1[ag][tb][0][im][nm][rg][na] = V2[ag][tb][0][im][nm][rg][na];
+                V0[ag][tb][0][im][nm][rg][na] = V2[ag][tb][0][im][nm][rg][na];
+                // } else {
+                // V0[ag][tb][0][im][nm][rg][na] = V1[ag][tb][0][im][nm][rg][na];
+                // }
+              } } } } } }
+    /////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////RESET POPULATION SIZE/////////////////////////////
 
-for(int ag=0; ag<11; ag++) {
-  for(int i=0; i<2; i++) {
-    InitPopZ[ag][i] = 0; //i is for us vs non us born
-  } }
-for(int ag=0; ag<11; ag++) {
-  for(int tb=0; tb<6; tb++) {
-    for(int nm=0; nm<4; nm++) {
-      for(int im=0; im<4; im++) {
-        for(int rg=0; rg<2; rg++) {
-          InitPopZ[ag][0]  += V1[ag][tb][0][im][nm][rg][0];
-          InitPopZ[ag][1]  += V1[ag][tb][0][im][nm][rg][1]+V1[ag][tb][0][im][nm][rg][2];
-        } } } } }
-for(int ag=0; ag<11; ag++) {
-  for(int i=0; i<2; i++) {                        // factor for pop size reset
-    InitPopZ[ag][i] = InitPopN[ag][i]/(InitPopZ[ag][i]+1e-12);
-  } }
-for(int ag=0; ag<11; ag++) {
-  for(int tb=0; tb<6; tb++) {
-    for(int nm=0; nm<4; nm++) {
-      for(int im=0; im<4; im++) {
-        for(int rg=0; rg<2; rg++) {  // reset pop to InitPop
-          V1[ag][tb][0][im][nm][rg][0]  = V1[ag][tb][0][im][nm][rg][0]*InitPopZ[ag][0];
-          V1[ag][tb][0][im][nm][rg][1]  = V1[ag][tb][0][im][nm][rg][1]*InitPopZ[ag][1];
-          V1[ag][tb][0][im][nm][rg][2]  = V1[ag][tb][0][im][nm][rg][2]*InitPopZ[ag][1];
-        } } } } }
-for(int ag=0; ag<11; ag++) {
-  for(int tb=0; tb<6; tb++) {
-    for(int nm=0; nm<4; nm++) {
-      for(int im=0; im<4; im++) {
-        for(int rg=0; rg<2; rg++) {
-          for(int na=0; na<3; na++){
-            V0[ag][tb][0][im][nm][rg][na] = V1[ag][tb][0][im][nm][rg][na];
-          } } } } } }
+    for(int ag=0; ag<11; ag++) {
+      for(int i=0; i<2; i++) {
+        InitPopZ[ag][i] = 0; //i is for us vs non us born
+      } }
+    for(int ag=0; ag<11; ag++) {
+      for(int tb=0; tb<6; tb++) {
+        for(int nm=0; nm<4; nm++) {
+          for(int im=0; im<4; im++) {
+            for(int rg=0; rg<2; rg++) {
+              InitPopZ[ag][0]  += V1[ag][tb][0][im][nm][rg][0];
+              InitPopZ[ag][1]  += V1[ag][tb][0][im][nm][rg][1]+V1[ag][tb][0][im][nm][rg][2];
+            } } } } }
+    for(int ag=0; ag<11; ag++) {
+      for(int i=0; i<2; i++) {                        // factor for pop size reset
+        InitPopZ[ag][i] = InitPopN[ag][i]/(InitPopZ[ag][i]+1e-12);
+      } }
+    for(int ag=0; ag<11; ag++) {
+      for(int tb=0; tb<6; tb++) {
+        for(int nm=0; nm<4; nm++) {
+          for(int im=0; im<4; im++) {
+            for(int rg=0; rg<2; rg++) {  // reset pop to InitPop
+              V1[ag][tb][0][im][nm][rg][0]  = V1[ag][tb][0][im][nm][rg][0]*InitPopZ[ag][0];
+              V1[ag][tb][0][im][nm][rg][1]  = V1[ag][tb][0][im][nm][rg][1]*InitPopZ[ag][1];
+              V1[ag][tb][0][im][nm][rg][2]  = V1[ag][tb][0][im][nm][rg][2]*InitPopZ[ag][1];
+            } } } } }
+    for(int ag=0; ag<11; ag++) {
+      for(int tb=0; tb<6; tb++) {
+        for(int nm=0; nm<4; nm++) {
+          for(int im=0; im<4; im++) {
+            for(int rg=0; rg<2; rg++) {
+              for(int na=0; na<3; na++){
+                V0[ag][tb][0][im][nm][rg][na] = V1[ag][tb][0][im][nm][rg][na];
+              } } } } } }
 
 
   } ///////////////////////////END BURN IN///////////////////////////////////////
@@ -832,11 +832,11 @@ for(int ag=0; ag<11; ag++) {
   //   }
 
 
-    //       for (int i=0; i<4; i++){
-    //         for (int j=0; j<4; j++){
-    //
-    //       Rcpp::Rcout << "dist diff after reblnc is" << dist_mat(i,j) << "@m= "<< m<< "\n";} }
-    ///////////////////////////////////////////////////////////////////////////////
+  //       for (int i=0; i<4; i++){
+  //         for (int j=0; j<4; j++){
+  //
+  //       Rcpp::Rcout << "dist diff after reblnc is" << dist_mat(i,j) << "@m= "<< m<< "\n";} }
+  ///////////////////////////////////////////////////////////////////////////////
 
   ///////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////
@@ -852,11 +852,11 @@ for(int ag=0; ag<11; ag++) {
           for(int nm=0; nm<4; nm++){
             for(int rg=0; rg<2; rg++) {
               for(int na=0; na<3; na++) {
-//                 if (std::any_of(V1[ag][tb][lt][im][nm][rg][na]<0)){
-// // Rcpp::Rcout << "After burn in pop is negative at ag = " << ag << " tb = "<< tb << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
-//  Rcpp::Rcout << "After burn in pop is negative /n" ;
-//
-//                 }
+                //                 if (std::any_of(V1[ag][tb][lt][im][nm][rg][na]<0)){
+                // // Rcpp::Rcout << "After burn in pop is negative at ag = " << ag << " tb = "<< tb << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+                //  Rcpp::Rcout << "After burn in pop is negative /n" ;
+                //
+                //                 }
                 CheckV0(ag+tb*11+lt*66+im*132+nm*528+rg*2112+na*4224) = V1[ag][tb][lt][im][nm][rg][na];
               } } } } } } }
   // Rcpp::Rcout << "pop is" << temp << "\n";
@@ -963,17 +963,17 @@ for(int ag=0; ag<11; ag++) {
       //
       //               }
       //             } } } } } } }
-/////////////////////////////////  NET INTERNAL MIGRATION  ///////////////////////////////////
-for(int ag=0; ag<11; ag++) {
-  for(int tb=0; tb<6; tb++) {
-    for(int lt=0; lt<2; lt++){
-      for(int im=0; im<4; im++){
-        for(int nm=0; nm<4; nm++){
-          for(int rg=0; rg<2; rg++) {
-            V1[ag][tb][lt][im][nm][rg][0]  += V0[ag][tb][lt][im][nm][rg][0]*net_mig_usb[ag];      // US
-            V1[ag][tb][lt][im][nm][rg][1]  += V0[ag][tb][lt][im][nm][rg][1]*net_mig_nusb[ag];      // FB1
-            V1[ag][tb][lt][im][nm][rg][2]  += V0[ag][tb][lt][im][nm][rg][2]*net_mig_nusb[ag];      // FB2
-          } } } } } }
+      /////////////////////////////////  NET INTERNAL MIGRATION  ///////////////////////////////////
+      for(int ag=0; ag<11; ag++) {
+        for(int tb=0; tb<6; tb++) {
+          for(int lt=0; lt<2; lt++){
+            for(int im=0; im<4; im++){
+              for(int nm=0; nm<4; nm++){
+                for(int rg=0; rg<2; rg++) {
+                  V1[ag][tb][lt][im][nm][rg][0]  += V0[ag][tb][lt][im][nm][rg][0]*net_mig_usb[ag];      // US
+                  V1[ag][tb][lt][im][nm][rg][1]  += V0[ag][tb][lt][im][nm][rg][1]*net_mig_nusb[ag];      // FB1
+                  V1[ag][tb][lt][im][nm][rg][2]  += V0[ag][tb][lt][im][nm][rg][2]*net_mig_nusb[ag];      // FB2
+                } } } } } }
       /////////////////////////////////  MORTALITY  ///////////////////////////////////
 
       // for (int i=0; i<4; i++){
@@ -1137,16 +1137,16 @@ for(int ag=0; ag<11; ag++) {
       //
       //               }
       //             } } } } } } }
-// for(int ag=0; ag<11; ag++) {
- // for(int tb=0; tb<6; tb++) {
- //   for(int im=0; im<4; im++) {
- //     for(int lt=0; lt<2; lt++){
- //       for(int na=0; na<3; na++){
- //         for(int nm=0; nm<4; nm++){
- //           for(int rg=0; rg<2; rg++){
- //             if (V1[ag][tb][lt][im][nm][rg][na]<0){
- //               Rcout<< "V1 is neg @ na " << na << "ag = " << ag << "tb="<< tb << "rg = " << rg << "nm = "<<nm<< "im = "<< im<< "\n";
- //             } } } } } } } }
+      // for(int ag=0; ag<11; ag++) {
+      // for(int tb=0; tb<6; tb++) {
+      //   for(int im=0; im<4; im++) {
+      //     for(int lt=0; lt<2; lt++){
+      //       for(int na=0; na<3; na++){
+      //         for(int nm=0; nm<4; nm++){
+      //           for(int rg=0; rg<2; rg++){
+      //             if (V1[ag][tb][lt][im][nm][rg][na]<0){
+      //               Rcout<< "V1 is neg @ na " << na << "ag = " << ag << "tb="<< tb << "rg = " << rg << "nm = "<<nm<< "im = "<< im<< "\n";
+      //             } } } } } } } }
 
       if (tb_dyn==1){
         ////////////////////////////  TRANSMISSION RISK  ////////////////////////////////
@@ -1160,8 +1160,8 @@ for(int ag=0; ag<11; ag++) {
         for(int ag=0; ag<11; ag++) {
           for(int tb=0; tb<6; tb++) {
             for(int lt=0; lt<2; lt++) {
-            for(int im=0; im<4; im++) {
-              for(int nm=0; nm<4; nm++) {
+              for(int im=0; im<4; im++) {
+                for(int nm=0; nm<4; nm++) {
 
                   // LOW RISK US BORN
                   VNkl[0][0]  += V0[ag][tb][lt][im][nm][0][0];
@@ -1376,26 +1376,26 @@ for(int ag=0; ag<11; ag++) {
         //             } } } } } } }
         /// LTBI SCREENING AND TLTBI INITIATION /// only for no previous TB or LTBI tx
 
-            for(int rg=0; rg<2; rg++) {
-              for(int na=0; na<3; na++) {
-                ////////////// US BORN, LOW RISK  //////////////////
-                if( rg==0 & na==0) {
-                  rTbP = rLtScrt[s]*LtDxParN[0][0];
-                  rTbN = rLtScrt[s]*LtDxParN[0][1];
-                }
-                //////////// NON US BORN  ////////////////
-                if(rg==0 & na > 0) {
-                  rTbP = rLtScrt[s]*LtDxParN[2][0];
-                  rTbN = rLtScrt[s]*LtDxParN[2][1];
-                }
-                ////////////// US BORN, HIGH RISK  /////////////////
-                if(rg==1) {
-                  rTbP = rLtScrt[s]*LtDxParN[1][0];
-                  rTbN = rLtScrt[s]*LtDxParN[1][1];
-                }
-                for(int ag=0; ag<11; ag++) {
-                  for(int nm=0; nm<4; nm++) {
-                    for(int im=0; im<4; im++) {
+        for(int rg=0; rg<2; rg++) {
+          for(int na=0; na<3; na++) {
+            ////////////// US BORN, LOW RISK  //////////////////
+            if( rg==0 & na==0) {
+              rTbP = rLtScrt[s]*LtDxParN[0][0];
+              rTbN = rLtScrt[s]*LtDxParN[0][1];
+            }
+            //////////// NON US BORN  ////////////////
+            if(rg==0 & na > 0) {
+              rTbP = rLtScrt[s]*LtDxParN[2][0];
+              rTbN = rLtScrt[s]*LtDxParN[2][1];
+            }
+            ////////////// US BORN, HIGH RISK  /////////////////
+            if(rg==1) {
+              rTbP = rLtScrt[s]*LtDxParN[1][0];
+              rTbN = rLtScrt[s]*LtDxParN[1][1];
+            }
+            for(int ag=0; ag<11; ag++) {
+              for(int nm=0; nm<4; nm++) {
+                for(int im=0; im<4; im++) {
                   ////////////// Dont have LTBI
                   temp  = V0[ag][0][0][im][nm][rg][na]*rTbN;
                   temp2 = V0[ag][1][0][im][nm][rg][na]*rTbN;
@@ -1405,27 +1405,27 @@ for(int ag=0; ag<11; ag++) {
                   V1[ag][0][1][im][nm][rg][na]  += temp;
                   V1[ag][1][1][im][nm][rg][na]  += temp2;
                 } } } } }
-            // for(int ag=0; ag<11; ag++) {
-            //   for(int tb=0; tb<6; tb++) {
-            //     for(int lt=0; lt<2; lt++){
-            //       for(int im=0; im<4; im++){
-            //         for(int nm=0; nm<4; nm++){
-            //           for(int rg=0; rg<2; rg++) {
-            //             for(int na=0; na<3; na++) {
-            //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
-            //                 Rcpp::Rcout << "after screen pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
-            //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-            //
-            //               }
-            //             } } } } } } }
+        // for(int ag=0; ag<11; ag++) {
+        //   for(int tb=0; tb<6; tb++) {
+        //     for(int lt=0; lt<2; lt++){
+        //       for(int im=0; im<4; im++){
+        //         for(int nm=0; nm<4; nm++){
+        //           for(int rg=0; rg<2; rg++) {
+        //             for(int na=0; na<3; na++) {
+        //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
+        //                 Rcpp::Rcout << "after screen pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+        //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+        //
+        //               }
+        //             } } } } } } }
         /// TLTBI: TX COMPLETION + DEFAULT /// only need to consider tx naive compartment
 
 
-            for(int ag=0; ag<11; ag++) {
-              for(int im=0; im<4 ; im++) {
-                for(int nm=0; nm<4; nm++) {
-                  for(int rg=0; rg<2; rg++) {
-                    for(int na=0; na<3; na++) {
+        for(int ag=0; ag<11; ag++) {
+          for(int im=0; im<4 ; im++) {
+            for(int nm=0; nm<4; nm++) {
+              for(int rg=0; rg<2; rg++) {
+                for(int na=0; na<3; na++) {
                   //N(latent)*r(posLTBIscreen)*p(TLTBI Initiation)*p(TLTBI completion)
                   temp  = V0[ag][2][0][im][nm][rg][na]*rTbP*LtTxPar[0]*(1-LtTxPar[1]); // tx completion
                   temp2 = V0[ag][3][0][im][nm][rg][na]*rTbP*LtTxPar[0]*(1-LtTxPar[1]); // tx completion
@@ -1806,7 +1806,7 @@ for(int ag=0; ag<11; ag++) {
                   for(int na=0; na<3; na++){
                     for(int tb=4; tb<6; tb++){
 
-                    Outputs[y][226+ag]  += VMort[ag][tb][lt][im][nm][rg][na];
+                      Outputs[y][226+ag]  += VMort[ag][tb][lt][im][nm][rg][na];
                     } } } } } } }
         ////////////     CREATE YEARLY VALUES FROM THE MONTH ESTIMATE     ////////////
         for(int i=226; i<237; i++) { Outputs[y][i] = Outputs[y][i]*12; }
@@ -1939,8 +1939,8 @@ for(int ag=0; ag<11; ag++) {
         for(int ag=0; ag<11; ag++) {
           for(int tb=0; tb<6; tb++) {
             for(int lt=0; lt<2; lt++) {
-                for(int im=0; im<4; im++) {
-                  for(int nm=0; nm<4; nm++) {
+              for(int im=0; im<4; im++) {
+                for(int nm=0; nm<4; nm++) {
 
                   for(int rg=0; rg<2; rg++) {
                     for(int na=0; na<3; na++) {
@@ -1973,66 +1973,68 @@ for(int ag=0; ag<11; ag++) {
       //////////////////////////////////////////////////////////////////////////////////
 
       ////// need to define the current distribution of persons across the RG at this timestep
-      if (reblnc==1){
-        for(int ag=0; ag<11; ag++) {
-          for(int na=0; na<3; na++){
-            for(int tb=0; tb<6; tb++) {
-               for(int lt=0; lt<2; lt++){
-                  for(int rg=0; rg<2; rg++) {
-                    for (int im=0; im<4; im++){
-                      for (int nm=0; nm<4; nm++){
-                    V2[ag][tb][lt][im][nm][rg][na]=0;
-                      } } } } } } }
-        for(int ag=0; ag<11; ag++) {
+      // if (reblnc==1){
 
-              for (int im=0; im<4; im++){
-                for (int nm=0; nm<4; nm++){
-                  for (int m2=0; m2<4; m2++){
-                    for (int p2=0; p2<4; p2++){
-                  for(int rg=0; rg<2; rg++) {
-                    for(int tb=0; tb<6; tb++) {
-                      for(int lt=0; lt<2; lt++){
-                        for(int na=0; na<3; na++){
+      for(int ag=0; ag<11; ag++) {
+        for(int na=0; na<3; na++){
+          for(int tb=0; tb<6; tb++) {
+            for(int lt=0; lt<2; lt++){
+              for(int rg=0; rg<2; rg++) {
+                for (int im=0; im<4; im++){
+                  for (int nm=0; nm<4; nm++){
+                    V2[ag][tb][lt][im][nm][rg][na]=0;
+                  } } } } } } }
+      for(int ag=0; ag<11; ag++) {
+
+        for (int im=0; im<4; im++){
+          for (int nm=0; nm<4; nm++){
+            for (int m2=0; m2<4; m2++){
+              for (int p2=0; p2<4; p2++){
+                for(int rg=0; rg<2; rg++) {
+                  for(int tb=0; tb<6; tb++) {
+                    for(int lt=0; lt<2; lt++){
+                      for(int na=0; na<3; na++){
                         V2[ag][tb][lt][im][nm][rg][na] += V1[ag][tb][lt][p2][m2][rg][na] *((trans_mat_tot_agesN[(m2+p2*4)][(16*(ag+1))-(16-(nm+im*4))]));//*((mubtN[s][ag]/mubtN[0][ag])*.1));
-                        }            } } } } } } }
-              }
-      }//end of rebalancing loop
-        for(int ag=0; ag<11; ag++) {
-          for(int im=0; im<4; im++) {
-            for(int nm=0; nm<4; nm++){
-              for(int rg=0; rg<2; rg++){
-                for (int na=0; na<3; na++){
-                  for(int lt=0; lt<2; lt++){
+                      }            } } } } } } }
+      }
+      for(int ag=0; ag<11; ag++) {
+
+        for(int im=0; im<4; im++) {
+          for(int nm=0; nm<4; nm++){
+            for(int rg=0; rg<2; rg++){
+              for (int na=0; na<3; na++){
+                for(int lt=0; lt<2; lt++){
                   for(int tb=0; tb<6; tb++) {
                     if (reblnc==1){
-                    V1[ag][tb][lt][im][nm][rg][na] = V2[ag][tb][lt][im][nm][rg][na];
-                    V0[ag][tb][lt][im][nm][rg][na] = V2[ag][tb][lt][im][nm][rg][na];
+                      V1[ag][tb][lt][im][nm][rg][na] = V2[ag][tb][lt][im][nm][rg][na];
+                      V0[ag][tb][lt][im][nm][rg][na] = V2[ag][tb][lt][im][nm][rg][na];
                     } else {
-                    V0[ag][tb][lt][im][nm][rg][na] = V1[ag][tb][lt][im][nm][rg][na];
-                  }
+                      V0[ag][tb][lt][im][nm][rg][na] = V1[ag][tb][lt][im][nm][rg][na];
+                    }
                   } } } } }
-          } }
+        }
 
-          // for(int ag=0; ag<11; ag++) {
-          //   for(int tb=0; tb<6; tb++) {
-          //     for(int lt=0; lt<2; lt++){
-          //       for(int im=0; im<4; im++){
-          //         for(int nm=0; nm<4; nm++){
-          //           for(int rg=0; rg<2; rg++) {
-          //             for(int na=0; na<3; na++) {
-          //               if (std::any_of(V1[ag][tb][lt][im][nm][rg][na]<0)){
-          //                 //Rcpp::Rcout << "after rblnc pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
-          //              //   Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-          //              Rcpp::Rcout << "after rblnc pop is negative /n";
-          //               }
-          //             } } } } } } }
+        // for(int ag=0; ag<11; ag++) {
+        //   for(int tb=0; tb<6; tb++) {
+        //     for(int lt=0; lt<2; lt++){
+        //       for(int im=0; im<4; im++){
+        //         for(int nm=0; nm<4; nm++){
+        //           for(int rg=0; rg<2; rg++) {
+        //             for(int na=0; na<3; na++) {
+        //               if (std::any_of(V1[ag][tb][lt][im][nm][rg][na]<0)){
+        //                 //Rcpp::Rcout << "after rblnc pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+        //              //   Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+        //              Rcpp::Rcout << "after rblnc pop is negative /n";
+        //               }
+        //             } } } } } } }
+      }//end of age loop
 
 
 
-  //     //
-  //     //    ///////////////////////////////////////////////////////////////////////////////////
-  //     //    ///////////                       UPDATE V0 as V1                       ///////////
-  // //     //    ///////////////////////////////////////////////////////////////////////////////////
+      //     //
+      //     //    ///////////////////////////////////////////////////////////////////////////////////
+      //     //    ///////////                       UPDATE V0 as V1                       ///////////
+      // //     //    ///////////////////////////////////////////////////////////////////////////////////
       // for(int ag=0; ag<11; ag++) {
       //   for(int tb=0; tb<6; tb++) {
       //     for(int lt=0; lt<2; lt++){
@@ -2079,8 +2081,8 @@ for(int ag=0; ag<11; ag++) {
       // }
 
 
-     } //// end of month loop!//////////////////////////////////////////////////////////
-   } //// end of year loop!///////////////////////////////////////////////////////////
+    } //// end of month loop!//////////////////////////////////////////////////////////
+  } //// end of year loop!///////////////////////////////////////////////////////////
   // for(int ag=0; ag<11; ag++) {
   //
   //   for (int i=0; i<4; i++){
