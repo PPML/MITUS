@@ -4,7 +4,8 @@
 \alias{llikelihoodZ_st}
 \title{Total DEATHS 1979-2016
 #' Total DEATHS 2015-2016 BY AGE
-#' Mort_dist 2016
+#' Mort_dist 2016 dirchlet
+mort_dist norm
 LIKELIHOOD FOR BORGDORFF, FEREBEE & SUTHERLAND ESTIMATES}
 \usage{
 llikelihoodZ_st(samp_i, ParMatrix, loc = "MA")
@@ -12,6 +13,7 @@ llikelihoodZ_st(samp_i, ParMatrix, loc = "MA")
 \description{
 Total DEATHS 1979-2016
 #' Total DEATHS 2015-2016 BY AGE
-#' Mort_dist 2016
+#' Mort_dist 2016 dirchlet
+mort_dist norm
 LIKELIHOOD FOR BORGDORFF, FEREBEE & SUTHERLAND ESTIMATES
 }
