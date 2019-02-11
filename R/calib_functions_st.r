@@ -218,7 +218,7 @@ dth_tot_lLik_st <- function(V,st) {
 tot_dth_age_lLik_st <- function(V,rho=0.01) {
   data("death_age_dist",package="MITUS")
   tda <- tot_deaths_age/rowSums(tot_deaths_age)
-  tda<-tda[17:18,]
+  tda<-tda[17:18,] #2015-2016
   adj_20b        <- sum(dDirMult(M=tda+0.1,n=tda+0.1,Rho=0.01)*wts[66:67])
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
   V2 <- V2[,-5]; V2[,4]  <- V2[,4]+V[,5]
@@ -244,6 +244,27 @@ mort_dist_lLik_st <- function(V,rho=0.1) {
     # print(x)
   }
   tot_lik<-tot_lik*5
+  return(tot_lik)
+}
+
+#' Mortality Risk Group Distribution 1999-2014
+#' Motivation: dnorm
+#'@name mort_dist_lLik_norm_st
+#'@param V table of mort_dist 1999-2014 (row=16 years, col=11 ages)
+#'@param rho correlation parameter
+#'@return likelihood
+mort_dist_lLik_norm_st <- function(V) {
+  md     <- rowSums(dist_gen)
+  mort_dist     <-matrix(md,length(51:67),4, byrow = TRUE)
+  adj_21b        <- sum(dnorm(mort_dist,mort_dist,mort_dist*0.1/1.96, log=T)*wts[51:67])
+  tot_lik<-0
+  for(ag in 1:11){
+    V1<-V[,(1:4)+4*(ag-1)]
+    x<-sum(dnorm(mort_dist, V1,mort_dist*0.1/1.96, log=T)*wts[51:67]) - adj_21b
+    tot_lik<-tot_lik+x
+    # print(x)
+  }
+  tot_lik<-tot_lik
   return(tot_lik)
 }
 ### ### ### HOMELESS POP 2010  ### ### ### ### ### ### names(CalibDatState)
@@ -274,6 +295,8 @@ borgdorff_lLik_st <- function(Par_list,N_red=1) {  # Par_list = list(Mpfast[,c(1
       p0[i,] <- pfast_v[i] *(1-(1-exp(-(rfast+rRecov)*datB[,1]))*(rfast/(rfast+rRecov))) +
         (1-pfast_v[i])*(1-(1-exp(-(rslow_v[i]+rRecov)*datB[,1]))*(rslow_v[i]/(rslow_v[i]+rRecov)))
     }
+    # p1 <- as.numeric(t(p0)%*%v21a[17,41:44])
+
     p1 <- as.numeric(t(p0)%*%colSums(dist_gen))
     p <- 1-(1-p1)/(1-p1)[nrow(datB)]
     sum(diff(-datB[,2])*ss_borgdorff*log(diff(-p)) + (1-diff(-datB[,2]))*ss_borgdorff*log(1-diff(-p)))/N_red - adj_24/N_red
