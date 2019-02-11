@@ -11,7 +11,7 @@ fixed_vals<-function(samp_i){
   pr_x<-as.vector(unlist(pr_x[,1]))
 #load the most up to date national optimized data set
 # and format the data back to their original distributions
-US_opt_all<-readRDS(system.file("US/US_Optim_all_10_2019-01-25.rds", package="MITUS"))
+US_opt_all<-readRDS(system.file("US/US_Optim_all_10_2019-02-09.rds", package="MITUS"))
 Par<-US_opt_all[samp_i,-(ncol(US_opt_all))]
 Par2 <- pnorm(Par,0,1)
 # uniform to true
@@ -55,6 +55,11 @@ for (i in seq_along(fixed_vals)) {
   j <- which(rownames(ParamInit_st) == names(fixed_vals)[[i]])
   newparaminitst[j,1] <- fixed_vals[[i]]
 }
+
+#check that everything matches
+y<-rownames(US_opt) %in% fixed_national
+x<-rownames(newparaminitst) %in% fixed_national
+identical(US_opt[y,1],newparaminitst[x,1])
 
 ParamInit_st[,]<-newparaminitst[,]
 saveRDS(ParamInit_st,file=paste0("~/MITUS/inst/ST/ST_ParamInit_", Sys.Date() ,".rds"))
