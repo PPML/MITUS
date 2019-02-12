@@ -19,6 +19,9 @@ param_noRB <- function (PV){
   TxInputs         <- Inputs[["TxInputs"]]
   NetMig           <- Inputs[["NetMigrState"]]
 
+  ########## DEFINE A VARIABLE THAT WILL DETERMINE HOW LONG THE TIME DEPENDENT
+  ########## VARIABLES SHOULD BE (IN MONTHS)
+  month<-1201;
 
   ##########                PARAMETER DEFINITIONS                      ###########
   ##########                RISK FACTOR DISTRIBUTIONS   ##########################
@@ -30,6 +33,7 @@ param_noRB <- function (PV){
   ####### INDEXED BY TIME, ABSOLUTE NUMBER OF NEW ADULT ENTRANTS OVER TIME #######
 
   Birthst   <- SmoCurve(Births)*PV["TunBirths"]/12
+  Birthst   <- Birthst[1:month]
 
   ##########################      MORTALITY RATES       ##########################
   ########################## BACKGROUND MORTALITY BY TIME ########################
@@ -55,15 +59,6 @@ param_noRB <- function (PV){
   ######################## MULTIPLER OF MORT RATE ABOVE ########################
 
   TunmuTbAg <- PV["TunmuTbAg"]
-  # TunmuHvAg <- PV["TunmuTbAg"]
-
-  ############ CONVERT ANNUAL RATES OF RF MORTALITY TO MONTHLY RATES ##########
-
-  ############ THESE MUST BE UPDATED
-  # muRF1      <- PV["muH1"]/12*.01
-  # muRF2      <- (PV["muH2"]+PV["muH1"])/24 *.01
-  # muRF3      <- PV["muH2"]/12*.01
-  # muTbRF    <- PV["muTbH"]/12
 
   ###############  RATE RATIO OF MORTALITY INCREASE FOR HIGH RISK ###############
 
@@ -71,7 +66,6 @@ param_noRB <- function (PV){
 
   ############### CREATE A MATRIX OF RF MORTALITIES BY AGE GROUP ###############
   ############### CREATE A MATRIX OF RF MORTALITIES BY AGE GROUP ###############
-
 
   RF_fact=20
 
@@ -134,6 +128,8 @@ param_noRB <- function (PV){
   ImmFst         <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*(1-PV["pImAct"])
   ImmNon         <- TotImmAge-ImmAct-ImmFst-ImmLat
 
+  ###################### TRUNCATE THESE VALS
+  ImmAct<-ImmAct[1:month,];ImmFst<-ImmFst[1:month,]; ImmLat<-ImmLat[1:month,]; ImmNon<-ImmNon[1:month,]
   ######################   EXOGENEOUS INFECTION RISK      ########################
 
   ExogInf        <- matrix(NA,length(PrevTrend25_34a),5)
@@ -225,10 +221,10 @@ param_noRB <- function (PV){
 
   ############# CREATE A VECTOR FOR RATE OF SLOW PROGRESSION THAT WILL
   ############# VARY BASED ON LEVELS OF TB REACTIVATION RATES
-  Vrslow     <- rep(rslow,4)
+  Vrslow     <- rep(1,4)
   ############# UPDATE LEVEL FOUR OF THE RATE OF SLOW BASED ON CALCULATED RR FROM
   ############# USER INPUTTED RR FOR THE RISK FACTOR
-  Vrslow=rslow*exp((0:3)/3*log(RRrslowRF))
+  Vrslow<-rslow*exp((0:3)/3*log(RRrslowRF))
 
   TunrslowAge  <- PV["TunrslowAge"]
   rrReactAg       <- exp(c(0,0,0,0,0,0,0.5,1:4)*PV["TunrslowAge"])
@@ -308,7 +304,7 @@ param_noRB <- function (PV){
   rDxt           <- 1/(1/rDxt1+DelaySp)*SensSp
   rDxt[,2]       <- (rDxt[,1]-min(rDxt[,1]))/PV["rrDxH"]+min(rDxt[,1]) #check this with Nick
   colnames(rDxt) <- c("Active","Active_HighRisk")
-
+  rDxt<-rDxt[1:month,]
   ################################################################################
   ###########################     TREATMENT OUTCOMES    ##########################
   ################################################################################
@@ -332,7 +328,8 @@ param_noRB <- function (PV){
   rDef1         <- predict(smooth.spline(x=c(1950:1979,1993:2100),y=rDef0[-(31:43)],spar=0.4),x=1950:2100)$y
   rDeft         <- SmoCurve(rDef1)/12;
   rDeftH        <- rDeft*PV["RRdefHR"] # second col is HR default rate
-
+  rDeft<-rDeft[1:month]
+  rDeftH<-rDeftH[1:month]
   #########################        REGIMEN QUALITY       ##########################
 
   TxQual0         <- rep(NA,151)
@@ -342,21 +339,14 @@ param_noRB <- function (PV){
   TxQual1         <- predict(smooth.spline(x=c(1950:1979,1993:2100),y=TxQual0[-(31:43)],spar=0.4),x=1950:2100)$y
   TxQualt         <- SmoCurve(TxQual1);
 
+  TxQualt<-TxQualt[1:month]
 
-
-
-
-  TxQual0         <- rep(NA,151)
-  TxQual0[1:30]   <- PV["TxQualEarly"]
-  TxQual0[44:62]  <- ORAdd(TxInputs[[2]][,2],PV["TunTxQual"])
-  TxQual0[63:151] <- TxQual0[62]
-  TxQual1         <- predict(smooth.spline(x=c(1950:1979,1993:2100),y=TxQual0[-(31:43)],spar=0.4),x=1950:2100)$y
-  TxQualt         <- SmoCurve(TxQual1);
   RRcurDef        <- PV["RRcurDef"]
 
   #########################         RETREATMENT         ##########################
 
   pReTx   <- LgtCurve(1985,2000,PV["pReTx"])   	# Probability Tx failure identified, patient initiated on tx experienced reg (may be same)
+  pReTx   <- pReTx[1:month]
 
   #####################         NEW TB TREATMENT VECTOR       ####################
 
