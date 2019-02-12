@@ -73,20 +73,67 @@ calib_graphs_st <- function(df,loc, Par_list){
   ### ### ### ### ### ###   TOTAL FB POP EACH DECADE, BY REC/LONG   ### ### ### ### ### ###
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
-  V  <- cbind(df[1:66,31],df[1:66,32])
+  V  <- cbind(df[1:68,31],df[1:68,32])
 
-  plot(0,0,ylim=c(min((V*.5),0),max(rowSums(V))*1.25),xlim=c(1950,2015),xlab="",ylab="",axes=F)
+  plot(0,0,ylim=c(min((V*.5),0),max(rowSums(V))*1.25),xlim=c(1950,2017),xlab="",ylab="",axes=F)
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
 
-  lines(1950:2015,V[,2],lwd=2,col="red3")
-  lines(1950:2015,V[,1],lwd=2,col="blue")
-  lines(1950:2015,rowSums(V),lwd=2,col="grey50")
+  lines(1950:2017,V[,2],lwd=2,col="red3")
+  lines(1950:2017,V[,1],lwd=2,col="blue")
+  lines(1950:2017,rowSums(V),lwd=2,col="grey50")
 
   mtext("Year",1,2.5,cex=1.2)
   mtext("Non-US Born Population: Total, Recent, Long-Term (mil)",3,.8,font=2,cex=1)
   legend("topleft",c("Total","Recent","Long-Term","model"),cex=1,
          pch=c(15,15,15,NA),lwd=c(NA,NA,NA,2),lty=c(NA,NA,NA,1),col=c("grey50",4,"red3",1),bg="white",pt.cex=c(1.8,1.8,1.8,NA))
+
+  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+  ### ### ### ### ### ###   TOTAL FB RECENT POP EACH DECADE  ### ### ### ### ### ###
+  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+  V1<-V*1e3
+  if (loc =="CA"){
+  est<-c(623500,596598, 569657, 544240,534542, 544490, 561243)/1e3
+  } else if (loc=="TX"){
+    est<-c(428585,
+           410480,
+           391566,
+           375654,
+           367044,
+           364898,
+           364670)/1e3
+  } else if (loc=="MA"){
+    est<-c(133153,
+           127403,
+           124165,
+           118684,
+           114787,
+           114683,
+           113249)/1e3
+  } else if (loc=="NY"){
+    est<-c(311010,
+           311062,
+           307475,
+           302396,
+           298544,
+           295435,
+           290282)/1e3
+  } else {est<-rep(0,7)}
+
+  plot(0,0,ylim=c(min((V1[,1]*.5),0),max(V1[,1],est)*1.25),xlim=c(1950,2015),xlab="",ylab="",axes=F)
+  axis(1);axis(2,las=2);box()
+  abline(h=axTicks(2),col="grey85")
+
+  lines(1950:2017,V1[,1],lwd=2,col="blue")
+  if (loc =="CA" |loc == "NY"|loc == "MA"|loc =="TX"){
+    points(2011:2017,est,pch=19,cex=0.6,col="blue")
+    lines(2011:2017,est,lty=3,col="blue")
+  }
+  mtext("Year",1,2.5,cex=1.2)
+  mtext("Recent Immigration Non-US Born Population (<2 yrs) (000s)",3,.8,font=2,cex=1)
+  legend("topleft",c("Total"),cex=1,
+         pch=c(15),lwd=c(NA),lty=c(NA),col=c("blue"),bg="white",pt.cex=c(1.8))
+
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   ### ### ### ### ### ###   TOTAL FB POP EACH DECADE, BY REC/LONG   ### ### ### ### ### ###
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
