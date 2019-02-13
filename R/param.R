@@ -32,7 +32,7 @@ param <- function (PV){
   # adj_fact<-exp(0.20025446*(10:0)/11 + 0.8708557*(0:10)/11)
   # adj_fact<-exp(0.20025446*(10:0)/11 + 2*(0:10)/11)
 
-    adj_fact <- exp(PV[["adj_ag1"]]*(10:0)/11 + PV[["adj_ag11"]]*(0:10)/11)
+  adj_fact <- exp(PV[["adj_ag1"]]*(10:0)/11 + PV[["adj_ag11"]]*(0:10)/11)
 
   #######################           BIRTHS                 #######################
   ####### INDEXED BY TIME, ABSOLUTE NUMBER OF NEW ADULT ENTRANTS OVER TIME #######
@@ -63,15 +63,6 @@ param <- function (PV){
   ######################## MULTIPLER OF MORT RATE ABOVE ########################
 
   TunmuTbAg <- PV["TunmuTbAg"]
-  # TunmuHvAg <- PV["TunmuTbAg"]
-
-  ############ CONVERT ANNUAL RATES OF RF MORTALITY TO MONTHLY RATES ##########
-
-  ############ THESE MUST BE UPDATED
-  # muRF1      <- PV["muH1"]/12*.01
-  # muRF2      <- (PV["muH2"]+PV["muH1"])/24 *.01
-  # muRF3      <- PV["muH2"]/12*.01
-  # muTbRF    <- PV["muTbH"]/12
 
   ###############  RATE RATIO OF MORTALITY INCREASE FOR HIGH RISK ###############
 
@@ -89,7 +80,7 @@ param <- function (PV){
   RRmuRF<-exp((0:3)/3*log(RF_fact))
   RRmuRF<-RRmuRF/sum(RRmuRF*mort_dist)
   #check
-  #RRmuRF%*%mort_dist
+  # RRmuRF%*%mort_dist
 
   # vRFMort    <- matrix(0,11,4);
   # rownames(vRFMort) <- c("0_4",paste(0:8*10+5,1:9*10+4,sep="_"),"95p")
@@ -211,7 +202,13 @@ param <- function (PV){
   #vector of ORpfastRF
   vORpfastPIRF<-vORpfastRF  <-c(1,1,1,1)
   vORpfastRF  <-(exp((0:3)/3*log(ORpfastRF)))
+  vORpfastRF<-vORpfastRF/sum(vORpfastRF*mort_dist)
+  # #check
+  # vORpfastRF%*%mort_dist
   vORpfastPIRF  <- vORpfastRF*ORpfastPI
+  vORpfastPIRF<-vORpfastPIRF/sum(vORpfastPIRF*mort_dist)
+
+  vORpfastPIRF%*%mort_dist
 
   ############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
   Mpfast[,1]   <- vORpfastRF[1]*Mpfast[,1]
@@ -239,10 +236,14 @@ param <- function (PV){
 
   ############# CREATE A VECTOR FOR RATE OF SLOW PROGRESSION THAT WILL
   ############# VARY BASED ON LEVELS OF TB REACTIVATION RATES
-  Vrslow     <- rep(1,4)
+  Vrslow     <- rep(rslow,4)
   ############# UPDATE LEVEL FOUR OF THE RATE OF SLOW BASED ON CALCULATED RR FROM
   ############# USER INPUTTED RR FOR THE RISK FACTOR
-  Vrslow<-rslow*exp((0:3)/3*log(RRrslowRF))
+  RRrslow<-exp((0:3)/3*log(RRrslowRF))
+  # RRrslow<-RRrslow/sum(RRrslow*mort_dist)
+  # # #check
+  # RRrslow%*%mort_dist
+  Vrslow<-Vrslow*RRrslow
 
   TunrslowAge  <- PV["TunrslowAge"]
   rrReactAg       <- exp(c(0,0,0,0,0,0,0.5,1:4)*PV["TunrslowAge"])
@@ -366,7 +367,7 @@ TxQualt<-TxQualt[1:month]
   #########################         RETREATMENT         ##########################
 
   pReTx   <- LgtCurve(1985,2000,PV["pReTx"])   	# Probability Tx failure identified, patient initiated on tx experienced reg (may be same)
-  pReTx   <- pReTx[1:1201]
+  pReTx   <- pReTx[1:month]
   #####################         NEW TB TREATMENT VECTOR       ####################
 
   TxVec           <- rep(NA,2)
