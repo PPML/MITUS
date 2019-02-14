@@ -20,6 +20,7 @@ set the likelihood to a hugely negative number (penalized)
 TOTAL POP EACH DECADE, BY US/FB
 #' TOTAL POP AGE DISTRIBUTION 2016 index updated
 Total DEATHS
+Total DEATHS by Decade
 Total DEATHS 1999-2016 BY AGE
 }
 \description{

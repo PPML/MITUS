@@ -306,9 +306,13 @@ llikelihoodZ_noRB_st <-  function(samp_i,opt_mat,loc="MA") { # opt_mat = ParInit
       lLik <- lLik + addlik
 
       #' Total DEATHS 1979-2016
-      v20a  <- rowSums(M[30:67,121:131])
-      v20a<-v20a*1e6
-      addlik <- dth_tot_lLik_st(V=v20a,st=st); addlik
+      # v20a  <- rowSums(M[30:67,121:131])
+      # v20a<-v20a*1e6
+      # addlik <- dth_tot_lLik_st(V=v20a,st=st); addlik
+      # lLik <- lLik + addlik
+      #' Total DEATHS by Decade
+      v20a  <- rowSums(M[1:67,121:131])
+      addlik <- US_dth_10_tot_lLik(V=v20a); addlik
       lLik <- lLik + addlik
       #' #' Total DEATHS 2015-2016 BY AGE
       v20b  <- M[66:67,121:131]

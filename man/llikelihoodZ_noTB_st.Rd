@@ -19,6 +19,7 @@ format P
 if any output is missing or negative or if any model state population is negative
 set the likelihood to a hugely negative number (penalized)
 Total DEATHS 1979-2016
+Total DEATHS by Decade
 #' Total DEATHS 2015-2016 BY AGE
 #' Mort_dist 2016
 }

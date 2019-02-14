@@ -4,7 +4,7 @@
 \alias{mort_dist_lLik}
 \title{Mortality Risk Group Distribution 1999-2014}
 \usage{
-mort_dist_lLik(V, rho = 0.01)
+mort_dist_lLik(V, rho = 0.1)
 }
 \arguments{
 \item{V}{table of mort_dist 1999-2014 (row=16 years, col=11 ages)}
