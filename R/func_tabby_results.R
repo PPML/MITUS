@@ -12,7 +12,7 @@ tabby_results_s<-function(loc){
   ResTabfb <- ResTabus <- ResTab <- array(NA,dim=c(90,length(age_id),7,11))
   for (intv in 1:9){
     #load the results for all the runs (need to make this dataset)
-    load(paste0("~/MITUS/",loc,"_results_",intv,".rda"))
+    load(paste0("~/MITUS/inst/US/",loc,"_results_",intv,".rda"))
       #dimensions of restab are:
       #number of datasets, number of ages, number of interventions
     nr<-10
