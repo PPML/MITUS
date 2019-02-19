@@ -40,7 +40,7 @@ llikelihoodZ <-  function(samp_i, start_mat) {
                  vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    , net_mig_usb = prms[["net_mig_usb"]]    ,
                  net_mig_nusb = prms[["net_mig_nusb"]]    ,
                  HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat" ]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst" ]]    ,
-                 mubt       = prms[["mubt"]]      , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
+                 mubt       = prms[["mubt"]]     , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
                  TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
                  LtDxPar    = prms[["LtDxPar"]]   , rLtScrt   = prms[["rLtScrt"]]       , RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
                  EarlyTrend = prms[["EarlyTrend"]], NixTrans = IP[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)
@@ -126,7 +126,7 @@ llikelihoodZ <-  function(samp_i, start_mat) {
       # addlik <- US_dth_tot_lLik(V=v20a); addlik
       # lLik <- lLik + addlik
       # Total DEATHS by Decade
-      v20a  <- rowSums(M[1:67,121:131])
+      v20a  <- rowSums(M[c(11,21,31,41,51,61),121:131])
       addlik <- US_dth_10_tot_lLik(V=v20a); addlik
       lLik <- lLik + addlik
       #' Total DEATHS 1999-2016 BY AGE
@@ -134,9 +134,9 @@ llikelihoodZ <-  function(samp_i, start_mat) {
       addlik <- tot_dth_age_lLik(V=v20b); addlik
       lLik <- lLik + addlik
       #' #' Mort_dist 2016
-      v21a<- v21  <- M[66:67,521:564]
+      v21a<- v21  <- M[c(11,21,31,41,51,61),521:564]
       for (i in 1:11){
-        denom<-M[66:67,2+i]
+        denom<-M[c(11,21,31,41,51,61),2+i]
         for (j in 1:ncol(v21)){
           v21a[,(1:4)+4*(i-1)]<-v21[,(1:4)+4*(i-1)]/denom
         } }
