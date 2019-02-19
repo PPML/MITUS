@@ -45,13 +45,20 @@ param <- function (PV){
   mubt      <- matrix(NA,1801,11)
 
   TunmuAg <- PV["TunmuAg"]
-  RRmuAg <- exp((1:11)*TunmuAg)
-  for(i in 1:11) {
-    mubt[,i] <- SmoCurve(BgMort[,i+1])*PV["TunMubt"]/12
-    mubt[,i] <- mubt[,i]*RRmuAg[i]
-  }
+#   RRmuAg <- exp((1:11)*TunmuAg)
+#   for(i in 1:11) {
+#     mubt[,i] <- SmoCurve(BgMort[,i+1])*PV["TunMubt"]/12
+#     mubt[,i] <- mubt[,i]*RRmuAg[i]
+#   }
+# # allows for linear rampup of mortality
+ RRmuAg<-seq(PV["TunmuAg1"]/12,PV["TunmuAg11"]/12, length.out=11)
 
-  mubt<-mubt[1:month,]
+ for(i in 1:11) {
+   mubt[,i] <- SmoCurve(BgMort[,i+1])
+   mubt[,i] <- mubt[,i]*RRmuAg[i]
+ }
+ #
+ #  mubt<-mubt[1:month,]
   # for(i in 2:10) {
   #   mubt[,i]<-mubt[,i]*exp(TunmuAg)
   # }
@@ -202,13 +209,13 @@ param <- function (PV){
   #vector of ORpfastRF
   vORpfastPIRF<-vORpfastRF  <-c(1,1,1,1)
   vORpfastRF  <-(exp((0:3)/3*log(ORpfastRF)))
-  vORpfastRF<-vORpfastRF/sum(vORpfastRF*mort_dist)
+  # vORpfastRF<-vORpfastRF/sum(vORpfastRF*mort_dist)
   # #check
   # vORpfastRF%*%mort_dist
   vORpfastPIRF  <- vORpfastRF*ORpfastPI
-  vORpfastPIRF<-vORpfastPIRF/sum(vORpfastPIRF*mort_dist)
+  # vORpfastPIRF<-vORpfastPIRF/sum(vORpfastPIRF*mort_dist)
 
-  vORpfastPIRF%*%mort_dist
+  # vORpfastPIRF%*%mort_dist
 
   ############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
   Mpfast[,1]   <- vORpfastRF[1]*Mpfast[,1]
