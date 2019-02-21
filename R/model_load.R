@@ -69,6 +69,7 @@ model_load<-function(loc="US", return_env=F){
 		for (object_name in ls(output_env)) {
 			assign(x = object_name, value = get(object_name, envir = output_env), envir = .GlobalEnv)
 		}
+		return(invisible(NULL))
 	}
 }
 
