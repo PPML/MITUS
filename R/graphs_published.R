@@ -74,6 +74,8 @@ for (i in 1:4){
   p0[i,] <- pfast_v[i] *(1-(1-exp(-(rfast+rRecov)*datB[,1]))*(rfast/(rfast+rRecov))) +
     (1-pfast_v[i])*(1-(1-exp(-(rslow_v[i]+rRecov)*datB[,1]))*(rslow_v[i]/(rslow_v[i]+rRecov)))
 }
+# p1 <- as.numeric(t(p0)%*%v21a[17,1:4])
+
 p1 <- as.numeric(t(p0)%*%colSums(dist_gen))
 p <- 1-(1-p1)/(1-p1)[nrow(datB)]
 

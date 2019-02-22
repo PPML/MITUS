@@ -64,22 +64,19 @@ llikelihoodZ_demo <-  function(samp_i,ParMatrix) {
       # v18a <- v18a[-3]; v18a[2]  <- v18a[2]+v18[3]
       addlik <- tot_pop_age_lLik(V=v18a); addlik
       lLik <- lLik + addlik
-
-      #' Total DEATHS
-      # v20  <- rowSums(M[51:67,14:24])
-      # v20a<-v20*1e6
+      # Total DEATHS 1979-2016
+      # v20a  <- rowSums(M[30:67,121:131])
       # addlik <- US_dth_tot_lLik(V=v20a); addlik
       # lLik <- lLik + addlik
-      #' Total DEATHS by Decade
-      v20a  <- rowSums(M[1:67,121:131])
+      # Total DEATHS by Decade
+      v20a  <- rowSums(M[c(11,21,31,41,51,61),14:24])
       addlik <- US_dth_10_tot_lLik(V=v20a); addlik
       lLik <- lLik + addlik
       #' Total DEATHS 1999-2016 BY AGE
-      v20b  <- M[67,14:24]
-      v20b[10]<-v20b[10]+v20b[11]
-      v20b    <-v20b[-11]
+      v20b  <- M[66:67,14:24]
       addlik <- tot_dth_age_lLik(V=v20b); addlik
       lLik <- lLik + addlik
+
 
 
     } }, error = function(e) NA)

@@ -15,7 +15,6 @@ calib_noRB<-function(samp_i,ParMatrix, loc){
   Par3[idZ2] <- qnorm( Par2[idZ2], mean    = ParamInitZ[idZ2,6], sd     = ParamInitZ[idZ2,7])
   P[ii] <- Par3
   P <- P
-  P[["ImmigVol"]]<-1.1
 
   prms <-list()
   prms <- param_noRB(P)
@@ -43,8 +42,10 @@ calib_noRB<-function(samp_i,ParMatrix, loc){
       v21a[,(1:4)+4*(i-1)]<-v21[,(1:4)+4*(i-1)]/denom
     } }
   print(v21a)
+  pub_list<-list(prms[["Mpfast"]],prms[["Mrslow"]], prms[["rfast"]],prms[["rRecov"]])
+  # print(pub_list)
   if (loc=="US"){
-    calib_graphs(M)
-  } else calib_graphs_st(M,loc)
+    calib_graphs(M, pub_list)
+  } else calib_graphs_st(M,loc, pub_list)
   return(M)
 }

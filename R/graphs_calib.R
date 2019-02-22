@@ -112,7 +112,7 @@ legend("topleft",c("Total","US born","Non-US Born","Reported data","model"),cex=
 ### ### ### ### ### ###   TOTAL MORT AGE DISTRIBUTION 2014  ### ### ### ### ### ###
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
-V  <- cbind((df[65,255:265])+(df[65,266:276]))
+V  <- cbind((df[1:65,255:265])+(df[1:65,266:276]))
 V1  <- V[,-3]
 V1[,2] <- V1[,2]+V[,3]
 V2 <- V1[,-4]
@@ -146,24 +146,24 @@ x<-seq(6,781,12)
 BgMort           <- Inputs[["BgMort"]]
 mubt   <- matrix(NA,1801,11)
 for(i in 1:11) {
-  mubt[,i] <- SmoCurve(BgMort[,i+1])*P["TunMubt"]/12
+  mubt[,i] <- SmoCurve(BgMort[,i+1])
 }
 V2  <-mubt[x,]
 
 col<-rainbow(11)
 
-plot(1,1,ylim=c(.00001,.04),xlim=c(1950,2014),xlab="",ylab="",axes=F, log="y")
+plot(1,1,ylim=c(min(V,V2)*.5,max(V,V2)*2),xlim=c(1950,2014),xlab="",ylab="",axes=F, log="y")
 axis(1);axis(2,las=2);box()
 abline(h=axTicks(2),col="grey85")
 # points(1993:2014,CalibDat$notif_us_hr[,1]/rowSums(CalibDat$notif_us_hr)*100,pch=19,cex=0.6)
 for (i in 1:11){
   lines(1950:2014,V[,i],lwd=3,col=col[i])
-  lines(1950:2014,V2[,i],lty=3,lwd=2, col="black")
+  lines(1950:2014,V2[,i],lty=3,lwd=2, col=col[i])
 
   mtext("Year",1,2.5,cex=1.2)
   mtext("Age Specific Mortality Rates from 1950 to 2014",3,.8,font=2,cex=1.2)
-  legend("bottomleft",colnames(V),cex=1.0,
-    pch=rep(15,i),lwd=rep(NA,i),lty=rep(NA,i),col=col,bg="white",pt.cex=rep(1.8,i))
+  # legend("bottomleft",colnames(V),cex=1.0,
+  #   pch=rep(15,i),lwd=rep(NA,i),lty=rep(NA,i),col=col,bg="white",pt.cex=rep(1.8,i))
 }
 
 # graph of total diagnosed cases
