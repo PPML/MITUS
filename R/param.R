@@ -44,21 +44,22 @@ param <- function (PV){
   ########################## BACKGROUND MORTALITY BY TIME ########################
   mubt      <- matrix(NA,1801,11)
 
-  TunmuAg <- PV["TunmuAg"]
-#   RRmuAg <- exp((1:11)*TunmuAg)
-#   for(i in 1:11) {
-#     mubt[,i] <- SmoCurve(BgMort[,i+1])*PV["TunMubt"]/12
-#     mubt[,i] <- mubt[,i]*RRmuAg[i]
-#   }
-# # allows for linear rampup of mortality
- RRmuAg<-seq(PV["TunmuAg1"]/12,PV["TunmuAg11"]/12, length.out=11)
 
- for(i in 1:11) {
-   mubt[,i] <- SmoCurve(BgMort[,i+1])
-   mubt[,i] <- mubt[,i]*RRmuAg[i]
- }
+TunmuAg <- PV["TunmuAg"]
+  RRmuAg <- exp((1:11)*TunmuAg)
+  for(i in 1:11) {
+    mubt[,i] <- SmoCurve(BgMort[,i+1])*PV["TunMubt"]/12
+    mubt[,i] <- mubt[,i]*RRmuAg[i]
+  }
+# # allows for linear rampup of mortality
+ # RRmuAg<-exp(seq(PV["TunmuAg1"]/12,PV["TunmuAg11"]/12, length.out=11))
  #
- #  mubt<-mubt[1:month,]
+ # for(i in 1:11){
+ #   mubt[,i] <- SmoCurve(BgMort[,i+1])
+ #   mubt[,i] <- mubt[,i]*RRmuAg[i]
+ # }
+
+  mubt<-mubt[1:month,]
   # for(i in 2:10) {
   #   mubt[,i]<-mubt[,i]*exp(TunmuAg)
   # }
@@ -87,7 +88,7 @@ param <- function (PV){
   RRmuRF<-exp((0:3)/3*log(RF_fact))
   RRmuRF<-RRmuRF/sum(RRmuRF*mort_dist)
   #check
-  # RRmuRF%*%mort_dist
+  # x<-RRmuRF%*%mortdist
 
   # vRFMort    <- matrix(0,11,4);
   # rownames(vRFMort) <- c("0_4",paste(0:8*10+5,1:9*10+4,sep="_"),"95p")
@@ -275,7 +276,7 @@ param <- function (PV){
   rrTestLrNoTb  <- PV["rrTestLrNoTb"] # RR of LTBI screening for individuals with no risk factors
   #  dLt           <- 1/9
 
-  rDefLt        <- PV["pDefLt"]/(1-PV["pDefLt"])  # based on 50% tx completion with 6 mo INH regimen 2.0 [1.0,3.0] from Menzies Ind J Med Res 2011
+  #rDefLt        <- PV["pDefLt"]/(1-PV["pDefLt"])  # based on 50% tx completion with 6 mo INH regimen 2.0 [1.0,3.0] from Menzies Ind J Med Res 2011
   EffLt         <- PV["EffLt"]
   ######NEW PARAMETER FOR MITUS MODEL
   pTlInt        <- .80
