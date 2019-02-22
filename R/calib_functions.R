@@ -213,7 +213,7 @@ tb_dth_age_lLik <- function(V,rho=0.01) {
 
 US_dth_tot_lLik <- function(V) {
   # CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
-  US_deaths_tot   <- CalibDat[["US_tot_mort"]][,-1]
+  US_deaths_tot   <- CalibDat[["US_tot_mort"]][30:67,-1]
   adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.5/1.96,log=T)*wts[30:67])
   sum(dnorm(US_deaths_tot,V*1e6,US_deaths_tot*0.5/1.96,log=T)*wts[30:67]) - adj_20a
 }
@@ -228,8 +228,17 @@ US_dth_tot_lLik <- function(V) {
 US_dth_10_tot_lLik <- function(V) {
   # CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
   US_deaths_tot   <- CalibDat[["US_tot_mort"]][c(11,21,31,41,51,61),-1]
+  # print(US_deaths_tot)
   adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.1/1.96,log=T)*wts[1+1:6*10])
-  sum(dnorm(US_deaths_tot,V*1e6,US_deaths_tot*0.1/1.96,log=T)*wts[1+1:6*10]) - adj_20a
+  # print(adj_20a)
+  b <- V*1e6
+  c <- US_deaths_tot*0.5/1.96
+  d <- wts[1+1:6*10]
+  # print(b)
+  # print(c)
+  # print(d)
+  a <- sum(dnorm(US_deaths_tot,b,c,log=T)*d) - adj_20a
+  # print(a)
 }
 
 #' TOTAL DEATHS AGE DISTRIBUTION 1999-2014
@@ -276,12 +285,21 @@ mort_dist_lLik <- function(V,rho=0.1) {
 #'@return likelihood
 mort_dist_lLik_norm <- function(V) {
   md     <- rowSums(dist_gen)
-  mort_dist     <-matrix(md,length(c(11,21,31,41,51,61)),4, byrow = TRUE)
-  adj_21b        <- sum(dnorm(mort_dist,mort_dist,mort_dist*0.1/1.96, log=T)*wts[1+1:6*10])
+  # mort_dist     <-matrix(md,length(c(11,21,31,41,51,61)),4, byrow = TRUE)
+  # adj_21b        <- sum(dnorm(mort_dist,mort_dist,mort_dist*0.1/1.96, log=T)*wts[1+1:6*10])
+  # tot_lik<-0
+  # for(ag in 1:11){
+  #   V1<-V[,(1:4)+4*(ag-1)]
+  #   x<-sum(dnorm(mort_dist,V1,mort_dist*0.1/1.96, log=T)*wts[1+1:6*10]) - adj_21b
+  #   tot_lik<-tot_lik+x
+  #   # print(x)
+  # }
+  mort_dist     <-matrix(md,1,4, byrow = TRUE)
+  adj_21b        <- sum(dnorm(mort_dist,mort_dist,mort_dist*0.1/1.96, log=T)*wts[67])
   tot_lik<-0
   for(ag in 1:11){
-    V1<-V[,(1:4)+4*(ag-1)]
-    x<-sum(dnorm(mort_dist,V1,mort_dist*0.1/1.96, log=T)*wts[1+1:6*10]) - adj_21b
+    V1<-V[(1:4)+4*(ag-1)]
+    x<-sum(dnorm(mort_dist,V1,mort_dist*0.1/1.96, log=T)*wts[67]) - adj_21b
     tot_lik<-tot_lik+x
     # print(x)
   }
@@ -428,3 +446,33 @@ tiemersma_lLik <- function(Par) { # Par= c(rSlfCur,muIp)
   l1+l2 - adj_27
 }
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+
+#' TOTAL US POP No nativity (ONLY FOR USE IN DEMO MODEL)
+#' 1970,1975,1980,1985,1990-2007
+#' Motivation: norm, mean centered with CI = +/- 5% of mean
+#'@param X vector of total deaths in US from 1971-2016, fraction of millions
+#'@return j likelihood
+US_pop_tot_lLik <- function(X) {
+  # CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
+  US_pop_tot  <- CalibDat[["tot_pop_yr_fb"]][-9,2];
+  # X1<-X[c(11,21,31,41,51,61)]
+  adj_20p             <- sum(dnorm(US_pop_tot[-1],US_pop_tot[-1],US_pop_tot[7]*0.01/1.96,log=T)*wts[1+1:6*10]);
+  #this is the problematic line
+  # print(X)
+  j<-(sum(dnorm(US_pop_tot[-1], X ,US_pop_tot[7]*0.01/1.96,log=T)*wts[1+1:6*10]) - adj_20p);
+  return(j)
+  # } # CI = +/- 2mil *wts[1+1:6*10]) - adj_20p
+  #dnorm(US_pop_tot[-1], X ,US_pop_tot[7]*0.1/1.96,log=T)*
+}
+#' #' TOTAL POP AGE DISTRIBUTION  NO NATIVITY (ONLY FOR USE IN DEMO MODEL) 1999-2014
+#' #'@param V table of POP by age 2016 (row=16 years, col=11 ages)
+#' #'@param ESS correlation parameter
+#' #'@return likelihood
+tot_pop_age_lLik <- function(V,ESS=500) {
+  # CalibDat$US_mort_age <- read.csv(system.file("extdata","US_mort_age.csv", package="MITUS"))
+  # tot_pop16_ag  <- CalibDat[["tot_pop16_ag_fb"]][-9,2]/sum(CalibDat[["tot_pop16_ag_fb"]][-9,2]);
+  data("wonder_pop",package="MITUS")
+  tot_pop16_ag<-wonder_pop/sum(wonder_pop)
+  adj_18               <- sum(log(tot_pop16_ag)*tot_pop16_ag);
+  sum(log(V[]/sum(V))*tot_pop16_ag[])*ESS - adj_18*ESS
+}
