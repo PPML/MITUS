@@ -13,12 +13,13 @@ model_load<-function(loc="US"){
 #'Model Input
 if (loc=="US"){
   CalibDat<<-readRDS(system.file("US/US_CalibDat_02-14-19.rds", package="MITUS"))
-  # ParamInit<<-readRDS(system.file("US/US_ParamInit_01-24-19.rds", package="MITUS"))
-  ParamInit<<-readRDS(system.file("US/US_ParamInit_02-14-19.rds", package="MITUS"))
+  ParamInit<<-readRDS(system.file("US/US_ParamInit_01-24-19.rds", package="MITUS"))
+  StartVal<<-readRDS(system.file("US/US_StartVal_01-24-19.rds", package="MITUS"))
+
+  # ParamInit<<-readRDS(system.file("US/US_ParamInit_02-20-19.rds", package="MITUS"))
+  # StartVal<<-readRDS(system.file("US/US_StartVal_02-20-19.rds", package="MITUS"))
 
   Inputs<<-readRDS(system.file("US/US_Inputs_01-24-19.rds", package="MITUS"))
-  # StartVal<<-readRDS(system.file("US/US_StartVal_01-24-19.rds", package="MITUS"))
-  StartVal<<-readRDS(system.file("US/US_StartVal_02-14-19.rds", package="MITUS"))
 
 } else {
   CalibDat<<-CalibDatState<<-readRDS(system.file("ST/ST_CalibDat_01-24-19.rds", package="MITUS"))
@@ -72,22 +73,18 @@ model_load_demo<-function(loc="US"){
   library(MASS)
   #'lazy load necessary datasets
   #'Model Input
-  if (loc=="US")
-  {
-    calib_dat<-paste0(loc,"_CalibDat_2018-09-17")
+  if (loc=="US"){
+    CalibDat<<-readRDS(system.file("US/US_CalibDat_02-14-19.rds", package="MITUS"))
+    ParamInit_demo<<-readRDS(system.file("US/US_ParamInitdemo_2019-02-21.rds", package="MITUS"))
+    StartVal_demo<<-readRDS(system.file("US/US_StartValdemo_2019-02-21.rds", package="MITUS"))
+    Inputs<<-readRDS(system.file("US/US_Inputs_01-24-19.rds", package="MITUS"))
 
   } else {
-    calib_dat<-paste0("CalibDatState_7-2-18")
-
+    CalibDat<<-CalibDatState<<-readRDS(system.file("ST/ST_CalibDat_01-24-19.rds", package="MITUS"))
+    ParamInit_st<<-ParamInit<<-readRDS(system.file("ST/ST_ParamInit_02-09-19.rds", package="MITUS"))
+    StartVal_st<<-StartVal<<-readRDS(system.file("ST/ST_StartVal_02-09-19.rds", package="MITUS"))
+    Inputs<<-readRDS(system.file(paste0(loc,"/",loc,"_ModelInputs_01-24-19.rds"), package="MITUS"))
   }
-  model_inputs<-paste0(loc,"_ModelInputs_11-13-18")
-  par_init<-paste0("US_ParamInit_demo")
-  start_val<-paste0("US_StartVal_demo")
-
-  data(list=model_inputs, package = 'MITUS')
-  data(list=par_init, package = 'MITUS')
-  data(list=start_val, package = 'MITUS')
-  data(list=calib_dat, package='MITUS')# ParamInit
 
   if (loc=="US")
   {
