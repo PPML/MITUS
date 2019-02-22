@@ -98,6 +98,6 @@ We will need to take the complement of the user input and then replace the perce
 for the user-specified years.
 
 ```r
-    prms["pDeft"]<-1-(UI_prgm_chng$ltbi_txdef_frc)
+    prms["pDeft"]<-1-(UI_prgm_chng$tb_txdef_frc)
 ```
  
