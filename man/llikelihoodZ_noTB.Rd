@@ -19,10 +19,15 @@ format P
 if any output is missing or negative or if any model state population is negative
 set the likelihood to a hugely negative number (penalized)
 TOTAL POP EACH DECADE, BY US/FB - index updated (maybe)
-TOTAL POP AGE DISTRIBUTION 2016 index updated
+v17  <- M[,31]+M[,32]
+addlik <- tot_pop_yr_fb_lLik(V=v17); addlik
+lLik <- lLik + addlik
+#' TOTAL POP AGE DISTRIBUTION 2016 index updated
+v18  <- cbind(M[67,33:43],M[67,44:54])
+addlik <- tot_pop16_ag_fb_lLik(V=v18); addlik
+lLik <- lLik + addlik
 Total DEATHS 1999-2016 BY AGE
 #' Mort_dist 2016
-HOMELESS POP 2010 - index updated
 }
 \description{
 This scrprmst creates a function that loops over the log-likelihood
