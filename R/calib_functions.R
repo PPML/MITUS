@@ -214,8 +214,8 @@ tb_dth_age_lLik <- function(V,rho=0.01) {
 US_dth_tot_lLik <- function(V) {
   # CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
   US_deaths_tot   <- CalibDat[["US_tot_mort"]][30:67,-1]
-  adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.5/1.96,log=T)*wts[30:67])
-  sum(dnorm(US_deaths_tot,V*1e6,US_deaths_tot*0.5/1.96,log=T)*wts[30:67]) - adj_20a
+  adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.1/1.96,log=T)*wts[30:67])
+  sum(dnorm(US_deaths_tot,V,US_deaths_tot*0.1/1.96,log=T)*wts[30:67]) - adj_20a
 }
 
 #' TOTAL US DEATHS BY DECADE
@@ -228,17 +228,9 @@ US_dth_tot_lLik <- function(V) {
 US_dth_10_tot_lLik <- function(V) {
   # CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
   US_deaths_tot   <- CalibDat[["US_tot_mort"]][c(11,21,31,41,51,61),-1]
-  # print(US_deaths_tot)
   adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.1/1.96,log=T)*wts[1+1:6*10])
   # print(adj_20a)
-  b <- V*1e6
-  c <- US_deaths_tot*0.5/1.96
-  d <- wts[1+1:6*10]
-  # print(b)
-  # print(c)
-  # print(d)
-  a <- sum(dnorm(US_deaths_tot,b,c,log=T)*d) - adj_20a
-  # print(a)
+  sum(dnorm(US_deaths_tot,V,US_deaths_tot*0.1/1.96,log=T)*wts[1+1:6*10]) - adj_20a
 }
 
 #' TOTAL DEATHS AGE DISTRIBUTION 1999-2014

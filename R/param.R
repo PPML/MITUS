@@ -45,19 +45,19 @@ param <- function (PV){
   mubt      <- matrix(NA,1801,11)
 
 
-TunmuAg <- PV["TunmuAg"]
-  RRmuAg <- exp((1:11)*TunmuAg)
-  for(i in 1:11) {
-    mubt[,i] <- SmoCurve(BgMort[,i+1])*PV["TunMubt"]/12
-    mubt[,i] <- mubt[,i]*RRmuAg[i]
-  }
+# TunmuAg <- PV["TunmuAg"]
+#   RRmuAg <- exp((1:11)*TunmuAg)
+#   for(i in 1:11) {
+#     mubt[,i] <- SmoCurve(BgMort[,i+1])*PV["TunMubt"]/12
+#     mubt[,i] <- mubt[,i]*RRmuAg[i]
+#   }
 # # allows for linear rampup of mortality
- # RRmuAg<-exp(seq(PV["TunmuAg1"]/12,PV["TunmuAg11"]/12, length.out=11))
- #
- # for(i in 1:11){
- #   mubt[,i] <- SmoCurve(BgMort[,i+1])
- #   mubt[,i] <- mubt[,i]*RRmuAg[i]
- # }
+ RRmuAg<-seq(PV["TunmuAg1"]/12,PV["TunmuAg11"]/12, length.out=11)
+
+ for(i in 1:11){
+   mubt[,i] <- SmoCurve(BgMort[,i+1])
+   mubt[,i] <- mubt[,i]*RRmuAg[i]
+ }
 
   mubt<-mubt[1:month,]
   # for(i in 2:10) {
