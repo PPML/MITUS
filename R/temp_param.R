@@ -283,7 +283,15 @@ new_param <- function (PV, prg_chng){
   }
 
   SpecLtFb_v      <- SpecLt_v         #  spec of test for latent TB infection (based on IGRA QFT-GIT) in foreign-born (assumed BCG exposed)
-  ###########   WILL THIS PARAMETER NEED TO BE REDUCED?
+
+  LtDxPar_lt <- LtDxPar_nolt <- matrix(NA,3,month);
+  # colnames(LtDxPar) <- c("latent","no latent");
+  rownames(LtDxPar_lt) <- rownames(LtDxPar_nolt) <- c("LR","HR","FB")
+  LtDxPar_lt[,] <- rbind(SensLt_v                 , rrTestHr*SensLt_v    , SensLt_v)
+  LtDxPar_nolt[,] <- rbind(rrTestLrNoTb*(1-SpecLt_v), rrTestHr*(1-SpecLt_v), (1-SpecLtFb_v))
+
+
+###########   WILL THIS PARAMETER NEED TO BE REDUCED?
   rrTestHr      <- PV["rrTestHr"] # RR of LTBI screening for HIV and HR as cmpared to general
   rrTestLrNoTb  <- PV["rrTestLrNoTb"] # RR of LTBI screening for individuals with no risk factors
   #  dLt           <- 1/9
@@ -312,12 +320,6 @@ new_param <- function (PV, prg_chng){
     LtTxPar       <- c(pTlInt,pDefLt,EffLt)
   }
 
-  LtDxPar <- matrix(NA,3,2);
-  colnames(LtDxPar) <- c("latent","no latent");
-  rownames(LtDxPar) <- c("LR","HR","FB")
-  LtDxPar[,1] <- c(SensLt                 , rrTestHr*SensLt    , SensLt)
-  LtDxPar[,2] <- c(rrTestLrNoTb*(1-SpecLt), rrTestHr*(1-SpecLt), (1-SpecLtFb))
-
   pImmScen    <- PV["pImmScen"] # lack of reactivitiy to IGRA for Sp
 
   ################################################################################
@@ -327,8 +329,11 @@ new_param <- function (PV, prg_chng){
   SensSp    <- PV["SensSp"]
 
   ######################           PROVIDER DELAY         ########################
+  DelaySp    <- rep(PV["DelaySp"],month)
 
-  DelaySp    <- PV["DelaySp"]
+  if (prg_chng["tb_tim2tx_frc"] !=round(DelaySp[prg_m], 2)){
+    DelaySp[prg_m:length(DelaySp)] <- prg_chng["tb_tim2tx_frc"];
+  }
 
   #######################     PROVIDER DELAY RR ELDERLY     ########################
 
@@ -356,12 +361,17 @@ new_param <- function (PV, prg_chng){
   rDx[62:151]    <- rDx[61] + (rDx[61]-rDx[60])*cumsum((0.75^(1:90)))
   rDxt0          <- SmoCurve(rDx)/12;
   rDxt1          <- cbind(rDxt0,rDxt0)
+  rDxt1<-rDxt1[1:month,]
 
+  rDxt<-matrix(NA,1201,2)
   # Put it all together
-  rDxt           <- 1/(1/rDxt1+DelaySp)*SensSp
-  rDxt[,2]       <- (rDxt[,1]-min(rDxt[,1]))/PV["rrDxH"]+min(rDxt[,1]) #check this with Nick
+  for (i in 1:nrow(rDxt)){
+    rDxt[i,1]           <- 1/(1/rDxt1[i,1]+DelaySp[i])*SensSp
+  }
+  for (i in 1:nrow(rDxt)){
+  rDxt[i,2]       <- (rDxt[i,1]-min(rDxt[,1]))/PV["rrDxH"]+min(rDxt[i,1])
+  } #check this with Nick
   colnames(rDxt) <- c("Active","Active_HighRisk")
-  rDxt<-rDxt[1:month,]
 
   ################################################################################
   ###########################     TREATMENT OUTCOMES    ##########################
@@ -385,11 +395,17 @@ new_param <- function (PV, prg_chng){
   rDef0[64:151] <- rDef0[63]
   rDef1         <- predict(smooth.spline(x=c(1950:1979,1993:2100),y=rDef0[-(31:43)],spar=0.4),x=1950:2100)$y
   rDeft         <- SmoCurve(rDef1)/12;
+  rDeft<-rDeft[1:month]
 
+
+  if (prg_chng["tb_txdef_frc"] !=round(rDeft[prg_m], 2)){
+    rDeft[prg_m:length(rDeft)] <- prg_chng["tb_txdef_frc"];
+  }
 
   rDeftH        <- rDeft*PV["RRdefHR"] # second col is HR default rate
-  rDeft<-rDeft[1:month]
   rDeftH<-rDeftH[1:month]
+
+
 
   #########################        REGIMEN QUALITY       ##########################
 
