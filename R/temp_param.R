@@ -48,16 +48,20 @@ new_param <- function (PV, prg_chng){
 
   # TunmuAg <- PV["TunmuAg"]
   # RRmuAg <- exp((1:11)*TunmuAg)
-  RRmuAg<-rep(1,11)
-  for(i in 1:11) {
-    mubt[,i] <- SmoCurve(BgMort[,i+1])*PV["TunMubt"]/12
+  # RRmuAg<-rep(1,11)
+  # for(i in 1:11) {
+  #   mubt[,i] <- SmoCurve(BgMort[,i+1])*PV["TunMubt"]/12
+  #   mubt[,i] <- mubt[,i]*RRmuAg[i]
+  # }
+  RRmuAg<-seq(PV["TunmuAg1"]/12,PV["TunmuAg11"]/12, length.out=11)
+
+  for(i in 1:11){
+    mubt[,i] <- SmoCurve(BgMort[,i+1])
     mubt[,i] <- mubt[,i]*RRmuAg[i]
   }
 
   mubt<-mubt[1:month,]
-  # for(i in 2:10) {
-  #   mubt[,i]<-mubt[,i]*exp(TunmuAg)
-  # }
+
   #########################     DISEASE SPECIFIC       ###########################
   #############    ACTIVE TB RATES DEFAULT TO THE SMEAR POS LEVELS   #############
 
@@ -283,6 +287,8 @@ new_param <- function (PV, prg_chng){
   }
 
   SpecLtFb_v      <- SpecLt_v         #  spec of test for latent TB infection (based on IGRA QFT-GIT) in foreign-born (assumed BCG exposed)
+  rrTestHr      <- PV["rrTestHr"] # RR of LTBI screening for HIV and HR as cmpared to general
+  rrTestLrNoTb  <- PV["rrTestLrNoTb"] # RR of LTBI screening for individuals with no risk factors
 
   LtDxPar_lt <- LtDxPar_nolt <- matrix(NA,3,month);
   # colnames(LtDxPar) <- c("latent","no latent");
@@ -659,7 +665,8 @@ new_param <- function (PV, prg_chng){
   Params[["rDeft"]]     = rDeft
   Params[["pReTx"]]     = pReTx
   Params[["LtTxPar"]]   = LtTxPar
-  Params[["LtDxPar"]]   = LtDxPar
+  Params[["LtDxPar_lt"]]   = LtDxPar_lt
+  Params[["LtDxPar_nolt"]]   = LtDxPar_nolt
   Params[["rLtScrt"]]   = rLtScrt
   Params[["RRdxAge"]]   = RRdxAge
   Params[["rRecov"]]    = rRecov
