@@ -8,12 +8,12 @@
 #' @return Params list
 #' @export
 param_noRB <- function (PV){
-  # load("~/MITUS/data/US_ModelInputs_9-6-18.rda")
   ################################################################################
   ###########################          INPUTS            #########################
   ################################################################################
   BgMort           <- Inputs[["BgMort"]]
-  InitPop          <- Inputs[["InitPop"]]
+  BgMort[1:68,2:12]<-read.csv("~/MITUS/inst/extdata/US/NCHS1950.csv", header = TRUE)[,2:12]
+  InitPop          <- init_pop()
   Births           <- Inputs[["Births"]]
   ImmigInputs      <- Inputs[["ImmigInputs"]]
   TxInputs         <- Inputs[["TxInputs"]]
@@ -26,7 +26,6 @@ param_noRB <- function (PV){
   ##########                PARAMETER DEFINITIONS                      ###########
   ##########                RISK FACTOR DISTRIBUTIONS   ##########################
 
-  #adj_fact<-exp(.0001*(10:0)/11 + .0011*(0:10)/11)
   adj_fact <- exp(PV[["adj_ag1"]]*(10:0)/11 + PV[["adj_ag11"]]*(0:10)/11)
 
   #######################           BIRTHS                 #######################
@@ -34,23 +33,44 @@ param_noRB <- function (PV){
 
   Birthst   <- SmoCurve(Births)*PV["TunBirths"]/12
   Birthst   <- Birthst[1:month]
+  Birthst[1:6]<-0
 
   ##########################      MORTALITY RATES       ##########################
   ########################## BACKGROUND MORTALITY BY TIME ########################
   mubt      <- matrix(NA,1801,11)
+  #mortality calculation version 1
+  # linear multiple on background mortality and exponential scaling of mort by age
+  # TunmuAg <- PV["TunmuAg"]
+  #   RRmuAg <- exp((1:11)*TunmuAg)
+  # # RRmuT<-seq(TunmuAg,PV["TunMubt"],length.out=month)/12
+  #   for(i in 1:11) {
+  #     mubt[,i] <- SmoCurve(BgMort[,i+1])*PV[["TunMubt"]]/12
+  #     # mubt[1:1201,i] <- mubt[1:1201,i]*RRmuT
+  #     mubt[,i] <- mubt[,i]*RRmuAg[i]
+  #   }
 
-  TunmuAg <- PV["TunmuAg"]
-  RRmuAg <- exp((1:11)*TunmuAg)
-  for(i in 1:11) {
-    mubt[,i] <- SmoCurve(BgMort[,i+1])*PV["TunMubt"]/12
+    # mubt[1:6]<-0
+  # mortality calculation version 2
+  # allows for linear rampup of mortality
+  RRmuAg<-seq((PV["TunmuAg"]+1),PV["TunMubt"], length.out=11)
+  # RRmuAg<-c(1,1,RRmu,rep(RRmu[6],3))
+  for(i in 1:11){
+    mubt[,i] <- SmoCurve(BgMort[,i+1])/12
+  }
+
+  mubt<-mubt[1:month,]
+  for(i in 1:11){
     mubt[,i] <- mubt[,i]*RRmuAg[i]
   }
 
+  mubt[1:6]<-0
+
+  # mubt[,]<-1-exp(-mubt[,])
+  # RRmuAg[1]<-RRmuAg[1]*1.25
+  # RRmuAg[10:11]<-RRmuAg[10:11]*.5
 
 
-  # for(i in 2:10) {
-  #   mubt[,i]<-mubt[,i]*exp(TunmuAg)
-  # }
+
   #########################     DISEASE SPECIFIC       ###########################
   #############    ACTIVE TB RATES DEFAULT TO THE SMEAR POS LEVELS   #############
 
@@ -65,10 +85,8 @@ param_noRB <- function (PV){
   RRmuHR    <- c(1,PV["RRmuHR"])
 
   ############### CREATE A MATRIX OF RF MORTALITIES BY AGE GROUP ###############
-  ############### CREATE A MATRIX OF RF MORTALITIES BY AGE GROUP ###############
-
-  RF_fact=20
-
+  #because this version of the model does not have rebalancing, we will set all
+  #these values to 1 for all four risk groups (all persons will be in the first)
   RRmuRF    <- rep(NA,4);
   names(RRmuRF) <- c("RF1","RF2","RF3","RF4")
   RRmuRF<-c(1,1,1,1)
@@ -82,10 +100,6 @@ param_noRB <- function (PV){
   # vRFMort[,3] <- muRF2*exp(c(0,0,1:6,6,6,6)*TunmuHvAg)
   # vRFMort[,4] <- muRF3*exp(c(0,0,1:6,6,6,6)*TunmuHvAg)
 
-  ##### combine the two RRs to a single factor
-  RRs_mu <-matrix(NA,2,4)
-  RRs_mu[1,] <-RRmuRF
-  RRs_mu[2,] <-RRmuRF*RRmuHR[2]
   ############### CREATE A MATRIX OF TB MORTALITIES BY AGE GROUP ###############
 
   vTMort   <- matrix(0,11,6);
@@ -124,18 +138,18 @@ param_noRB <- function (PV){
   PrevTrend25_341a <-   PrevTrend25_340a
   PrevTrend25_34a  <- SmoCurve(PrevTrend25_341a)
   # ImDxChngV      <- SmoCurve(c(rep(1,57),seq(1,PV["ImDxChng"],length.out=6)[-1],rep(PV["ImDxChng"],89)))
+  # ImmAct         <- outer(PrevTrend25_34a*PV["RRtbprev"]*ImDxChngV,ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*PV["pImAct"]
   ImmAct         <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*PV["pImAct"]
   ImmFst         <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*(1-PV["pImAct"])
   ImmNon         <- TotImmAge-ImmAct-ImmFst-ImmLat
-
   ###################### TRUNCATE THESE VALS
   ImmAct<-ImmAct[1:month,];ImmFst<-ImmFst[1:month,]; ImmLat<-ImmLat[1:month,]; ImmNon<-ImmNon[1:month,]
+  ImmNon[1:6,]<- ImmAct[1:6,]<-ImmFst[1:6,]<-ImmLat[1:6,]<-0
   ######################   EXOGENEOUS INFECTION RISK      ########################
 
   ExogInf        <- matrix(NA,length(PrevTrend25_34a),5)
   ExogInf        <- PV["ExogInf"]*PrevTrend25_34a/PrevTrend25_341a["2013"]/12
-
-  #removed *(ImmigInputs[[7]][4]*DrN[,i]+(1-ImmigInputs[[7]][4])*DrE[,i])
+  ExogInf        <- ExogInf[1:month]
 
   ######################             EMIGRATION          #########################
 
@@ -196,8 +210,17 @@ param_noRB <- function (PV){
   #vector of ORpfastRF
   vORpfastPIRF<-vORpfastRF  <-c(1,1,1,1)
   vORpfastRF  <-(exp((0:3)/3*log(ORpfastRF)))
+  # vORpfastRF<-vORpfastRF/sum(vORpfastRF*mort_dist)
+  # #check
+  # vORpfastRF%*%mort_dist
   vORpfastPIRF  <- vORpfastRF*ORpfastPI
+  # vORpfastPIRF<-vORpfastPIRF/sum(vORpfastPIRF*mort_dist)
 
+  # vORpfastPIRF%*%mort_dist
+
+  ############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
+  Mpfast[,1]   <- vORpfastRF[1]*Mpfast[,1]
+  MpfastPI[,1]   <- vORpfastPIRF[1]*Mpfast[,1]
   ############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
   Mpfast[,2]   <- vORpfastRF[2]*Mpfast[,2]
   MpfastPI[,2]   <- vORpfastPIRF[2]*Mpfast[,2]
@@ -216,15 +239,19 @@ param_noRB <- function (PV){
   rslowRF    <- PV["rslowH"]/12
   RRrslowRF  <- rslowRF/rslow
   rfast      <- PV["rfast"]/12
-  # rrSlowFB0  <- PV["rrSlowFB"]
+  #rrSlowFB0  <- PV["rrSlowFB"] #removed
   rrSlowFB   <- c(1,1,1)
 
   ############# CREATE A VECTOR FOR RATE OF SLOW PROGRESSION THAT WILL
   ############# VARY BASED ON LEVELS OF TB REACTIVATION RATES
-  Vrslow     <- rep(1,4)
+  Vrslow     <- rep(rslow,4)
   ############# UPDATE LEVEL FOUR OF THE RATE OF SLOW BASED ON CALCULATED RR FROM
   ############# USER INPUTTED RR FOR THE RISK FACTOR
-  Vrslow<-rslow*exp((0:3)/3*log(RRrslowRF))
+  RRrslow<-exp((0:3)/3*log(RRrslowRF))
+  # RRrslow<-RRrslow/sum(RRrslow*mort_dist)
+  # # #check
+  # RRrslow%*%mort_dist
+  Vrslow<-Vrslow*RRrslow
 
   TunrslowAge  <- PV["TunrslowAge"]
   rrReactAg       <- exp(c(0,0,0,0,0,0,0.5,1:4)*PV["TunrslowAge"])
@@ -553,9 +580,9 @@ param_noRB <- function (PV){
   Params[["TxQualt"]]   = TxQualt
   Params[["InitPop"]]   = InitPop
   Params[["Mpfast"]]    = Mpfast
-  Params[["ExogInf"]]   = ExogInf
+  Params[["ExogInf"]]   = round(ExogInf,3)
   Params[["MpfastPI"]]  = MpfastPI
-  Params[["Mrslow"]]    = Mrslow
+  Params[["Mrslow"]]    = round(Mrslow,3)
   Params[["rrSlowFB"]]  = rrSlowFB
   Params[["rfast"]]     = rfast
   Params[["RRcurDef"]]  = RRcurDef
