@@ -85,7 +85,7 @@ reblncd <- function(mubt, can_go, RRmuHR, RRmuRF, HRdist, dist_gen_v, adj_fact) 
     .Call('_MITUS_reblncd', PACKAGE = 'MITUS', mubt, can_go, RRmuHR, RRmuRF, HRdist, dist_gen_v, adj_fact)
 }
 
-#'@title cSim_rblnc
+#'@name cSim_rblnc
 #'@description runs a simulation of the tb model
 #'@param nYrs number of years to run the model.
 #'@param nRes number of results of the model
@@ -103,13 +103,14 @@ reblncd <- function(mubt, can_go, RRmuHR, RRmuRF, HRdist, dist_gen_v, adj_fact) 
 #'@param vTMort vector of TB mortality rates
 #'@param RRmuRF rate ratio of mortality across mortality risk group
 #'@param RRmuHR rate ratio of mortality across low/high risk dimension
-#'@param muTBRF comorbidity factor btw TB and mortality risk group
 #'@param Birthst Births over time
 #'@param HrEntEx Matrix of Entry and Exit rates into the High Risk population
 #'@param ImmNon Immigration with no TB
 #'@param ImmLat Immigration with Latent TB
 #'@param ImmAct Immigration with Active TB
 #'@param ImmFst Immigration with Fast Progressing TB
+#'@param net_mig_usb net internal migration usb
+#'@param net_mig_nusb net internal migration nusb
 #'@param mubt background mortality over time
 #'@param RelInf beta
 #'@param RelInfRg beta based off of risk group
@@ -126,15 +127,15 @@ reblncd <- function(mubt, can_go, RRmuHR, RRmuRF, HRdist, dist_gen_v, adj_fact) 
 #'@param pImmScen lack of reactivitiy to IGRA for Sp
 #'@param EarlyTrend ramp down of TB in burn-in
 #'@param pReTx probability of re-treatment for TB
-#'@param NixTrans
+#'@param NixTrans reduction of transmission over time
 #'@param dist_gen general distribution across tb progression and mort
 #'@param can_go matrix of logical transitions for reblnc code
 #'@param dist_goal_v goal distribution of reblnc code
 #'@param dist_orig_v empty vector for reblnc
 #'@param diff_i_v empty vector for reblnc
-#'@return a list of outputs
-cSim_rblnc <- function(nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow, rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, muTbRF, Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, mubt, RelInf, RelInfRg, Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, LtTxPar, LtDxPar, RRdxAge, rRecov, pImmScen, EarlyTrend, pReTx, NixTrans, dist_gen, can_go, dist_goal_v, dist_orig_v, diff_i_v) {
-    .Call('_MITUS_cSim_rblnc', PACKAGE = 'MITUS', nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow, rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, muTbRF, Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, mubt, RelInf, RelInfRg, Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, LtTxPar, LtDxPar, RRdxAge, rRecov, pImmScen, EarlyTrend, pReTx, NixTrans, dist_gen, can_go, dist_goal_v, dist_orig_v, diff_i_v)
+#'@return Outputs a list of outputs
+cSim_rblnc <- function(nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow, rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, net_mig_usb, net_mig_nusb, mubt, RelInf, RelInfRg, Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, LtTxPar, LtDxPar, RRdxAge, rRecov, pImmScen, EarlyTrend, pReTx, NixTrans, dist_gen, can_go, dist_goal_v, dist_orig_v, diff_i_v) {
+    .Call('_MITUS_cSim_rblnc', PACKAGE = 'MITUS', nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow, rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, net_mig_usb, net_mig_nusb, mubt, RelInf, RelInfRg, Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, LtTxPar, LtDxPar, RRdxAge, rRecov, pImmScen, EarlyTrend, pReTx, NixTrans, dist_gen, can_go, dist_goal_v, dist_orig_v, diff_i_v)
 }
 
 #'@name cSim
