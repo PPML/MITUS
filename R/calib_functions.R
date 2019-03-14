@@ -227,10 +227,10 @@ US_dth_tot_lLik <- function(V) {
 
 US_dth_10_tot_lLik <- function(V) {
   # CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
-  US_deaths_tot   <- CalibDat[["US_tot_mort"]][c(11,21,31,41,51,61),-1]
-  adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.1/1.96,log=T)*wts[1+1:6*10])
+  US_deaths_tot   <- CalibDat[["US_tot_mort"]][c(66:67),-1]
+  adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.1/1.96,log=T)*c(66:67))
   # print(adj_20a)
-  sum(dnorm(US_deaths_tot,V,US_deaths_tot*0.1/1.96,log=T)*wts[1+1:6*10]) - adj_20a
+  sum(dnorm(US_deaths_tot,V,US_deaths_tot*0.1/1.96,log=T)*c(66:67)) - adj_20a
 }
 
 #' TOTAL DEATHS AGE DISTRIBUTION 1999-2014
@@ -240,14 +240,15 @@ US_dth_10_tot_lLik <- function(V) {
 #'@return likelihood
 tot_dth_age_lLik <- function(V,rho=0.01) {
   # CalibDat$US_mort_age <- read.csv(system.file("extdata","US_mort_age.csv", package="MITUS"))
-  tot_deaths_age  <- CalibDat[["US_mort_age"]][17:18,-1]
-  adj_20b        <- sum(dDirMult(M=tot_deaths_age+0.,n=tot_deaths_age+0.1,Rho=0.01)*wts[66:67])
+  tot_deaths_age  <- CalibDat[["US_mort_age"]][c(66:67),2:9]
+  tot_deaths_age  <-tot_deaths_age/rowSums(tot_deaths_age)
+  adj_20b        <- sum(dDirMult(M=tot_deaths_age,n=tot_deaths_age,Rho=rho)*wts[c(66:67)])
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
   V2 <- V2[,-5]; V2[,4]  <- V2[,4]+V[,5]
   V2 <- V2[,-3]; V2[,2]  <- V2[,2]+V[,3]
-
-  sum(dDirMult(M=(V2*1e6),n=tot_deaths_age+.1,Rho=rho)*wts[66:67]) - adj_20b  }
-
+  V2<-V2/rowSums(V2)
+  sum(dDirMult(M=V,n=tot_deaths_age,Rho=rho)*wts[c(66:67)]) - adj_20b
+}
 
 #' Mortality Risk Group Distribution 1999-2014
 #'
@@ -286,12 +287,12 @@ mort_dist_lLik_norm <- function(V) {
   #   tot_lik<-tot_lik+x
   #   # print(x)
   # }
-  mort_dist     <-matrix(md,1,4, byrow = TRUE)
-  adj_21b        <- sum(dnorm(mort_dist,mort_dist,mort_dist*0.1/1.96, log=T)*wts[67])
+  mort_dist     <-matrix(md,length(c(11,21,31,41,51,61)),4, byrow = TRUE)
+  adj_21b        <- sum(dnorm(mort_dist,mort_dist,mort_dist*0.5/1.96, log=T)*wts[1+1:6*10])
   tot_lik<-0
   for(ag in 1:11){
     V1<-V[(1:4)+4*(ag-1)]
-    x<-sum(dnorm(mort_dist,V1,mort_dist*0.1/1.96, log=T)*wts[67]) - adj_21b
+    x<-sum(dnorm(mort_dist,V1,mort_dist*0.5/1.96, log=T)*wts[1+1:6*10]) - adj_21b
     tot_lik<-tot_lik+x
     # print(x)
   }
