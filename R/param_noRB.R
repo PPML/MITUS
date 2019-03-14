@@ -12,7 +12,8 @@ param_noRB <- function (PV){
   ###########################          INPUTS            #########################
   ################################################################################
   BgMort           <- Inputs[["BgMort"]]
-  BgMort[1:68,2:12]<-read.csv("~/MITUS/inst/extdata/US/NCHS1950.csv", header = TRUE)[,2:12]
+  NCHS_mort        <-readRDS(system.file("US/US_NCHS_mort.rds", package="MITUS"))[,2:12]
+  BgMort[1:68,2:12]<-NCHS_mort
   InitPop          <- init_pop()
   Births           <- Inputs[["Births"]]
   ImmigInputs      <- Inputs[["ImmigInputs"]]

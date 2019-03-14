@@ -571,7 +571,7 @@ dev.off()
 pdfname<-paste("MITUS_results/pop_age",Sys.time(),".pdf")
 pdf(file=pdfname, width = 11, height = 8.5)
 par(mfrow=c(2,2),mar=c(4,4.5,3,1))
-I<-as.matrix(read.csv("~/MITUS/inst/extdata/US/immig_pop_ag.csv", header=TRUE)[,2:11])
+I<-as.matrix(readRDS(system.file("US/immig_pop_ag.rds", package="MITUS")))[,2:11]
 I<-I/1e6
 I1<-I[,-3]
 I1[,2]<-I1[,2]+I[,3]
