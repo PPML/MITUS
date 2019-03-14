@@ -8,7 +8,6 @@
 #' @return Params list
 #' @export
 param <- function (PV){
-  # load("~/MITUS/data/US_ModelInputs_9-6-18.rda")
   ################################################################################
   ###########################          INPUTS            #########################
   ################################################################################
@@ -19,18 +18,12 @@ param <- function (PV){
   TxInputs         <- Inputs[["TxInputs"]]
   NetMig           <- Inputs[["NetMigrState"]]
 
-
   ########## DEFINE A VARIABLE THAT WILL DETERMINE HOW LONG THE TIME DEPENDENT
   ########## VARIABLES SHOULD BE (IN MONTHS)
   month<-1201;
 
   ##########                PARAMETER DEFINITIONS                      ###########
   ##########                RISK FACTOR DISTRIBUTIONS   ##########################
-
-  # adj_fact<-exp(.0001*(10:0)/11 + .0011*(0:10)/11)
-
-  # adj_fact<-exp(0.20025446*(10:0)/11 + 0.8708557*(0:10)/11)
-  # adj_fact<-exp(0.20025446*(10:0)/11 + 2*(0:10)/11)
 
   adj_fact <- exp(PV[["adj_ag1"]]*(10:0)/11 + PV[["adj_ag11"]]*(0:10)/11)
 
@@ -43,26 +36,29 @@ param <- function (PV){
   ##########################      MORTALITY RATES       ##########################
   ########################## BACKGROUND MORTALITY BY TIME ########################
   mubt      <- matrix(NA,1801,11)
-
-
+#mortality calculation version 1
+# linear multiple on background mortality and exponential scaling of mort by age
 # TunmuAg <- PV["TunmuAg"]
 #   RRmuAg <- exp((1:11)*TunmuAg)
+# # RRmuT<-seq(TunmuAg,PV["TunMubt"],length.out=month)/12
 #   for(i in 1:11) {
-#     mubt[,i] <- SmoCurve(BgMort[,i+1])*PV["TunMubt"]/12
+#     mubt[,i] <- SmoCurve(BgMort[,i+1])*PV[["TunMubt"]]/12
+#     # mubt[1:1201,i] <- mubt[1:1201,i]*RRmuT
 #     mubt[,i] <- mubt[,i]*RRmuAg[i]
 #   }
-# # allows for linear rampup of mortality
- RRmuAg<-seq(PV["TunmuAg1"]/12,PV["TunmuAg11"]/12, length.out=11)
-
+# mortality calculation version 2
+# allows for linear rampup of mortality
+ RRmu<-seq((PV["TunmuAg"]+1)/12,PV["TunMubt"]/12, length.out=6)
+ RRmuAg<-c(1,1,RRmu,rep(RRmu[6],3))
  for(i in 1:11){
    mubt[,i] <- SmoCurve(BgMort[,i+1])
-   mubt[,i] <- mubt[,i]*RRmuAg[i]
  }
 
-  mubt<-mubt[1:month,]
-  # for(i in 2:10) {
-  #   mubt[,i]<-mubt[,i]*exp(TunmuAg)
-  # }
+ mubt<-mubt[1:month,]
+
+ for(i in 1:11){
+   mubt[,i] <- mubt[,i]*RRmuAg[i]
+ }
   #########################     DISEASE SPECIFIC       ###########################
   #############    ACTIVE TB RATES DEFAULT TO THE SMEAR POS LEVELS   #############
 
@@ -77,7 +73,6 @@ param <- function (PV){
   RRmuHR    <- c(1,PV["RRmuHR"])
 
   ############### CREATE A MATRIX OF RF MORTALITIES BY AGE GROUP ###############
-  ############### CREATE A MATRIX OF RF MORTALITIES BY AGE GROUP ###############
   mort_dist<-rowSums(dist_gen)
 
   RF_fact=20
@@ -88,7 +83,7 @@ param <- function (PV){
   RRmuRF<-exp((0:3)/3*log(RF_fact))
   RRmuRF<-RRmuRF/sum(RRmuRF*mort_dist)
   #check
-  # x<-RRmuRF%*%mortdist
+  # x<-RRmuRF%*%mort_dist
 
   # vRFMort    <- matrix(0,11,4);
   # rownames(vRFMort) <- c("0_4",paste(0:8*10+5,1:9*10+4,sep="_"),"95p")
@@ -98,10 +93,6 @@ param <- function (PV){
   # vRFMort[,3] <- muRF2*exp(c(0,0,1:6,6,6,6)*TunmuHvAg)
   # vRFMort[,4] <- muRF3*exp(c(0,0,1:6,6,6,6)*TunmuHvAg)
 
-  ##### combine the two RRs to a single factor
-  RRs_mu <-matrix(NA,2,4)
-  RRs_mu[1,] <-RRmuRF
-  RRs_mu[2,] <-RRmuRF*RRmuHR[2]
   ############### CREATE A MATRIX OF TB MORTALITIES BY AGE GROUP ###############
 
   vTMort   <- matrix(0,11,6);
