@@ -325,6 +325,7 @@ Rcpp::List cSim_rblnc(
       for(int tb=0; tb<6; tb++) {
         vTMortN[ag][tb] =0;
       } }
+  }
     // for(int ag=0; ag<11; ag++) {
     // for(int nm=0; nm<4; nm++) {
     //   vRFMortN[ag][nm] = 0;
@@ -364,7 +365,7 @@ Rcpp::List cSim_rblnc(
       dist_i_v[i]=0;
       temp_vec[i]=0;
     }
-  }
+
 
   ////////////////////////////////////////////////////////////////////////////////
   ///////                  UPDATING TREATMENT METERS                        //////
