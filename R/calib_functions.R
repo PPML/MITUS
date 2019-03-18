@@ -287,12 +287,12 @@ mort_dist_lLik_norm <- function(V) {
   #   tot_lik<-tot_lik+x
   #   # print(x)
   # }
-  mort_dist     <-matrix(md,length(c(11,21,31,41,51,61)),4, byrow = TRUE)
-  adj_21b        <- sum(dnorm(mort_dist,mort_dist,mort_dist*0.5/1.96, log=T)*wts[1+1:6*10])
+  mort_dist     <-matrix(md,length(c(67)),4, byrow = TRUE)
+  adj_21b        <- sum(dnorm(mort_dist,mort_dist,mort_dist*0.5/1.96, log=T)*wts[c(67)])
   tot_lik<-0
   for(ag in 1:11){
     V1<-V[(1:4)+4*(ag-1)]
-    x<-sum(dnorm(mort_dist,V1,mort_dist*0.5/1.96, log=T)*wts[1+1:6*10]) - adj_21b
+    x<-sum(dnorm(mort_dist,V1,mort_dist*0.5/1.96, log=T)*wts[c(67)]) - adj_21b
     tot_lik<-tot_lik+x
     # print(x)
   }
