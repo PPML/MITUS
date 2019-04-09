@@ -149,7 +149,7 @@ ltbi_fb_11_dp_lLik <- function(V) {
   V[9,] <- colSums(V[9:11,])
   (sum( dbeta(V[2:9,1]/rowSums(V[2:9,]),ltbi_fb_11_dp[,2],ltbi_fb_11_dp[,3],log=T) ) - adj_16dp)*2  }
 
-#' TOTAL POP EACH DECADE, FOR FB
+#' TOTAL POP EACH DECADE, FOR
 #' Motivation: norm, mean centered with CI = +/- 2 million wts[1+0:6*10]
 #'@param V total pop (rows=year, cols=us, fb)
 #'@return likelihood
@@ -158,6 +158,14 @@ tot_pop_yr_fb_lLik <- function(V) {
   adj_17             <- sum(dnorm(tot_pop_yr_fb[-1,4],tot_pop_yr_fb[-1,4],tot_pop_yr_fb[7,4]*0.1/1.96,log=T)*wts[1+1:6*10])
   sum(dnorm(tot_pop_yr_fb[-1,4],V[c(11,21,31,41,51,61)],tot_pop_yr_fb[7,4]*0.1/1.96,log=T)*wts[1+1:6*10]) - adj_17  } # CI = +/- 2mil
 
+#' TOTAL POP EACH DECADE, FOR USB
+#' Motivation: norm, mean centered with CI = +/- 2 million wts[1+0:6*10]
+#'@param V total pop (rows=year, cols=us, fb)
+#'@return likelihood
+tot_pop_yr_usb_lLik <- function(V) {
+  tot_pop_yr_fb      <- CalibDat[["tot_pop_yr_fb"]]
+  adj_17             <- sum(dnorm(tot_pop_yr_fb[-1,3],tot_pop_yr_fb[-1,3],tot_pop_yr_fb[7,3]*0.1/1.96,log=T)*wts[1+1:6*10])
+  sum(dnorm(tot_pop_yr_fb[-1,3],V[c(11,21,31,41,51,61)],tot_pop_yr_fb[7,3]*0.1/1.96,log=T)*wts[1+1:6*10]) - adj_17  } # CI = +/- 2mil
 
 #' TOTAL POP AGE DISTRIBUTION 2014
 #' Motivation: reported estimates represent pseudo-data for a multinomial likelihood, with ESS = 500
@@ -204,7 +212,7 @@ tb_dth_age_lLik <- function(V,rho=0.01) {
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
   sum(dDirMult(M=V2,n=tb_deaths_age+.1,Rho=rho)*wts[50:65]) - adj_19b  }
 
-#' TOTAL US DEATHS
+#' TOTAL DEATHS
 #' 1970,1975,1980,1985,1990-2007
 #' Motivation: norm, mean centered with CI = +/- 5% of mean
 #' weaken this likelihood to a variance of .5, 1
@@ -227,10 +235,11 @@ US_dth_tot_lLik <- function(V) {
 
 US_dth_10_tot_lLik <- function(V) {
   # CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
-  US_deaths_tot   <- CalibDat[["US_tot_mort"]][c(66:67),-1]
-  adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.1/1.96,log=T)*c(66:67))
+  US_deaths_tot   <- CalibDat[["US_tot_mort"]][c(51,61),-1]
+  adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.1/1.96,log=T)*wts[c(51,61)])
+
   # print(adj_20a)
-  sum(dnorm(US_deaths_tot,V,US_deaths_tot*0.1/1.96,log=T)*c(66:67)) - adj_20a
+  sum(dnorm(US_deaths_tot,V,US_deaths_tot*0.1/1.96,log=T)*wts[c(51,61)]) - adj_20a
 }
 
 #' TOTAL DEATHS AGE DISTRIBUTION 1999-2014
@@ -241,15 +250,18 @@ US_dth_10_tot_lLik <- function(V) {
 tot_dth_age_lLik <- function(V,rho=0.01) {
   # CalibDat$US_mort_age <- read.csv(system.file("extdata","US_mort_age.csv", package="MITUS"))
   tot_deaths_age  <- CalibDat[["US_mort_age"]][c(66:67),2:9]
-  tot_deaths_age  <-tot_deaths_age/rowSums(tot_deaths_age)
-  adj_20b        <- sum(dDirMult(M=tot_deaths_age,n=tot_deaths_age,Rho=rho)*wts[c(66:67)])
+  # tot_deaths_age  <-tot_deaths_age/rowSums(tot_deaths_age)
+#   adj_20b        <- sum(dDirMult(M=tot_deaths_age,n=tot_deaths_age,Rho=rho)*wts[c(66:67)])
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
   V2 <- V2[,-5]; V2[,4]  <- V2[,4]+V[,5]
   V2 <- V2[,-3]; V2[,2]  <- V2[,2]+V[,3]
-  V2<-V2/rowSums(V2)
-  sum(dDirMult(M=V,n=tot_deaths_age,Rho=rho)*wts[c(66:67)]) - adj_20b
-}
+#   V2<-V2/rowSums(V2)
+  adj_20b        <- sum(dDirMult(M=tot_deaths_age+0.1,n=tot_deaths_age+0.1,Rho=rho)*wts[66:67])
 
+  sum(dDirMult(M=V2,n=tot_deaths_age+0.1,Rho=rho)*wts[c(66:67)]) - adj_20b
+# }
+
+}
 #' Mortality Risk Group Distribution 1999-2014
 #'
 #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases

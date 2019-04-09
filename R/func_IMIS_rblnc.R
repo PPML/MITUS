@@ -123,7 +123,7 @@ llikelihoodZ_rblnc <-  function(samp_i, start_mat) {
       lLik <- lLik + addlik
 
       #'   Total DEATHS by Decad
-      v20a  <- rowSums(M[c(66:67),121:131])*1e6
+      v20a  <- rowSums(M[c(41,51,61),121:131])*1e6
       addlik <- US_dth_10_tot_lLik(V=v20a); addlik
       lLik <- lLik + addlik
       #' #' Total DEATHS 1999-2016 BY AGE

@@ -101,8 +101,8 @@ abline(h=axTicks(2),col="grey85")
 lines(1950:2015,V[,2],lwd=2,col="red3")
 lines(1950:2015,V[,1],lwd=2,col="blue")
 lines(1950:2015,V1c,lwd=2,col="grey50")
-points(CalibDat$US_tot_mort[,1],(CalibDat$US_tot_mort[,2])/1e6,pch=19,cex=0.6,col="grey50")
-lines(CalibDat$US_tot_mort[,1],(CalibDat$US_tot_mort[,2])/1e6,lty=3,col="grey50")
+points(CalibDat$US_mort_age[,1],rowSums((CalibDat$US_mort_age[,2:9]))/1e6,pch=19,cex=0.6,col="grey50")
+lines(CalibDat$US_mort_age[,1],rowSums((CalibDat$US_mort_age[,2:9]))/1e6,lty=3,col="grey50")
 
 mtext("Year",1,2.5,cex=1.2)
 mtext("Mortality: Total, US, and Non-US Born (mil)",3,.8,font=2,cex=1.2)
@@ -536,7 +536,7 @@ dev.off()
 pdfname<-paste("MITUS_results/mort_age",Sys.time(),".pdf")
 pdf(file=pdfname, width = 11, height = 8.5)
 par(mfrow=c(2,2),mar=c(4,4.5,3,1))
-V  <- cbind((df[1:65,255:265])+(df[1:65,266:276]))
+V  <- cbind((df[1:67,255:265])+(df[1:67,266:276]))
 V1  <- V[,-3]
 V1[,2] <- V1[,2]+V[,3]
 V2 <- V1[,-4]
@@ -545,11 +545,11 @@ V3 <- V2[,-9]
 V3[,8] <- V3[,8]+V2[,9]
 V3<-V3/rowSums(V3)*100
 
-for (x in 1:65){
+for (x in 1:67){
   plot(0,0,ylim=c(0.05,max(range(V3))+.2),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA)
   axis(1,1:8,paste(c("0-4","5-24","25-44","45-54","55-64","65-74","75-84","85+"),"\nyears",sep=""),tick=F,cex.axis=0.75)
   axis(1,1:9-0.5,rep("",9))
-  axis(2,c(0,.2,.4,.6,.8,1.0)*100,las=2);box()
+  axis(2,c(0,.2,.3,.4,.6,.8,1.0)*100,las=2);box()
   abline(h=axTicks(2),col="grey85")
 
   # for(i in 1:8) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V3[65,i],V3[65,i]),border=NA,col="gray")

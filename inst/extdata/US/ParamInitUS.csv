@@ -1,6 +1,15 @@
 ,BcValue,Lower,Upper,B0_G1_N2,Calib
 TunBirths,1,0.9,1.1,1,0
 TunmuAg1,1,0.8,1.2,1,1
+TunmuAg2,1,0.8,1.2,1,1
+TunmuAg3,1,0.8,1.2,1,1
+TunmuAg4,1,0.8,1.2,1,1
+TunmuAg5,1,0.8,1.2,1,1
+TunmuAg6,1,0.8,1.2,1,1
+TunmuAg7,1,0.8,1.2,1,1
+TunmuAg8,1,0.8,1.2,1,1
+TunmuAg9,1,0.8,1.2,1,1
+TunmuAg10,1,0.8,1.2,1,1
 TunmuAg11,1,0.8,1.2,1,1
 muIp,0.05,0.025,0.15,1,1
 TunmuTbAg,0.5,0.2,0.8,1,1

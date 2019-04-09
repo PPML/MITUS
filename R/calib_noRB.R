@@ -20,9 +20,9 @@ calib_noRB<-function(samp_i,ParMatrix, loc){
   prms <- param_noRB(P)
   IP <- list()
   IP <- param_init(P)
-  tm<-matrix(0,16,16)
+  tm<-matrix(0,4,4)
   diag(tm)<-1
-  trans_mat_tot_ages<<-matrix(tm,16,176)
+  trans_mat_tot_ages<<-matrix(tm,4,44)
   zz <- cSim(  nYrs       = 2018-1950         , nRes      = length(prms[["ResNam"]])  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]],
                Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]  ,
                rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
@@ -50,3 +50,4 @@ calib_noRB<-function(samp_i,ParMatrix, loc){
   } else calib_graphs_st(M,loc, pub_list)
   return(M)
 }
+

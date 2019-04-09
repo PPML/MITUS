@@ -13,16 +13,15 @@ model_load<-function(loc="US"){
 #'Model Input
 if (loc=="US"){
   CalibDat<<-readRDS(system.file("US/US_CalibDat_03-06-19.rds", package="MITUS"))
-  # ParamInit<<-readRDS(system.file("US/US_ParamInit_02-28-19.rds", package="MITUS"))
-  # StartVal<<-readRDS(system.file("US/US_StartVal_02-28-19.rds", package="MITUS"))
+  # ParamInit<<-readRDS(system.file("US/US_ParamInit_03-13-19.rds", package="MITUS"))
+  # StartVal<<-readRDS(system.file("US/US_StartVal_03-13-19.rds", package="MITUS"))
 
-  # ParamInit<<-readRDS(system.file("US/US_ParamInit_02-14-19.rds", package="MITUS"))
-  # StartVal<<-readRDS(system.file("US/US_StartVal_02-14-19.rds", package="MITUS"))
-
-  # ParamInit<<-readRDS(system.file("US/US_ParamInit_01-24-19.rds", package="MITUS"))
-  # StartVal<<-readRDS(system.file("US/US_StartVal_01-24-19.rds", package="MITUS"))
-  ParamInit<<-readRDS(system.file("US/US_ParamInit_03-13-19.rds", package="MITUS"))
-  StartVal<<-readRDS(system.file("US/US_StartVal_03-13-19.rds", package="MITUS"))
+  # ParamInit<<-readRDS(system.file("US/US_ParamInit_allag_2019-04-08.rds", package="MITUS"))
+  # StartVal<<-readRDS(system.file("US/US_StartVal_allag_2019-04-08.rds", package="MITUS"))
+  # ParamInit<<-readRDS(system.file("US/US_ParamInit_03-20-19.rds", package="MITUS"))
+  # StartVal<<-readRDS(system.file("US/US_StartVal_03-20-19.rds", package="MITUS"))
+  ParamInit<<-readRDS(system.file("US/US_ParamInit_01-24-19.rds", package="MITUS"))
+  StartVal<<-readRDS(system.file("US/US_StartVal_01-24-19.rds", package="MITUS"))
   Inputs<<-readRDS(system.file("US/US_Inputs_01-24-19.rds", package="MITUS"))
 
 } else {
@@ -78,7 +77,9 @@ model_load_demo<-function(loc="US"){
   #'lazy load necessary datasets
   #'Model Input
   if (loc=="US"){
-    CalibDat<<-readRDS(system.file("US/US_CalibDat_02-14-19.rds", package="MITUS"))
+    CalibDat<<-readRDS(system.file("US/US_CalibDat_03-06-19.rds", package="MITUS"))
+
+    # CalibDat<<-readRDS(system.file("US/US_CalibDat_02-14-19.rds", package="MITUS"))
     ParamInit_demo<<-readRDS(system.file("US/US_ParamInitdemo_2019-02-21.rds", package="MITUS"))
     StartVal_demo<<-readRDS(system.file("US/US_StartValdemo_2019-02-21.rds", package="MITUS"))
     Inputs<<-readRDS(system.file("US/US_Inputs_01-24-19.rds", package="MITUS"))

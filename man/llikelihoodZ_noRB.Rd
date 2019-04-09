@@ -70,18 +70,18 @@ lLik <- lLik + addlik
 v16  <- cbind(M[62,66:76],M[62,44:54]-M[62,66:76])
 v16a <- outer(v16[,1],c(P[["SensLt"]],1-P[["SensLt"]]))+outer(v16[,2],c(1-P[["SpecLt"]],P[["SpecLt"]]))
 addlik <- ltbi_fb_11_lLik(V=v16a)*2; addlik
+#' lLik <- lLik + addlik
+v17a  <- M[,31]+M[,32]
+addlik <- tot_pop_yr_fb_lLik(V=v17a); addlik
 lLik <- lLik + addlik
-TOTAL POP EACH DECADE, BY US/FB - index updated (maybe)
-TOTAL POP AGE DISTRIBUTION 2016 index updated
-TOTAL DEATHS WITH TB 1999-2014 - index updated
-v19  <- M[50:65,227:237]
-addlik <- tb_dth_tot_lLik(V=rowSums(v19)); addlik
+# v17b  <- M[,30]
+# addlik <- tot_pop_yr_usb_lLik(V=v17b); addlik
+# lLik <- lLik + addlik
+#' TOTAL POP AGE DISTRIBUTION 2016 index updated
+v18  <- cbind(M[67,33:43],M[67,44:54])
+addlik <- tot_pop16_ag_fb_lLik(V=v18); addlik
 lLik <- lLik + addlik
-#' TB DEATHS 1999-2014 BY AGE - index updated above
-addlik <- tb_dth_age_lLik(V=v19); addlik
-lLik <- lLik + addlik
-Total DEATHS 1979-2016
-  Total DEATHS by Decad
+  Total DEATHS by Decade
 #' Total DEATHS 1999-2016 BY AGE
 
 #' HOMELESS POP 2010 - index updated

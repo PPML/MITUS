@@ -316,7 +316,7 @@ Rcpp::List cSim_rblnc(
   //   dist_i_v[i]=0;
   //   temp_vec[i]=0;
   // }
-  N=30; indextemp=0;
+  N=40; indextemp=0;
   reblnc=1;
   tb_dyn=1;
   temp=0; n2=0;
@@ -460,17 +460,17 @@ Rcpp::List cSim_rblnc(
             for(int na=0; na<3; na++){
               for(int tb=0; tb<5; tb++) {
                 //we implement a mortality ceiling for the highest to age groups (85+ individuals)
-                if ((ag<9) | ((RRmuRFN[nm]*RRmuHR[rg]) < 5)){
+                if ((ag<9) | ((mubtN[0][ag]*RRmuRFN[nm]*RRmuHR[rg]) < .2)){
                   V1[ag][tb][0][im][nm][rg][na]  -= V0[ag][tb][0][im][nm][rg][na]*(mubtN[0][ag]*RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][tb]);
                 } else {
-                  V1[ag][tb][0][im][nm][rg][na]  -= (V0[ag][tb][0][im][nm][rg][na]*(mubtN[0][ag]*5+vTMortN[ag][tb]));
+                  V1[ag][tb][0][im][nm][rg][na]  -= (V0[ag][tb][0][im][nm][rg][na]*(.2+vTMortN[ag][tb]));
                 }
               }//close the tb loop
               ////////////////          MORTALITY WITH TB TREATMENT         ////////////////////
-              if ( (ag<9) |((RRmuRFN[nm]*RRmuHR[rg])<5)){
+              if ( (ag<9) |((mubtN[0][ag]*RRmuRFN[nm]*RRmuHR[rg])<5)){
                 V1[ag][5 ][0][im][nm][rg][na]  -= V0[ag][5 ][0][im][nm][rg][na]*(mubtN[0][ag]*RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][5 ]*pow(1.0-TxVecZ[1],TunTxMort)); //check the mortality in param
               } else {
-                V1[ag][5 ][0][im][nm][rg][na]  -= (V0[ag][5 ][0][im][nm][rg][na]*(mubtN[0][ag]*5+vTMortN[ag][5 ]*pow(1.0-TxVecZ[1],TunTxMort)));
+                V1[ag][5 ][0][im][nm][rg][na]  -= (V0[ag][5 ][0][im][nm][rg][na]*(.2+vTMortN[ag][5 ]*pow(1.0-TxVecZ[1],TunTxMort)));
               }
             } } } } }
     /////////////////////////////////////AGING///////////////////////////////////////
@@ -768,7 +768,7 @@ Rcpp::List cSim_rblnc(
       ////////////////////////////////////////////////////////////////////////////////////////////////////////////
       //////////////////////////////////////BEGIN THE N LOOP//////////////////////////////////////////////////////
       ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      for(int n=0; n<30; n++){
+      for(int n=0; n<N; n++){
         /////// CALCULATE DIFFERENCE FROM CURRENT DISTRIBUTION TO GOAL DISTRIBUTION /////
         for (int i=0; i<4; i++){
           diff_i_v[i] = dist_i_v[i] - dist_goal[i];
@@ -1115,26 +1115,26 @@ Rcpp::List cSim_rblnc(
               for(int rg=0; rg<2; rg++) {
                 for(int na=0; na<3; na++) {
                   for(int tb=0; tb<4; tb++) {
-                    if ((ag<9) | ((RRmuRFN[nm]*RRmuHR[rg]) <5)){
+                    if ((ag<9) | ((mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]) <.2)){
 
                       ////////////////////////UNINFECTED, SUSCEPTIBLE//////////////////////////////////
                       VMort[ag][tb ][lt][im][nm][rg][na]  = V0[ag][tb][lt][im][nm][rg][na]*(mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]);
                     } else {
-                      VMort[ag][tb ][lt][im][nm][rg][na]  = (V0[ag][tb][lt][im][nm][rg][na]*(mubtN[s][ag]*5));}
+                      VMort[ag][tb ][lt][im][nm][rg][na]  = (V0[ag][tb][lt][im][nm][rg][na]*(.2));}
                   }//close the tb loop
                   ////////////////////////      ACTIVE TB         /////////////////////////////////
 
-                  if ((ag<9) | ((RRmuRFN[nm]*RRmuHR[rg]) <5)){
+                  if ((ag<9) | ((mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]) <.2)){
                     VMort[ag][4 ][lt][im][nm][rg][na]  = V0[ag][4 ][lt][im][nm][rg][na]*
                       (mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][4 ]+temp );
                   } else {VMort[ag][4 ][lt][im][nm][rg][na]  = (V0[ag][4 ][lt][im][nm][rg][na]*(mubtN[s][ag]*5+vTMortN[ag][4 ]+temp)); }
 
                   ////////////////////////    TB TREATMENT        /// //////////////////////////////
-                  if ((ag<9) | ((RRmuRFN[nm]*RRmuHR[rg])<5)){
+                  if ((ag<9) | ((mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg])<.2)){
                     VMort[ag][5 ][lt][im][nm][rg][na]  = V0[ag][5 ][lt][im][nm][rg][na]*
                       (mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]+(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort));
                   } else  {
-                    VMort[ag][5 ][lt][im][nm][rg][na]  = (V0[ag][5 ][lt][im][nm][rg][na]*(mubtN[s][ag]*5+(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort))); }
+                    VMort[ag][5 ][lt][im][nm][rg][na]  = (V0[ag][5 ][lt][im][nm][rg][na]*(.2+(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort))); }
 
                   ///////////// UPDATE THE PRIMARY VECTOR BY REMOVING MORTALITY /////////////////
                   for(int tb=0; tb<6; tb++) {
@@ -2113,7 +2113,7 @@ Rcpp::List cSim_rblnc(
           ////////////////////////////////////////////////////////////////////////////////////////////////////////////
           //////////////////////////////////////BEGIN THE N LOOP//////////////////////////////////////////////////////
           ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-          for(int n=0; n<30; n++){
+          for(int n=0; n<N; n++){
             /////// CALCULATE DIFFERENCE FROM CURRENT DISTRIBUTION TO GOAL DISTRIBUTION /////
             for (int i=0; i<4; i++){
               diff_i_v[i] = dist_i_v[i] - dist_goal[i];

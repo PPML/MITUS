@@ -17,9 +17,9 @@ tb_graph_demo <- function(df, dist=FALSE){
   # CalibDat$US_mort_age <- read.csv(file="inst/extdata/US_mort_age.csv", header = TRUE)
   # data("CalibDat_2018-07-12", package='MITUS')#  source("R/calib_functions.R")
 
-  pdf(file=paste("MITUS_results/graphs_demo",Sys.time(),".pdf"), width = 11, height = 8.5)
-  par(mfrow=c(2,2),mar=c(4,4.5,3,1))
-  df<-as.data.frame(df)
+  # pdf(file=paste("MITUS_results/graphs_demo",Sys.time(),".pdf"), width = 11, height = 8.5)
+  # par(mfrow=c(2,2),mar=c(4,4.5,3,1))
+  # df<-as.data.frame(df)
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   ### ### ### ### ### ###   TOTAL POP EACH DECADE, BY US/FB   ### ### ### ### ### ###
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -131,7 +131,7 @@ tb_graph_demo <- function(df, dist=FALSE){
   V2[,3] <- V2[,3]+V1[,4]
   V3 <- V2[,-9]
   V3[,8] <- V3[,8]+V2[,9]
-
+  V3<-V3/rowSums(V3)
 
   plot(0,0,ylim=c(0.05,max(range(V3))),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA)
   axis(1,1:8,paste(c("0-4","5-24","25-44","45-54","55-64","65-74","75-84","85+"),"\nyears",sep=""),tick=F,cex.axis=0.75)
@@ -140,12 +140,12 @@ tb_graph_demo <- function(df, dist=FALSE){
   abline(h=axTicks(2),col="grey85")
 
   for(i in 1:8) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V3[1,i],V3[1,i]),border=NA,col="gray")
-  for(i in 1:8) points(i+.2,(CalibDat$US_mort_age[16,i+1])/1e6,pch=19,cex=1.2,col="black")
+  for(i in 1:8) points(i+.2,(CalibDat$US_mort_age[67,i+1])/rowSums(CalibDat$US_mort_age[67,]),pch=19,cex=1.2,col="black")
 
 
   mtext("Age Group",1,2.5,cex=0.9)
   box()
-  mtext("Mortality by Age, 2014 (mil)",3,.8,font=2,cex=0.8)
+  mtext("Mortality by Age, 2014 (%)",3,.8,font=2,cex=0.8)
   legend("topleft",c("Reported data","model"),pch=c(19,15),pt.cex=c(1,2),
          lwd=NA,col=c("black","gray"),bg="white")
 
@@ -171,6 +171,35 @@ tb_graph_demo <- function(df, dist=FALSE){
   # legend("topleft",c("Reported data","model"),pch=c(19,15),pt.cex=c(1,2),
   #        lwd=NA,col=c("black","gray"),bg="white")
 
+  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+  ### ### ### ### ### ###   TOTAL MORT AGE DISTRIBUTION 2014  ### ### ### ### ### ###
+  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+
+  V  <- cbind((df[1,255:265])+(df[1,266:276]))
+  V1  <- V[,-3]
+  V1[,2] <- V1[,2]+V[,3]
+  V2 <- V1[,-4]
+  V2[,3] <- V2[,3]+V1[,4]
+  V3 <- V2[,-9]
+  V3[,8] <- V3[,8]+V2[,9]
+  V3<-V3/rowSums(V3)
+
+
+  plot(0,0,ylim=c(0.05,max(range(V3))),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA)
+  axis(1,1:8,paste(c("0-4","5-24","25-44","45-54","55-64","65-74","75-84","85+"),"\nyears",sep=""),tick=F,cex.axis=0.75)
+  axis(1,1:9-0.5,rep("",9))
+  axis(2,c(0,.2,.4,.6,.8,1.0,1.2),las=2);box()
+  abline(h=axTicks(2),col="grey85")
+
+  for(i in 1:8) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V3[1,i],V3[1,i]),border=NA,col="gray")
+  for(i in 1:8) points(i+.2,(CalibDat$US_mort_age[1,i+1])/rowSums(CalibDat$US_mort_age[1,]),pch=19,cex=1.2,col="black")
+
+
+  mtext("Age Group",1,2.5,cex=0.9)
+  box()
+  mtext("Mortality by Age, 1950 (%)",3,.8,font=2,cex=0.8)
+  legend("topleft",c("Reported data","model"),pch=c(19,15),pt.cex=c(1,2),
+         lwd=NA,col=c("black","gray"),bg="white")
 
    ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   ### ### ### ### ### ###   TOTAL MORT AGE DISTRIBUTION 2014  ### ### ### ### ### ###
@@ -204,51 +233,53 @@ tb_graph_demo <- function(df, dist=FALSE){
   legend("topleft",c("Non US Born", "US Born"),pch=c(15,15),pt.cex=c(2,2),
          lwd=c(NA,NA),col=c("pink","lightblue"),bg="white")
 
+
+
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   ### ### ### ### ### ###   TOTAL MORT AGE % DISTRIBUTION 2014  ### ### ### ### ### ###
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
-  V  <- cbind(t(df[65,121:131]))
-  V1 <-sum(V)
-  V2 <-V/V1*100
-
-  plot(0,0,ylim=c(0.05,max(range(V/V1))*100),xlim=c(0.6,11.4),xlab="",ylab="",axes=F,col=NA)
-  axis(1,1:11,paste(c("0-4","5-14","15-24","25-34","35-44","45-54","55-64","65-74","75-84","85-94", "95p"),"\nyears",sep=""),tick=F,cex.axis=0.75)
-  axis(1,1:12-0.5,rep("",12))
-  axis(2,c(0,5,10,15,20,25,30),las=2);box()
-  abline(h=axTicks(2),col="grey85")
-
-  for(i in 1:11) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V2[i,1],V2[i,1]),border=NA,col="grey")
-
-  mtext("Age Group",1,2.5,cex=0.9)
-  mtext("Percent of Total Deaths",2,2.5,cex=0.9)
-
-  box()
-  mtext("Percent of Total Mortality by Age Group 2014 (mil)",3,.8,font=2,cex=0.8)
-  legend("topleft",c("Model"),pch=15,pt.cex=2,
-         lwd=NA,col=c("gray"),bg="white")
+  # V  <- cbind(t(df[65,121:131]))
+  # V1 <-sum(V)
+  # V2 <-V/V1*100
+  #
+  # plot(0,0,ylim=c(0.05,max(range(V/V1))*100),xlim=c(0.6,11.4),xlab="",ylab="",axes=F,col=NA)
+  # axis(1,1:11,paste(c("0-4","5-14","15-24","25-34","35-44","45-54","55-64","65-74","75-84","85-94", "95p"),"\nyears",sep=""),tick=F,cex.axis=0.75)
+  # axis(1,1:12-0.5,rep("",12))
+  # axis(2,c(0,5,10,15,20,25,30),las=2);box()
+  # abline(h=axTicks(2),col="grey85")
+  #
+  # for(i in 1:11) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V2[i,1],V2[i,1]),border=NA,col="grey")
+  #
+  # mtext("Age Group",1,2.5,cex=0.9)
+  # mtext("Percent of Total Deaths",2,2.5,cex=0.9)
+  #
+  # box()
+  # mtext("Percent of Total Mortality by Age Group 2014 (mil)",3,.8,font=2,cex=0.8)
+  # legend("topleft",c("Model"),pch=15,pt.cex=2,
+  #        lwd=NA,col=c("gray"),bg="white")
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   ### ### ### ### ### ### TOTAL MORT RATE 1950-2013 ### ### ### ### ### ###
   # ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-  V   <- cbind(df[1:65,510:520])
-  x<-seq(6,781,12)
-  V2  <-IP[["mubt"]][x,]
-
-  col<-rainbow(11)
-
-  plot(0,0,ylim=c(0,max(range(V), range(V2))),xlim=c(1950,2014),xlab="",ylab="",axes=F)
-  axis(1);axis(2,las=2);box()
-  abline(h=axTicks(2),col="grey85")
-  # points(1993:2014,CalibDat$notif_us_hr[,1]/rowSums(CalibDat$notif_us_hr)*100,pch=19,cex=0.6)
-  for (i in 1:11){
-    lines(1950:2014,V[,i],lwd=3,col=col[i])
-    lines(1950:2014,V2[,i],lty=3,lwd=2, col="black")
-
-    mtext("Year",1,2.5,cex=0.9)
-    mtext("Age Specific Mortality Rates from 1950 to 2014",3,.8,font=2,cex=0.8)
-    legend("topright",colnames(V),cex=0.9,
-           pch=rep(15,i),lwd=rep(NA,i),lty=rep(NA,i),col=col,bg="white",pt.cex=rep(1.8,i))
-  }
+  # V   <- cbind(df[1:65,510:520])
+  # x<-seq(6,781,12)
+  # V2  <-IP[["mubt"]][x,]
+  #
+  # col<-rainbow(11)
+  #
+  # plot(0,0,ylim=c(0,max(range(V), range(V2))),xlim=c(1950,2014),xlab="",ylab="",axes=F)
+  # axis(1);axis(2,las=2);box()
+  # abline(h=axTicks(2),col="grey85")
+  # # points(1993:2014,CalibDat$notif_us_hr[,1]/rowSums(CalibDat$notif_us_hr)*100,pch=19,cex=0.6)
+  # for (i in 1:11){
+  #   lines(1950:2014,V[,i],lwd=3,col=col[i])
+  #   lines(1950:2014,V2[,i],lty=3,lwd=2, col="black")
+  #
+  #   mtext("Year",1,2.5,cex=0.9)
+  #   mtext("Age Specific Mortality Rates from 1950 to 2014",3,.8,font=2,cex=0.8)
+  #   legend("topright",colnames(V),cex=0.9,
+  #          pch=rep(15,i),lwd=rep(NA,i),lty=rep(NA,i),col=col,bg="white",pt.cex=rep(1.8,i))
+  # }
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   ### ### ### ### ### ###   TOTAL MORT AGE DISTRIBUTION % 2014  ### ### ### ### ### ###
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -477,6 +508,6 @@ if(dist==TRUE){
          pch=c(15,15,15,NA),lwd=c(NA,NA,NA,2),lty=c(NA,NA,NA,1),col=c("grey50",4,"red3",1),bg="white",pt.cex=c(1.8,1.8,1.8,NA))
 
  }
-dev.off()
+#dev.off()
   }
 

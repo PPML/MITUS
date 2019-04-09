@@ -12,9 +12,9 @@ param <- function (PV){
   ###########################          INPUTS            #########################
   ################################################################################
   BgMort           <- Inputs[["BgMort"]]
-  NCHS_mort        <-readRDS(system.file("US/US_NCHS_mort.rds", package="MITUS"))[,2:12]
-  BgMort[1:68,2:12]<-NCHS_mort
-  InitPop          <- init_pop()
+  # NCHS_mort        <-readRDS(system.file("US/US_NCHS_mort.rds", package="MITUS"))[,2:12]
+  # BgMort[1:68,2:12]<-NCHS_mort
+  InitPop          <- Inputs[["InitPop"]] #init_pop()
   Births           <- Inputs[["Births"]]
   ImmigInputs      <- Inputs[["ImmigInputs"]]
   TxInputs         <- Inputs[["TxInputs"]]
@@ -26,7 +26,7 @@ param <- function (PV){
 
   ##########                PARAMETER DEFINITIONS                      ###########
   ##########                RISK FACTOR DISTRIBUTIONS   ##########################
-
+  #turned off because the rebalancing has been moved back into the model
   adj_fact <- exp(PV[["adj_ag1"]]*(10:0)/11 + PV[["adj_ag11"]]*(0:10)/11)
 
   #######################           BIRTHS                 #######################
@@ -53,20 +53,23 @@ param <- function (PV){
   # mubt[1:6]<-0
   # mortality calculation version 2
   # allows for linear rampup of mortality
-  RRmuAg<-seq((PV["TunmuAg"]+1),PV["TunMubt"], length.out=11)
-  # RRmuAg<-c(1,1,RRmu,rep(RRmu[6],3))
+  # RRmuAg<-seq((PV["TunmuAg1"]),PV["TunmuAg11"], length.out=11)
+  # RRmuAg<-seq((PV["TunMubt"]),(PV["TunmuAg"]+1), length.out=11)
+
+  # RRmuAg<-(c(PV[["TunmuAg1"]], PV[["TunmuAg2"]], PV[["TunmuAg3"]], PV[["TunmuAg4"]], PV[["TunmuAg5"]],
+  #           PV[["TunmuAg6"]], PV[["TunmuAg7"]], PV[["TunmuAg8"]], PV[["TunmuAg9"]], PV[["TunmuAg10"]], PV[["TunmuAg11"]]) + 1)
   for(i in 1:11){
-    mubt[,i] <- SmoCurve(BgMort[,i+1])/12
+    mubt[,i] <- SmoCurve(BgMort[,i+1])*PV[["TunmuAg11"]] /12
   }
+  mubt[,]<-1-exp(-mubt[,])
 
   mubt<-mubt[1:month,]
   for(i in 1:11){
-    mubt[,i] <- mubt[,i]*RRmuAg[i]
+    mubt[,i] <- mubt[,i]*exp((PV[["TunmuAg1"]]-1)*i)
   }
 
   mubt[1:6]<-0
 
-  # mubt[,]<-1-exp(-mubt[,])
   # RRmuAg[1]<-RRmuAg[1]*1.25
   # RRmuAg[10:11]<-RRmuAg[10:11]*.5
 
@@ -148,7 +151,7 @@ param <- function (PV){
   ImmNon         <- TotImmAge-ImmAct-ImmFst-ImmLat
   ###################### TRUNCATE THESE VALS
   ImmAct<-ImmAct[1:month,];ImmFst<-ImmFst[1:month,]; ImmLat<-ImmLat[1:month,]; ImmNon<-ImmNon[1:month,]
-  ImmNon[1:6,]<- ImmAct[1:6,]<-ImmFst[1:6,]<-ImmLat[1:6,]<-0
+ ImmNon[1:6,]<- ImmAct[1:6,]<-ImmFst[1:6,]<-ImmLat[1:6,]<-0
 
   ######################   EXOGENEOUS INFECTION RISK      ########################
 

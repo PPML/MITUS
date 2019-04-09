@@ -26,7 +26,7 @@ llikelihoodZ_noTB_rblnc <-  function(samp_i,opt_mat) {
 
   jj <- tryCatch({
     #'format P
-
+#matrix(c(1,rep(0,15)),4,4),
     prms <-list()
     prms <- param(P)
     IP <- list()
@@ -51,9 +51,11 @@ llikelihoodZ_noTB_rblnc <-  function(samp_i,opt_mat) {
       M <- zz$Outputs
       colnames(M) <- prms[["ResNam"]]
       lLik <- 0
-
-      v17  <- M[,31]+M[,32]
-      addlik <- tot_pop_yr_fb_lLik(V=v17); addlik
+      v17a  <- M[,31]+M[,32]
+      addlik <- tot_pop_yr_fb_lLik(V=v17a); addlik
+      lLik <- lLik + addlik
+      v17b  <- M[,30]
+      addlik <- tot_pop_yr_usb_lLik(V=v17b); addlik
       lLik <- lLik + addlik
       #' TOTAL POP AGE DISTRIBUTION 2016 index updated
       v18  <- cbind(M[67,33:43],M[67,44:54])
@@ -61,7 +63,7 @@ llikelihoodZ_noTB_rblnc <-  function(samp_i,opt_mat) {
       lLik <- lLik + addlik
 
       #'   Total DEATHS by Decade
-      v20a  <- rowSums(M[c(66:67),121:131])*1e6
+      v20a  <- rowSums(M[c(11,21,31,41,51,67),121:131])*1e6
       addlik <- US_dth_10_tot_lLik(V=v20a); addlik
       lLik <- lLik + addlik
       #' #' Total DEATHS 1999-2016 BY AGE
@@ -75,12 +77,12 @@ llikelihoodZ_noTB_rblnc <-  function(samp_i,opt_mat) {
       # lLik <- lLik + addlik
 
       #' #' Mort_dist 2016
-      v21a<- v21  <- M[c(67),521:564]
-      for (i in 1:11){
-        denom<-M[c(67),2+i]
-        # for (j in 1:length(v21)){
-        v21a[(1:4)+4*(i-1)]<-v21[(1:4)+4*(i-1)]/denom
-      }
+      # v21a<- v21  <- M[c(67),521:564]
+      # for (i in 1:11){
+      #   denom<-M[c(67),2+i]
+      #   # for (j in 1:length(v21)){
+      #   v21a[(1:4)+4*(i-1)]<-v21[(1:4)+4*(i-1)]/denom
+      # }
       # }
       # v21a<- v21  <- M[67,521:564]
       # for (i in 1:11){
@@ -90,8 +92,8 @@ llikelihoodZ_noTB_rblnc <-  function(samp_i,opt_mat) {
       #   } }
       # # addlik <- mort_dist_lLik(V=v21a); addlik
       # # lLik <- lLik + addlik
-      addlik <- mort_dist_lLik_norm(V=v21a); addlik
-      lLik <- lLik + addlik
+      # addlik <- mort_dist_lLik_norm(V=v21a); addlik
+      # lLik <- lLik + addlik
 
 
     } }, error = function(e) NA)

@@ -32,13 +32,13 @@ llikelihoodZ_noRB <-  function(samp_i,opt_mat) {
     prms <- param_noRB(P)
     IP <- list()
     IP <- param_init(P)
-    tm<-matrix(0,16,16)
+    tm<-matrix(0,4,4)
     diag(tm)<-1
-    trans_mat_tot_ages<<-matrix(tm,16,176)
+    trans_mat_tot_ages<<-matrix(tm,4,44)
 
     zz <- cSim(  nYrs       = 2018-1950         , nRes      = length(prms[["ResNam"]]), rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
                  Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]    ,
-                 rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
+                 rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = 0   , dist_gen = prms[["dist_gen"]]    ,
                  vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    ,
                  HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat" ]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst" ]]    ,
                  net_mig_usb = prms[["net_mig_usb"]]      , net_mig_nusb    = prms[["net_mig_nusb"]]        ,
@@ -107,28 +107,20 @@ llikelihoodZ_noRB <-  function(samp_i,opt_mat) {
       #' v16  <- cbind(M[62,66:76],M[62,44:54]-M[62,66:76])
       #' v16a <- outer(v16[,1],c(P[["SensLt"]],1-P[["SensLt"]]))+outer(v16[,2],c(1-P[["SpecLt"]],P[["SpecLt"]]))
       #' addlik <- ltbi_fb_11_lLik(V=v16a)*2; addlik
+      #' #' lLik <- lLik + addlik
+      #' v17a  <- M[,31]+M[,32]
+      #' addlik <- tot_pop_yr_fb_lLik(V=v17a); addlik
       #' lLik <- lLik + addlik
-      #' TOTAL POP EACH DECADE, BY US/FB - index updated (maybe)
-       v17  <- M[,31]+M[,32]
-       addlik <- tot_pop_yr_fb_lLik(V=v17); addlik
-       lLik <- lLik + addlik
-      #' TOTAL POP AGE DISTRIBUTION 2016 index updated
-      v18  <- cbind(M[67,33:43],M[67,44:54])
-      addlik <- tot_pop16_ag_fb_lLik(V=v18); addlik
-      lLik <- lLik + addlik
-      #' TOTAL DEATHS WITH TB 1999-2014 - index updated
-      #' v19  <- M[50:65,227:237]
-      #' addlik <- tb_dth_tot_lLik(V=rowSums(v19)); addlik
+      #' # v17b  <- M[,30]
+      #' # addlik <- tot_pop_yr_usb_lLik(V=v17b); addlik
+      #' # lLik <- lLik + addlik
+      #' #' TOTAL POP AGE DISTRIBUTION 2016 index updated
+      #' v18  <- cbind(M[67,33:43],M[67,44:54])
+      #' addlik <- tot_pop16_ag_fb_lLik(V=v18); addlik
       #' lLik <- lLik + addlik
-      #' #' TB DEATHS 1999-2014 BY AGE - index updated above
-      #' addlik <- tb_dth_age_lLik(V=v19); addlik
-      #' lLik <- lLik + addlik
-      #' Total DEATHS 1979-2016
-      # v20a  <- rowSums(M[30:67,121:131])
-      # addlik <- US_dth_tot_lLik(V=v20a); addlik
-      # lLik <- lLik + addlik
-   #'   Total DEATHS by Decad
-      v20a  <- rowSums(M[c(66:67),121:131])*1e6
+
+      #'   Total DEATHS by Decade
+      v20a  <- rowSums(M[c(51,61),121:131])*1e6
       addlik <- US_dth_10_tot_lLik(V=v20a); addlik
       lLik <- lLik + addlik
       #' #' Total DEATHS 1999-2016 BY AGE
