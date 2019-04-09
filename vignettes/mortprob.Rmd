@@ -1,0 +1,54 @@
+---
+title: "Age Distributed Mortality and Population Counts in MITUS"
+output: rmarkdown::pdf_document
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+It is physically impossible to preserve the shape of the mortality rates in the model with the current targets for age distributed mortality and population counts. 
+
+Below we compare the calculated mortality rate necessary in 2016 to hit both the mortality count targets (from CDC wonder) and the population counts (source unknown.) It should be noted that the denominators presented on CDC wonder for total population counts are higher than our population counts. Higher population counts could be part of the difference in mortality rates. 
+```{r,warning=FALSE}
+library(MITUS)
+model_load()
+CalibDat$US_mort_age[18,]
+CalibDat$tot_pop16_ag_fb[,1:2]*1e6
+###calculate the mortality rates required to reach these 2016 counts
+mort_rate<-rep(NA,11)
+mort_rate[1]<-as.numeric(CalibDat$US_mort_age[18,1]/(CalibDat$tot_pop16_ag_fb[1,2]*1e6))
+mort_rate[2:3]<-as.numeric(CalibDat$US_mort_age[18,2]/(CalibDat$tot_pop16_ag_fb[2,2]*1e6))
+mort_rate[4:5]<-as.numeric(CalibDat$US_mort_age[18,3]/(CalibDat$tot_pop16_ag_fb[3,2]*1e6))
+mort_rate[6:9]<-as.numeric(CalibDat$US_mort_age[18,4:7]/(CalibDat$tot_pop16_ag_fb[4:7,2]*1e6))
+mort_rate[10:11]<-as.numeric(CalibDat$US_mort_age[18,8]/(CalibDat$tot_pop16_ag_fb[8,2]*1e6))
+
+#plot our model inputted background mortality for 
+input_mort_rate <- as.numeric(Inputs[["BgMort"]][67,-1])
+
+plot(1,1,ylim=c(0.000001,.30),xlim=c(1,11),xlab="",ylab="",axes=F,log="y")
+axis(1);axis(2,las=2);box()
+abline(h=axTicks(2),col="grey85")
+
+lines(mort_rate, col="blue")
+lines(input_mort_rate, col="red")
+
+mtext("Age Group",1,2.5,cex=1.2)
+mtext("Mortality Rates in 2016",3,.8,font=2,cex=0.8)
+legend("topleft",c("target rates", "input rates"),
+       pch=rep(15,2),lwd=rep(NA,2),lty=rep(NA,2),col=c("blue","red"),bg="white",pt.cex=rep(1.8,2))
+```
+
+With this inconsistency in mind, I propose using a constant mortality rate for the 85+ population equal to either the input that we currently use for the 85-94 age group. 
+
+If we take this approach these are the results: 
+
+```{r,echo=TRUE, fig.width=12, fig.height=9,fig.show='hold',fig.align='center'}
+model_load_demo()
+Inputs$BgMort[,12]<-Inputs$BgMort[,11]
+opt_par<-optim_demo(StartVal_demo,1)$par
+calib_demo_ag(1,opt_par,FALSE)
+```
+
+
+

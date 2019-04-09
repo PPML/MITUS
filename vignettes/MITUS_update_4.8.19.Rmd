@@ -1,0 +1,98 @@
+---
+title: "MITUS Update"
+geometry: margin=2cm
+output: rmarkdown::pdf_document
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+We have decided to prioritize the following demographic targets:    
+
+*  non-US born population size
+*  age distribution of population (%)
+*  age distribution of deaths (%)
+*  distribution of population across the generic mortality risk stratum 
+  
+The parameters that provide the flexibility to hit these targets are: 
+
+* ImmigVol 
+```
+  TotImmig0       <- (c(ImmigInputs[[1]][1:151])+c(rep(0,65),
+  cumsum(rep(PV["ImmigVolFut"],86))))/12*PV["ImmigVol"]
+```
+* TunMuAg1 & TunMuAg11 
+```
+#CREATE VECTOR OF MORTALITY RR BY AGE 
+  RRmuAg<-seq((PV["TunMuAg1"]),(PV["TunMuAg11"]), length.out=11)
+#CREATES A SMOOTHED DATASET FROM BACKGROUND MORTALITY INPUT 
+  for(i in 1:11){
+    mubt[,i] <- SmoCurve(BgMort[,i+1])/12
+  }
+#TRUNCATE THE VALUES FOR THE NUMBER OF MONTHS FOR THE RUN 
+  mubt<-mubt[1:month,]
+#APPLY THE RATE RATIOS CALCULATED ABOVE 
+  for(i in 1:11){
+    mubt[,i] <- mubt[,i]*RRmuAg[i]
+  }
+```
+* adj_fact1 &adj_fact11
+```
+  adj_fact <- exp(PV[["adj_ag1"]]*(10:0)/11 + PV[["adj_ag11"]]*(0:10)/11)
+```
+
+# formatting likelihoods 
+Each of the likelihood functions for the above targets has been equally weighted. 
+
+#results and proposed demography going forward 
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=4}
+library(MITUS)
+model_load("US")
+#load in optimized parameter vector
+load("~/MITUS/Opt_US_r2_1_2019-04-02_n.rda")
+Par<-o2$par
+  Par2 <- pnorm(Par,0,1)
+  # uniform to true
+  Par3 <- Par2
+  Par3[idZ0] <- qbeta( Par2[idZ0], shape1  = ParamInitZ[idZ0,6], shape2 = ParamInitZ[idZ0,7])
+  Par3[idZ1] <- qgamma(Par2[idZ1], shape   = ParamInitZ[idZ1,6], rate   = ParamInitZ[idZ1,7])
+  Par3[idZ2] <- qnorm( Par2[idZ2], mean    = ParamInitZ[idZ2,6], sd     = ParamInitZ[idZ2,7])
+  P[ii] <- Par3
+  P <- P
+  prms <-list()
+  prms <- param(P)
+  IP <- list()
+  IP <- param_init(P)
+
+  trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
+  if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
+  zz <- cSim( nYrs       = 2018-1950         , nRes      = length(prms[["ResNam"]])  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
+               Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]  ,
+               rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
+               vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    ,
+               HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat"]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst"]]    ,
+               net_mig_usb = prms[["net_mig_usb"]], net_mig_nusb = prms[["net_mig_nusb"]],
+               mubt       = prms[["mubt"]]    , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
+               TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
+               LtDxPar    = prms[["LtDxPar"]]   , rLtScrt   = prms[["rLtScrt"]]       , RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
+               EarlyTrend = prms[["EarlyTrend"]], NixTrans = IP[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)
+    M <- zz$Outputs
+  colnames(M) <- prms[["ResNam"]]
+  df<-as.data.frame(M)
+  tb_graph_demo(df,FALSE)
+  ### CHECK REBALANCING 
+  ## GOAL DIST 
+  rowSums(dist_gen)
+  ## MODEL DIST 
+      v21a<- v21  <- M[51:67,521:564]
+    for (i in 1:11){
+      denom<-M[51:67,2+i]
+      for (j in 1:ncol(v21)){
+        v21a[,(1:4)+4*(i-1)]<-v21[,(1:4)+4*(i-1)]/denom
+      } }
+   v21a
+```
+
+#Rebalancing Update 
+

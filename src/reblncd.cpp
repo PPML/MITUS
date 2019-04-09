@@ -1,5 +1,5 @@
 #include <Rcpp.h>
-
+#include <math.h>
 using namespace Rcpp;
 
 //'@title reblncd
@@ -30,6 +30,7 @@ Rcpp::NumericMatrix reblncd(
   double trans_mat_tot_ag[4][44];
   Rcpp::NumericMatrix trans_mat_tot_ages(4,44);
   double frc;
+  double temp;
   int mat_sum; int N;
 
 
@@ -51,9 +52,12 @@ Rcpp::NumericMatrix reblncd(
   }
 
   for (int i=0; i<11; i++){
-    mubtN[i]=mubt(0,i);
+    mubtN[i]=mubt(7,i);
   }
+  for (int i=0; i<11; i++){
 
+  Rcpp::Rcout<< "i="<< i << "and mu = "<< mubtN[i]<<"\n";
+  }
   frc=0.01;
   mat_sum=0;
   N=0;
@@ -76,7 +80,8 @@ Rcpp::NumericMatrix reblncd(
     for (int nm=0; nm<4; nm++){
 
         // if ((ag<9) & ((RRmuRF[nm]*RRmuHR)<5)){
-          dist_t1_v[nm]=dist_gen_v[nm]*(1-((mubtN[ag]*RRmuRF[nm]*RRmuHR*HRdist[ag])));
+        temp= 1-(exp(-(mubtN[ag]*RRmuRF[nm])));
+          dist_t1_v[nm]=dist_gen_v[nm]*(1-temp);
 
         // } else {
         //   dist_t1_v[nm+im*4]=dist_gen_v[nm+im*4]*(1-((mubtN[ag]*5*HRdist[ag])));
@@ -87,7 +92,7 @@ Rcpp::NumericMatrix reblncd(
 
 
     for (int i=0; i<4; i++){
-      // Rcpp::Rcout <<"dist_t1_v at ag = "<< ag << "and index = "<< i << " is "<<  dist_t1_v[i]<< "\n";
+      Rcpp::Rcout <<"dist_t1_v at ag = "<< ag << "and index = "<< i << " is "<<  dist_t1_v[i]<< "\n";
       dist_i_v[i]=dist_t1_v[i];
     }
     //' Open the iteration loop
@@ -208,7 +213,7 @@ Rcpp::NumericMatrix reblncd(
     for(int i=0; i<4; i++){
       row_sum[i]=0;
       for(int j=0; j<4; j++){
-        row_sum[i] +=trans_mat_tot[i][j]*adj_fact[ag]; ///calculate the number of total transitions from a state
+        row_sum[i] +=trans_mat_tot[i][j];//*adj_fact[ag]; ///calculate the number of total transitions from a state
       } }
     for(int i=0; i<4; i++){
       if (row_sum[i]>1){
@@ -226,7 +231,7 @@ Rcpp::NumericMatrix reblncd(
 
     for(int i=0; i<4; i++){
       for(int j=0; j<4; j++){
-        // Rcpp::Rcout<<(4*ag)+j<<"\n";
+        Rcpp::Rcout<<(4*ag)+j<<"\n";
         // Rcpp::Rcout<<"ag="<<ag<< "i="<< i <<"j="<< j << trans_mat_tot[i][j] <<"\n";
         trans_mat_tot_ag[i][(4*ag)+j]=trans_mat_tot[i][j];
       } }

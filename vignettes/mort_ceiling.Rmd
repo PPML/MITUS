@@ -1,0 +1,26 @@
+---
+title: "Mortality Ceiling in the MITUS Model"
+
+output: rmarkdown::pdf_document
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+##### Limit on Background Mortality
+There is a mortality ceiling in the model for the two oldest age groups (ages 85+). Previously, this is operationalized as a restriction on the product: $RR_{\mu_{rg}}RR_{\mu_{rf}}$. The mortality ceiling is a discontinuous function $f$ that takes value:
+  
+  $$RR_{\mu_{rg}}RR_{\mu_{rf}} < 5, f= RR_{\mu_{rg}}RR_{\mu_{rf}}$$
+    $$RR_{\mu_{rg}}RR_{\mu_{rf}} > 5, f = 5$$
+
+However, this construction results in this range of mortality
+```{r}
+library(MITUS)
+model_load()
+prms<-list()
+prms<-param(P)
+range(prms$mubt)*5
+```
+
+
