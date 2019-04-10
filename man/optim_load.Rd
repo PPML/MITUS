@@ -7,7 +7,7 @@
 optim_load()
 }
 \value{
-env
+loc_vec of optimized geographies
 }
 \description{
 loads data for the geography of interest
