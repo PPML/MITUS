@@ -54,10 +54,10 @@ Rcpp::NumericMatrix reblncd(
   for (int i=0; i<11; i++){
     mubtN[i]=mubt(7,i);
   }
-  for (int i=0; i<11; i++){
-
-  Rcpp::Rcout<< "i="<< i << "and mu = "<< mubtN[i]<<"\n";
-  }
+  // for (int i=0; i<11; i++){
+  //
+  // Rcpp::Rcout<< "i="<< i << "and mu = "<< mubtN[i]<<"\n";
+  // }
   frc=0.01;
   mat_sum=0;
   N=0;
@@ -92,7 +92,7 @@ Rcpp::NumericMatrix reblncd(
 
 
     for (int i=0; i<4; i++){
-      Rcpp::Rcout <<"dist_t1_v at ag = "<< ag << "and index = "<< i << " is "<<  dist_t1_v[i]<< "\n";
+      // Rcpp::Rcout <<"dist_t1_v at ag = "<< ag << "and index = "<< i << " is "<<  dist_t1_v[i]<< "\n";
       dist_i_v[i]=dist_t1_v[i];
     }
     //' Open the iteration loop
@@ -231,7 +231,7 @@ Rcpp::NumericMatrix reblncd(
 
     for(int i=0; i<4; i++){
       for(int j=0; j<4; j++){
-        Rcpp::Rcout<<(4*ag)+j<<"\n";
+        // Rcpp::Rcout<<(4*ag)+j<<"\n";
         // Rcpp::Rcout<<"ag="<<ag<< "i="<< i <<"j="<< j << trans_mat_tot[i][j] <<"\n";
         trans_mat_tot_ag[i][(4*ag)+j]=trans_mat_tot[i][j];
       } }
