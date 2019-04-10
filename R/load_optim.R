@@ -1,7 +1,7 @@
 #'loads data for the geography of interest
-#'@name optim_load
+#'@name load_optim
 #'@return loc_vec of optimized geographies
-optim_load<-function(){
+load_optim<-function(){
 # create a logical vector for all 51 geographies
   # optim_vec<-rep("F",nrow(stateID))
 #create an empty vector for the locations

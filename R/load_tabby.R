@@ -1,8 +1,8 @@
 #'loads data for the geography of interest
-#'@name tabby_load
+#'@name load_tabby
 #'@param loc two letter postal abbreviation for states; US for national
 #'@return env
-tabby_load<-function(loc="US"){
+load_tabby<-function(loc="US"){
   library(mnormt)
   library(parallel)
   library(lhs)
