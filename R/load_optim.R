@@ -9,7 +9,7 @@ load_optim<-function(){
 #loop through all the geographies to check for optim files
 for (i in 1:nrow(stateID)){
   loc<-stateID[i,3]
-  if (any(grepl(paste0(loc,"_Optim_all"),list.files(paste0("inst/",loc,"/"), full.names = TRUE)))==TRUE){
+  if (any(grepl(paste0(loc,"_Optim_all"),list.files(system.file(loc, package="MITUS"), full.names = TRUE)))==TRUE){
     # optim_vec[i]<-"T"
     loc_vec<-c(loc_vec,loc)
   }
@@ -20,3 +20,4 @@ if (length(loc_vec)>1){
   names(loc_vec)<-NULL
 return(loc_vec)
 }
+
