@@ -17,5 +17,6 @@ for (i in 1:nrow(stateID)){
 if (length(loc_vec)>1){
   loc_vec<-c("US",loc_vec)
 }
+  names(loc_vec)<-NULL
 return(loc_vec)
 }
