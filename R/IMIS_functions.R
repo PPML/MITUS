@@ -115,16 +115,19 @@ llikelihoodZ <-  function(samp_i, start_mat) {
       lLik <- lLik + addlik
       #DEMOGRAPHIC LIKELIHOODS
       #' TOTAL POP EACH DECADE, BY US/FB - index updated (maybe)
-      v17  <- M[,31]+M[,32]
-      addlik <- tot_pop_yr_fb_lLik(V=v17); addlik
+      v17a  <- M[,31]+M[,32]
+      addlik <- tot_pop_yr_fb_lLik(V=v17a); addlik
       lLik <- lLik + addlik
+      # v17b  <- M[,30]
+      # addlik <- tot_pop_yr_usb_lLik(V=v17b); addlik
+      # lLik <- lLik + addlik
       #' TOTAL POP AGE DISTRIBUTION 2016 index updated
       v18  <- cbind(M[67,33:43],M[67,44:54])
       addlik <- tot_pop16_ag_fb_lLik(V=v18); addlik
       lLik <- lLik + addlik
 
-      #'   Total DEATHS by Decad
-      v20a  <- rowSums(M[c(66:67),121:131])*1e6
+      #'   Total DEATHS by Decade
+      v20a  <- rowSums(M[c(51,61),121:131])*1e6
       addlik <- US_dth_10_tot_lLik(V=v20a); addlik
       lLik <- lLik + addlik
       #' #' Total DEATHS 1999-2016 BY AGE

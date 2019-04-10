@@ -21,7 +21,6 @@ set the likelihood to a hugely negative number (penalized)
 TOTAL POP AGE DISTRIBUTION 2016 index updated
   Total DEATHS by Decade
 #' Total DEATHS 1999-2016 BY AGE
-
 #' Mort_dist 2016
 }
 \description{

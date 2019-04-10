@@ -34,7 +34,7 @@ TOTAL DEATHS WITH TB 1999-2014 - index updated
 TB DEATHS 1999-2014 BY AGE - index updated above
 TOTAL POP EACH DECADE, BY US/FB - index updated (maybe)
 TOTAL POP AGE DISTRIBUTION 2016 index updated
-  Total DEATHS by Decad
+  Total DEATHS by Decade
 #' Total DEATHS 1999-2016 BY AGE
 
 #' Mort_dist 2016

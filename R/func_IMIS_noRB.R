@@ -108,16 +108,16 @@ llikelihoodZ_noRB <-  function(samp_i,opt_mat) {
       #' v16a <- outer(v16[,1],c(P[["SensLt"]],1-P[["SensLt"]]))+outer(v16[,2],c(1-P[["SpecLt"]],P[["SpecLt"]]))
       #' addlik <- ltbi_fb_11_lLik(V=v16a)*2; addlik
       #' #' lLik <- lLik + addlik
-      #' v17a  <- M[,31]+M[,32]
-      #' addlik <- tot_pop_yr_fb_lLik(V=v17a); addlik
-      #' lLik <- lLik + addlik
-      #' # v17b  <- M[,30]
-      #' # addlik <- tot_pop_yr_usb_lLik(V=v17b); addlik
-      #' # lLik <- lLik + addlik
-      #' #' TOTAL POP AGE DISTRIBUTION 2016 index updated
-      #' v18  <- cbind(M[67,33:43],M[67,44:54])
-      #' addlik <- tot_pop16_ag_fb_lLik(V=v18); addlik
-      #' lLik <- lLik + addlik
+      v17a  <- M[,31]+M[,32]
+      addlik <- tot_pop_yr_fb_lLik(V=v17a); addlik
+      lLik <- lLik + addlik
+      # v17b  <- M[,30]
+      # addlik <- tot_pop_yr_usb_lLik(V=v17b); addlik
+      # lLik <- lLik + addlik
+      #' TOTAL POP AGE DISTRIBUTION 2016 index updated
+      v18  <- cbind(M[67,33:43],M[67,44:54])
+      addlik <- tot_pop16_ag_fb_lLik(V=v18); addlik
+      lLik <- lLik + addlik
 
       #'   Total DEATHS by Decade
       v20a  <- rowSums(M[c(51,61),121:131])*1e6
