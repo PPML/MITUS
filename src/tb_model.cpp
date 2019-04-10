@@ -302,7 +302,7 @@ Rcpp::List cSim(
   // }
   N=30; indextemp=0;
   reblnc=1;
-  tb_dyn=0;
+  tb_dyn=1;
   temp=0; n2=0;
   if (tb_dyn != 1){
     for(int ag=0; ag<11; ag++) {
