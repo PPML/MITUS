@@ -11,8 +11,8 @@ tabby_load(loc = "US")
 }
 \value{
 env
-load necessary datasets
-Model Input
+create a new environment
+load necessary datasets into the environment
 }
 \description{
 loads data for the geography of interest
