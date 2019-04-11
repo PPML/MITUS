@@ -1,7 +1,7 @@
 #'loads data for the geography of interest
 #'@name load_tabby
 #'@param loc two letter postal abbreviation for states; US for national
-#'@return env
+#'@return tabby_env
 load_tabby<-function(loc="US"){
   library(mnormt)
   library(parallel)
@@ -10,6 +10,7 @@ load_tabby<-function(loc="US"){
   library(MCMCpack)
   library(MASS)
   #'create a new environment
+  #be careful about defaults and parent environments
   tabby_env<-new.env()
   #'load necessary datasets into the environment
   with(tabby_env,{
@@ -17,29 +18,52 @@ load_tabby<-function(loc="US"){
     CalibDat<-readRDS(system.file("US/US_CalibDat_03-06-19.rds", package="MITUS"))
     ParamInit<-readRDS(system.file("US/US_ParamInit_01-24-19.rds", package="MITUS"))
     Inputs<-readRDS(system.file("US/US_Inputs_01-24-19.rds", package="MITUS"))
-    # OptParam<-readRDS(system.file("US/US_Optim_all_01-24-19.rds"), package="MITUS")
+    # Opt<-readRDS(system.file("US/US_Optim_all_10_2019-01-25.rds", package="MITUS"))
     #add reshaped data
-    #add calibplots
   } else {
     CalibDat<-CalibDatState<-readRDS(system.file("ST/ST_CalibDat_01-24-19.rds", package="MITUS"))
     ParamInit_st<-ParamInit<-readRDS(system.file("ST/ST_ParamInit_02-09-19.rds", package="MITUS"))
     Inputs<-readRDS(system.file(paste0(loc,"/",loc,"_ModelInputs_01-24-19.rds"), package="MITUS"))
-    # OptParam<-readRDS(system.file(paste0(loc,"/",loc,"_Optim_all_01-24-19.rds"), package="MITUS"))
+    # Opt<-readRDS(system.file(paste0(loc,"/",loc,"_Optim_all_01-24-19.rds"), package="MITUS"))
     #add reshaped data
-    #add calibplots
   }
-
+##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+# use getmode function to determine the mode of the optim dataset and then select one
+##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+    # j<-0
+    # Par<-vector()
+    # for (i in 1:nrow(Opt)){
+    #   while(j<1){
+    #     if(Opt[i,ncol(Opt)]==getmode(Opt[i,ncol(Opt)])){
+    #       Par<-Opt[i,1:(ncol(Opt)-1)]
+    #       j<-j+1
+    #     }}}
+##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+# make the calibration plots for the selected location
+    ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+# tabby_calib_graphs(loc=loc,out_i = 1) #out_i needs to be updated; perhaps based off the reshaped data
+##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+# update the Parameter Vector for the optimized values
+##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
   if (loc=="US"){
-    P  <- ParamInit[,1] #definition of P will change
+    P  <- ParamInit[,1]
     names(P) <- rownames(ParamInit)
-
     ii <-  ParamInit[,5]==1
     ParamInitZ <- ParamInit[ParamInit$Calib==1,]
     idZ0 <- ParamInitZ[,4]==0
     idZ1 <- ParamInitZ[,4]==1
     idZ2 <- ParamInitZ[,4]==2
-  } else {
+    #add in the optimized values to P
+    # Par2 <- pnorm(Par,0,1)
+    # # uniform to true
+    # Par3 <- Par2
+    # Par3[idZ0] <- qbeta( Par2[idZ0], shape1  = ParamInitZ[idZ0,6], shape2 = ParamInitZ[idZ0,7])
+    # Par3[idZ1] <- qgamma(Par2[idZ1], shape   = ParamInitZ[idZ1,6], rate   = ParamInitZ[idZ1,7])
+    # Par3[idZ2] <- qnorm( Par2[idZ2], mean    = ParamInitZ[idZ2,6], sd     = ParamInitZ[idZ2,7])
+    # P[ii] <- Par3
+    # P <- P
 
+  } else {
     #creation of background parameters
     #elements of P will be replaced from either the StartVals in the case
     #of optimization or the user inputted dataset
@@ -52,6 +76,14 @@ load_tabby<-function(loc="US"){
     idZ1 <- ParamInitZ[,4]==1
     idZ2 <- ParamInitZ[,4]==2
     ParamInit<-ParamInit_st
+    # Par2 <- pnorm(Par,0,1)
+    # # uniform to true
+    # Par3 <- Par2
+    # Par3[idZ0] <- qbeta( Par2[idZ0], shape1  = ParamInitZ[idZ0,6], shape2 = ParamInitZ[idZ0,7])
+    # Par3[idZ1] <- qgamma(Par2[idZ1], shape   = ParamInitZ[idZ1,6], rate   = ParamInitZ[idZ1,7])
+    # Par3[idZ2] <- qnorm( Par2[idZ2], mean    = ParamInitZ[idZ2,6], sd     = ParamInitZ[idZ2,7])
+    # P[ii] <- Par3
+    # P <- P
   }
 })
   return(tabby_env)
