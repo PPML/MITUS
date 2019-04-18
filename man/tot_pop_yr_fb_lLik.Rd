@@ -2,7 +2,7 @@
 % Please edit documentation in R/calib_functions.R
 \name{tot_pop_yr_fb_lLik}
 \alias{tot_pop_yr_fb_lLik}
-\title{TOTAL POP EACH DECADE, FOR
+\title{TOTAL POP EACH DECADE, FOR FB
 Motivation: norm, mean centered with CI = +/- 2 million wts[1+0:6*10]}
 \usage{
 tot_pop_yr_fb_lLik(V)
@@ -14,6 +14,6 @@ tot_pop_yr_fb_lLik(V)
 likelihood
 }
 \description{
-TOTAL POP EACH DECADE, FOR
+TOTAL POP EACH DECADE, FOR FB
 Motivation: norm, mean centered with CI = +/- 2 million wts[1+0:6*10]
 }

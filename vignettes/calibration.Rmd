@@ -1,0 +1,41 @@
+---
+title: "Calibration in the MITUS Model"
+
+output: rmarkdown::pdf_document
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+#National Calibration Targets in the MITUS model 
+
+## Tuberculosis Targets
++ Total Diagnosed Cases 1953-2016
++ US cases age distribution 1993-2016
++ Non-US born case age distribution 1993-2016
++ Cases non-US born distribution 1993-2016
++ Cases non-US born slope 2000-2014
++ Cases high risk distribution 1993-2016
++ Cases non-US born recent entry distribution 1993-2014
++ Treatment Outcomes 1993-2012
++ Total LTBI Treatment Initiations 2002
++ Distribution of LTBI Treatment Inits 2002
++ LTBI prevalence by age 2011 US
++ LTBI prevalence by age 2011 non-US born 
++ Total deaths with TB 1999-2014
++ Total deaths with TB by age 
+
+## Demographic Targets
++ Total population of each decade by US/non-US born 
++ Total population of age distribution 2016
++ Total deaths by decade ???
++ Total deaths by age 1999-2016
++ Mortality distribution 2016
++ Homeless population 2010
+
+## Published estimates targets 
++ Borgdorff
++ Ferebee
++ Sutherland 
++ Tiemersma 

@@ -10,7 +10,7 @@ load_tabby(loc = "US")
 \item{loc}{two letter postal abbreviation for states; US for national}
 }
 \value{
-env
+tabby_env
 create a new environment
 load necessary datasets into the environment
 }

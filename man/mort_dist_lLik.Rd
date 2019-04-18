@@ -2,9 +2,10 @@
 % Please edit documentation in R/calib_functions.R
 \name{mort_dist_lLik}
 \alias{mort_dist_lLik}
-\title{Mortality Risk Group Distribution 1999-2014}
+\title{Mortality Risk Group Distribution 1999-2014
+Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases}
 \usage{
-mort_dist_lLik(V, rho = 0.1)
+mort_dist_lLik(V, rho = 0.01)
 }
 \arguments{
 \item{V}{table of mort_dist 1999-2014 (row=16 years, col=11 ages)}
@@ -15,5 +16,6 @@ mort_dist_lLik(V, rho = 0.1)
 likelihood
 }
 \description{
+Mortality Risk Group Distribution 1999-2014
 Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
 }

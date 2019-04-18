@@ -2,10 +2,9 @@
 % Please edit documentation in R/calib_functions.R
 \name{US_dth_tot_lLik}
 \alias{US_dth_tot_lLik}
-\title{TOTAL DEATHS
+\title{TOTAL US DEATHS
 1970,1975,1980,1985,1990-2007
-Motivation: norm, mean centered with CI = +/- 5% of mean
-weaken this likelihood to a variance of .5, 1}
+Motivation: norm, mean centered with CI = +/- 5% of mean}
 \usage{
 US_dth_tot_lLik(V)
 }
@@ -16,8 +15,7 @@ US_dth_tot_lLik(V)
 likelihood
 }
 \description{
-TOTAL DEATHS
+TOTAL US DEATHS
 1970,1975,1980,1985,1990-2007
 Motivation: norm, mean centered with CI = +/- 5% of mean
-weaken this likelihood to a variance of .5, 1
 }
