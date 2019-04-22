@@ -16,6 +16,8 @@ model_load<-function(loc="US"){
     ParamInit<<-readRDS(system.file("US/US_ParamInit_2018-12-05.rds", package="MITUS"))
     StartVal<<-readRDS(system.file("US/US_StartVal_2018-12-05.rds", package="MITUS"))
     Inputs<<-readRDS(system.file("US/US_Inputs_12-05-2018.rds", package="MITUS"))
+    Opt <<- readRDS(system.file(paste0(loc,"/",loc,"_opt_all_2018-12-10.rds"), package="MITUS"))
+
 
   } else {
     CalibDat<<-CalibDatState<<-readRDS(system.file("ST/CalibDatState_7-2-18.rds", package="MITUS"))
