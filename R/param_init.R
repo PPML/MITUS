@@ -168,9 +168,10 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
   PrevTrend25_34a  <- SmoCurve(PrevTrend25_341a)
   PrevTrend25_34a  <-PrevTrend25_34a[1:1201]
 
-  ImDxChngV      <- SmoCurve(c(rep(1,57),seq(1,PV["ImDxChng"],length.out=6)[-1],rep(PV["ImDxChng"],89)))
-  ImDxChngV      <-ImDxChngV[1:1201]
-  InputParams[["ImmAct"]]        <- outer(PrevTrend25_34a*PV["RRtbprev"]*ImDxChngV,ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*PV["pImAct"]
+  # ImDxChngV      <- SmoCurve(c(rep(1,57),seq(1,PV["ImDxChng"],length.out=6)[-1],rep(PV["ImDxChng"],89)))
+  # ImDxChngV      <-ImDxChngV[1:1201]
+  # ImmAct         <- outer(PrevTrend25_34a*PV["RRtbprev"]*ImDxChngV,ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*PV["pImAct"]
+  ImmAct         <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*PV["pImAct"]
   InputParams[["ImmFst"]]        <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*(1-PV["pImAct"])
 
   InputParams[["ImmAct"]]    <-InputParams[["ImmAct"]][1:1201,1:11]
@@ -296,8 +297,8 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
   rslowRF    <- PV["rslowH"]/12
   RRrslowRF  <- rslowRF/rslow
   InputParams[["rfast"]]    <- PV["rfast"]/12
-  rrSlowFB0  <- PV["rrSlowFB"]
-  InputParams[["rrSlowFB"]]   <- c(1,rrSlowFB0,rrSlowFB0)
+  # rrSlowFB0  <- PV["rrSlowFB"]
+  InputParams[["rrSlowFB"]]   <- c(1,1,1)
 
   ############# CREATE A VECTOR FOR RATE OF SLOW PROGRESSION THAT WILL
   ############# VARY BASED ON LEVELS OF TB REACTIVATION RATES

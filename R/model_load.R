@@ -37,7 +37,7 @@ model_load<-function(loc="US"){
     idZ2 <<- ParamInitZ[,4]==2
   } else {
     wts <<- CalibDatState[["ImptWeights"]]
-    W <- wts[44:67];  W["2016"] <- 4
+    W <<- wts[44:67];  W["2016"] <<- 4
     wtZ <<-W
 
     #creation of background parameters
@@ -51,7 +51,7 @@ model_load<-function(loc="US"){
     idZ0 <<- ParamInitZ[,4]==0
     idZ1 <<- ParamInitZ[,4]==1
     idZ2 <<- ParamInitZ[,4]==2
-    ParamInit<-ParamInit_st
+    ParamInit<<-ParamInit_st
   }
 
   return(invisible(NULL))
@@ -91,7 +91,7 @@ model_load_demo<-function(loc="US"){
 
   } else {
     wts <<- CalibDatState[["ImptWeights"]]
-    wtZ <- wts[44:67];  wtZ["2016"] <- 4
+    wtZ <<- wts[44:67];  wtZ["2016"] <<- 4
     wtZ<<-wtZ
 
   }
@@ -109,11 +109,11 @@ model_load_demo<-function(loc="US"){
   idZ2 <<- ParamInitZ[,4]==2
 
   #'format the calibration data
-  # targets[["ParamInitZ"]]<-ParamInitZ
-  # targets[["idZ0"]]<-idZ0
-  # targets[["idZ1"]]<-idZ1
-  # targets[["idZ2"]]<-idZ2
-  # targets[["P"]]<-P
+  # targets[["ParamInitZ"]]<<-ParamInitZ
+  # targets[["idZ0"]]<<-idZ0
+  # targets[["idZ1"]]<<-idZ1
+  # targets[["idZ2"]]<<-idZ2
+  # targets[["P"]]<<-P
 
   return(invisible(NULL))
 }

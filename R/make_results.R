@@ -14,7 +14,7 @@ locs<-c("CA","FL","GA","IL","NJ" ,"NY", "PA","TX", "VA","WA")
 #   OutputsInt(Par,loc,n_cores=1,endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=1,Scen2=0,Scen3=0)
 # }
 #  }
-#
+#s
  # for (i in 1:length(locs)){
  #   loc<-locs[i]
  #   print(loc)
