@@ -25,11 +25,11 @@
 #   loc<-locs[i]
 # model_load(loc)
 #   print(loc)
-# format_as_restab(loc)
+# make_results(loc)
 #   }
-#
-# # for (i in 1:length(locs)){
-# #   loc<-locs[i]
-# #   print(loc)
-# # make_results(loc)
-# #   }
+# #
+# for (i in 1:length(locs)){
+#   loc<-locs[i]
+#   print(loc)
+#   reshaping(loc)
+#   }
