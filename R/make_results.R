@@ -11,24 +11,25 @@
 #   Opt <<- readRDS(system.file(paste0(loc,"/",loc,"_opt_all_2018-12-12.rds"), package="MITUS"))
 #   Par <<- readRDS(paste0("~/Desktop/GoodStateOptims/parAll_",loc,"_10_2018_11_27.rds"))
 #
-#   OutputsInt(Par,loc,n_cores=1,endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=1,Scen2=0,Scen3=0)
+#   OutputsInt(Par,loc,n_cores=1,endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=1)
 # }
-#  }
-#s
- # for (i in 1:length(locs)){
- #   loc<-locs[i]
- #   print(loc)
- # tabby_calib_graphs(loc)
- #   }
-
+#  # }
+# #s
+#  # for (i in 1:length(locs)){
+#  #   loc<-locs[i]
+#  #   print(loc)
+#  # tabby_calib_graphs(loc)
+#  #   }
+#
 # for (i in 1:length(locs)){
 #   loc<-locs[i]
+# model_load(loc)
 #   print(loc)
 # format_as_restab(loc)
 #   }
-
-# for (i in 1:length(locs)){
-#   loc<-locs[i]
-#   print(loc)
-# make_results(loc)
-#   }
+#
+# # for (i in 1:length(locs)){
+# #   loc<-locs[i]
+# #   print(loc)
+# # make_results(loc)
+# #   }
