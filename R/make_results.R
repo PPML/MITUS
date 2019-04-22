@@ -1,4 +1,4 @@
-# locs<-c("CA","FL","GA","IL","NJ" ,"NY", "PA","TX", "VA","WA")
+locs<-c("CA","FL","GA","IL","NJ" ,"NY", "PA","TX", "VA","WA")
 # # #  make_results<-function(locs){
 # for (i in 1:length(locs)){
 #   loc<-locs[i]
@@ -23,8 +23,9 @@
 #
 # for (i in 1:length(locs)){
 #   loc<-locs[i]
-# model_load(loc)
 #   print(loc)
+#
+# model_load(loc)
 # make_results(loc)
 #   }
 # #
