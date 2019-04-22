@@ -8,7 +8,7 @@ make_empty_res_tab2sm <- function() {
     "tb_incidence_per_mil",
     "tb_mortality_000s",
     "tb_mortality_per_mil")
-  CatList[[2]] <- c('base_case')
+  CatList[[2]] <- c('base_case', paste0('intervention_', 1:5), paste0('scenario_', 1:3))
   CatList[[3]] <- c("all_populations","usb_population","fb_population")
   CatList[[4]] <- c("0-4",paste(0:8*10+5,1:9*10+4,sep="-"),"95+")
   CatList[[5]] <- c("absolute_value","pct_basecase_same_year","pct_basecase_2016")
@@ -47,7 +47,7 @@ make_empty_res_tab2bg <- function() {
     "tb_incidence_per_mil",
     "tb_mortality_000s",
     "tb_mortality_per_mil")
-  CatList[[2]] <- c('base_case')
+  CatList[[2]] <- c('base_case', paste0('intervention_', 1:5), paste0('scenario_', 1:3))
   CatList[[3]] <- c("all_populations","usb_population","fb_population")
   CatList[[4]] <- c("all", "0-24","25-64","65+")
   CatList[[5]] <- c("absolute_value","pct_basecase_same_year","pct_basecase_2016")
