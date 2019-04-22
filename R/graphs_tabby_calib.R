@@ -502,8 +502,7 @@ tabby_calib_graphs <- function(loc) {
     p <- recordPlot()
     saveRDS(p, paste0('~/MITUS/inst/',loc,'/calibplots/total-deaths-by-age.rds'))
 
-  }
-  else{
+  } else{
     data("stateID",package="MITUS")
     StateID<-as.data.frame(stateID)
 
