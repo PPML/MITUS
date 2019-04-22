@@ -1,5 +1,5 @@
-locs<-c("CA","FL","GA","IL","NJ" ,"NY", "PA","TX", "VA","WA")
-# #  make_results<-function(locs){
+# locs<-c("CA","FL","GA","IL","NJ" ,"NY", "PA","TX", "VA","WA")
+# # #  make_results<-function(locs){
 # for (i in 1:length(locs)){
 #   loc<-locs[i]
 #   print(loc)
@@ -9,7 +9,7 @@ locs<-c("CA","FL","GA","IL","NJ" ,"NY", "PA","TX", "VA","WA")
 #   Inputs<-readRDS(paste0("~/Desktop/GoodStateOptims/",loc,"/",loc,"_ModelInputs_01-24-19.rds"))
 #
 #   Opt <<- readRDS(system.file(paste0(loc,"/",loc,"_opt_all_2018-12-12.rds"), package="MITUS"))
-#   Par <- readRDS(paste0("~/Desktop/GoodStateOptims/parAll_",loc,"_10_2018_11_27.rds"))
+#   Par <<- readRDS(paste0("~/Desktop/GoodStateOptims/parAll_",loc,"_10_2018_11_27.rds"))
 #
 #   OutputsInt(Par,loc,n_cores=1,endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=1,Scen2=0,Scen3=0)
 # }
