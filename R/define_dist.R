@@ -20,18 +20,18 @@ for(i in 1:num_mRF) {
 
 mort_v<-rowSums(dist_gen)
 #can_go definition for just mortality rebalancing
-can_go <- matrix(0,4,4)
-can_go <- matrix(c(1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1), 4,4)
+# can_go <- matrix(0,4,4)
+# can_go <- matrix(c(1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1), 4,4)
 #rownames(can_go) <- colnames(can_go) <- paste0(rep(paste0("p",0:3),each=4),"_",rep(paste0("m",0:3),4))
 
 #define can go matrix
-# can_go <- matrix(0,16,16)
-#
-# for(i in 1:nrow(can_go)){ # i=1
-#   pi <- rep(0:3,each=4)[i]; mi <- rep(0:3,4)[i]
-#   can_go[i, rep(0:3,each=4)%in%(pi + -1:1)  & rep(0:3,4)%in%(mi + -1:1)] <- 1
-# }
-#
+can_go <- matrix(0,16,16)
+
+for(i in 1:nrow(can_go)){ # i=1
+  pi <- rep(0:3,each=4)[i]; mi <- rep(0:3,4)[i]
+  can_go[i, rep(0:3,each=4)%in%(pi + -1:1)  & rep(0:3,4)%in%(mi + -1:1)] <- 1
+}
+
 # can_go[1:4,5:16]<-0
 # can_go[5:8,1:4]<-0; can_go[5:8,9:16]<-0;
 # can_go[9:12,1:8]<-0; can_go[9:12,13:16]<-0;

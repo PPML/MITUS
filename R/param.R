@@ -14,7 +14,7 @@ param <- function (PV){
   BgMort           <- Inputs[["BgMort"]]
   # NCHS_mort        <-readRDS(system.file("US/US_NCHS_mort.rds", package="MITUS"))[,2:12]
   # BgMort[1:68,2:12]<-NCHS_mort
-  InitPop          <- Inputs[["InitPop"]] #init_pop()
+  InitPop          <- Inputs[["InitPop"]] #init_pop() #
   Births           <- Inputs[["Births"]]
   ImmigInputs      <- Inputs[["ImmigInputs"]]
   TxInputs         <- Inputs[["TxInputs"]]
@@ -34,7 +34,7 @@ param <- function (PV){
 
   Birthst   <- SmoCurve(Births)*PV["TunBirths"]/12
   Birthst   <- Birthst[1:month]
-  # Birthst[1:6]<-0
+#  Birthst[1:6]<-0
 
   ##########################      MORTALITY RATES       ##########################
   ########################## BACKGROUND MORTALITY BY TIME ########################
@@ -68,7 +68,7 @@ param <- function (PV){
     mubt[,i] <- mubt[,i]*exp((PV[["TunmuAg1"]]-1)*i)
   }
 
-  # mubt[1:6]<-0
+#  mubt[1:6]<-0
 
   # RRmuAg[1]<-RRmuAg[1]*1.25
   # RRmuAg[10:11]<-RRmuAg[10:11]*.5
@@ -151,7 +151,7 @@ param <- function (PV){
   ImmNon         <- TotImmAge-ImmAct-ImmFst-ImmLat
   ###################### TRUNCATE THESE VALS
   ImmAct<-ImmAct[1:month,];ImmFst<-ImmFst[1:month,]; ImmLat<-ImmLat[1:month,]; ImmNon<-ImmNon[1:month,]
- # ImmNon[1:6,]<- ImmAct[1:6,]<-ImmFst[1:6,]<-ImmLat[1:6,]<-0
+# ImmNon[1:6,]<- ImmAct[1:6,]<-ImmFst[1:6,]<-ImmLat[1:6,]<-0
 
   ######################   EXOGENEOUS INFECTION RISK      ########################
 

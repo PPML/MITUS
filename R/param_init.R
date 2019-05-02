@@ -49,7 +49,10 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
   ################################################################################
   ################################################################################
   BgMort           <- Inputs[["BgMort"]]
-  InputParams[["InitPop"]]          <- Inputs[["InitPop"]]
+  NCHS_mort        <-readRDS(system.file("US/US_NCHS_mort.rds", package="MITUS"))[,2:12]
+  BgMort[1:68,2:12]<-NCHS_mort
+  InitPop          <- init_pop() #Inputs[["InitPop"]]
+  InputParams[["InitPop"]] <- InitPop
   Births           <- Inputs[["Births"]]
   ImmigInputs      <- Inputs[["ImmigInputs"]]
   #In order for proper scenario/Interventions, creation of a variable to limit the

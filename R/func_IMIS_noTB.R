@@ -64,32 +64,29 @@ llikelihoodZ_noTB <-  function(samp_i,opt_mat) {
       addlik <- tot_pop16_ag_fb_lLik(V=v18); addlik
       lLik <- lLik + addlik
 
-      #'   Total DEATHS by Decade
-      v20a  <- rowSums(M[c(51,61),121:131])*1e6
-      addlik <- US_dth_10_tot_lLik(V=v20a); addlik
-      lLik <- lLik + addlik
-      #' #' Total DEATHS 1999-2016 BY AGE
-      v20b  <- M[c(66:67),121:131]
+      #' Total DEATHS 1979-2016
+      # v20a  <- rowSums(M[66:67,121:131])
+      # v20a<-v20a*1e6
+      # addlik <- US_dth_tot_lLik(V=v20a); addlik
+      # lLik <- lLik + addlik
+      #' Total DEATHS 1999-2016 BY AGE
+      v20b  <- M[67,121:131]
+      v20b[10] <-v20b[10]+v20b[11]
+      v20b<-v20b[-11]
       addlik <- tot_dth_age_lLik(V=v20b); addlik
       lLik <- lLik + addlik
-
       #' #' Mort_dist 2016
-      v21a<- v21  <- M[c(67),521:564]
+      v21a<- v21  <- M[66:67,521:564]
       for (i in 1:11){
-        denom<-M[c(67),2+i]
-        # for (j in 1:length(v21)){
-          v21a[(1:4)+4*(i-1)]<-v21[(1:4)+4*(i-1)]/denom
-      }
-      # }
-      # v21a<- v21  <- M[67,521:564]
-      # for (i in 1:11){
-      #   denom<-M[67,2+i]
-      #   for (j in 1:length(v21)){
-      #     v21a[(1:4)+4*(i-1)]<-v21[(1:4)+4*(i-1)]/denom
-      #   } }
-      # # addlik <- mort_dist_lLik(V=v21a); addlik
-      # # lLik <- lLik + addlik
-      addlik <- mort_dist_lLik_norm(V=v21a); addlik
+        denom<-M[66:67,2+i]
+        for (j in 1:ncol(v21)){
+          v21a[,(1:4)+4*(i-1)]<-v21[,(1:4)+4*(i-1)]/denom
+        } }
+      addlik <- mort_dist_lLik(V=v21a); addlik
+      lLik <- lLik + addlik
+      #' HOMELESS POP 2010 - index updated
+      v23b  <- M[61,29]
+      addlik <- homeless_10_lLik(V=v23b); addlik
       lLik <- lLik + addlik
 
 

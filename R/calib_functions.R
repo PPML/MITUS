@@ -252,9 +252,9 @@ tb_dth_age_lLik <- function(V,rho=0.01) {
 
 US_dth_tot_lLik <- function(V) {
   # CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
-  US_deaths_tot   <- CalibDat[["US_tot_mort"]][22:38,-1]
-  adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.01/1.96,log=T)*wts[51:67])
-  sum(dnorm(US_deaths_tot,V,US_deaths_tot*0.01/1.96,log=T)*wts[51:67]) - adj_20a
+  US_deaths_tot   <- CalibDat[["US_tot_mort"]][37:38,-1]
+  adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.01/1.96,log=T)*wts[66:67])
+  sum(dnorm(US_deaths_tot,V,US_deaths_tot*0.01/1.96,log=T)*wts[66:67]) - adj_20a
 }
 
 #' TOTAL DEATHS AGE DISTRIBUTION 1999-2014
@@ -277,12 +277,12 @@ tot_dth_age_lLik <- function(V,ESS=500) {
 #'@return likelihood
 mort_dist_lLik <- function(V,rho=0.01) {
   md     <- rowSums(dist_gen)
-  mort_dist     <-matrix(md,17,4, byrow = TRUE)
-  adj_21        <- sum(dDirMult(M=mort_dist,n=mort_dist,Rho=0.01)*wts[51:67])
+  mort_dist     <-matrix(md,2,4, byrow = TRUE)
+  adj_21        <- sum(dDirMult(M=mort_dist,n=mort_dist,Rho=0.01)*wts[66:67])
   tot_lik<-0
   for(ag in 1:11){
     V1<-V[,(1:4)+4*(ag-1)]
-    x<-sum(dDirMult(M=V1,n=mort_dist,Rho=rho)*wts[51:67]) - adj_21
+    x<-sum(dDirMult(M=V1,n=mort_dist,Rho=rho)*wts[66:67]) - adj_21
     tot_lik<-tot_lik+x
   }
   return(tot_lik)
