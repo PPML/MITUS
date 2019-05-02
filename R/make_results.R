@@ -40,5 +40,6 @@
 # for (i in 1:length(locs)){
 #   loc<-locs[i]
 #   print(loc)
-#   reshaping(loc)
+#     # onesim(loc)
+#   make_results(loc)
 #   }
