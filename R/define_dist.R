@@ -26,6 +26,7 @@ mort_v<-rowSums(dist_gen)
 
 #define can go matrix
 can_go <- matrix(0,16,16)
+rownames(can_go) <- colnames(can_go) <- paste0(rep(paste0("p",0:3),each=4),"_",rep(paste0("m",0:3),4))
 
 for(i in 1:nrow(can_go)){ # i=1
   pi <- rep(0:3,each=4)[i]; mi <- rep(0:3,4)[i]

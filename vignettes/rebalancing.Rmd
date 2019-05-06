@@ -1,0 +1,217 @@
+---
+title: "Rebalancing Checks"
+output: rmarkdown::pdf_document
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+The rebalancing of the MITUS model has not been performing well after removing it from the model. Below are some checks for improvement. 
+
+## Run One: Adjustment Factor not active; rebalancing applied as non flows in the model. 
+```{r,warning=FALSE, message=FALSE}
+library(MITUS)
+model_load("US")
+ prms <-list()
+  prms <- param(P)
+  IP <- list()
+  IP <- param_init(P)
+  trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=rep(1,11))
+  if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
+  zz <- cSim( nYrs       = 2018-1950         , nRes      = length(prms[["ResNam"]])  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
+               Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]  ,
+               rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
+               vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    ,
+               HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat"]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst"]]    ,
+               net_mig_usb = prms[["net_mig_usb"]], net_mig_nusb = prms[["net_mig_nusb"]],
+               mubt       = prms[["mubt"]]    , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
+               TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
+               LtDxPar    = prms[["LtDxPar"]]   , rLtScrt   = prms[["rLtScrt"]]       , RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
+               EarlyTrend = prms[["EarlyTrend"]], NixTrans = IP[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)
+    M <- zz$Outputs
+    colnames(M) <- prms[["ResNam"]]
+    v50a<- v50  <- M[1:2,521:564]
+    V15a<- V15  <- M[66:67,521:564]
+
+    for (i in 1:11){
+      denom50<-M[1:2,2+i]
+      denom05<-M[66:67,2+i]
+      for (j in 1:ncol(v50)){
+        v50a[,(1:4)+4*(i-1)]<-v50[,(1:4)+4*(i-1)]/denom50
+        V15a[,(1:4)+4*(i-1)]<-V15[,(1:4)+4*(i-1)]/denom05
+
+      } }
+  #####DISTRIBUTION FOR 1950 AND 1951 
+   print(v50a)
+  #####DISTRIBUTION FOR 2015 AND 2016 
+   print(V15a)
+
+```
+
+## Run Two: Adjustment Factor not active; rebalancing applied as flows in the model, similar to other dynamics 
+```{r,warning=FALSE, message=FALSE}
+library(MITUS)
+model_load("US")
+ prms <-list()
+  prms <- param(P)
+  IP <- list()
+  IP <- param_init(P)
+  trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=rep(1,11))
+  if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
+  zz <- cSim_flow( nYrs       = 2018-1950         , nRes      = length(prms[["ResNam"]])  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
+               Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]  ,
+               rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
+               vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    ,
+               HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat"]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst"]]    ,
+               net_mig_usb = prms[["net_mig_usb"]], net_mig_nusb = prms[["net_mig_nusb"]],
+               mubt       = prms[["mubt"]]    , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
+               TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
+               LtDxPar    = prms[["LtDxPar"]]   , rLtScrt   = prms[["rLtScrt"]]       , RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
+               EarlyTrend = prms[["EarlyTrend"]], NixTrans = IP[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)
+    M <- zz$Outputs
+    colnames(M) <- prms[["ResNam"]]
+    v50a<- v50  <- M[1:2,521:564]
+    V15a<- V15  <- M[66:67,521:564]
+
+    for (i in 1:11){
+      denom50<-M[1:2,2+i]
+      denom05<-M[66:67,2+i]
+      for (j in 1:ncol(v50)){
+        v50a[,(1:4)+4*(i-1)]<-v50[,(1:4)+4*(i-1)]/denom50
+        V15a[,(1:4)+4*(i-1)]<-V15[,(1:4)+4*(i-1)]/denom05
+
+      } }
+  #####DISTRIBUTION FOR 1950 AND 1951 
+   print(v50a)
+  #####DISTRIBUTION FOR 2015 AND 2016 
+   print(V15a)
+
+```
+
+## Run Three: No Rebalancing, but everyone distributed among the risk groups 
+```{r,warning=FALSE, message=FALSE}
+library(MITUS)
+model_load("US")
+  prms <-list()
+  prms <- param(P)
+  IP <- list()
+  IP <- param_init(P)
+  # data("trans_mat_nat",package="MITUS")
+ # trans_mat_tot_ages<-trans_mat_tot_ages_nat
+  tm<-matrix(0,16,16)
+  diag(tm)<-1
+  trans_mat_tot_ages<<-matrix(tm,16,176)
+  # trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
+  if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
+  zz <- cSim( nYrs       = 2018-1950         , nRes      = length(prms[["ResNam"]])  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
+               Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]  ,
+               rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
+               vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    ,
+               HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat"]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst"]]    ,
+               net_mig_usb = prms[["net_mig_usb"]], net_mig_nusb = prms[["net_mig_nusb"]],
+               mubt       = prms[["mubt"]]    , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
+               TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
+               LtDxPar    = prms[["LtDxPar"]]   , rLtScrt   = prms[["rLtScrt"]]       , RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
+               EarlyTrend = prms[["EarlyTrend"]], NixTrans = IP[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)
+    M <- zz$Outputs
+    colnames(M) <- prms[["ResNam"]]
+    v50a<- v50  <- M[1:2,521:564]
+    V15a<- V15  <- M[66:67,521:564]
+
+    for (i in 1:11){
+      denom50<-M[1:2,2+i]
+      denom05<-M[66:67,2+i]
+      for (j in 1:ncol(v50)){
+        v50a[,(1:4)+4*(i-1)]<-v50[,(1:4)+4*(i-1)]/denom50
+        V15a[,(1:4)+4*(i-1)]<-V15[,(1:4)+4*(i-1)]/denom05
+
+      } }
+  #####DISTRIBUTION FOR 1950 AND 1951 
+   print(v50a)
+  #####DISTRIBUTION FOR 2015 AND 2016 
+   print(V15a)
+```
+
+## Run Two: Adjustment Factor not active; rebalancing applied as flows in the model, Births are zeroed
+```{r,warning=FALSE, message=FALSE}
+library(MITUS)
+model_load("US")
+ prms <-list()
+  prms <- param(P)
+  IP <- list()
+  IP <- param_init(P)
+  trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=rep(1,11))
+  if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
+  zz <- cSim_flow( nYrs       = 2018-1950         , nRes      = length(prms[["ResNam"]])  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
+               Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]  ,
+               rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
+               vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = rep(0,1201)    ,
+               HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat"]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst"]]    ,
+               net_mig_usb = prms[["net_mig_usb"]], net_mig_nusb = prms[["net_mig_nusb"]],
+               mubt       = prms[["mubt"]]    , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
+               TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
+               LtDxPar    = prms[["LtDxPar"]]   , rLtScrt   = prms[["rLtScrt"]]       , RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
+               EarlyTrend = prms[["EarlyTrend"]], NixTrans = IP[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)
+    M <- zz$Outputs
+    colnames(M) <- prms[["ResNam"]]
+    v50a<- v50  <- M[1:2,521:564]
+    V15a<- V15  <- M[66:67,521:564]
+
+    for (i in 1:11){
+      denom50<-M[1:2,2+i]
+      denom05<-M[66:67,2+i]
+      for (j in 1:ncol(v50)){
+        v50a[,(1:4)+4*(i-1)]<-v50[,(1:4)+4*(i-1)]/denom50
+        V15a[,(1:4)+4*(i-1)]<-V15[,(1:4)+4*(i-1)]/denom05
+
+      } }
+  #####DISTRIBUTION FOR 1950 AND 1951 
+   print(v50a)
+  #####DISTRIBUTION FOR 2015 AND 2016 
+   print(V15a)
+
+```
+
+
+
+
+## Run Four: Adjustment Factor hand tweaked; rebalancing applied as flows in the model, similar to other dynamics 
+```{r,warning=FALSE, message=FALSE}
+library(MITUS)
+model_load("US")
+ prms <-list()
+  prms <- param(P)
+  IP <- list()
+  IP <- param_init(P)
+  trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=seq(1.1,2,length.out = 11))
+  if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
+  zz <- cSim_flow( nYrs       = 2018-1950         , nRes      = length(prms[["ResNam"]])  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
+               Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]  ,
+               rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
+               vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    ,
+               HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat"]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst"]]    ,
+               net_mig_usb = prms[["net_mig_usb"]], net_mig_nusb = prms[["net_mig_nusb"]],
+               mubt       = prms[["mubt"]]    , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
+               TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
+               LtDxPar    = prms[["LtDxPar"]]   , rLtScrt   = prms[["rLtScrt"]]       , RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
+               EarlyTrend = prms[["EarlyTrend"]], NixTrans = IP[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)
+    M <- zz$Outputs
+    colnames(M) <- prms[["ResNam"]]
+    v50a<- v50  <- M[1:2,521:564]
+    V15a<- V15  <- M[66:67,521:564]
+
+    for (i in 1:11){
+      denom50<-M[1:2,2+i]
+      denom05<-M[66:67,2+i]
+      for (j in 1:ncol(v50)){
+        v50a[,(1:4)+4*(i-1)]<-v50[,(1:4)+4*(i-1)]/denom50
+        V15a[,(1:4)+4*(i-1)]<-V15[,(1:4)+4*(i-1)]/denom05
+
+      } }
+  #####DISTRIBUTION FOR 1950 AND 1951 
+   print(v50a)
+  #####DISTRIBUTION FOR 2015 AND 2016 
+   print(V15a)
+
+```

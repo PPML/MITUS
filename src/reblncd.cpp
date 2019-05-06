@@ -56,7 +56,7 @@ Rcpp::NumericMatrix reblncd(
 
   frc=0.01;
   mat_sum=0;
-  N=0;
+  N=1;
 
 
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -89,9 +89,7 @@ Rcpp::NumericMatrix reblncd(
 
     for (int nm=0; nm<4; nm++){
       for (int im=0; im<4; im++){
-
           dist_t1_v[nm+im*4]=dist_gen_v[nm+im*4]*(1-((mubtN[ag]*RRmuRF[nm])));
-
       }
     }
 
@@ -99,30 +97,35 @@ Rcpp::NumericMatrix reblncd(
       // Rcpp::Rcout <<"dist_t1_v at ag = "<< ag << "and index = "<< i << " is "<<  dist_t1_v[i]<< "\n";
       dist_i_v[i]=dist_t1_v[i];
     }
+
+    for (int r=0; r<16; r++){
+      for (int c=0; c<16; c++){
+        trans_mat[r][c] = 0;
+      } }
     //' Open the iteration loop
 
-    N=10;
+    N=1;
 
     for (int n=0; n<N; n++){
       //'calculate the difference between dist_gen and current dist
       for (int i=0; i<16; i++){
-        diff_i_v[i] = dist_i_v[i] - dist_gen_v[i];
+        diff_i_v[i] = dist_i_v[i]-dist_gen_v[i];
       }
       // for (int i=0; i<16; i++){
       // Rcpp::Rcout <<"diff_i_v at ag = "<< ag << "and index = "<< i << " is "<<  diff_i_v[i]<< "\n";
       // }
       //'create the transition matrix
       //'initialize to zero for each loop
-      for (int r=0; r<16; r++){
-        for (int c=0; c<16; c++){
-          trans_mat[r][c] = 0;
-        } }
+
       //'Set the Value of trans_mat to the max of 0 and the difference between row & column
+      //'already no transition in the first row -- why??
       for (int r=0; r<16; r++){
         for (int c=0; c<16; c++){
           if ((diff_i_v[r]-diff_i_v[c]) > 0.0) {
             trans_mat[r][c] = can_goN[r][c]*(diff_i_v[r]-diff_i_v[c]);
           }
+          // Rcpp::Rcout <<"diff at ag = "<< ag << "and index = "<< r << " c =  "<< c << " is "<< diff_i_v[r]-diff_i_v[c]<< "\n";
+
         } }
 
       //'Adjust the Transition Matrix
@@ -141,7 +144,7 @@ Rcpp::NumericMatrix reblncd(
         } }
       ////////This is the step that is failing!
       for(int i=0; i<16; i++){
-        if ((1-row_sum[i])<0.0){ //max of 1 and sum(trans_mat)
+        if (row_sum[i] >1.0){ //max of 1 and sum(trans_mat)
           for(int j=0; j<16; j++){
             trans_mat[i][j] =  trans_mat[i][j] / (row_sum[i]+1e-200); //dividing by the row sum guarantees that the new row sum does not exceed 1
           }
@@ -213,11 +216,11 @@ Rcpp::NumericMatrix reblncd(
         trans_mat_tot[i][j] = did_go[i][j] / (dist_gen_v[i]);
       } }
 
-    // for(int i=0; i<16; i++){
-    //   for(int j=0; j<16; j++){
-    //     if (i != j){
-    //     trans_mat_tot[i][j] =  trans_mat_tot[i][j]*adj_fact[ag];
-    //   } } }
+    for(int i=0; i<16; i++){
+      for(int j=0; j<16; j++){
+        if (i != j){
+        trans_mat_tot[i][j] =  trans_mat_tot[i][j]*adj_fact[ag];
+      } } }
 
     for(int i=0; i<16; i++){
       row_sum[i]=0;
@@ -234,7 +237,7 @@ Rcpp::NumericMatrix reblncd(
         } } }
     for(int i=0; i<16; i++){
       for(int j=0; j<16; j++){
-        trans_mat_tot[i][j]=trans_mat_tot[i][j]*adj_fact[ag];
+        trans_mat_tot[i][j]=trans_mat_tot[i][j];//*adj_fact[ag];
       } }
     for(int i=0; i<16; i++){
       for(int j=0; j<16; j++){
