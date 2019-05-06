@@ -40,6 +40,6 @@ locs<-c("CA","FL","GA","IL","NJ" ,"NY", "PA","TX", "VA","WA")
 # for (i in 1:length(locs)){
 #   loc<-locs[i]
 #   print(loc)
-#     # onesim(loc)
-#   make_results(loc)
+#   # onesim(loc)
+#  make_results(loc)
 #   }

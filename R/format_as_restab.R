@@ -25,7 +25,7 @@ format_as_restab <- function(loc) {
     #scenarios; length age id;
     # print(1:nr+((intv-1)*10))
     ################################################################################
-    ResTab[1:nr+((intv-1)*10),,1,ag]<-o[,age_id,1]
+    ResTab[1:nr+((intv-1)*10),,1,ag]<-o[,age_id,1]/1e6
     #number of ltbi prevalence
     ResTab[1:nr+((intv-1)*10),,2,ag]<-apply(o[,age_id,c(54,65)+ag],c(1,2),sum)*1e3
     #percentage of ltbi prevalence
@@ -42,7 +42,7 @@ format_as_restab <- function(loc) {
     ################################################################################
     #US Born population
     ################################################################################
-    ResTabus[1:nr+((intv-1)*10),,1,ag]<-o[,age_id,1]
+    ResTabus[1:nr+((intv-1)*10),,1,ag]<-o[,age_id,1]/1e6
     #number of ltbi prevalence
     ResTabus[1:nr+((intv-1)*10),,2,ag]<-o[, age_id,54+ag]*1e3
     #percentage of ltbi prevalence
@@ -59,7 +59,7 @@ format_as_restab <- function(loc) {
     ################################################################################
     #non-US Born population
     ################################################################################
-    ResTabfb[1:nr+((intv-1)*10),,1,ag]<-o[,age_id,1]
+    ResTabfb[1:nr+((intv-1)*10),,1,ag]<-o[,age_id,1]/1e6
     #number of ltbi prevalence
     ResTabfb[1:nr+((intv-1)*10),,2,ag]<-o[, age_id,65+ag]*1e3
     #percentage of ltbi prevalence
@@ -104,7 +104,7 @@ format_as_restab <- function(loc) {
       ag_vec<- switch(b_ag,1:11, c(1,2,3),c(4,5,6,7),c(8,9,10,11))
       ################################################################################
       for (ag in ag_vec){
-        ResTab[1:nr+((intv-1)*10),,1,b_ag]<-o[,age_id,1]
+        ResTab[1:nr+((intv-1)*10),,1,b_ag]<-o[,age_id,1]/1e6
         #number of ltbi prevalence
         ResTab[1:nr+((intv-1)*10),,2,b_ag]<-sum(apply(o[,age_id,rowSums(expand.grid(c(54,65), ag_vec))],c(1,2),sum)*1e3)
         #percentage of ltbi prevalence
@@ -121,7 +121,7 @@ format_as_restab <- function(loc) {
         ################################################################################
         #US Born population
         ################################################################################
-        ResTabus[1:nr+((intv-1)*10),,1,b_ag]<-o[,age_id,1]
+        ResTabus[1:nr+((intv-1)*10),,1,b_ag]<-o[,age_id,1]/1e6
         #number of ltbi prevalence
         ResTabus[1:nr+((intv-1)*10),,2,b_ag]<-sum(o[, age_id,54+ag_vec]*1e3)
         #percentage of ltbi prevalence
@@ -138,7 +138,7 @@ format_as_restab <- function(loc) {
         ################################################################################
         #non-US Born population
         ################################################################################
-        ResTabfb[1:nr+((intv-1)*10),,1,b_ag]<-o[,age_id,1]
+        ResTabfb[1:nr+((intv-1)*10),,1,b_ag]<-o[,age_id,1]/1e6
         #number of ltbi prevalence
         ResTabfb[1:nr+((intv-1)*10),,2,b_ag]<-sum(o[, age_id,65+ag_vec]*1e3)
         #percentage of ltbi prevalence
