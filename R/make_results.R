@@ -36,10 +36,10 @@
 # model_load(loc)
 # make_results(loc)
 #   }
-#
+# #
 # for (i in 1:length(locs)){
 #   loc<-locs[i]
 #   print(loc)
-#     # onesim(loc)
-#   make_results(loc)
+#     onesim(loc)
+#   # make_results(loc)
 #   }
