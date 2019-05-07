@@ -18,7 +18,7 @@
 #'@return InputParams list
 #'@export
 param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0){
-  InputParams <-vector("list", 41)   #Create an empty list to hold the formatted intitial parameters
+  InputParams <-vector("list", 42)   #Create an empty list to hold the formatted intitial parameters
   names(InputParams) <- c("rDxt","TxQualt", "InitPop", "Mpfast", "ExogInf", "MpfastPI",
                           "Mrslow", "rrSlowFB", "rfast"    ,"RRcurDef"      , "rSlfCur"  ,
                           "p_HR"        , "dist_gen" , "vTMort"   ,"RRmuRF"          , "RRmuHR",
@@ -26,8 +26,8 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
                           "ImmAct"      , "ImmFst" , "mubt"     ,"RelInf"        , "RelInfRg" ,
                           "Vmix"       , "rEmmigFB" , "TxVec"    , "TunTxMort"    , "rDeft"    ,
                           "pReTx"      , "LtTxPar"  , "LtDxPar"  , "rLtScrt"      , "RRdxAge"  ,
-                          "rRecov"      , "pImmScen"  ,   "EarlyTrend","adj_fact", "NixTrans"   ,
-                          "ResNam")
+                          "rRecov"      , "pImmScen"  ,   "EarlyTrend", "NixTrans"   ,
+                          "net_mig_usb", "net_mig_nusb", "ResNam")
   ################################################################################
   ##### INTERVENTION
   ################################################################################
@@ -35,8 +35,8 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
     Int1 = Int2 = Int3 = Int4 = 1
   }
   # adj_fact<-exp(.0001*(10:0)/11 + .0011*(0:10)/11)
-  adj_fact <- exp(PV[["adj_ag1"]]*(10:0)/11 + PV[["adj_ag11"]]*(0:10)/11)
-  InputParams[["adj_fact"]] <- adj_fact;
+  # adj_fact <- exp(PV[["adj_ag1"]]*(10:0)/11 + PV[["adj_ag11"]]*(0:10)/11)
+  # InputParams[["adj_fact"]] <- adj_fact
 
   #params from general reblnc_pop:
   InputParams[["dist_gen"]] <- dist_gen;
@@ -54,24 +54,40 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
   ImmigInputs      <- Inputs[["ImmigInputs"]]
   #In order for proper scenario/Interventions, creation of a variable to limit the
   TxInputs         <- Inputs[["TxInputs"]]
-
+  NetMig           <- Inputs[["NetMigrState"]]
+  ########## DEFINE A VARIABLE THAT WILL DETERMINE HOW LONG THE TIME DEPENDENT
+  ########## VARIABLES SHOULD BE (IN MONTHS)
+  month<-1201;
   ##########                PARAMETER DEFINITIONS                      ###########
+  ##########                RISK FACTOR DISTRIBUTIONS   ##########################
+
+  #adj_fact<-exp(.0001*(10:0)/11 + .0011*(0:10)/11)
+  InputParams[["adj_fact"]] <- exp(PV[["adj_ag1"]]*(10:0)/11 + PV[["adj_ag11"]]*(0:10)/11)
+
   #######################           BIRTHS                 #######################
   ####### INDEXED BY TIME, ABSOLUTE NUMBER OF NEW ADULT ENTRANTS OVER TIME #######
 
-  InputParams[["Birthst"]]  <- SmoCurve(Births)*PV["TunBirths"]/12
+  Birthst   <- SmoCurve(Births)*PV["TunBirths"]/12
+  InputParams[["Birthst"]]   <- Birthst[1:month]
 
   ##########################      MORTALITY RATES       ##########################
   ########################## BACKGROUND MORTALITY BY TIME ########################
-  InputParams[["mubt"]]    <- matrix(NA,1801,11)
+  mubt      <- matrix(NA,1801,11)
 
   TunmuAg <- PV["TunmuAg"]
   RRmuAg <- exp((1:11)*TunmuAg)
-
   for(i in 1:11) {
-    InputParams[["mubt"]][,i] <- SmoCurve(BgMort[,i+1])*PV["TunMubt"]/12
-    InputParams[["mubt"]][,i]<-InputParams[["mubt"]][,i]*RRmuAg[i]
+    mubt[,i] <- SmoCurve(BgMort[,i+1])*PV["TunMubt"]/12
+    mubt[,i] <- mubt[,i]*RRmuAg[i]
   }
+
+
+  mubt<-mubt[1:month,]
+  # for(i in 2:10) {
+  #   mubt[,i]<-mubt[,i]*exp(TunmuAg)
+  # }
+  InputParams[["mubt"]]    <- mubt
+
   #########################     DISEASE SPECIFIC       ###########################
   #############    ACTIVE TB RATES DEFAULT TO THE SMEAR POS LEVELS   #############
   muIp  	  <- PV["muIp"]/12
@@ -135,7 +151,7 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
   TunmuTbAg <- PV["TunmuTbAg"]
 
   #################                IMMIGRATION              #####################
-  TotImmig1       <- c(ImmigInputs[[1]][1:65],(ImmigInputs[[1]][66:151]-ImmigInputs[[1]][66])*PV["ImmigVolFut"]+ImmigInputs[[1]][66])/12*PV["ImmigVol"]
+  # TotImmig1       <- c(ImmigInputs[[1]][1:65],(ImmigInputs[[1]][66:151]-ImmigInputs[[1]][66])+ImmigInputs[[1]][66])/12*PV["ImmigVol"]
   TotImmig0       <- (c(ImmigInputs[[1]][1:151])+c(rep(0,65),cumsum(rep(PV["ImmigVolFut"],86))))/12*PV["ImmigVol"]
 
   #set.seed( rand_seed)
@@ -168,9 +184,10 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
   PrevTrend25_34a  <- SmoCurve(PrevTrend25_341a)
   PrevTrend25_34a  <-PrevTrend25_34a[1:1201]
 
-  ImDxChngV      <- SmoCurve(c(rep(1,57),seq(1,PV["ImDxChng"],length.out=6)[-1],rep(PV["ImDxChng"],89)))
-  ImDxChngV      <-ImDxChngV[1:1201]
-  InputParams[["ImmAct"]]        <- outer(PrevTrend25_34a*PV["RRtbprev"]*ImDxChngV,ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*PV["pImAct"]
+  # ImDxChngV      <- SmoCurve(c(rep(1,57),seq(1,PV["ImDxChng"],length.out=6)[-1],rep(PV["ImDxChng"],89)))
+  # ImDxChngV      <-ImDxChngV[1:1201]
+  # ImmAct         <- outer(PrevTrend25_34a*PV["RRtbprev"]*ImDxChngV,ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*PV["pImAct"]
+  InputParams[["ImmAct"]]          <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*PV["pImAct"]
   InputParams[["ImmFst"]]        <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*(1-PV["pImAct"])
 
   InputParams[["ImmAct"]]    <-InputParams[["ImmAct"]][1:1201,1:11]
@@ -219,6 +236,10 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
 
   InputParams[["rEmmigFB"]] <- c(PV["rEmmigF1"],PV["rEmmigF2"])/12
 
+  ######################          NET MIGRATION          #########################
+
+  InputParams[["net_mig_usb"]]  <- (NetMig[,"usb" ]*PV["TunNetMig"])^(1/12)-1
+  InputParams[["net_mig_nusb"]] <- (NetMig[,"nusb"]*PV["TunNetMig"])^(1/12)-1
 
   ##########################  HIGH-RISK ENTRY/EXIT  #############################
 
@@ -274,7 +295,7 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
 
   #vector of ORpfastRF
   vORpfastPIRF<-vORpfastRF  <-c(1,1,1,1)
-  vORpfastRF  <- pfast*(exp((0:3)/3*log(ORpfastRF)))
+  vORpfastRF  <- (exp((0:3)/3*log(ORpfastRF)))
   vORpfastPIRF  <- vORpfastRF*ORpfastPI
 
   ############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
@@ -296,8 +317,8 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
   rslowRF    <- PV["rslowH"]/12
   RRrslowRF  <- rslowRF/rslow
   InputParams[["rfast"]]    <- PV["rfast"]/12
-  rrSlowFB0  <- PV["rrSlowFB"]
-  InputParams[["rrSlowFB"]]   <- c(1,rrSlowFB0,rrSlowFB0)
+  # rrSlowFB0  <- PV["rrSlowFB"]
+  InputParams[["rrSlowFB"]]   <- c(1,1,1)
 
   ############# CREATE A VECTOR FOR RATE OF SLOW PROGRESSION THAT WILL
   ############# VARY BASED ON LEVELS OF TB REACTIVATION RATES
@@ -658,7 +679,10 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
               paste("N_ag_8",StatList[[5]],sep="_" ),
               paste("N_ag_9",StatList[[5]],sep="_" ),
               paste("N_ag_10",StatList[[5]],sep="_" ),
-              paste("N_ag_11",StatList[[5]],sep="_" )
+              paste("N_ag_11",StatList[[5]],sep="_" ),
+              ### new infections
+              paste("N_newinf_USB",StatList[[1]],sep="_" ),
+              paste("N_newinf_NUSB",StatList[[1]],sep="_" )
 
   )
 

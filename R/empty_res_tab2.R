@@ -41,12 +41,10 @@ make_empty_res_tab2bg <- function() {
   # Specify the levels of each dimension to the data
   CatList <- list()
   CatList[[1]] <- c(
-    "ltbi_000s",
     "pct_ltbi",
-    "tb_incidence_000s",
+    "tb_infection_per_mil",
     "tb_incidence_per_mil",
-    "tb_mortality_000s",
-    "tb_mortality_per_mil")
+    "tb_deaths_per_mil")
   CatList[[2]] <- c('base_case', paste0('intervention_', 1:5), paste0('scenario_', 1:3))
   CatList[[3]] <- c("all_populations","usb_population","fb_population")
   CatList[[4]] <- c("all", "0-24","25-64","65+")

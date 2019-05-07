@@ -11,10 +11,30 @@ locs<-c("CA","FL","GA","IL","NJ" ,"NY", "PA","TX", "VA","WA")
 #   Opt <- readRDS(system.file(paste0(loc,"/",loc,"_opt_all_2018-12-12.rds"), package="MITUS"))
 #   Par <- readRDS(paste0("~/Desktop/GoodStateOptims/parAll_",loc,"_10_2018_11_27.rds"))
 #
-#   OutputsInt(Par,loc,n_cores=1,endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0)
+#   for (intv in 0:8) {
+#     # intvs will be a vector of 0s except for (possibly) one activated intervention
+#     intvs <- rep(0, 8)
 #
+#     # If intv is 0, disable all interventions to run the basecase.
+#     # Otherwise, activate one of the 8 interventions.
+#     if (intv != 0) intvs[intv] <- 1
+#
+#     # Simulate using the elements of intvs to control
+#     # whether or not each intervention is on.
+#     OutputsInt(Par,loc,n_cores=1,endyr=2050, Int1 = intvs[[1]],
+#                       Int2 = intvs[[2]],
+#                       Int3 = intvs[[3]],
+#                       Int4 = intvs[[4]],
+#                       Int5 = intvs[[5]],
+#                       Scen1 = intvs[[6]],
+#                       Scen2 = intvs[[7]],
+#                       Scen3 = intvs[[8]])
+#
+#     # Do something to save the simulation outcomes
 #   }
-#  # }
+# # format_as_restab(loc)
+#   }
+ # }
 # #s
 #  # for (i in 1:length(locs)){
 #  #   loc<-locs[i]
@@ -40,6 +60,6 @@ locs<-c("CA","FL","GA","IL","NJ" ,"NY", "PA","TX", "VA","WA")
 # for (i in 1:length(locs)){
 #   loc<-locs[i]
 #   print(loc)
-#   # onesim(loc)
+#    # onesim(loc)
 #  make_results(loc)
 #   }

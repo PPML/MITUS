@@ -17,6 +17,8 @@ param <- function (PV){
   Births           <- Inputs[["Births"]]
   ImmigInputs      <- Inputs[["ImmigInputs"]]
   TxInputs         <- Inputs[["TxInputs"]]
+  NetMig           <- Inputs[["NetMigrState"]]
+
 
   ########## DEFINE A VARIABLE THAT WILL DETERMINE HOW LONG THE TIME DEPENDENT
   ########## VARIABLES SHOULD BE (IN MONTHS)
@@ -135,8 +137,10 @@ param <- function (PV){
   #  PrevTrend25_341a <-   c(PrevTrend25_340a[1:66],exp(mvrnorm(1, log(PrevTrend25_340a[-(1:66)]), vcv_gp_l10_sd0.1))) # Add gaussian process noise
   PrevTrend25_341a <-   PrevTrend25_340a
   PrevTrend25_34a  <- SmoCurve(PrevTrend25_341a)
-  ImDxChngV      <- SmoCurve(c(rep(1,57),seq(1,PV["ImDxChng"],length.out=6)[-1],rep(PV["ImDxChng"],89)))
-  ImmAct         <- outer(PrevTrend25_34a*PV["RRtbprev"]*ImDxChngV,ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*PV["pImAct"]
+  # ImDxChngV      <- SmoCurve(c(rep(1,57),seq(1,PV["ImDxChng"],length.out=6)[-1],rep(PV["ImDxChng"],89)))
+  # ImmAct         <- outer(PrevTrend25_34a*PV["RRtbprev"]*ImDxChngV,ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*PV["pImAct"]
+  ImmAct         <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*PV["pImAct"]
+
   ImmFst         <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*(1-PV["pImAct"])
   ImmNon         <- TotImmAge-ImmAct-ImmFst-ImmLat
   ###################### TRUNCATE THESE VALS
@@ -152,6 +156,9 @@ param <- function (PV){
 
   rEmmigFB <- c(PV["rEmmigF1"],PV["rEmmigF2"])/12
 
+  ######################          NET MIGRATION          #########################
+  net_mig_usb  <- (NetMig[,"usb" ]*PV["TunNetMig"])^(1/12)-1
+  net_mig_nusb <- (NetMig[,"nusb"]*PV["TunNetMig"])^(1/12)-1
   ######################       HIGH-RISK ENTRY/EXIT      ########################
 
   p_HR     <- PV["pHR"]
@@ -222,8 +229,8 @@ param <- function (PV){
   rslowRF    <- PV["rslowH"]/12
   RRrslowRF  <- rslowRF/rslow
   rfast      <- PV["rfast"]/12
-  rrSlowFB0  <- PV["rrSlowFB"]
-  rrSlowFB   <- c(1,rrSlowFB0,rrSlowFB0)
+  #rrSlowFB0  <- PV["rrSlowFB"] #removed
+  rrSlowFB   <- c(1,1,1)
 
   ############# CREATE A VECTOR FOR RATE OF SLOW PROGRESSION THAT WILL
   ############# VARY BASED ON LEVELS OF TB REACTIVATION RATES
@@ -552,7 +559,11 @@ param <- function (PV){
               paste("N_ag_8",StatList[[5]],sep="_" ),
               paste("N_ag_9",StatList[[5]],sep="_" ),
               paste("N_ag_10",StatList[[5]],sep="_" ),
-              paste("N_ag_11",StatList[[5]],sep="_" )
+              paste("N_ag_11",StatList[[5]],sep="_" ),
+
+              ### new infections
+              paste("N_newinf_USB",StatList[[1]],sep="_" ),
+              paste("N_newinf_NUSB",StatList[[1]],sep="_" )
   )
 
   Params<-list()
@@ -594,6 +605,8 @@ param <- function (PV){
   Params[["rRecov"]]    = rRecov
   Params[["pImmScen"]]  = pImmScen
   Params[["EarlyTrend"]]= EarlyTrend
+  Params[["net_mig_usb"]]  = net_mig_usb
+  Params[["net_mig_nusb"]]= net_mig_nusb
   # Params[["NixTrans"]]  = NixTrans
   # Params[["can_go"]]    = can_go
   # Params[["dist_goal"]] = dist_goal
@@ -604,3 +617,4 @@ param <- function (PV){
   Params[["ResNam"]]    = ResNam
   return(Params)
 }
+
