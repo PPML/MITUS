@@ -20,7 +20,6 @@ Rcpp::NumericMatrix reblncd(
   double mubtN[11];
   double dist_i_v[16];
   double diff_i_v[16];
-  double dist_t1_v[16];
   double temp_vec[16];
   double row_sum[16];
   double can_goN[16][16];
@@ -30,6 +29,7 @@ Rcpp::NumericMatrix reblncd(
   double trans_mat_tot_ag[16][176];
   Rcpp::NumericMatrix trans_mat_tot_ages(16,176);
   double frc;
+  double sum;
   int mat_sum; int N;
 
 
@@ -51,7 +51,7 @@ Rcpp::NumericMatrix reblncd(
   }
 
   for (int i=0; i<11; i++){
-    mubtN[i]=mubt(6,i);
+    mubtN[i]=mubt(792,i);
   }
 
   frc=0.01;
@@ -65,13 +65,14 @@ Rcpp::NumericMatrix reblncd(
   for(int ag=0; ag<11; ag++){
     //' reset the appropriate age specific variables
     for(int i=0;i<16;i++){
-      dist_t1_v[i]=0;
       dist_i_v[i]=0;
+      temp_vec[i]=0;
       for (int j=0;j<16;j++){
         did_go[i][j]=0;
         trans_mat_tot[i][j]=0;
       } }
     mat_sum=0;
+    sum=0;
     //' Calculate the dist_t1_v
     // for (int nm=0; nm<4; nm++){
     //   for (int im=0; im<4; im++){
@@ -89,13 +90,18 @@ Rcpp::NumericMatrix reblncd(
 
     for (int nm=0; nm<4; nm++){
       for (int im=0; im<4; im++){
-          dist_t1_v[nm+im*4]=dist_gen_v[nm+im*4]*(1-((mubtN[ag]*RRmuRF[nm])));
+          temp_vec[nm+im*4]=dist_gen_v[nm+im*4]*(1-((mubtN[ag]*RRmuRF[nm])));
       }
     }
 
     for (int i=0; i<16; i++){
       // Rcpp::Rcout <<"dist_t1_v at ag = "<< ag << "and index = "<< i << " is "<<  dist_t1_v[i]<< "\n";
-      dist_i_v[i]=dist_t1_v[i];
+      sum += temp_vec[i];
+    }
+
+    for (int i=0; i<16; i++){
+      // Rcpp::Rcout <<"dist_t1_v at ag = "<< ag << "and index = "<< i << " is "<<  dist_t1_v[i]<< "\n";
+      dist_i_v[i]=temp_vec[i]/sum;
     }
 
     for (int r=0; r<16; r++){
@@ -104,7 +110,7 @@ Rcpp::NumericMatrix reblncd(
       } }
     //' Open the iteration loop
 
-    N=1;
+    N=100;
 
     for (int n=0; n<N; n++){
       //'calculate the difference between dist_gen and current dist
@@ -204,7 +210,7 @@ Rcpp::NumericMatrix reblncd(
       }
       for(int r=0; r<16; r++){
         for(int c=0; c<16; c++){
-          temp_vec[c] +=dist_i_v[r]*trans_mat[r][c];
+          temp_vec[c] += dist_i_v[r]*trans_mat[r][c];
         } }
       for(int c=0; c<16; c++){
         dist_i_v[c] = temp_vec[c];
