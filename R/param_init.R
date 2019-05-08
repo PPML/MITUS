@@ -203,10 +203,10 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
   #### #### #### SCEN 3 #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
   if(Scen3==1) {
-    adjf <- (1-0.5)^(1/10/12);  adjfV <- adjf^(0:372)
-    for(i in 1:11) InputParams[["ImmLat"]][829:1201,i] <- InputParams[["ImmLat"]][829:1201,i]*adjfV
-    for(i in 1:11) InputParams[["ImmAct"]][829:1201,i] <- InputParams[["ImmAct"]][829:1201,i]*adjfV
-    for(i in 1:11) InputParams[["ImmFst"]][829:1201,i] <- InputParams[["ImmFst"]][829:1201,i]*adjfV
+    adjf <- (1-0.5)^(1/10/12);  adjfV <- adjf^(0:384)
+    for(i in 1:11) InputParams[["ImmLat"]][817:1201,i] <- InputParams[["ImmLat"]][817:1201,i]*adjfV
+    for(i in 1:11) InputParams[["ImmAct"]][817:1201,i] <- InputParams[["ImmAct"]][817:1201,i]*adjfV
+    for(i in 1:11) InputParams[["ImmFst"]][817:1201,i] <- InputParams[["ImmFst"]][817:1201,i]*adjfV
     InputParams[["ImmNon"]]         <- TotImmAge-InputParams[["ImmAct"]]-InputParams[["ImmFst"]]-InputParams[["ImmLat"]]
   }
 
@@ -322,7 +322,7 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
   InputParams[["rSlfCur"]]      <- PV["rSlfCur"]/12
 
   ##################### __         LTBI DIAGNOSIS           #######################
-  InputParams[["rLtScrt"]]       <- LgtCurve(1985,2015,PV["rLtScr"])/12
+  InputParams[["rLtScrt"]]       <- LgtCurve(1985,2017,PV["rLtScr"])/12
   SensLt        <- PV["SensLt"]    #  sens of test for latent TB infection (based on IGRA QFT-GIT)
   ###removed sens for HIV
   SpecLt        <- PV["SpecLt"]    #  spec of test for latent TB infection (based on IGRA QFT-GIT)
@@ -339,7 +339,7 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
 
   #dLtt          <- (1-LgtCurve(2016,2021,0)) * 1/9
 
-  EffLt0        <- LgtCurve(2016,2021,0)+1
+  EffLt0        <- LgtCurve(2018,2023,0)+1
   EffLtX        <- cbind(EffLt0,0,EffLt0,0,0)
 
   #### #### #### INT 2 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
