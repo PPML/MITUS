@@ -12,6 +12,11 @@ make_results<-function(loc){
     body=readr::read_file(
       system.file('inline_cpp/format_restab2.cpp', package='MITUS')))
 
+  cpp_reshaperbg <- cxxfunction(
+    signature(ResTab='numeric', ResTabus='numeric', ResTabfb='numeric', res_tab2 = 'numeric'),
+    plugin='Rcpp',
+    body=readr::read_file(
+      system.file('inline_cpp/format_restab2bg.cpp', package='MITUS')))
 #####################################################################################
 
 #load in the little results
@@ -35,7 +40,7 @@ bg_restab<-make_empty_res_tab2bg()
 bg_restab %<>% mutate_if(is.factor, as.integer) %>% as.matrix
 
 #reshape it baby
-res_tab2<-cpp_reshaper(results[[1]],results[[2]],results[[3]],bg_restab)
+res_tab2<-cpp_reshaperbg(results[[1]],results[[2]],results[[3]],bg_restab)
 #save the results
 saveRDS(res_tab2,file=paste0("~/MITUS/inst/", loc, "/bg_restab2.rds"))
 
