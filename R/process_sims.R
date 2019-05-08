@@ -39,7 +39,7 @@ OutputsZint <-  function(samp_i=1,ParMatrix,loc="US",startyr=1950, endyr=2050,In
    prms <-list()
    prms <- param(P)
    IP <- list()
-   IP <- param_init(P)
+   IP <- param_init(P, Int1 = Int1, Int2 = Int2, Int3 = Int3, Int4=Int4, Int5 = Int5, Scen1 = Scen1, Scen2 = Scen2, Scen3 = Scen3)
    NY<-endyr-startyr
    trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v,adj_fact= prms[["adj_fact"]])
    if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
