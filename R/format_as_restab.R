@@ -88,9 +88,9 @@ format_as_restab <- function(loc) {
   age_id = (2018:2049)-1949
   tt<-0
   #create 3 lists to hold output
-  mResTabfb <- mResTabus <- mResTab <- array(NA,dim=c(9,length(age_id),7,4))
+  mResTabfb <- mResTabus <- mResTab <- array(NA,dim=c(9,length(age_id),5,4))
 
-  ResTabfb <- ResTabus <- ResTab <- array(NA,dim=c(90,length(age_id),7,4))
+  ResTabfb <- ResTabus <- ResTab <- array(NA,dim=c(90,length(age_id),5,4))
   for (intv in 1:9){
     #load the results for all the runs (need to make this dataset)
     o<-readRDS(system.file(paste0(loc,"/results_", intv, "_2019-05-08.rds"), package="MITUS"))
