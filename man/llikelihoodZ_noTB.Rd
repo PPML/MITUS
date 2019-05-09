@@ -19,9 +19,10 @@ format P
 if any output is missing or negative or if any model state population is negative
 set the likelihood to a hugely negative number (penalized)
 TOTAL POP AGE DISTRIBUTION 2016 index updated
-  Total DEATHS by Decade
-#' Total DEATHS 1999-2016 BY AGE
+Total DEATHS 1979-2016
+Total DEATHS 1999-2016 BY AGE
 #' Mort_dist 2016
+HOMELESS POP 2010 - index updated
 }
 \description{
 This scrprmst creates a function that loops over the log-likelihood

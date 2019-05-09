@@ -51,7 +51,7 @@ Rcpp::NumericMatrix reblncd(
   }
 
   for (int i=0; i<11; i++){
-    mubtN[i]=mubt(792,i);
+    mubtN[i]=mubt(6,i);
   }
 
   frc=0.01;
@@ -62,7 +62,7 @@ Rcpp::NumericMatrix reblncd(
   ////////////////////////////////////////////////////////////////////////////////////////
 
   //'Open the Age Loop to Calculate Age Specific Transition Matrices
-  for(int ag=0; ag<11; ag++){
+  for(int ag=10; ag<11; ag++){
     //' reset the appropriate age specific variables
     for(int i=0;i<16;i++){
       dist_i_v[i]=0;
@@ -70,7 +70,7 @@ Rcpp::NumericMatrix reblncd(
       for (int j=0;j<16;j++){
         did_go[i][j]=0;
         trans_mat_tot[i][j]=0;
-      } }
+    } }
     mat_sum=0;
     sum=0;
     //' Calculate the dist_t1_v
@@ -87,10 +87,11 @@ Rcpp::NumericMatrix reblncd(
     //
     //   }
     // }
+     Rcpp::Rcout <<"mubt at ag = "<< ag << " is "<<  mubtN[ag]<< "\n";
 
     for (int nm=0; nm<4; nm++){
       for (int im=0; im<4; im++){
-          temp_vec[nm+im*4]=dist_gen_v[nm+im*4]*(1-((mubtN[ag]*RRmuRF[nm])));
+          temp_vec[nm+im*4]=dist_gen_v[nm+im*4]*(1-(mubtN[ag]*RRmuRF[nm]));
       }
     }
 
@@ -100,17 +101,17 @@ Rcpp::NumericMatrix reblncd(
     }
 
     for (int i=0; i<16; i++){
-      // Rcpp::Rcout <<"dist_t1_v at ag = "<< ag << "and index = "<< i << " is "<<  dist_t1_v[i]<< "\n";
       dist_i_v[i]=temp_vec[i]/sum;
     }
 
     for (int r=0; r<16; r++){
+      Rcpp::Rcout <<"start diff at ag = "<< ag << "and index = "<< r << " is "<<  dist_i_v[r] -dist_gen_v[r]<< "\n";
       for (int c=0; c<16; c++){
         trans_mat[r][c] = 0;
       } }
     //' Open the iteration loop
 
-    N=100;
+    N=10;
 
     for (int n=0; n<N; n++){
       //'calculate the difference between dist_gen and current dist

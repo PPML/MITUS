@@ -13,9 +13,9 @@ for(i in 1:num_mRF) {
                              upper = cuts[c(i,j)+1],
                              mean  = pars[c(1,1)],
                              sigma = matrix(pars[2]*c(1,pars[3],pars[3],1),2,2) )[[1]]
-    dist_gen_v[(i)+((j-1)*4)]=dist_gen[i,j]
   }
 }
+dist_gen_v<-as.vector(dist_gen)
 # names(dist_gen_v) <-paste0(rep(paste0("p",0:3),each=4),"_",rep(paste0("m",0:3),4))
 
 mort_v<-rowSums(dist_gen)

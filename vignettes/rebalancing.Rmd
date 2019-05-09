@@ -133,7 +133,7 @@ model_load("US")
    print(V15a)
 ```
 
-## Run Two: Adjustment Factor not active; rebalancing applied as flows in the model, Births are zeroed
+## Run Four: Adjustment Factor not active; rebalancing applied as flows in the model, Births are zeroed
 ```{r,warning=FALSE, message=FALSE}
 library(MITUS)
 model_load("US")
@@ -176,7 +176,7 @@ model_load("US")
 
 
 
-## Run Four: Adjustment Factor hand tweaked; rebalancing applied as flows in the model, similar to other dynamics 
+## Run Five: Adjustment Factor hand tweaked; rebalancing applied as flows in the model, similar to other dynamics 
 ```{r,warning=FALSE, message=FALSE}
 library(MITUS)
 model_load("US")
