@@ -73,7 +73,7 @@ llikelihoodZ_demo <-  function(samp_i,ParMatrix) {
       addlik <- US_dth_10_tot_lLik(V=v20a); addlik
       lLik <- lLik + addlik
       #' Total DEATHS 1999-2016 BY AGE
-      v20b  <- M[66:67,14:24]
+      v20b  <- M[67,14:24]
       addlik <- tot_dth_age_lLik(V=v20b); addlik
       lLik <- lLik + addlik
 

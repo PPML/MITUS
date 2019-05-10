@@ -252,11 +252,24 @@ tb_dth_age_lLik <- function(V,rho=0.01) {
 
 US_dth_tot_lLik <- function(V) {
   # CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
-  US_deaths_tot   <- CalibDat[["US_tot_mort"]][37:38,-1]
-  adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.01/1.96,log=T)*wts[66:67])
-  sum(dnorm(US_deaths_tot,V,US_deaths_tot*0.01/1.96,log=T)*wts[66:67]) - adj_20a
+  US_deaths_tot   <- CalibDat[["US_tot_mort"]][30:67,-1]
+  adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.1/1.96,log=T)*wts[30:67])
+  sum(dnorm(US_deaths_tot,V,US_deaths_tot*0.1/1.96,log=T)*wts[30:67]) - adj_20a
 }
 
+#' TOTAL US DEATHS BY DECADE
+#' 1970,1975,1980,1985,1990-2007
+#' Motivation: norm, mean centered with CI = +/- 5% of mean
+#' weaken this likelihood to a variance of .5, 1
+#'@param V vector of total deaths in US from 1971-2016, fraction of millions
+#'@return likelihood
+
+US_dth_10_tot_lLik <- function(V) {
+  # CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
+  US_deaths_tot   <- CalibDat[["US_tot_mort"]][c(11,21,31,41,51,61),-1]
+  adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.1/1.96,log=T)*wts[c(11,21,31,41,51,61)])
+  sum(dnorm(US_deaths_tot,V,US_deaths_tot*0.1/1.96,log=T)*wts[c(11,21,31,41,51,61)]) - adj_20a
+}
 #' TOTAL DEATHS AGE DISTRIBUTION 1999-2014
 #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
 #'@param V table of deaths by age 1999-2014 (row=16 years, col=11 ages)
@@ -266,8 +279,11 @@ tot_dth_age_lLik <- function(V,ESS=500) {
   # CalibDat$US_mort_age <- read.csv(system.file("extdata","US_mort_age.csv", package="MITUS"))
   data("mort_ag_16", package = 'MITUS');
   mort_ag_16_d <-(mort_ag_16[]/sum(mort_ag_16[]))
+  V2 <- V[-11]; V2[10] <- V2[10]+V[11]
+
   adj_20b               <- sum(log(mort_ag_16_d)*mort_ag_16_d);
-  sum(log(V[]/sum(V))*mort_ag_16_d[])*ESS - adj_20b*ESS  }
+  sum(log(V2[]/sum(V2))*mort_ag_16_d[])*ESS - adj_20b*ESS
+  }
 
 
 #' Mortality Risk Group Distribution 1999-2014

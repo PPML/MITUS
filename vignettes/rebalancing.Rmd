@@ -184,7 +184,7 @@ model_load("US")
   prms <- param(P)
   IP <- list()
   IP <- param_init(P)
-  trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=seq(1.1,2,length.out = 11))
+  trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=seq(.8,1.8,length.out = 11))
   if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
   zz <- cSim_flow( nYrs       = 2018-1950         , nRes      = length(prms[["ResNam"]])  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
                Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]  ,
@@ -215,3 +215,11 @@ model_load("US")
    print(V15a)
 
 ```
+
+
+#### changing the rebalancing code itself 
+
+It appears that the following changes actually alter the distribution significantly:
++ increasing the frc makes dist better!
++ might be a problem with the fail safe of adding 1e30 to the denominator to prevent division by zero 
++ The dist seems to have cells go to zero very early in the iteration loop -- shouldn't this be okay?
