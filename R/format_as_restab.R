@@ -9,7 +9,7 @@ format_as_restab <- function(loc) {
   # to reflect that we're working on custom scenarios
   for (intv in 1:9){
     #load the results for all the runs (need to make this dataset)
-  o<-readRDS(system.file(paste0(loc,"/results_", intv, "_2019-05-13.rds"), package="MITUS"))
+  o<-readRDS(system.file(paste0(loc,"/results_", intv, "_2019-05-08.rds"), package="MITUS"))
   # for (i in 1:564){
   #   o[,,i]<-o[,,i]*1e3
   # }
@@ -93,7 +93,7 @@ format_as_restab <- function(loc) {
   ResTabfb <- ResTabus <- ResTab <- array(NA,dim=c(90,length(age_id),5,4))
   for (intv in 1:9){
     #load the results for all the runs (need to make this dataset)
-    o<-readRDS(system.file(paste0(loc,"/results_", intv, "_2019-05-13.rds"), package="MITUS"))
+    o<-readRDS(system.file(paste0(loc,"/results_", intv, "_2019-05-08.rds"), package="MITUS"))
     # for (i in 1:564){
     #   o[,,i]<-o[,,i]*1e3
     # }
@@ -112,39 +112,39 @@ format_as_restab <- function(loc) {
       # for (ag_vec in ag_vector){
         ResTab[1:nr+((intv-1)*10),,1,b_ag]<-o[,age_id,1]
         #percentage of ltbi prevalence
-        ResTab[1:nr+((intv-1)*10),,2,b_ag]<-apply(o[,age_id,c(54+ag_vec,65+ag_vec)],c(1,2),sum)/sum(o[, age_id,2+ag_vec])*1e2
+        ResTab[1:nr+((intv-1)*10),,2,b_ag]<-apply(o[,age_id,c(54+ag_vec,65+ag_vec)],c(1,2),sum)/rowSums(o[, age_id,2+ag_vec], dims = 2)*1e2
         #incident tb infections per million
-        ResTab[1:nr+((intv-1)*10),,3,b_ag]<-apply(o[,age_id,c(564+ag_vec,575+ag_vec)],c(1,2),sum)/sum(o[, age_id,2+ag_vec])*1e6
+        ResTab[1:nr+((intv-1)*10),,3,b_ag]<-apply(o[,age_id,c(564+ag_vec,575+ag_vec)],c(1,2),sum)/rowSums(o[, age_id,2+ag_vec], dims = 2)*1e6
         # TB notifications (alive+dead at diagnosis) per million
-        ResTab[1:nr+((intv-1)*10),,4,b_ag]<-apply(o[,age_id,c(135+ag_vec,188+ag_vec)],c(1,2),sum)/sum(o[, age_id,2+ag_vec])*1e6
+        ResTab[1:nr+((intv-1)*10),,4,b_ag]<-apply(o[,age_id,c(135+ag_vec,188+ag_vec)],c(1,2),sum)/rowSums(o[, age_id,2+ag_vec], dims = 2)*1e6
         # tb attributable deaths per million
-        ResTab[1:nr+((intv-1)*10),,5,b_ag]<-apply(o[,age_id,c(87+ag_vec,98+ag_vec)],c(1,2),sum)/sum(o[, age_id,2+ag_vec])*1e6
+        ResTab[1:nr+((intv-1)*10),,5,b_ag]<-apply(o[,age_id,c(87+ag_vec,98+ag_vec)],c(1,2),sum)/rowSums(o[, age_id,2+ag_vec], dims = 2)*1e6
 
         ################################################################################
         #US Born population
         ################################################################################
         ResTabus[1:nr+((intv-1)*10),,1,b_ag]<-o[,age_id,1]/1e6
         # #percentage of ltbi prevalence
-        ResTabus[1:nr+((intv-1)*10),,2,b_ag]<-rowSums(o[, age_id,54+ag_vec], dims = 2)/sum(o[, age_id,32+ag_vec])*1e2
+        ResTabus[1:nr+((intv-1)*10),,2,b_ag]<-(rowSums(o[, age_id,54+ag_vec], dims = 2)/rowSums(o[, age_id,32+ag_vec], dims = 2))*1e2
         #incident tb infections per million
-        ResTabus[1:nr+((intv-1)*10),,3,b_ag]<-rowSums(o[, age_id,564+ag_vec], dims=2)/sum(o[, age_id,32+ag_vec])*1e6
+        ResTabus[1:nr+((intv-1)*10),,3,b_ag]<-rowSums(o[, age_id,564+ag_vec], dims=2)/rowSums(o[, age_id,32+ag_vec], dims = 2)*1e6
         # # TB notifications (alive+dead at diagnosis) per million
-        ResTabus[1:nr+((intv-1)*10),,4,b_ag]<-apply(o[,age_id,c(204+ag_vec,215+ag_vec)],c(1,2),sum)/sum(o[, age_id,32+ag_vec])*1e6
+        ResTabus[1:nr+((intv-1)*10),,4,b_ag]<-apply(o[,age_id,c(204+ag_vec,215+ag_vec)],c(1,2),sum)/rowSums(o[, age_id,32+ag_vec], dims = 2)*1e6
         # #  attributable deaths per million
-        ResTabus[1:nr+((intv-1)*10),,5,b_ag]<-rowSums(o[, age_id,87+ag_vec], dims = 2)/sum(o[, age_id,32+ag_vec])*1e6
+        ResTabus[1:nr+((intv-1)*10),,5,b_ag]<-rowSums(o[, age_id,87+ag_vec], dims = 2)/rowSums(o[, age_id,32+ag_vec], dims = 2)*1e6
         #
         # ################################################################################
         # #non-US Born population
         # ################################################################################
         ResTabfb[1:nr+((intv-1)*10),,1,b_ag]<-o[,age_id,1]/1e6
         # #percentage of ltbi prevalence
-        ResTabfb[1:nr+((intv-1)*10),,2,b_ag]<-rowSums(o[, age_id,65+ag_vec], dims=2)/sum(o[, age_id, 43+ag_vec])*1e2
+        ResTabfb[1:nr+((intv-1)*10),,2,b_ag]<-rowSums(o[, age_id,65+ag_vec], dims=2)/rowSums(o[, age_id,43+ag_vec], dims = 2)*1e2
         #incident tb infections per million
-        ResTabus[1:nr+((intv-1)*10),,3,b_ag]<-rowSums(o[, age_id,575+ag_vec], dims=2)/sum(o[, age_id,43+ag_vec])*1e6
+        ResTabus[1:nr+((intv-1)*10),,3,b_ag]<-rowSums(o[, age_id,575+ag_vec], dims=2)/rowSums(o[, age_id,43+ag_vec], dims = 2)*1e6
         # TB notifications (alive+dead at diagnosis) per million
-        ResTabfb[1:nr+((intv-1)*10),,4,b_ag]<-(apply(o[,age_id,c(135+ag_vec,188+ag_vec)],c(1,2),sum)-apply(o[,age_id,c(204+ag_vec,215+ag_vec)],c(1,2),sum))/sum(o[, age_id,43+ag_vec])*1e6
+        ResTabfb[1:nr+((intv-1)*10),,4,b_ag]<-(apply(o[,age_id,c(135+ag_vec,188+ag_vec)],c(1,2),sum)-apply(o[,age_id,c(204+ag_vec,215+ag_vec)],c(1,2),sum))/rowSums(o[, age_id,43+ag_vec], dims = 2)*1e6
         # tb attributable deaths per million
-        ResTabfb[1:nr+((intv-1)*10),,5,b_ag]<-rowSums(o[, age_id,98+ag_vec],dims = 2)/sum(o[, age_id, 43+ag_vec])*1e6
+        ResTabfb[1:nr+((intv-1)*10),,5,b_ag]<-rowSums(o[, age_id,98+ag_vec],dims = 2)/rowSums(o[, age_id,43+ag_vec], dims = 2)*1e6
       # }
     }
     # print(paste(aa,"--",bb)); flush.console()
