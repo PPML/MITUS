@@ -8,7 +8,7 @@ locs<-c("CA","FL","GA","IL","NJ" ,"NY", "PA","TX", "VA","WA")
 #   StartVal_st<-StartVal<-readRDS("~/Desktop/GoodStateOptims/StartVal_2018-11-14.rds")
 #   Inputs<-readRDS(paste0("~/Desktop/GoodStateOptims/",loc,"/",loc,"_ModelInputs_01-24-19.rds"))
 #
-#   Opt <- readRDS(system.file(paste0(loc,"/",loc,"_opt_all_2018-12-12.rds"), package="MITUS"))
+#    Opt <- readRDS(system.file(paste0(loc,"/",loc,"_opt_all_2018-12-12.rds"), package="MITUS"))
 #   Par <- readRDS(paste0("~/Desktop/GoodStateOptims/parAll_",loc,"_10_2018_11_27.rds"))
 #
 #   for (intv in 0:8) {
@@ -53,7 +53,7 @@ locs<-c("CA","FL","GA","IL","NJ" ,"NY", "PA","TX", "VA","WA")
 #   loc<-locs[i]
 #   print(loc)
 #
-# model_load(loc)
+# # model_load(loc)
 # make_results(loc)
 #   }
 # #
@@ -61,5 +61,5 @@ locs<-c("CA","FL","GA","IL","NJ" ,"NY", "PA","TX", "VA","WA")
 #   loc<-locs[i]
 #   print(loc)
 # # onesim(loc)
-#  make_results(loc)
+# make_results(loc)
 #   }

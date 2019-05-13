@@ -42,7 +42,9 @@ gen_par_matrix<-function(startMat){
   P <- P
   ParMatrix[i,]<-P
   }
-save(ParMatrix,file=paste("parAll",nrow(startMat),"_",Sys.time(),".rda", sep=""))
+# saveRDS(ParMatrix,file=paste("parAll",nrow(startMat),"_",Sys.time(),".rds", sep=""))
+  saveRDS(ParMatrix,file="/Users/nis100/Desktop/GoodStateOptims/parAll_MA_10_2018_11_27.rds")
+
   return(ParMatrix)
 
 }
