@@ -140,7 +140,7 @@ format_as_restab <- function(loc) {
         # #percentage of ltbi prevalence
         ResTabfb[1:nr+((intv-1)*10),,2,b_ag]<-rowSums(o[, age_id,65+ag_vec], dims=2)/rowSums(o[, age_id,43+ag_vec], dims = 2)*1e2
         #incident tb infections per million
-        ResTabus[1:nr+((intv-1)*10),,3,b_ag]<-rowSums(o[, age_id,575+ag_vec], dims=2)/rowSums(o[, age_id,43+ag_vec], dims = 2)*1e6
+        ResTabfb[1:nr+((intv-1)*10),,3,b_ag]<-rowSums(o[, age_id,575+ag_vec], dims=2)/rowSums(o[, age_id,43+ag_vec], dims = 2)*1e6
         # TB notifications (alive+dead at diagnosis) per million
         ResTabfb[1:nr+((intv-1)*10),,4,b_ag]<-(apply(o[,age_id,c(135+ag_vec,188+ag_vec)],c(1,2),sum)-apply(o[,age_id,c(204+ag_vec,215+ag_vec)],c(1,2),sum))/rowSums(o[, age_id,43+ag_vec], dims = 2)*1e6
         # tb attributable deaths per million
