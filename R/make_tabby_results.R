@@ -35,7 +35,7 @@ CatList[[3]] <- c("all_populations","usb_population","fb_population")
 CatList[[4]] <- c("0-4",paste(0:8*10+5,1:9*10+4,sep="-"),"95+")
 CatList[[5]] <- c("absolute_value","pct_basecase_same_year","pct_basecase_2016")
 CatList[[6]] <- 2018:2049
-
+res_tab2 <- as.data.frame(res_tab2)
 # Re-Factorize each column
 for (i in 1:6) {
   res_tab2[,i] <- factor(res_tab2[,i], labels = CatList[[i]])
@@ -66,7 +66,7 @@ CatList[[3]] <- c("all_populations","usb_population","fb_population")
 CatList[[4]] <- c("all_ages", "age_0_24","age_25_64","age_65p")
 CatList[[5]] <- c("absolute_value","pct_basecase_same_year","pct_basecase_2016")
 CatList[[6]] <- 2018:2049
-
+res_tab2 <- as.data.frame(res_tab2)
 # Re-Factorize each column
 for (i in 1:6) {
   res_tab2[,i] <- factor(res_tab2[,i], labels = CatList[[i]])
