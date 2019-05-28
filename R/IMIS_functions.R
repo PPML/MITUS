@@ -34,7 +34,7 @@ llikelihoodZ <-  function(samp_i, start_mat) {
     IP <- param_init(P)
     trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
 
-    zz <- cSim(  nYrs       = 2018-1950         , nRes      = length(prms[["ResNam"]]), rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
+    zz <- cSim_flow(  nYrs       = 2018-1950         , nRes      = length(prms[["ResNam"]]), rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
                  Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]    ,
                  rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
                  vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    , net_mig_usb = prms[["net_mig_usb"]]    ,
@@ -121,26 +121,34 @@ llikelihoodZ <-  function(samp_i, start_mat) {
       #' TB DEATHS 1999-2014 BY AGE - index updated above
       addlik <- tb_dth_age_lLik(V=v19); addlik
       lLik <- lLik + addlik
-      #' Total DEATHS 1979-2016
-      v20a  <- rowSums(M[51:67,121:131])
-      v20a<-v20a*1e6
-      addlik <- US_dth_tot_lLik(V=v20a); addlik
+      v20a<-M[c(11,21,31,41,51,61),121:131]
+      addlik <-US_dth_10_tot_lLik(V=v20a); addlik
       lLik <- lLik + addlik
+
       #' Total DEATHS 1999-2016 BY AGE
-      v20b  <- M[50:67,121:131]
-      v20b[,10] <-v20b[,10]+v20b[,11]
-      v20b<-v20b[,-11]
+      v20b  <- M[67,121:131]
+      # v20b[10] <-v20b[10]+v20b[11]
+      # v20b<-v20b[-11]
       addlik <- tot_dth_age_lLik(V=v20b); addlik
       lLik <- lLik + addlik
       #' #' Mort_dist 2016
-      v21a<- v21  <- M[51:67,521:564]
+      v21a<- v21  <- M[66:67,521:564]
       for (i in 1:11){
-        denom<-M[51:67,2+i]
+        denom<-M[66:67,2+i]
         for (j in 1:ncol(v21)){
           v21a[,(1:4)+4*(i-1)]<-v21[,(1:4)+4*(i-1)]/denom
         } }
       addlik <- mort_dist_lLik(V=v21a); addlik
       lLik <- lLik + addlik
+      #' #' Mort_dist 2016
+      # v21a<- v21  <- M[51:67,521:564]
+      # for (i in 1:11){
+      #   denom<-M[51:67,2+i]
+      #   for (j in 1:ncol(v21)){
+      #     v21a[,(1:4)+4*(i-1)]<-v21[,(1:4)+4*(i-1)]/denom
+      #   } }
+      # addlik <- mort_dist_lLik(V=v21a); addlik
+      # lLik <- lLik + addlik
       #' HOMELESS POP 2010 - index updated
       v23b  <- M[61,29]
       addlik <- homeless_10_lLik(V=v23b); addlik
