@@ -1,6 +1,7 @@
 tabby_calib <- function(samp_i,loc) {
   model_load(loc)
-  Par<-Opt[samp_i,-58]
+  Par<-opt[samp_i,-(length(Par))]
+
 Par2 <- pnorm(Par,0,1)
 # uniform to true
 Par3 <- Par2
@@ -1009,3 +1010,4 @@ p <- recordPlot()
 saveRDS(p, paste0('~/MITUS/inst/',loc,'/calibplots/total-deaths-by-age.rds'))
 }
 }
+
