@@ -140,12 +140,12 @@ Rcpp::NumericMatrix reblncd(
 
       //'Adjust the Transition Matrix
       //'1st scale up rates, 2nd make sure that it does not sum over one
-      frc = 0.1;  // approach seems quite sensitive to this value, = fraction of change to
+      frc = 0.05;  // approach seems quite sensitive to this value, = fraction of change to
       for(int i=0; i<16; i++){
         // Rcpp::Rcout <<"dist_i_v at ag = "<< ag << "and index = "<< i << " is "<<  dist_i_v[i]<< "\n";
 
         for(int j=0; j<16; j++){
-          trans_mat[i][j] =  trans_mat[i][j] /(dist_i_v[i])*frc; //makes this number bigger
+          trans_mat[i][j] =  trans_mat[i][j] /(dist_i_v[i]+1e-30)*frc; //makes this number bigger
         } }
 
       //'Calculate Row Sums
