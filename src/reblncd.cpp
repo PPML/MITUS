@@ -74,6 +74,7 @@ Rcpp::NumericMatrix reblncd(
       for (int j=0;j<16;j++){
         did_go[i][j]=0;
         trans_mat_tot[i][j]=0;
+        trans_mat[i][j]=0;
     } }
     mat_sum=0;
     sum=0;
@@ -132,7 +133,6 @@ Rcpp::NumericMatrix reblncd(
             trans_mat[r][c] = can_goN[r][c]*(diff_i_v[r]-diff_i_v[c]);
           } else {
             trans_mat[r][c] = can_goN[r][c]*0;
-
           }
           // Rcpp::Rcout <<"diff at ag = "<< ag << "and index = "<< r << " c =  "<< c << " is "<< diff_i_v[r]-diff_i_v[c]<< "\n";
 
@@ -140,12 +140,12 @@ Rcpp::NumericMatrix reblncd(
 
       //'Adjust the Transition Matrix
       //'1st scale up rates, 2nd make sure that it does not sum over one
-      frc = 0.05;  // approach seems quite sensitive to this value, = fraction of change to
+      frc = .05;  // approach seems quite sensitive to this value, = fraction of change to
       for(int i=0; i<16; i++){
         // Rcpp::Rcout <<"dist_i_v at ag = "<< ag << "and index = "<< i << " is "<<  dist_i_v[i]<< "\n";
 
         for(int j=0; j<16; j++){
-          trans_mat[i][j] =  trans_mat[i][j] /(dist_i_v[i]+1e-30)*frc; //makes this number bigger
+          trans_mat[i][j] =  trans_mat[i][j]/dist_i_v[i]*frc; //makes this number bigger
         } }
 
       //'Calculate Row Sums
@@ -154,6 +154,7 @@ Rcpp::NumericMatrix reblncd(
         for(int j=0; j<16; j++){
           row_sum[i]+=trans_mat[i][j];
         } }
+
       ////////This is the step that is failing!
       for(int i=0; i<16; i++){
         if (row_sum[i] >1.0){ //max of 1 and sum(trans_mat)
@@ -168,11 +169,11 @@ Rcpp::NumericMatrix reblncd(
           row_sum[i]+=trans_mat[i][j]; //calculate the row sum of temp mat above
         } }
 
-      for(int i=0; i<16; i++){
-
-        if(row_sum[i]>1){
-          row_sum[i]=1;
-        } }
+      // for(int i=0; i<16; i++){
+      //
+      //   if(row_sum[i]>1){
+      //     row_sum[i]=1;
+      //   } }
 
       //this step is what causes the negative
       for(int i=0; i<16; i++){
@@ -228,11 +229,11 @@ Rcpp::NumericMatrix reblncd(
         trans_mat_tot[i][j] = did_go[i][j] / (dist_t1_v[i]+1e-30);
       } }
 
-    for(int i=0; i<16; i++){
-      for(int j=0; j<16; j++){
-        if (i != j){
-        trans_mat_tot[i][j] =  trans_mat_tot[i][j];//*adj_fact[ag];
-      } } }
+    // for(int i=0; i<16; i++){
+    //   for(int j=0; j<16; j++){
+    //     if (i != j){
+    //     trans_mat_tot[i][j] =  trans_mat_tot[i][j];//*adj_fact[ag];
+    //   } } }
 
     for(int i=0; i<16; i++){
       row_sum[i]=0;
