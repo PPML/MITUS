@@ -110,7 +110,7 @@ Rcpp::NumericMatrix reblncd(
       for (int c=0; c<16; c++){
         trans_mat[r][c] = 0;
       } }
-    //' Open the iteration loop
+    //' Open the iteration loo
 
     N=100;
 
@@ -140,7 +140,7 @@ Rcpp::NumericMatrix reblncd(
 
       //'Adjust the Transition Matrix
       //'1st scale up rates, 2nd make sure that it does not sum over one
-      frc = .05;  // approach seems quite sensitive to this value, = fraction of change to
+      frc = .01;  // approach seems quite sensitive to this value, = fraction of change to
       for(int i=0; i<16; i++){
         // Rcpp::Rcout <<"dist_i_v at ag = "<< ag << "and index = "<< i << " is "<<  dist_i_v[i]<< "\n";
 
