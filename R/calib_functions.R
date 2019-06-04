@@ -279,8 +279,8 @@ tot_dth_age_lLik <- function(V,ESS=500) {
   # CalibDat$US_mort_age <- read.csv(system.file("extdata","US_mort_age.csv", package="MITUS"))
   data("mort_ag_16", package = 'MITUS');
   mort_ag_16_d <-(mort_ag_16[]/sum(mort_ag_16[]))
-  V2 <- V[-11]; V2[10] <- V2[10]+V[11]
-
+ V2 <- V[-11]; V2[10] <- V2[10]+V[11]
+ V2<-V2/sum(V2)
   adj_20b               <- sum(log(mort_ag_16_d)*mort_ag_16_d);
   sum(log(V2[]/sum(V2))*mort_ag_16_d[])*ESS - adj_20b*ESS
   }
