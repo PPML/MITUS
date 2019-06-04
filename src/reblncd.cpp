@@ -57,7 +57,7 @@ Rcpp::NumericMatrix reblncd(
     mubtN[i]=mubt(6,i);
   }
 
-  frc=0.01;
+  frc=0.1;
   mat_sum=0;
   sum=0;
   temp=0;
@@ -100,7 +100,7 @@ Rcpp::NumericMatrix reblncd(
       sum += temp_vec[i];
     }
     for (int i=0; i<16; i++){
-      dist_t1_v[i]=temp_vec[i]/sum;
+      dist_t1_v[i]=temp_vec[i]/(sum+1e-30);
     }
     for (int i=0; i<16; i++){
       dist_i_v[i]=dist_t1_v[i];
@@ -110,7 +110,7 @@ Rcpp::NumericMatrix reblncd(
       for (int c=0; c<16; c++){
         trans_mat[r][c] = 0;
       } }
-    //' Open the iteration loo
+    //' Open the iteration loop
 
     N=100;
 
@@ -145,7 +145,7 @@ Rcpp::NumericMatrix reblncd(
         // Rcpp::Rcout <<"dist_i_v at ag = "<< ag << "and index = "<< i << " is "<<  dist_i_v[i]<< "\n";
 
         for(int j=0; j<16; j++){
-          trans_mat[i][j] =  trans_mat[i][j]/dist_i_v[i]*frc; //makes this number bigger
+          trans_mat[i][j] =  trans_mat[i][j]/(dist_i_v[i]+1e-30)*frc; //makes this number bigger
         } }
 
       //'Calculate Row Sums
@@ -168,21 +168,27 @@ Rcpp::NumericMatrix reblncd(
         for(int j=0; j<16; j++){
           row_sum[i]+=trans_mat[i][j]; //calculate the row sum of temp mat above
         } }
+      for(int i=0; i<16; i++){
 
-      // for(int i=0; i<16; i++){
-      //
-      //   if(row_sum[i]>1){
-      //     row_sum[i]=1;
-      //   } }
+      if (row_sum[i]>1) {
+        Rcpp::Rcout<<"row sum0 is too large at ag = " << ag<< " and i = "<< i <<" and n = "<< n <<"rowsum is = " << row_sum[i]<<"\n";
+      }}
+
 
       //this step is what causes the negative
       for(int i=0; i<16; i++){
         if (row_sum[i]<0) {
           Rcpp::Rcout<<"row sum is negative at ag = " << ag<< " and i = "<< i <<" and n = "<< n <<"\n";
+          row_sum[i]=0;
         }
         if (row_sum[i]>1) {
-          Rcpp::Rcout<<"row sum is too large at ag = " << ag<< " and i = "<< i <<" and n = "<< n <<"rowsum is = " << 1-row_sum[i]<<"\n";
+          Rcpp::Rcout<<"row sum is too large at ag = " << ag<< " and i = "<< i <<" and n = "<< n <<"rowsum is = " << row_sum[i]<<"\n";
         }
+        for(int i=0; i<16; i++){
+
+          if(row_sum[i]>1){
+            row_sum[i]=1;
+          } }
         for(int j=0; j<16; j++){
           if (i==j){
             trans_mat[i][j]=(1-row_sum[i]);
@@ -239,6 +245,11 @@ Rcpp::NumericMatrix reblncd(
       row_sum[i]=0;
       for(int j=0; j<16; j++){
         row_sum[i] +=trans_mat_tot[i][j]; ///calculate the number of total transitions from a state
+      } }
+    for(int i=0; i<16; i++){
+
+      if(row_sum[i]>1){
+        row_sum[i]=1;
       } }
     for(int i=0; i<16; i++){
       if (row_sum[i]>1){
