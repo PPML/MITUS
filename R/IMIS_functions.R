@@ -121,16 +121,18 @@ llikelihoodZ <-  function(samp_i, start_mat) {
       #' TB DEATHS 1999-2014 BY AGE - index updated above
       addlik <- tb_dth_age_lLik(V=v19); addlik
       lLik <- lLik + addlik
-      v20a<-M[67,121:131]
-      addlik <-US_dth_10_tot_lLik(V=v20a); addlik
-      lLik <- lLik + addlik
-
-      #' Total DEATHS 1999-2016 BY AGE
-      v20b  <- M[67,121:131]
-      # v20b[10] <-v20b[10]+v20b[11]
-      # v20b<-v20b[-11]
-      addlik <- tot_dth_age_lLik(V=v20b); addlik
-      lLik <- lLik + addlik
+      #' #' Total DEATHS 1999-2016
+      #'
+      #' v20a<-M[67,121:131]
+      #' addlik <-US_dth_10_tot_lLik(V=v20a); addlik
+      #' lLik <- lLik + addlik
+      #'
+      #' #' Total DEATHS 1999-2016 BY AGE
+      #' v20b  <- M[67,121:131]
+      #' # v20b[10] <-v20b[10]+v20b[11]
+      #' # v20b<-v20b[-11]
+      #' addlik <- tot_dth_age_lLik(V=v20b); addlik
+      #' lLik <- lLik + addlik
       #' #' Mort_dist 2016
       v21a<- v21  <- M[66:67,521:564]
       for (i in 1:11){
