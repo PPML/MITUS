@@ -12,8 +12,8 @@ param <- function (PV){
   ###########################          INPUTS            #########################
   ################################################################################
   BgMort           <- Inputs[["BgMort"]]
-  # NCHS_mort        <-readRDS(system.file("US/US_NCHS_mort.rds", package="MITUS"))[,2:12]
-  # BgMort[1:68,2:12]<-NCHS_mort
+  NCHS_mort        <-readRDS(system.file("US/US_NCHS_mort.rds", package="MITUS"))[,2:12]
+  BgMort[1:68,2:12]<-NCHS_mort
   InitPop          <- Inputs[["InitPop"]] #init_pop() #
   Births           <- Inputs[["Births"]]
   ImmigInputs      <- Inputs[["ImmigInputs"]]
