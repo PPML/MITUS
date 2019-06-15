@@ -34,8 +34,14 @@ TOTAL POP EACH DECADE, BY US/FB - index updated (maybe)
 TOTAL POP AGE DISTRIBUTION 2016 index updated
 TOTAL DEATHS WITH TB 1999-2014 - index updated
 TB DEATHS 1999-2014 BY AGE - index updated above
-Total DEATHS 1979-2016
-Total DEATHS 1999-2016 BY AGE
+#' Total DEATHS 1999-2016
+
+v20a<-M[67,121:131]
+addlik <-US_dth_10_tot_lLik(V=v20a); addlik
+lLik <- lLik + addlik
+
+#' Total DEATHS 1999-2016 BY AGE
+#' Mort_dist 2016
 #' Mort_dist 2016
 HOMELESS POP 2010 - index updated
 LIKELIHOOD FOR BORGDORFF, FEREBEE & SUTHERLAND ESTIMATES
