@@ -402,6 +402,7 @@ Rcpp::List cSim_flow(
         for(int im=0; im<4; im++) {
           for(int nm=0; nm<4; nm++){
             for(int rg=0; rg<2; rg++){
+              // V1[ag][tb][0][im][nm][rg][0]  -= ((.045000/12)/12672);
               V1[ag][tb][0][im][nm][rg][1]  -= V0[ag][tb][0][im][nm][rg][1]*rEmmigFB[0];   // FB1
               V1[ag][tb][0][im][nm][rg][2]  -= V0[ag][tb][0][im][nm][rg][2]*rEmmigFB[1];   // FB2
             } } } } }
@@ -440,20 +441,18 @@ Rcpp::List cSim_flow(
           for(int rg=0; rg<2; rg++) {
             for(int na=0; na<3; na++){
               for(int tb=0; tb<5; tb++) {
-                if ((ag<9) | ((RRmuRFN[nm]*RRmuHR[rg]) < 5)){
-                  V1[ag][tb][0][im][nm][rg][na]  -= V0[ag][tb][0][im][nm][rg][na]*(mubtN[0][ag]*RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][tb]);
+                if ((ag<9) | ((mubtN[0][ag]*RRmuRFN[nm]*RRmuHR[rg]) < .5)){
+                  temp = ((RRmuRFN[nm]*RRmuHR[rg])*mubtN[0][ag]);
                 } else {
-                  V1[ag][tb][0][im][nm][rg][na]  -= (V0[ag][tb][0][im][nm][rg][na]*(mubtN[0][ag]*5+vTMortN[ag][tb]));
-                }
+                  temp =  .5;
+                  }
+                  V1[ag][tb][0][im][nm][rg][na]  -= (V0[ag][tb][0][im][nm][rg][na]*(temp+vTMortN[ag][tb]));
+
               }//close the tb loop
 
               ////////////////          MORTALITY WITH TB TREATMENT         ////////////////////
-              if ( (ag<9) |((RRmuRFN[nm]*RRmuHR[rg])<5)){
-                V1[ag][5 ][0][im][nm][rg][na]  -= V0[ag][5 ][0][im][nm][rg][na]*(mubtN[0][ag]*RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][5 ]*pow(1.0-TxVecZ[1],TunTxMort)); //check the mortality in param
-              } else {
-                V1[ag][5 ][0][im][nm][rg][na]  -= (V0[ag][5 ][0][im][nm][rg][na]*(mubtN[0][ag]*5+vTMortN[ag][5 ]*pow(1.0-TxVecZ[1],TunTxMort)));
-              }
-            } } } } }
+                V1[ag][5 ][0][im][nm][rg][na]  -= V0[ag][5 ][0][im][nm][rg][na]*(temp+vTMortN[ag][5 ]*pow(1.0-TxVecZ[1],TunTxMort)); //check the mortality in param
+              } } } } }
     /////////////////////////////////////AGING///////////////////////////////////////
     for(int ag=0; ag<10; ag++) {
       for(int tb=0; tb<6; tb++) {
@@ -926,6 +925,7 @@ Rcpp::List cSim_flow(
             for(int im=0; im<4; im++){
               for(int nm=0; nm<4; nm++){
                 for(int rg=0; rg<2; rg++) {
+                  // V1[ag][tb][lt][im][nm][rg][0]  -= ((.045000/12)/12672);
                   V1[ag][tb][lt][im][nm][rg][1]  -= V0[ag][tb][lt][im][nm][rg][1]*rEmmigFB[0];      // FB1
                   V1[ag][tb][lt][im][nm][rg][2]  -= V0[ag][tb][lt][im][nm][rg][2]*rEmmigFB[1];      // FB2
                 } } } } } }
@@ -990,26 +990,19 @@ Rcpp::List cSim_flow(
               for(int rg=0; rg<2; rg++) {
                 for(int na=0; na<3; na++) {
                   for(int tb=0; tb<4; tb++) {
-                    if ((ag<9) | ((RRmuRFN[nm]*RRmuHR[rg]) <5)){
+                    if ((ag<9) | ((mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]) < .5)){
+                      temp = ((RRmuRFN[nm]*RRmuHR[rg])*mubtN[s][ag]);}
+                    else {
+                      temp =  .5;
+                    }
 
-                      ////////////////////////UNINFECTED, SUSCEPTIBLE//////////////////////////////////
-                      VMort[ag][tb ][lt][im][nm][rg][na]  = V0[ag][tb][lt][im][nm][rg][na]*(mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]);
-                    } else {
-                      VMort[ag][tb ][lt][im][nm][rg][na]  = (V0[ag][tb][lt][im][nm][rg][na]*(mubtN[s][ag]*5));}
+                    VMort[ag][tb ][lt][im][nm][rg][na]  = V0[ag][tb][lt][im][nm][rg][na]*temp;
                   }//close the tb loop
                   ////////////////////////      ACTIVE TB         /////////////////////////////////
-
-                  if ((ag<9) | ((RRmuRFN[nm]*RRmuHR[rg]) <5)){
-                    VMort[ag][4 ][lt][im][nm][rg][na]  = V0[ag][4 ][lt][im][nm][rg][na]*
-                      (mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][4 ]+temp );
-                  } else {VMort[ag][4 ][lt][im][nm][rg][na]  = (V0[ag][4 ][lt][im][nm][rg][na]*(mubtN[s][ag]*5+vTMortN[ag][4 ]+temp)); }
+                    VMort[ag][4 ][lt][im][nm][rg][na]  = V0[ag][4 ][lt][im][nm][rg][na]*(temp+vTMortN[ag][4 ] );
 
                   ////////////////////////    TB TREATMENT        /// //////////////////////////////
-                  if ((ag<9) | ((RRmuRFN[nm]*RRmuHR[rg])<5)){
-                    VMort[ag][5 ][lt][im][nm][rg][na]  = V0[ag][5 ][lt][im][nm][rg][na]*
-                      (mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]+(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort));
-                  } else  {
-                    VMort[ag][5 ][lt][im][nm][rg][na]  = (V0[ag][5 ][lt][im][nm][rg][na]*(mubtN[s][ag]*5+(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort))); }
+                    VMort[ag][5 ][lt][im][nm][rg][na]  = V0[ag][5 ][lt][im][nm][rg][na]*(temp+vTMortN[ag][5 ]*pow(1.0-TxVecZ[1],TunTxMort));
 
                   ///////////// UPDATE THE PRIMARY VECTOR BY REMOVING MORTALITY /////////////////
                   for(int tb=0; tb<6; tb++) {

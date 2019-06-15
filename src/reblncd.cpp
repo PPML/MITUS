@@ -82,11 +82,10 @@ Rcpp::NumericMatrix reblncd(
 
     for (int nm=0; nm<4; nm++){
       for (int im=0; im<4; im++){
-            if ((ag<9) | (RRmuRF[nm]<5)){
-              temp_vec[nm+im*4]=dist_gen_v[nm+im*4]*(1-(mubtN[ag]*RRmuRF[nm]));
-            } else {
-              temp_vec[nm+im*4]=dist_gen_v[nm+im*4]*(1-(mubtN[ag]*5));
-            }
+            if ((ag<9) | (mubtN[ag]*RRmuRF[nm]<.5)){
+              temp = mubtN[ag]*RRmuRF[nm]; }
+            else { temp = .5; }
+              temp_vec[nm+im*4]=dist_gen_v[nm+im*4]*(1-temp);
       //the mortality dimension is distributed as follows:
       //nm=0 is 0,4,8,12 =1 is 1,5,9,12, etc.
          // Rcpp::Rcout <<"index= "<< nm << "and index = "<< im << " is "<<nm+im*4  << "\n";
