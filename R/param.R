@@ -14,7 +14,11 @@ param <- function (PV){
   BgMort           <- Inputs[["BgMort"]]
   NCHS_mort        <-readRDS(system.file("US/US_NCHS_mort.rds", package="MITUS"))[,2:12]
   BgMort[1:68,2:12]<-NCHS_mort
-  InitPop          <- Inputs[["InitPop"]] #init_pop() #
+  # BgMort<-BgMort*.8
+  #
+  # BgMort[11:12]<-BgMort[11:12]*3
+  # BgMort[12]<-BgMort[12]*1.2
+  InitPop          <- init_pop() #Inputs[["InitPop"]] #
   Births           <- Inputs[["Births"]]
   ImmigInputs      <- Inputs[["ImmigInputs"]]
   TxInputs         <- Inputs[["TxInputs"]]
@@ -50,26 +54,20 @@ param <- function (PV){
   #     mubt[,i] <- mubt[,i]*RRmuAg[i]
   #   }
 
-  # mubt[1:6]<-0
-  # mortality calculation version 2
-  # allows for linear rampup of mortality
-  # RRmuAg<-seq((PV["TunmuAg1"]),PV["TunmuAg11"], length.out=11)
-  # RRmuAg<-seq((PV["TunMubt"]),(PV["TunmuAg"]+1), length.out=11)
-
-  # RRmuAg<-(c(PV[["TunmuAg1"]], PV[["TunmuAg2"]], PV[["TunmuAg3"]], PV[["TunmuAg4"]], PV[["TunmuAg5"]],
-  #           PV[["TunmuAg6"]], PV[["TunmuAg7"]], PV[["TunmuAg8"]], PV[["TunmuAg9"]], PV[["TunmuAg10"]], PV[["TunmuAg11"]]) + 1)
   for(i in 1:11){
-    mubt[,i] <- SmoCurve(BgMort[,i+1])*PV[["TunmuAg11"]] /12
+    mubt[,i] <- SmoCurve(BgMort[,i+1])*PV[["TunMubt"]] /12
   }
   mubt[,]<-1-exp(-mubt[,])
 
   mubt<-mubt[1:month,]
   for(i in 1:11){
-    mubt[,i] <- mubt[,i]*exp((PV[["TunmuAg1"]]-1)*i)
+    mubt[,i] <- mubt[,i]*exp((PV[["TunmuAg"]]-1)*i)
   }
 
-#  mubt[1:6]<-0
 
+#  mubt[1:6]<-0
+  #convert from rates to probabilities
+  # mubt<-1-exp(-mubt)
   # RRmuAg[1]<-RRmuAg[1]*1.25
   # RRmuAg[10:11]<-RRmuAg[10:11]*.5
 

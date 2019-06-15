@@ -70,7 +70,7 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
   InputParams[["mubt"]]    <- matrix(NA,1801,11)
 
   TunmuAg <- PV["TunmuAg"]
-  RRmuAg <- exp((1:11)*TunmuAg)
+  RRmuAg <- exp((1:11)*(TunmuAg-1))
 
   for(i in 1:11) {
     InputParams[["mubt"]][,i] <- SmoCurve(BgMort[,i+1])*PV["TunMubt"]/12
