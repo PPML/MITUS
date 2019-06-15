@@ -13,8 +13,11 @@ param_noRB <- function (PV){
   ################################################################################
   BgMort           <- Inputs[["BgMort"]]
   NCHS_mort        <-readRDS(system.file("US/US_NCHS_mort.rds", package="MITUS"))[,2:12]
-  BgMort[1:68,2:12]<- NCHS_mort
-  InitPop          <- init_pop()
+  BgMort[1:68,2:12]<-NCHS_mort
+  # BgMort[11]<-BgMort[11]*.7
+  # BgMort[12]<-BgMort[12]*1.3
+
+  InitPop          <- init_pop() #Inputs[["InitPop"]] #
   Births           <- Inputs[["Births"]]
   ImmigInputs      <- Inputs[["ImmigInputs"]]
   TxInputs         <- Inputs[["TxInputs"]]
@@ -26,7 +29,7 @@ param_noRB <- function (PV){
 
   ##########                PARAMETER DEFINITIONS                      ###########
   ##########                RISK FACTOR DISTRIBUTIONS   ##########################
-
+  #turned off because the rebalancing has been moved back into the model
   adj_fact <- exp(PV[["adj_ag1"]]*(10:0)/11 + PV[["adj_ag11"]]*(0:10)/11)
 
   #######################           BIRTHS                 #######################
@@ -34,7 +37,7 @@ param_noRB <- function (PV){
 
   Birthst   <- SmoCurve(Births)*PV["TunBirths"]/12
   Birthst   <- Birthst[1:month]
- # Birthst[1:6]<-0
+   Birthst[1:6]<-0
 
   ##########################      MORTALITY RATES       ##########################
   ########################## BACKGROUND MORTALITY BY TIME ########################
@@ -50,29 +53,22 @@ param_noRB <- function (PV){
   #     mubt[,i] <- mubt[,i]*RRmuAg[i]
   #   }
 
-    # mubt[1:6]<-0
-  # mortality calculation version 2
-  # allows for linear rampup of mortality
-  # RRmuAg<-seq((PV["TunmuAg1"]),PV["TunmuAg11"], length.out=11)
-  # RRmuAg<-seq((PV["TunMubt"]),(PV["TunmuAg"]+1), length.out=11)
-
-  # RRmuAg<-(c(PV[["TunmuAg1"]], PV[["TunmuAg2"]], PV[["TunmuAg3"]], PV[["TunmuAg4"]], PV[["TunmuAg5"]],
-  #           PV[["TunmuAg6"]], PV[["TunmuAg7"]], PV[["TunmuAg8"]], PV[["TunmuAg9"]], PV[["TunmuAg10"]], PV[["TunmuAg11"]]) + 1)
   for(i in 1:11){
-    mubt[,i] <- SmoCurve(BgMort[,i+1])*PV[["TunMubt"]] /12
+    mubt[,i] <- SmoCurve(BgMort[,i+1])*PV[["TunmuAg11"]] /12
   }
   mubt[,]<-1-exp(-mubt[,])
 
   mubt<-mubt[1:month,]
   for(i in 1:11){
-    mubt[,i] <- mubt[,i]*exp(PV[["TunmuAg"]]*i)
+    mubt[,i] <- mubt[,i]*exp((PV[["TunmuAg1"]]-1)*i)
   }
 
-#  mubt[1:6,]<-0
+   mubt[1:6]<-0
+   #convert from rates to probabilities
+   mubt<-1-exp(-mubt)
 
   # RRmuAg[1]<-RRmuAg[1]*1.25
   # RRmuAg[10:11]<-RRmuAg[10:11]*.5
-
   #########################     DISEASE SPECIFIC       ###########################
   #############    ACTIVE TB RATES DEFAULT TO THE SMEAR POS LEVELS   #############
 
@@ -146,7 +142,7 @@ param_noRB <- function (PV){
   ImmNon         <- TotImmAge-ImmAct-ImmFst-ImmLat
   ###################### TRUNCATE THESE VALS
   ImmAct<-ImmAct[1:month,];ImmFst<-ImmFst[1:month,]; ImmLat<-ImmLat[1:month,]; ImmNon<-ImmNon[1:month,]
- # ImmNon[1:6,]<- ImmAct[1:6,]<-ImmFst[1:6,]<-ImmLat[1:6,]<-0
+ ImmNon[1:6,]<- ImmAct[1:6,]<-ImmFst[1:6,]<-ImmLat[1:6,]<-0
   ######################   EXOGENEOUS INFECTION RISK      ########################
 
   ExogInf        <- matrix(NA,length(PrevTrend25_34a),5)

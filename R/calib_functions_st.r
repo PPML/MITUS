@@ -215,11 +215,11 @@ dth_tot_lLik_st <- function(V,st) {
 #'@param V table of deaths by age 1999-2014 (row=16 years, col=11 ages)
 #'@param rho correlation parameter
 #'@return likelihood
-tot_dth_age_lLik_st <- function(V,rho=0.01) {
+tot_dth_age_lLik_st <- function(V,rho=0.1) {
   data("death_age_dist",package="MITUS")
   tda <- tot_deaths_age/rowSums(tot_deaths_age)
   tda<-tda[17:18,] #2015-2016
-  adj_20b        <- sum(dDirMult(M=tda+0.1,n=tda+0.1,Rho=0.01)*wts[66:67])
+  adj_20b        <- sum(dDirMult(M=tda+0.1,n=tda+0.1,Rho=0.1)*wts[66:67])
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
   V2 <- V2[,-5]; V2[,4]  <- V2[,4]+V[,5]
   V2 <- V2[,-3]; V2[,2]  <- V2[,2]+V[,3]
@@ -234,16 +234,16 @@ tot_dth_age_lLik_st <- function(V,rho=0.01) {
 #'@return likelihood
 mort_dist_lLik_st <- function(V,rho=0.1) {
   md     <- rowSums(dist_gen)
-  mort_dist     <-matrix(md,length(51:67),4, byrow = TRUE)
-  adj_21        <- sum(dDirMult(M=mort_dist,n=mort_dist,Rho=0.1)*wts[51:67])
+  mort_dist     <-matrix(md,length(66:67),4, byrow = TRUE)
+  adj_21        <- sum(dDirMult(M=mort_dist,n=mort_dist,Rho=0.1)*wts[66:67])
   tot_lik<-0
   for(ag in 1:11){
     V1<-V[,(1:4)+4*(ag-1)]
-    x<-sum(dDirMult(M=V1,n=mort_dist,Rho=rho)*wts[51:67]) - adj_21
+    x<-sum(dDirMult(M=V1,n=mort_dist,Rho=rho)*wts[66:67]) - adj_21
     tot_lik<-tot_lik+x
     # print(x)
   }
-  tot_lik<-tot_lik*5
+  tot_lik<-tot_lik
   return(tot_lik)
 }
 

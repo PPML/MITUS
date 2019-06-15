@@ -91,15 +91,20 @@ for(int ag=0; ag<11; ag++) {
   V1[ag] += ImmTotN[s][ag];
 }
 // Emmigration
-// for(int ag=0; ag<11; ag++) {
-//   V1[ag] -= V0[ag]*rEmmigFB;
-// }
+  // for(int ag=0; ag<11; ag++) {
+  //   V1[ag] = V1[ag]*.995;
+  // }
 // Mortality
 for(int ag=0; ag<11; ag++) {
   VMort[ag] = V0[ag]*mubtN[s][ag];
 
   // VMort[ag] = ((1-p_HR)*V0[ag]*mubtN[s][ag])+(p_HR*V0[ag]*mubtN[s][ag]*RRmuHR[1]);
 }
+// for(int ag=9; ag<11; ag++) {
+//   VMort[ag] = V0[ag]*mubtN[s][ag]*1.2;
+//
+//   // VMort[ag] = ((1-p_HR)*V0[ag]*mubtN[s][ag])+(p_HR*V0[ag]*mubtN[s][ag]*RRmuHR[1]);
+// }
 for(int ag=0; ag<11; ag++) {
 V1[ag]   -= VMort[ag];
   // Rcpp::Rcout << "for ag =" << ag << "and t = "<< s<< "mort is" << VMort[ag] << "\n";

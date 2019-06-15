@@ -136,10 +136,9 @@ library(lhs)
       lLik <- lLik + addlik
 
       #' Total DEATHS 1979-2016
-      v20a  <- rowSums(M[30:67,121:131])
-      v20a<-v20a*1e6
-      addlik <- dth_tot_lLik_st(V=v20a,st=st); addlik
-      lLik <- lLik + addlik
+      # v20a  <- rowSums(M[66:67,121:131])
+      # addlik <- dth_tot_lLik_st(V=v20a,st=st); addlik
+      # lLik <- lLik + addlik
       #' #' Total DEATHS 2015-2016 BY AGE
       v20b  <- M[66:67,121:131]
       v20b  <- v20b/rowSums(v20b)
@@ -148,18 +147,18 @@ library(lhs)
       lLik <- lLik + addlik
 
       #' #' Mort_dist 2016 dirchlet
-      v21a<- v21  <- M[51:67,521:564]
+      v21a<- v21  <- M[66:67,521:564]
       for (i in 1:11){
-        denom<-M[51:67,2+i]
+        denom<-M[66:67,2+i]
         for (j in 1:ncol(v21)){
           v21a[,(1:4)+4*(i-1)]<-v21[,(1:4)+4*(i-1)]/denom
         } }
-      # addlik <- mort_dist_lLik(V=v21a); addlik
-      # lLik <- lLik + addlik
+      addlik <- mort_dist_lLik(V=v21a); addlik
+      lLik <- lLik + addlik
 
       #'mort_dist norm
-      addlik<-mort_dist_lLik_norm_st(V=v21a); addlik
-      lLik <- lLik + addlik
+      # addlik<-mort_dist_lLik_norm_st(V=v21a); addlik
+      # lLik <- lLik + addlik
 
       #' LIKELIHOOD FOR BORGDORFF, FEREBEE & SUTHERLAND ESTIMATES
       v2456  <- list(prms[["Mpfast"]],prms[["Mrslow"]], prms[["rfast"]],prms[["rRecov"]])

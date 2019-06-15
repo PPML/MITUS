@@ -121,17 +121,17 @@ tb_graph_demo <- function(df, dist=FALSE){
          pch=c(15,15,15,19,NA),lwd=c(NA,NA,NA,1,2),lty=c(NA,NA,NA,3,1),col=c("grey50",4,"red3",1,1),bg="white",pt.cex=c(1.8,1.8,1.8,0.3,NA))
 
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-  ### ### ### ### ### ###   TOTAL MORT AGE DISTRIBUTION 2014  ### ### ### ### ### ###
+  ### ### ### ### ### ###   TOTAL MORT AGE DISTRIBUTION 2016  ### ### ### ### ### ###
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
-  V  <- cbind((df[65,255:265])+(df[65,266:276]))
-  V1  <- V[,-3]
-  V1[,2] <- V1[,2]+V[,3]
-  V2 <- V1[,-4]
-  V2[,3] <- V2[,3]+V1[,4]
-  V3 <- V2[,-9]
-  V3[,8] <- V3[,8]+V2[,9]
-  V3<-V3/rowSums(V3)
+  V  <- df[67,121:131]
+  V1  <- V[-3]
+  V1[2] <- V1[2]+V[3]
+  V2 <- V1[-4]
+  V2[3] <- V2[3]+V1[4]
+  V3 <- V2[-9]
+  V3[8] <- V3[8]+V2[9]
+  V3<-V3/sum(V3)
 
   plot(0,0,ylim=c(0.05,max(range(V3))),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA)
   axis(1,1:8,paste(c("0-4","5-24","25-44","45-54","55-64","65-74","75-84","85+"),"\nyears",sep=""),tick=F,cex.axis=0.75)
@@ -139,13 +139,13 @@ tb_graph_demo <- function(df, dist=FALSE){
   axis(2,c(0,.2,.4,.6,.8,1.0,1.2),las=2);box()
   abline(h=axTicks(2),col="grey85")
 
-  for(i in 1:8) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V3[1,i],V3[1,i]),border=NA,col="gray")
-  for(i in 1:8) points(i+.2,(CalibDat$US_mort_age[67,i+1])/rowSums(CalibDat$US_mort_age[67,]),pch=19,cex=1.2,col="black")
+  for(i in 1:8) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V3[i],V3[i]),border=NA,col="gray")
+  for(i in 1:8) points(i+.2,(CalibDat$US_mort_age[67,i+1])/rowSums(CalibDat$US_mort_age[67,2:9]),pch=19,cex=1.2,col="black")
 
 
   mtext("Age Group",1,2.5,cex=0.9)
   box()
-  mtext("Mortality by Age, 2014 (%)",3,.8,font=2,cex=0.8)
+  mtext("Mortality by Age, 2016 (%)",3,.8,font=2,cex=0.8)
   legend("topleft",c("Reported data","model"),pch=c(19,15),pt.cex=c(1,2),
          lwd=NA,col=c("black","gray"),bg="white")
 
@@ -172,17 +172,17 @@ tb_graph_demo <- function(df, dist=FALSE){
   #        lwd=NA,col=c("black","gray"),bg="white")
 
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-  ### ### ### ### ### ###   TOTAL MORT AGE DISTRIBUTION 2014  ### ### ### ### ### ###
+  ### ### ### ### ### ###   TOTAL MORT AGE DISTRIBUTION 1950  ### ### ### ### ### ###
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
-  V  <- cbind((df[1,255:265])+(df[1,266:276]))
-  V1  <- V[,-3]
-  V1[,2] <- V1[,2]+V[,3]
-  V2 <- V1[,-4]
-  V2[,3] <- V2[,3]+V1[,4]
-  V3 <- V2[,-9]
-  V3[,8] <- V3[,8]+V2[,9]
-  V3<-V3/rowSums(V3)
+  V  <- df[1,121:131]
+  V1  <- V[-3]
+  V1[2] <- V1[2]+V[3]
+  V2 <- V1[-4]
+  V2[3] <- V2[3]+V1[4]
+  V3 <- V2[-9]
+  V3[8] <- V3[8]+V2[9]
+  V3<-V3/sum(V3)
 
 
   plot(0,0,ylim=c(0.05,max(range(V3))),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA)
@@ -191,8 +191,8 @@ tb_graph_demo <- function(df, dist=FALSE){
   axis(2,c(0,.2,.4,.6,.8,1.0,1.2),las=2);box()
   abline(h=axTicks(2),col="grey85")
 
-  for(i in 1:8) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V3[1,i],V3[1,i]),border=NA,col="gray")
-  for(i in 1:8) points(i+.2,(CalibDat$US_mort_age[1,i+1])/rowSums(CalibDat$US_mort_age[1,]),pch=19,cex=1.2,col="black")
+  for(i in 1:8) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V3[i],V3[i]),border=NA,col="gray")
+  for(i in 1:8) points(i+.2,(CalibDat$US_mort_age[1,i+1])/rowSums(CalibDat$US_mort_age[1,2:9]),pch=19,cex=1.2,col="black")
 
 
   mtext("Age Group",1,2.5,cex=0.9)

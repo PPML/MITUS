@@ -71,12 +71,12 @@ llikelihoodZ_noTB <-  function(samp_i,opt_mat) {
       # addlik <- US_dth_tot_lLik(V=v20a); addlik
       # lLik <- lLik + addlik
       #'Total deaths by decade
-      v20a<-M[c(11,21,31,41,51,61),121:131]
-      addlik <-US_dth_10_tot_lLik(V=v20a); addlik
-      lLik <- lLik + addlik
-
-      #' Total DEATHS 1999-2016 BY AGE
-      v20b  <- M[67,121:131]
+      #' v20a<-M[c(11,21,31,41,51,61),121:131]
+      #' addlik <-US_dth_10_tot_lLik(V=v20a); addlik
+      #' lLik <- lLik + addlik
+      #'
+      #' #' Total DEATHS 1999-2016 BY AGE
+      v20b  <- M[66:67,121:131]
       # v20b[10] <-v20b[10]+v20b[11]
       # v20b<-v20b[-11]
       addlik <- tot_dth_age_lLik(V=v20b); addlik
