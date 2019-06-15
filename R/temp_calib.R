@@ -14,6 +14,7 @@ new_calib<-function(samp_i,optim_mat, loc){
   Par3[idZ1] <- qgamma(Par2[idZ1], shape   = ParamInitZ[idZ1,6], rate   = ParamInitZ[idZ1,7])
   Par3[idZ2] <- qnorm( Par2[idZ2], mean    = ParamInitZ[idZ2,6], sd     = ParamInitZ[idZ2,7])
   P[ii] <- Par3
+
   P <- P
 
   # P["TunMubt"]<-1;
@@ -25,8 +26,8 @@ new_calib<-function(samp_i,optim_mat, loc){
   # P["TunrslowAge"]<-oldpar["TunrslowAge"]
   # # p[[""]]
   # P[["ImmigVol"]]<-1.1
-  prg_chng<-c(2020,2,.90,.95,.85,.90,.8,.25)
-  names(prg_chng)<-c("start_yr", #year in which the program change starts (discontinuous step up to the values below at this year)
+  prgchng<-c(2020,2,.90,.95,.85,.90,.8,.25)
+  names(prgchng)<-c("start_yr", #year in which the program change starts (discontinuous step up to the values below at this year)
                      "scrn_cov", #Screening Coverage Rate as a Multiple of the Current Rate
                      "IGRA_frc", #Fraction of Individuals Receiving IGRA
                      "ltbi_init_frc", #Fraction of Individuals Testing Positive who Accept Treatment
@@ -36,7 +37,7 @@ new_calib<-function(samp_i,optim_mat, loc){
                      "tb_txdef_frc" #Fraction Discontinuing/Defaulting from Treatment
   )
   prms <-list()
-  prms <- new_param(P,prg_chng)
+  prms <- new_param(P,prgchng)
   IP <- list()
   IP <- param_init(P)
   # data("trans_mat_nat",package="MITUS")

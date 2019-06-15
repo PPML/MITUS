@@ -448,6 +448,7 @@ new_param <- function (PV, prg_chng){
   names(TxVec) <- c("TxCompRate","TxEff")
   TxVec[1]       <-  d1st
   TxVec[2]       <-  pCurPs
+  NixTrans<- 1-LgtCurve(2016,2017,1)
 
   ################################################################################
   ##### CREATE A LIST TO HOLD THE VECTORS
@@ -689,9 +690,10 @@ new_param <- function (PV, prg_chng){
   # Params[["dist_goal"]] = dist_goal
   # Params[["diff_i_v"]]  = diff_i_v
   # Params[["dist_orig_v"]]=dist_orig_v
-  Params[["adj_fact"]] <- adj_fact;
+  Params[["adj_fact"]] <- adj_fact
+  Params[["NixTrans"]] <- NixTrans
 
-  Params[["ResNam"]]    = ResNam
+  Params[["ResNam"]]    <- ResNam
   return(Params)
 }
 
