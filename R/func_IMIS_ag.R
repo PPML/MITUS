@@ -32,7 +32,7 @@ llikelihoodZ_ag <-  function(samp_i, start_mat) {
     prms <- param(P)
     IP <- list()
     IP <- param_init(P)
-    aging_denominators<-read.csv("~/MITUS/inst/extdata/aging_rates.csv")
+    data("aging_denominators",package="MITUS")
 
     td<-matrix(NA,10,1201)
     for (i in 1:10){
