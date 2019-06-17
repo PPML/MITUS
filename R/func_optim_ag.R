@@ -27,19 +27,19 @@ optim_ag <- function(df, samp_i=1){
     b<-samp_i
     # for (i in min(b, nrow(StartVal))){
     o1  <- optim(df1, posterior, method ="BFGS", control=list(maxit=400,trace=5,reltol=sqrt(.Machine$double.eps)/5)) ; o1$value
-    save(o1,file=paste("Opt_US_r1_noRB_", b,"_", Sys.Date(),".rda",sep=""))
+    save(o1,file=paste("Opt_US_r1_", b,"_", Sys.Date(),".rda",sep=""))
     o2  <- optim(o1$par,posterior, method ="Nelder-Mead", control=list(maxit=1000,trace=1,reltol=sqrt(.Machine$double.eps)/5));  o2$value
-    save(o2,file=paste("Opt_US_r2_noRB_", b,"_", Sys.Date(),".rda",sep=""))
+    save(o2,file=paste("Opt_US_r2_", b,"_", Sys.Date(),".rda",sep=""))
     o3  <- optim(o2$par, posterior, method ="BFGS", control=list(maxit=400,trace=5,reltol=sqrt(.Machine$double.eps)/5)) ; o3$value
-    save(o3,file=paste("Opt_US_r3_noRB_", b,"_", Sys.Date(),".rda",sep=""))
+    save(o3,file=paste("Opt_US_r3_", b,"_", Sys.Date(),".rda",sep=""))
     o4  <- optim(o3$par ,posterior, method ="Nelder-Mead", control=list(maxit=1000,trace=1,reltol=sqrt(.Machine$double.eps)/5));  o4$value
-    save(o4,file=paste("Opt_US_r4_noRB_", b,"_", Sys.Date(),".rda",sep=""))
+    save(o4,file=paste("Opt_US_r4_", b,"_", Sys.Date(),".rda",sep=""))
     o5  <- optim(o4$par, posterior, method ="BFGS", control=list(maxit=400,trace=5,reltol=sqrt(.Machine$double.eps)/5)) ; o5$value
-    save(o5,file=paste("Opt_US_r5_noRB_", b,"_", Sys.Date(),".rda",sep=""))
+    save(o5,file=paste("Opt_US_r5_", b,"_", Sys.Date(),".rda",sep=""))
     o6  <- optim(o5$par ,posterior, method ="Nelder-Mead", control=list(maxit=1000,trace=1,reltol=sqrt(.Machine$double.eps)/5));  o6$value
-    save(o6,file=paste("Opt_US_r6_noRB_", b,"_", Sys.Date(),".rda",sep=""))
+    save(o6,file=paste("Opt_US_r6_", b,"_", Sys.Date(),".rda",sep=""))
     o7  <- optim(o6$par, posterior, method ="BFGS", control=list(maxit=400,trace=5,reltol=sqrt(.Machine$double.eps)/5)) ; o7$value
-    save(o7,file=paste("Opt_US_r7_noRB_", b,"_", Sys.Date(),".rda",sep=""))
+    save(o7,file=paste("Opt_US_r7_", b,"_", Sys.Date(),".rda",sep=""))
     # }
   # } else {
   #
