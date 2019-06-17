@@ -267,8 +267,8 @@ US_dth_tot_lLik <- function(V) {
 US_dth_10_tot_lLik <- function(V) {
   # CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
   US_deaths_tot   <- CalibDat[["US_tot_mort"]][67,-1]
-  adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.5/1.96,log=T)*wts[67])
-  sum(dnorm(US_deaths_tot,V,US_deaths_tot*0.5/1.96,log=T)*wts[67]) - adj_20a
+  adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.2/1.96,log=T)*wts[67])
+  sum(dnorm(US_deaths_tot,V,US_deaths_tot*0.2/1.96,log=T)*wts[67]) - adj_20a
 }
 #' TOTAL DEATHS AGE DISTRIBUTION 1999-2014
 #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
