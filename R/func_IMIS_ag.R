@@ -12,10 +12,7 @@ llikelihoodZ_ag <-  function(samp_i, start_mat) {
   } else {  Par <- as.numeric(start_mat[samp_i,]);
   names(Par) <- colnames(start_mat) }  ##previously, the distribution of parameters were transformed to normal distribution in
   ##to facilitate comparisons. These first two steps convert these parameters back to their
-  #'load the necessary libraries
-  library(mnormt)
-  library(parallel)
-  library(lhs)
+
   ##distributions
   # normal to uniform
   Par2 <- pnorm(Par,0,1)
@@ -32,13 +29,38 @@ llikelihoodZ_ag <-  function(samp_i, start_mat) {
     prms <- param(P)
     IP <- list()
     IP <- param_init(P)
-    data("aging_denominators",package="MITUS")
+    popdist<- as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS")))
+    popdist<-popdist[,-1]
+    rownames(popdist)<-as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS"))[,1])
+
+    #calculate the percentage of the total age band in each single year age
+    ltd<-matrix(NA,10,69)
+
+    ltd[1,]<-popdist[5,]/colSums(popdist[1:5,])
+    ltd[2,]<-popdist[15,]/colSums(popdist[6:15,])
+    ltd[3,]<-popdist[25,]/colSums(popdist[16:25,])
+    ltd[4,]<-popdist[35,]/colSums(popdist[26:35,])
+    ltd[5,]<-popdist[45,]/colSums(popdist[36:45,])
+    ltd[6,]<-popdist[55,]/colSums(popdist[46:55,])
+    ltd[7,]<-popdist[65,]/colSums(popdist[56:65,])
+    ltd[8,]<-popdist[75,]/colSums(popdist[66:75,])
+    ltd[9,]<-popdist[85,]/colSums(popdist[76:85,])
+    ltd[10,]<-popdist[95,]/colSums(popdist[86:95,])
+
+
+    #invert this for the aging rate
+    ltd<-1/ltd
 
     td<-matrix(NA,10,1201)
     for (i in 1:10){
-      td[i,1:721]<-SmoCurve_decade(as.numeric(aging_denominators[i,2:8]))
-      td[i,722:1201]<-td[i,721]
+      td[i,1:817]<-SmoCurve(as.numeric(ltd[i,]))
+      td[i,818:1201]<-td[i,817]
     }
+
+    #plot the spline denominators
+    for(i in 1:10){
+      plot(t(td)[1:817,i], type="l")}
+
     spl_den<-t(td)*12
 
     trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
@@ -130,8 +152,7 @@ llikelihoodZ_ag <-  function(samp_i, start_mat) {
       addlik <- tb_dth_age_lLik(V=v19); addlik
       lLik <- lLik + addlik
       #' #' Total DEATHS 1999-2016
-      #'
-      v20a<-M[67,121:131]
+      v20a<-sum(M[67,121:131])
       addlik <-US_dth_10_tot_lLik(V=v20a); addlik
       lLik <- lLik + addlik
       #'
@@ -139,6 +160,8 @@ llikelihoodZ_ag <-  function(samp_i, start_mat) {
       v20b  <- M[66:67,121:131]
       # v20b[10] <-v20b[10]+v20b[11]
       # v20b<-v20b[-11]
+      addlik <- tot_dth_age_lLik(V=v20b); addlik
+      lLik <- lLik + addlik
       addlik <- tot_dth_age_lLik(V=v20b); addlik
       lLik <- lLik + addlik
       #' #' Mort_dist 2016
