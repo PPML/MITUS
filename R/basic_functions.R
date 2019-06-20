@@ -55,6 +55,18 @@ SmoCurve <- function(vec) {
                 x=seq(1,length(vec),1/12))$y;
   jj[jj<0] <- 0 ; jj
 }
+
+#'This function creates a smooth curve from a vector of values.
+#'@name SmoCurve_knots
+#'@param vec vector of values that the user would like to have smoothed into a curve
+#'@param nk number of knots
+#'@return expanded vector of values that determine the shape of the smoothing spline
+SmoCurve_knots <- function(vec,nk) {
+  jj <- predict(smooth.spline(x=1:length(vec),y=vec,spar=0.2, nknots = nk),
+                x=seq(1,length(vec),1/12))$y;
+  jj[jj<0] <- 0 ; jj
+}
+
 #'This function creates a smooth curve from a vector of values.
 #'@name SmoCurve_decade
 #'@param vec vector of values that the user would like to have smoothed into a curve
