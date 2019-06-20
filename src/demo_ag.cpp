@@ -8,6 +8,7 @@ using namespace Rcpp;
 //'@param Birthst Births over time
 //'@param ImmTot Immigration over time
 //'@param mubt background mortality over time
+//'@param ag_den denominator used in the aging process
 //'@return a list of outputs
 //[[Rcpp::export]]
 
@@ -20,7 +21,8 @@ Rcpp::List cSim_demo_ag(
     Rcpp::NumericMatrix       ImmLat,
     Rcpp::NumericMatrix       ImmAct,
     Rcpp::NumericMatrix       ImmFst,
-    Rcpp::NumericMatrix       mubt
+    Rcpp::NumericMatrix       mubt,
+    Rcpp::NumericMatrix       ag_den
 
 
 ){
@@ -32,6 +34,7 @@ Rcpp::List cSim_demo_ag(
   double        mubtN[mubt.nrow()][mubt.ncol()];
   double        Outputs[nYrs][nRes];
   Rcpp::NumericMatrix Outputs2(nYrs,nRes);
+  double        ag_denN[ag_den.nrow()][ag_den.ncol()];
   double   V0[11];
   double   V1[11];
   double   VMort[11];
@@ -53,6 +56,10 @@ for(int i=0; i<mubt.nrow(); i++) {
   for(int j=0; j<mubt.ncol(); j++) {
     mubtN[i][j] = mubt(i,j);
 
+  } }
+for(int i=0; i<ag_den.nrow(); i++) {
+  for(int j=0; j<ag_den.ncol(); j++) {
+    ag_denN[i][j] = ag_den(i,j);
   } }
 
 for(int ag=0; ag<11; ag++) {
@@ -116,13 +123,13 @@ V1[ag]   -= VMort[ag];
 // Aging
 for(int ag=0; ag<10; ag++) {
 /////          IF AGE > 4, IT TAKES 120 MONTHS TO LEAVE AGE GROUP          /////
-  if(ag>0) {
-    temp2 = 120;
-/////          IF AGE < 4, IT TAKES 60 MONTHS TO LEAVE AGE GROUP           /////
-  } else {
-    temp2 = 60;
-  }
-  temp=V0[ag]/temp2;
+//   if(ag>0) {
+//     temp2 = 120;
+// /////          IF AGE < 4, IT TAKES 60 MONTHS TO LEAVE AGE GROUP           /////
+//   } else {
+//     temp2 = 60;
+//   }
+  temp=V0[ag]/ag_denN[s][ag];
   V1[ag]-=temp;
   V1[ag+1]+=temp;
 }
