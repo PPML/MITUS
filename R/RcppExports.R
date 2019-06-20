@@ -9,9 +9,10 @@
 #'@param Birthst Births over time
 #'@param ImmTot Immigration over time
 #'@param mubt background mortality over time
+#'@param ag_den denominator used in the aging process
 #'@return a list of outputs
-cSim_demo_ag <- function(nYrs, nRes, InitPop, Birthst, ImmNon, ImmLat, ImmAct, ImmFst, mubt) {
-    .Call('_MITUS_cSim_demo_ag', PACKAGE = 'MITUS', nYrs, nRes, InitPop, Birthst, ImmNon, ImmLat, ImmAct, ImmFst, mubt)
+cSim_demo_ag <- function(nYrs, nRes, InitPop, Birthst, ImmNon, ImmLat, ImmAct, ImmFst, mubt, ag_den) {
+    .Call('_MITUS_cSim_demo_ag', PACKAGE = 'MITUS', nYrs, nRes, InitPop, Birthst, ImmNon, ImmLat, ImmAct, ImmFst, mubt, ag_den)
 }
 
 #'@name cSim_demo_agna
