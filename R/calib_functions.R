@@ -266,9 +266,13 @@ US_dth_tot_lLik <- function(V) {
 
 US_dth_10_tot_lLik <- function(V) {
   # CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
-  US_deaths_tot   <- CalibDat[["US_tot_mort"]][67,-1]
-  adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.2/1.96,log=T)*wts[67])
-  sum(dnorm(US_deaths_tot,V,US_deaths_tot*0.2/1.96,log=T)*wts[67]) - adj_20a
+  # US_deaths_tot   <- CalibDat[["US_tot_mort"]][67,-1]
+  death_age <-(readRDS(system.file("US/US_MortalityCountsByAge.rds", package="MITUS"))[,2:69])/1e6
+  rownames(death_age)<-readRDS(system.file("US/US_MortalityCountsByAge.rds", package="MITUS"))[,1]
+  death_sum<-colSums(death_age)[67]
+
+  adj_20a         <- sum(dnorm(death_sum,death_sum,death_sum*0.2/1.96,log=T)*wts[67])
+  sum(dnorm(death_sum,V,death_sum*0.2/1.96,log=T)*wts[67]) - adj_20a
 }
 #' TOTAL DEATHS AGE DISTRIBUTION 1999-2014
 #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
@@ -276,19 +280,14 @@ US_dth_10_tot_lLik <- function(V) {
 #'@param rho correlation parameter
 #'@return likelihood
 tot_dth_age_lLik <- function(V,rho=0.1) {
-  mortdist<-CalibDat$US_mort_age[2:9]/rowSums(CalibDat$US_mort_age[2:9])
-  mortdist<-mortdist[66:67,]
-  #   data("mort_ag_16", package = 'MITUS');
-#   mort_ag_16_d <-(mort_ag_16[]/sum(mort_ag_16[]))
-#  V2 <- V[-11]; V2[10] <- V2[10]+V[11]
-#  V2<-V2/sum(V2)
+mortdist<-readRDS(system.file("US/US_deathdist.rds", package="MITUS"))[,66:67]
+mortdist<-t(mortdist)
 #   adj_20b               <- sum(log(mort_ag_16_d)*mort_ag_16_d);
 #   sum(log(V2[]/sum(V2))*mort_ag_16_d[])*ESS - adj_20b*ESS
 #   }
   adj_20b        <- sum(dDirMult(M=mortdist+0.1,n=mortdist+0.1,Rho=rho)*wts[66:67])
-  V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
-  V2<-V2/rowSums(V2)
-  sum(dDirMult(M=V2,n=mortdist+.1,Rho=rho)*wts[66:67]) - adj_20b
+  V<-V/rowSums(V)
+  sum(dDirMult(M=V,n=mortdist+.1,Rho=rho)*wts[66:67]) - adj_20b
 }
 
 #' Mortality Risk Group Distribution 1999-2014
