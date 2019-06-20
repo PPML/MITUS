@@ -11,9 +11,37 @@ param <- function (PV){
   ################################################################################
   ###########################          INPUTS            #########################
   ################################################################################
-  BgMort           <- Inputs[["BgMort"]]
-  NCHS_mort        <-readRDS(system.file("US/US_NCHS_mort.rds", package="MITUS"))[,2:12]
-  BgMort[1:68,2:12]<-NCHS_mort
+  BgMort           <- as.matrix(Inputs[["BgMort"]])
+  death_age <-readRDS(system.file("US/US_MortalityCountsByAge.rds", package="MITUS"))[,2:69]
+  rownames(death_age)<-readRDS(system.file("US/US_MortalityCountsByAge.rds", package="MITUS"))[,1]
+  death_age<-as.matrix(death_age)
+
+  popdist<- as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS")))
+  popdist<-popdist[,-1]
+  popdist<-popdist[,-69]
+  rownames(popdist)<-as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS"))[,1])
+  new_mort<-popdist
+  new_mort<-death_age/popdist
+  ##weighted mort for the age groups
+  weight_mort<-matrix(NA,11,68)
+  colnames(weight_mort)<-colnames(new_mort)
+  weight_mort[1,]<-colSums(new_mort[1:5,]*popdist[1:5,])/colSums(popdist[1:5,])
+  weight_mort[2,]<-colSums(new_mort[6:15,]*popdist[6:15,])/colSums(popdist[6:15,])
+  weight_mort[3,]<-colSums(new_mort[16:25,]*popdist[16:25,])/colSums(popdist[16:25,])
+  weight_mort[4,]<-colSums(new_mort[26:35,]*popdist[26:35,])/colSums(popdist[26:35,])
+  weight_mort[5,]<-colSums(new_mort[36:45,]*popdist[36:45,])/colSums(popdist[36:45,])
+  weight_mort[6,]<-colSums(new_mort[46:55,]*popdist[46:55,])/colSums(popdist[46:55,])
+  weight_mort[7,]<-colSums(new_mort[56:65,]*popdist[56:65,])/colSums(popdist[56:65,])
+  weight_mort[8,]<-colSums(new_mort[66:75,]*popdist[66:75,])/colSums(popdist[66:75,])
+  weight_mort[9,]<-colSums(new_mort[76:85,]*popdist[76:85,])/colSums(popdist[76:85,])
+  weight_mort[10,]<-colSums(new_mort[86:95,]*popdist[86:95,])/colSums(popdist[86:95,])
+  weight_mort[11,]<-colSums(new_mort[96:111,]*popdist[96:111,])/colSums(popdist[96:111,])
+
+  weight_mort<-t(weight_mort)
+
+
+  # NCHS_mort        <-readRDS(system.file("US/US_NCHS_mort.rds", package="MITUS"))[,2:12]
+  BgMort[1:68,2:12]<-weight_mort
   # BgMort<-BgMort*.8
   #
   # BgMort[11:12]<-BgMort[11:12]*3
@@ -57,11 +85,11 @@ param <- function (PV){
   for(i in 1:11){
     mubt[,i] <- SmoCurve(BgMort[,i+1])*PV[["TunMubt"]] /12
   }
-  mubt[,]<-1-exp(-mubt[,])
+  # mubt[,]<-1-exp(-mubt[,])
 
   mubt<-mubt[1:month,]
   for(i in 1:11){
-    mubt[,i] <- mubt[,i]*exp((PV[["TunmuAg"]]-1)*i)
+    mubt[,i] <- mubt[,i]*exp((PV[["TunmuAg"]]-1))
   }
 
 
