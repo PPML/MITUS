@@ -46,7 +46,7 @@ new_OutputsZint <-  function(samp_i=1,ParMatrix,startyr=1950, endyr=2050,Int1=0,
 
   # P <- Par
   prms <-list()
-  prms <- new_param(P,prgchng)
+  prms <- new_param(P,prg_chng)
   IP <- list()
   IP <- param_init(P)
   # data("trans_mat_nat",package="MITUS")
