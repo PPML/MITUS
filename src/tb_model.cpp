@@ -42,7 +42,7 @@ using namespace Rcpp;
 //'@param rRecov rate of recovery from latent slow to safe tb state
 //'@param pImmScen lack of reactivitiy to IGRA for Sp
 //'@param EarlyTrend ramp down of TB in burn-in
-//'@param pReTx probability of re-treatment for TB
+//'@param ag_den denominator used in the aging process
 //'@param NixTrans reduction of transmission over time
 //'@param dist_gen general distribution across tb progression and mort
 //'@param trans_mat_tot_ages
@@ -92,6 +92,7 @@ Rcpp::List cSim(
     double              pImmScen,
     std::vector<double>  EarlyTrend,
     std::vector<double> pReTx,
+    Rcpp::NumericMatrix ag_den,
     std::vector<double> NixTrans,
     Rcpp::NumericMatrix       dist_gen,
     Rcpp::NumericMatrix       trans_mat_tot_ages
@@ -109,6 +110,8 @@ Rcpp::List cSim(
   double        MpslowPIN[MpfastPI.nrow()][MpfastPI.ncol()];
   double        MrslowN[Mrslow.nrow()][Mrslow.ncol()];
   double        vTMortN[vTMort.nrow()][vTMort.ncol()];
+  double        ag_denN[ag_den.nrow()][ag_den.ncol()];
+
   // double        RRs_muN[RRs_mu.nrow()][RRs_mu.ncol()];
   // double        vIsxtoIsyN[vIsxtoIsy.nrow()][vIsxtoIsy.ncol()];
   // double        vNmxtoNmyN[vNmxtoNmy.nrow()][vNmxtoNmy.ncol()];
@@ -186,6 +189,10 @@ Rcpp::List cSim(
   for(int i=0; i<vTMort.nrow(); i++) {
     for(int j=0; j<vTMort.ncol(); j++) {
       vTMortN[i][j] = vTMort(i,j);
+    } }
+  for(int i=0; i<ag_den.nrow(); i++) {
+    for(int j=0; j<ag_den.ncol(); j++) {
+      ag_denN[i][j] = ag_den(i,j);
     } }
   // for(int i=0; i<RRs_mu.nrow(); i++) {
   //   for(int j=0; j<RRs_mu.ncol(); j++) {
@@ -402,6 +409,7 @@ Rcpp::List cSim(
         for(int im=0; im<4; im++) {
           for(int nm=0; nm<4; nm++){
             for(int rg=0; rg<2; rg++){
+              // V1[ag][tb][0][im][nm][rg][0]  -= ((.045000/12)/12672);
               V1[ag][tb][0][im][nm][rg][1]  -= V0[ag][tb][0][im][nm][rg][1]*rEmmigFB[0];   // FB1
               V1[ag][tb][0][im][nm][rg][2]  -= V0[ag][tb][0][im][nm][rg][2]*rEmmigFB[1];   // FB2
             } } } } }
@@ -440,19 +448,17 @@ Rcpp::List cSim(
           for(int rg=0; rg<2; rg++) {
             for(int na=0; na<3; na++){
               for(int tb=0; tb<5; tb++) {
-                if ((ag<9) | ((RRmuRFN[nm]*RRmuHR[rg]) < 5)){
-                  V1[ag][tb][0][im][nm][rg][na]  -= V0[ag][tb][0][im][nm][rg][na]*(mubtN[0][ag]*RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][tb]);
+                if ((ag<9) | ((mubtN[0][ag]*RRmuRFN[nm]*RRmuHR[rg]) < .5)){
+                  temp = ((RRmuRFN[nm]*RRmuHR[rg])*mubtN[0][ag]);
                 } else {
-                  V1[ag][tb][0][im][nm][rg][na]  -= (V0[ag][tb][0][im][nm][rg][na]*(mubtN[0][ag]*5+vTMortN[ag][tb]));
+                  temp =  .5;
                 }
+                V1[ag][tb][0][im][nm][rg][na]  -= (V0[ag][tb][0][im][nm][rg][na]*(temp+vTMortN[ag][tb]));
+
               }//close the tb loop
 
               ////////////////          MORTALITY WITH TB TREATMENT         ////////////////////
-              if ( (ag<9) |((RRmuRFN[nm]*RRmuHR[rg])<5)){
-                V1[ag][5 ][0][im][nm][rg][na]  -= V0[ag][5 ][0][im][nm][rg][na]*(mubtN[0][ag]*RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][5 ]*pow(1.0-TxVecZ[1],TunTxMort)); //check the mortality in param
-              } else {
-                V1[ag][5 ][0][im][nm][rg][na]  -= (V0[ag][5 ][0][im][nm][rg][na]*(mubtN[0][ag]*5+vTMortN[ag][5 ]*pow(1.0-TxVecZ[1],TunTxMort)));
-              }
+              V1[ag][5 ][0][im][nm][rg][na]  -= V0[ag][5 ][0][im][nm][rg][na]*(temp+vTMortN[ag][5 ]*pow(1.0-TxVecZ[1],TunTxMort)); //check the mortality in param
             } } } } }
     /////////////////////////////////////AGING///////////////////////////////////////
     for(int ag=0; ag<10; ag++) {
@@ -461,14 +467,14 @@ Rcpp::List cSim(
           for(int nm=0; nm<4; nm++) {
             for(int rg=0; rg<2; rg++) {
               for(int na=0; na<3; na++) {
-                /////          IF AGE > 4, IT TAKES 120 MONTHS TO LEAVE AGE GROUP          /////
-                if(ag>0) {
-                  temp2 = 120;
-                  /////          IF AGE < 4, IT TAKES 60 MONTHS TO LEAVE AGE GROUP           /////
-                } else {
-                  temp2 = 60;
-                }
-                temp = V0[ag][tb][0][im][nm][rg][na]/temp2;
+                // /////          IF AGE > 4, IT TAKES 120 MONTHS TO LEAVE AGE GROUP          /////
+                // if(ag>0) {
+                //   temp2 = 120;
+                //   /////          IF AGE < 4, IT TAKES 60 MONTHS TO LEAVE AGE GROUP           /////
+                // } else {
+                //   temp2 = 60;
+                // }
+                temp = V0[ag][tb][0][im][nm][rg][na]/ag_denN[0][ag];
                 V1[ag  ][tb][0][im][nm][rg][na]  -= temp;
                 V1[ag+1][tb][0][im][nm][rg][na]  += temp;
               } } } } } }
@@ -717,42 +723,20 @@ Rcpp::List cSim(
     ////////           NOW FINALLY UPDATE THE DISTRIBUTION           ///////////
     if (reblnc==1){
       for(int ag=0; ag<11; ag++) {
-
-          for(int tb=0; tb<6; tb++) {
-            for (int im=0; im<4; im++){
-              for (int nm=0; nm<4; nm++){
-                for(int rg=0; rg<2; rg++) {
-                  for(int na=0; na<3; na++){
-
-                  V2[ag][tb][0][im][nm][rg][na]=0;
-                } } } }
-        }
-          for(int tb=0; tb<6; tb++) {
-            for (int im=0; im<4; im++){
-              for (int nm=0; nm<4; nm++){
+        for(int tb=0; tb<6; tb++) {
+          for (int im=0; im<4; im++){
+            for (int nm=0; nm<4; nm++){
+              for(int rg=0; rg<2; rg++) {
                 for(int na=0; na<3; na++){
-                  for(int rg=0; rg<2; rg++) {
-                    for (int m2=0; m2<4; m2++){
-                      for (int p2=0; p2<4; p2++){
+                  // V2[ag][tb][0][im][nm][rg][na]=0;
+                  for (int m2=0; m2<4; m2++){
+                    for (int p2=0; p2<4; p2++){
+                      temp = V1[ag][tb][0][p2][m2][rg][na]*(trans_mat_tot_agesN[m2+p2*4][(16*(ag+1))-(16-(nm+im*4))]);
+                      V1[ag][tb][0][im][nm][rg][na] += temp;
+                      V1[ag][tb][0][p2][m2][rg][na] -= temp;
 
-                        // Rcout<< trans_mat_tot_agesN[m2+p2*4][(16*(ag+1))-(16-(nm+im*4))]<<"\n";
-                        V2[ag][tb][0][im][nm][rg][na] += V1[ag][tb][0][p2][m2][rg][na] * (trans_mat_tot_agesN[m2+p2*4][(16*(ag+1))-(16-(nm+im*4))]);
-                      } } } } } } }
-      } //end of age loop
-    } //end of reblncing loop
-    for(int ag=0; ag<11; ag++) {
-      for(int tb=0; tb<6; tb++) {
-        for(int im=0; im<4; im++) {
-          for(int nm=0; nm<4; nm++){
-            for(int rg=0; rg<2; rg++){
-              for (int na=0; na<3; na++){
-                // if (reblnc==1){
-                V1[ag][tb][0][im][nm][rg][na] = V2[ag][tb][0][im][nm][rg][na];
-                V0[ag][tb][0][im][nm][rg][na] = V2[ag][tb][0][im][nm][rg][na];
-                // } else {
-                // V0[ag][tb][0][im][nm][rg][na] = V1[ag][tb][0][im][nm][rg][na];
-                // }
-              } } } } } }
+                    } } } } } } } }
+    } //end of rebalancing loop
     /////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////RESET POPULATION SIZE/////////////////////////////
 
@@ -948,6 +932,7 @@ Rcpp::List cSim(
             for(int im=0; im<4; im++){
               for(int nm=0; nm<4; nm++){
                 for(int rg=0; rg<2; rg++) {
+                  // V1[ag][tb][lt][im][nm][rg][0]  -= ((.045000/12)/12672);
                   V1[ag][tb][lt][im][nm][rg][1]  -= V0[ag][tb][lt][im][nm][rg][1]*rEmmigFB[0];      // FB1
                   V1[ag][tb][lt][im][nm][rg][2]  -= V0[ag][tb][lt][im][nm][rg][2]*rEmmigFB[1];      // FB2
                 } } } } } }
@@ -1012,26 +997,19 @@ Rcpp::List cSim(
               for(int rg=0; rg<2; rg++) {
                 for(int na=0; na<3; na++) {
                   for(int tb=0; tb<4; tb++) {
-                    if ((ag<9) | ((RRmuRFN[nm]*RRmuHR[rg]) <5)){
+                    if ((ag<9) | ((mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]) < .5)){
+                      temp = ((RRmuRFN[nm]*RRmuHR[rg])*mubtN[s][ag]);}
+                    else {
+                      temp =  .5;
+                    }
 
-                      ////////////////////////UNINFECTED, SUSCEPTIBLE//////////////////////////////////
-                      VMort[ag][tb ][lt][im][nm][rg][na]  = V0[ag][tb][lt][im][nm][rg][na]*(mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]);
-                    } else {
-                      VMort[ag][tb ][lt][im][nm][rg][na]  = (V0[ag][tb][lt][im][nm][rg][na]*(mubtN[s][ag]*5));}
+                    VMort[ag][tb ][lt][im][nm][rg][na]  = V0[ag][tb][lt][im][nm][rg][na]*temp;
                   }//close the tb loop
                   ////////////////////////      ACTIVE TB         /////////////////////////////////
-
-                  if ((ag<9) | ((RRmuRFN[nm]*RRmuHR[rg]) <5)){
-                    VMort[ag][4 ][lt][im][nm][rg][na]  = V0[ag][4 ][lt][im][nm][rg][na]*
-                      (mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]+vTMortN[ag][4 ]+temp );
-                  } else {VMort[ag][4 ][lt][im][nm][rg][na]  = (V0[ag][4 ][lt][im][nm][rg][na]*(mubtN[s][ag]*5+vTMortN[ag][4 ]+temp)); }
+                  VMort[ag][4 ][lt][im][nm][rg][na]  = V0[ag][4 ][lt][im][nm][rg][na]*(temp+vTMortN[ag][4 ] );
 
                   ////////////////////////    TB TREATMENT        /// //////////////////////////////
-                  if ((ag<9) | ((RRmuRFN[nm]*RRmuHR[rg])<5)){
-                    VMort[ag][5 ][lt][im][nm][rg][na]  = V0[ag][5 ][lt][im][nm][rg][na]*
-                      (mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]+(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort));
-                  } else  {
-                    VMort[ag][5 ][lt][im][nm][rg][na]  = (V0[ag][5 ][lt][im][nm][rg][na]*(mubtN[s][ag]*5+(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort))); }
+                  VMort[ag][5 ][lt][im][nm][rg][na]  = V0[ag][5 ][lt][im][nm][rg][na]*(temp+vTMortN[ag][5 ]*pow(1.0-TxVecZ[1],TunTxMort));
 
                   ///////////// UPDATE THE PRIMARY VECTOR BY REMOVING MORTALITY /////////////////
                   for(int tb=0; tb<6; tb++) {
@@ -1059,19 +1037,19 @@ Rcpp::List cSim(
       /////////////////////////////////////AGING///////////////////////////////////////
       for(int ag=0; ag<10; ag++) {
         /////          IF AGE > 4, IT TAKES 120 MONTHS TO LEAVE AGE GROUP          /////
-        if(ag>0) {
-          temp2 = 120;
-          /////          IF AGE < 4, IT TAKES 60 MONTHS TO LEAVE AGE GROUP           /////
-        } else {
-          temp2 = 60;
-        }
+        // if(ag>0) {
+        //   temp2 = 120;
+        //   /////          IF AGE < 4, IT TAKES 60 MONTHS TO LEAVE AGE GROUP           /////
+        // } else {
+        //   temp2 = 60;
+        // }
         for(int tb=0; tb<6; tb++) {
           for(int lt=0; lt<2; lt++){
             for (int im=0; im<4; im++){
               for (int nm=0; nm<4; nm++){
                 for(int rg=0; rg<2; rg++) {
                   for(int na=0; na<3; na++){
-                    temp = V0[ag  ][tb][lt][im][nm][rg][na]/temp2;
+                    temp = V0[ag  ][tb][lt][im][nm][rg][na]/ag_denN[s][ag];
                     V1[ag  ][tb][lt][im][nm][rg][na]  -= temp;
                     V1[ag+1][tb][lt][im][nm][rg][na]  += temp;
                   } } } } } } }
@@ -1974,61 +1952,37 @@ Rcpp::List cSim(
       //////////////////////////////////////////////////////////////////////////////////
 
       ////// need to define the current distribution of persons across the RG at this timestep
-      // if (reblnc==1){
-
-      for(int ag=0; ag<11; ag++) {
-        for(int na=0; na<3; na++){
+      if (reblnc==1){
+        for(int ag=0; ag<11; ag++) {
           for(int tb=0; tb<6; tb++) {
-            for(int lt=0; lt<2; lt++){
-              for(int rg=0; rg<2; rg++) {
-                for (int im=0; im<4; im++){
-                  for (int nm=0; nm<4; nm++){
-                    V2[ag][tb][lt][im][nm][rg][na]=0;
-                  } } } } } } }
-      for(int ag=0; ag<11; ag++) {
+            for(int lt=0; lt<2; lt++) {
+              for (int im=0; im<4; im++){
+                for (int nm=0; nm<4; nm++){
+                  for(int rg=0; rg<2; rg++) {
+                    for(int na=0; na<3; na++){
+                      // V2[ag][tb][0][im][nm][rg][na]=0;
+                      for (int m2=0; m2<4; m2++){
+                        for (int p2=0; p2<4; p2++){
+                          temp = V1[ag][tb][lt][p2][m2][rg][na]*(trans_mat_tot_agesN[m2+p2*4][(16*(ag+1))-(16-(nm+im*4))]);
+                          V1[ag][tb][lt][im][nm][rg][na] += temp;
 
-        for (int im=0; im<4; im++){
-          for (int nm=0; nm<4; nm++){
-            for (int m2=0; m2<4; m2++){
-              for (int p2=0; p2<4; p2++){
-                for(int rg=0; rg<2; rg++) {
-                  for(int tb=0; tb<6; tb++) {
-                    for(int lt=0; lt<2; lt++){
-                      for(int na=0; na<3; na++){
-                        V2[ag][tb][lt][im][nm][rg][na] += V1[ag][tb][lt][p2][m2][rg][na] *((trans_mat_tot_agesN[(m2+p2*4)][(16*(ag+1))-(16-(nm+im*4))]));//*((mubtN[s][ag]/mubtN[0][ag])*.1));
-                      }            } } } } } } }
-      }
-      for(int ag=0; ag<11; ag++) {
-
-        for(int im=0; im<4; im++) {
-          for(int nm=0; nm<4; nm++){
-            for(int rg=0; rg<2; rg++){
-              for (int na=0; na<3; na++){
-                for(int lt=0; lt<2; lt++){
-                  for(int tb=0; tb<6; tb++) {
-                    if (reblnc==1){
-                      V1[ag][tb][lt][im][nm][rg][na] = V2[ag][tb][lt][im][nm][rg][na];
-                      V0[ag][tb][lt][im][nm][rg][na] = V2[ag][tb][lt][im][nm][rg][na];
-                    } else {
-                      V0[ag][tb][lt][im][nm][rg][na] = V1[ag][tb][lt][im][nm][rg][na];
-                    }
-                  } } } } }
-        }
-
-        // for(int ag=0; ag<11; ag++) {
-        //   for(int tb=0; tb<6; tb++) {
-        //     for(int lt=0; lt<2; lt++){
-        //       for(int im=0; im<4; im++){
-        //         for(int nm=0; nm<4; nm++){
-        //           for(int rg=0; rg<2; rg++) {
-        //             for(int na=0; na<3; na++) {
-        //               if (std::any_of(V1[ag][tb][lt][im][nm][rg][na]<0)){
-        //                 //Rcpp::Rcout << "after rblnc pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
-        //              //   Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-        //              Rcpp::Rcout << "after rblnc pop is negative /n";
-        //               }
-        //             } } } } } } }
-      }//end of age loop
+                          V1[ag][tb][lt][p2][m2][rg][na] -= temp;
+                        } } } } } } } } }
+      } //end of rebalancing loop
+      // for(int ag=0; ag<11; ag++) {
+      //   for(int tb=0; tb<6; tb++) {
+      //     for(int lt=0; lt<2; lt++){
+      //       for(int im=0; im<4; im++){
+      //         for(int nm=0; nm<4; nm++){
+      //           for(int rg=0; rg<2; rg++) {
+      //             for(int na=0; na<3; na++) {
+      //               if (std::any_of(V1[ag][tb][lt][im][nm][rg][na]<0)){
+      //                 //Rcpp::Rcout << "after rblnc pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+      //              //   Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+      //              Rcpp::Rcout << "after rblnc pop is negative /n";
+      //               }
+      //             } } } } } } }
+      // }//end of age loop
 
 
 
@@ -2036,20 +1990,20 @@ Rcpp::List cSim(
       //     //    ///////////////////////////////////////////////////////////////////////////////////
       //     //    ///////////                       UPDATE V0 as V1                       ///////////
       // //     //    ///////////////////////////////////////////////////////////////////////////////////
-      // for(int ag=0; ag<11; ag++) {
-      //   for(int tb=0; tb<6; tb++) {
-      //     for(int lt=0; lt<2; lt++){
-      //       for (int im=0; im<4; im++){
-      //         for (int nm=0; nm<4; nm++){
-      //           for(int rg=0; rg<2; rg++) {
-      //             for(int na=0; na<3; na++){
-      //               // if ((reblnc == 1) & ((m==5)|(m==11))){
-      //               //   V0[ag][tb][lt][im][nm][rg][na] = V2[ag][tb][lt][im][nm][rg][na];
-      //               //   V1[ag][tb][lt][im][nm][rg][na] = V2[ag][tb][lt][im][nm][rg][na];
-      //               // } else {
-      //                 V0[ag][tb][lt][im][nm][rg][na] = V1[ag][tb][lt][im][nm][rg][na];
-      //               // }
-      //             } } } } } } }
+      for(int ag=0; ag<11; ag++) {
+        for(int tb=0; tb<6; tb++) {
+          for(int lt=0; lt<2; lt++){
+            for (int im=0; im<4; im++){
+              for (int nm=0; nm<4; nm++){
+                for(int rg=0; rg<2; rg++) {
+                  for(int na=0; na<3; na++){
+                    // if ((reblnc == 1) & ((m==5)|(m==11))){
+                    //   V0[ag][tb][lt][im][nm][rg][na] = V2[ag][tb][lt][im][nm][rg][na];
+                    //   V1[ag][tb][lt][im][nm][rg][na] = V2[ag][tb][lt][im][nm][rg][na];
+                    // } else {
+                    V0[ag][tb][lt][im][nm][rg][na] = V1[ag][tb][lt][im][nm][rg][na];
+                    // }
+                  } } } } } } }
       // for(int ag=0; ag<11; ag++) {
       //
       // for (int i=0; i<4; i++){

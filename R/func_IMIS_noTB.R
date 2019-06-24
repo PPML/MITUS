@@ -31,18 +31,52 @@ llikelihoodZ_noTB <-  function(samp_i,opt_mat) {
     prms <- param(P)
     IP <- list()
     IP <- param_init(P)
+    popdist<- as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS")))
+    popdist<-popdist[,-1]
+    rownames(popdist)<-as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS"))[,1])
+
+    #calculate the percentage of the total age band in each single year age
+    ltd<-matrix(NA,10,69)
+
+    ltd[1,]<-popdist[5,]/colSums(popdist[1:5,])
+    ltd[2,]<-popdist[15,]/colSums(popdist[6:15,])
+    ltd[3,]<-popdist[25,]/colSums(popdist[16:25,])
+    ltd[4,]<-popdist[35,]/colSums(popdist[26:35,])
+    ltd[5,]<-popdist[45,]/colSums(popdist[36:45,])
+    ltd[6,]<-popdist[55,]/colSums(popdist[46:55,])
+    ltd[7,]<-popdist[65,]/colSums(popdist[56:65,])
+    ltd[8,]<-popdist[75,]/colSums(popdist[66:75,])
+    ltd[9,]<-popdist[85,]/colSums(popdist[76:85,])
+    ltd[10,]<-popdist[95,]/colSums(popdist[86:95,])
+
+
+    #invert this for the aging rate
+    ltd<-1/ltd
+
+    td<-matrix(NA,10,1201)
+    for (i in 1:10){
+      td[i,1:817]<-SmoCurve(as.numeric(ltd[i,]))
+      td[i,818:1201]<-td[i,817]
+    }
+
+    #plot the spline denominators
+    for(i in 1:10){
+      plot(t(td)[1:817,i], type="l")}
+
+    spl_den<-t(td)*12
+
     trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, prms$adj_fact)
 
-    zz <- cSim_flow(  nYrs       = 2018-1950         , nRes      = length(prms[["ResNam"]]), rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
-                 Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]    ,
-                 rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
-                 vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  ,  Birthst  = prms[["Birthst"]]    ,
-                 HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat" ]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst" ]]    ,
-                 net_mig_usb = prms[["net_mig_usb"]]      , net_mig_nusb    = prms[["net_mig_nusb"]]        ,
-                 mubt       = prms[["mubt"]]      , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
-                 TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
-                 LtDxPar    = prms[["LtDxPar"]]   , rLtScrt   = prms[["rLtScrt"]]       , RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
-                 EarlyTrend = prms[["EarlyTrend"]], NixTrans = IP[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)
+    zz <- cSim_ag(  nYrs       = 2018-1950         , nRes      = length(prms[["ResNam"]])  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]],
+                    Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]  ,
+                    rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
+                    vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    ,
+                    HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat" ]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst" ]]    ,
+                    net_mig_usb = prms[["net_mig_usb"]], net_mig_nusb = prms[["net_mig_nusb"]],
+                    mubt       = prms[["mubt"]]    , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
+                    TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
+                    LtDxPar    = prms[["LtDxPar"]]   , rLtScrt   = prms[["rLtScrt"]]       , RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
+                    EarlyTrend = prms[["EarlyTrend"]], ag_den=spl_den, NixTrans = IP[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)
     #'if any output is missing or negative or if any model state population is negative
     #'set the likelihood to a hugely negative number (penalized)
     if(sum(is.na(zz$Outputs[65,]))>0 | min(zz$Outputs[65,])<0 | min(zz$V1)<0 ) {
@@ -53,32 +87,32 @@ llikelihoodZ_noTB <-  function(samp_i,opt_mat) {
       colnames(M) <- prms[["ResNam"]]
       lLik <- 0
 
-      v17a  <- M[,31]+M[,32]
-      addlik <- tot_pop_yr_fb_lLik(V=v17a); addlik
+      #' TOTAL POP EACH DECADE, BY US/FB - index updated (maybe)
+      v17  <- M[,31]+M[,32]
+      addlik <- tot_pop_yr_fb_lLik(V=v17); addlik
       lLik <- lLik + addlik
-      # v17b  <- M[,30]
-      # addlik <- tot_pop_yr_usb_lLik(V=v17b); addlik
-      # lLik <- lLik + addlik
       #' TOTAL POP AGE DISTRIBUTION 2016 index updated
       v18  <- cbind(M[67,33:43],M[67,44:54])
       addlik <- tot_pop16_ag_fb_lLik(V=v18); addlik
       lLik <- lLik + addlik
-
-      #' Total DEATHS 1979-2016
-      #'
-      # v20a  <- rowSums(M[66:67,121:131])
-      # v20a<-v20a*1e6
-      # addlik <- US_dth_tot_lLik(V=v20a); addlik
-      # lLik <- lLik + addlik
-      #'Total deaths by decade
-      #' v20a<-M[c(11,21,31,41,51,61),121:131]
-      #' addlik <-US_dth_10_tot_lLik(V=v20a); addlik
-      #' lLik <- lLik + addlik
+      #' TOTAL DEATHS WITH TB 1999-2014 - index updated
+      v19  <- M[50:65,227:237]
+      addlik <- tb_dth_tot_lLik(V=rowSums(v19)); addlik
+      lLik <- lLik + addlik
+      #' TB DEATHS 1999-2014 BY AGE - index updated above
+      addlik <- tb_dth_age_lLik(V=v19); addlik
+      lLik <- lLik + addlik
+      #' #' Total DEATHS 1999-2016
+      v20a<-sum(M[67,121:131])
+      addlik <-US_dth_10_tot_lLik(V=v20a); addlik
+      lLik <- lLik + addlik
       #'
       #' #' Total DEATHS 1999-2016 BY AGE
       v20b  <- M[66:67,121:131]
       # v20b[10] <-v20b[10]+v20b[11]
       # v20b<-v20b[-11]
+      addlik <- tot_dth_age_lLik(V=v20b); addlik
+      lLik <- lLik + addlik
       addlik <- tot_dth_age_lLik(V=v20b); addlik
       lLik <- lLik + addlik
       #' #' Mort_dist 2016
@@ -90,10 +124,20 @@ llikelihoodZ_noTB <-  function(samp_i,opt_mat) {
         } }
       addlik <- mort_dist_lLik(V=v21a); addlik
       lLik <- lLik + addlik
+      #' #' Mort_dist 2016
+      # v21a<- v21  <- M[51:67,521:564]
+      # for (i in 1:11){
+      #   denom<-M[51:67,2+i]
+      #   for (j in 1:ncol(v21)){
+      #     v21a[,(1:4)+4*(i-1)]<-v21[,(1:4)+4*(i-1)]/denom
+      #   } }
+      # addlik <- mort_dist_lLik(V=v21a); addlik
+      # lLik <- lLik + addlik
       #' HOMELESS POP 2010 - index updated
       v23b  <- M[61,29]
       addlik <- homeless_10_lLik(V=v23b); addlik
       lLik <- lLik + addlik
+
 
 
     } }, error = function(e) NA)

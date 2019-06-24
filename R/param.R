@@ -52,6 +52,41 @@ param <- function (PV){
   TxInputs         <- Inputs[["TxInputs"]]
   NetMig           <- Inputs[["NetMigrState"]]
 
+  ##########                CALCULATION OF AGING DENOMINATORS           ##########
+  popdist<- as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS")))
+  popdist<-popdist[,-1]
+  rownames(popdist)<-as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS"))[,1])
+
+  #calculate the percentage of the total age band in each single year age
+  ltd<-matrix(NA,10,69)
+
+  ltd[1,]<-popdist[5,]/colSums(popdist[1:5,])
+  ltd[2,]<-popdist[15,]/colSums(popdist[6:15,])
+  ltd[3,]<-popdist[25,]/colSums(popdist[16:25,])
+  ltd[4,]<-popdist[35,]/colSums(popdist[26:35,])
+  ltd[5,]<-popdist[45,]/colSums(popdist[36:45,])
+  ltd[6,]<-popdist[55,]/colSums(popdist[46:55,])
+  ltd[7,]<-popdist[65,]/colSums(popdist[56:65,])
+  ltd[8,]<-popdist[75,]/colSums(popdist[66:75,])
+  ltd[9,]<-popdist[85,]/colSums(popdist[76:85,])
+  ltd[10,]<-popdist[95,]/colSums(popdist[86:95,])
+
+
+  #invert this for the aging rate
+  ltd<-1/ltd
+
+  td<-matrix(NA,10,1201)
+  for (i in 1:10){
+    td[i,1:817]<-SmoCurve(as.numeric(ltd[i,]))
+    td[i,818:1201]<-td[i,817]
+  }
+
+  #plot the spline denominators
+  for(i in 1:10){
+    plot(t(td)[1:817,i], type="l")}
+
+  spl_den<-t(td)*12
+
   ########## DEFINE A VARIABLE THAT WILL DETERMINE HOW LONG THE TIME DEPENDENT
   ########## VARIABLES SHOULD BE (IN MONTHS)
   month<-1201;
@@ -610,54 +645,49 @@ TxQualt<-TxQualt[1:month]
   )
 
   Params<-list()
-  Params[["rDxt"]]      = rDxt
-  Params[["TxQualt"]]   = TxQualt
-  Params[["InitPop"]]   = InitPop
-  Params[["Mpfast"]]    = Mpfast
-  Params[["ExogInf"]]   = ExogInf
-  Params[["MpfastPI"]]  = MpfastPI
-  Params[["Mrslow"]]    = Mrslow
-  Params[["rrSlowFB"]]  = rrSlowFB
-  Params[["rfast"]]     = rfast
-  Params[["RRcurDef"]]  = RRcurDef
-  Params[["rSlfCur"]]   = rSlfCur
-  Params[["p_HR"]]      = p_HR
-  Params[["dist_gen"]]  = dist_gen
-  Params[["vTMort"]]    = vTMort
-  Params[["RRmuRF"]]    = RRmuRF
-  Params[["RRmuHR"]]    = RRmuHR
-  Params[["Birthst"]]   = Birthst
-  Params[["HrEntEx"]]   = HrEntEx
-  Params[["ImmNon"]]    = ImmNon
-  Params[["ImmLat"]]    = ImmLat
-  Params[["ImmAct"]]    = ImmAct
-  Params[["ImmFst"]]    = ImmFst
-  Params[["mubt"]]      = mubt
-  Params[["RelInf"]]    = RelInf
-  Params[["RelInfRg"]]  = RelInfRg
-  Params[["Vmix"]]      = Vmix
-  Params[["rEmmigFB"]]  = rEmmigFB
-  Params[["TxVec"]]     = TxVec
-  Params[["TunTxMort"]] = TunTxMort
-  Params[["rDeft"]]     = rDeft
-  Params[["pReTx"]]     = pReTx
-  Params[["LtTxPar"]]   = LtTxPar
-  Params[["LtDxPar"]]   = LtDxPar
-  Params[["rLtScrt"]]   = rLtScrt
-  Params[["RRdxAge"]]   = RRdxAge
-  Params[["rRecov"]]    = rRecov
-  Params[["pImmScen"]]  = pImmScen
-  Params[["EarlyTrend"]]= EarlyTrend
-  Params[["net_mig_usb"]]  = net_mig_usb
-  Params[["net_mig_nusb"]]= net_mig_nusb
-  # Params[["NixTrans"]]  = NixTrans
-  # Params[["can_go"]]    = can_go
-  # Params[["dist_goal"]] = dist_goal
-  # Params[["diff_i_v"]]  = diff_i_v
-  # Params[["dist_orig_v"]]=dist_orig_v
-  Params[["adj_fact"]] <- adj_fact;
-
-  Params[["ResNam"]]    = ResNam
+  Params[["rDxt"]]      <- rDxt
+  Params[["TxQualt"]]   <- TxQualt
+  Params[["InitPop"]]   <- InitPop
+  Params[["Mpfast"]]    <- Mpfast
+  Params[["ExogInf"]]   <- ExogInf
+  Params[["MpfastPI"]]  <- MpfastPI
+  Params[["Mrslow"]]    <- Mrslow
+  Params[["rrSlowFB"]]  <- rrSlowFB
+  Params[["rfast"]]     <- rfast
+  Params[["RRcurDef"]]  <- RRcurDef
+  Params[["rSlfCur"]]   <- rSlfCur
+  Params[["p_HR"]]      <- p_HR
+  Params[["dist_gen"]]  <- dist_gen
+  Params[["vTMort"]]    <- vTMort
+  Params[["RRmuRF"]]    <- RRmuRF
+  Params[["RRmuHR"]]    <- RRmuHR
+  Params[["Birthst"]]   <- Birthst
+  Params[["HrEntEx"]]   <- HrEntEx
+  Params[["ImmNon"]]    <- ImmNon
+  Params[["ImmLat"]]    <- ImmLat
+  Params[["ImmAct"]]    <- ImmAct
+  Params[["ImmFst"]]    <- ImmFst
+  Params[["mubt"]]      <- mubt
+  Params[["RelInf"]]    <- RelInf
+  Params[["RelInfRg"]]  <- RelInfRg
+  Params[["Vmix"]]      <- Vmix
+  Params[["rEmmigFB"]]  <- rEmmigFB
+  Params[["TxVec"]]     <- TxVec
+  Params[["TunTxMort"]] <- TunTxMort
+  Params[["rDeft"]]     <- rDeft
+  Params[["pReTx"]]     <- pReTx
+  Params[["LtTxPar"]]   <- LtTxPar
+  Params[["LtDxPar"]]   <- LtDxPar
+  Params[["rLtScrt"]]   <- rLtScrt
+  Params[["RRdxAge"]]   <- RRdxAge
+  Params[["rRecov"]]    <- rRecov
+  Params[["pImmScen"]]  <- pImmScen
+  Params[["EarlyTrend"]]<- EarlyTrend
+  Params[["net_mig_usb"]]  <- net_mig_usb
+  Params[["net_mig_nusb"]]<- net_mig_nusb
+  Params[["aging_denom"]] <-spl_den
+  Params[["adj_fact"]] <- adj_fact
+  Params[["ResNam"]]    <- ResNam
   return(Params)
 }
 
