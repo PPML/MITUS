@@ -102,7 +102,8 @@ new_OutputsInt <- function(loc,ParMatrix,n_cores=1,endyr=2050,Int1=0,Int2=0,Int3
   if(Int1==1) intv<-2;if(Int2==1) intv<-3; if(Int3==1) intv<-4;
   if(Int4==1) intv<-5; if(Int5==1) intv<-6; if(Scen1==1) intv<-7;
   if(Scen2==1) intv<-8;if(Scen3==1) intv<-9;
-  save(out,file=paste("/Users/nis100/MITUS/",loc,"_results_",intv,".rda",sep=""))
+  # saveRDS(out, file=paste("~MITUS/",loc,"_results_",intv,".rds",sep=""))
+  # save(out,file=paste("/Users/nis100/MITUS/",loc,"_results_",intv,".rda",sep=""))
   return(out)
 }
 
