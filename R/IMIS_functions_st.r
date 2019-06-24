@@ -112,9 +112,9 @@ library(lhs)
       addlik <- tot_pop_yr_fb_lLik_st(V=v17,st=st); addlik
       lLik <- lLik + addlik
       ### ### ### TOTAL US POP EACH DECADE, FOR US  ### ### ### ### ### ###  D ResNam
-      v17b  <- M[,30]
-      addlik <- tot_pop_yr_us_lLik_st_00_10(V=v17b,st=st); addlik
-      lLik <- lLik + addlik
+      # v17b  <- M[,30]
+      # addlik <- tot_pop_yr_us_lLik_st_00_10(V=v17b,st=st); addlik
+      # lLik <- lLik + addlik
       ### ### ### TOTAL POP AGE DISTRIBUTION 2014  ### ### ### ### ### ### D
       v18  <- cbind(M[65,33:43],M[65,44:54])
       addlik <- tot_pop14_ag_fb_lLik_st(V=v18,st=st); addlik
