@@ -148,7 +148,7 @@ ltbi_fb_11_dp_lLik_st <- function(V) { # V = LTBI in FB pop 2011 (row=11 ages, c
 tot_pop_yr_fb_lLik_st <- function(V,st) { # V = total pop (rows=year, cols=us, fb)
   tot_pop_yr      <- CalibDatState[["tot_pop_yr_fb"]][[st]]
   tot_pop_yr_fb   <- tot_pop_yr[tot_pop_yr$usb==0,]
-  adj_17          <- sum(dnorm(tot_pop_yr_fb[-1,3],tot_pop_yr_fb[-1,3],tot_pop_yr_fb[7,3]*0.05/1.96,log=T)*wts[1+1:6*10])
+  adj_17          <- sum(dnorm(tot_pop_yr_fb[-1,3],tot_pop_yr_fb[-1,3],tot_pop_yr_fb[7,3]*0.1/1.96,log=T)*wts[1+1:6*10])
   sum(dnorm(tot_pop_yr_fb[-1,3],V[c(11,21,31,41,51,61)]*1e6,tot_pop_yr_fb[7,3]*0.1/1.96,log=T)*wts[1+1:6*10]) - adj_17  } # CI = +/- 2mil
 
 ### D
@@ -156,8 +156,8 @@ tot_pop_yr_us_lLik_st_00_10 <- function(V,st) {
   tot_pop_yr      <- CalibDatState[["tot_pop_yr_fb"]][[st]]
   # V = total pop (rows=year, cols=us, fb)
   tot_pop_yr_us  <- tot_pop_yr[tot_pop_yr$usb==1,]
-  adj_17b        <- sum(dnorm(tot_pop_yr_us[6:7,3],tot_pop_yr_us[6:7,3],tot_pop_yr_us[7,3]*0.05/1.96,log=T)*wts[1+5:6*10])
-  sum(dnorm(tot_pop_yr_us[6:7,3],V[c(51,61)]*1e6,tot_pop_yr_us[7,3]*0.05/1.96,log=T)*wts[1+5:6*10]) - adj_17b  } # CI = +/- 2mil
+  adj_17b        <- sum(dnorm(tot_pop_yr_us[6:7,3],tot_pop_yr_us[6:7,3],tot_pop_yr_us[7,3]*0.1/1.96,log=T)*wts[1+5:6*10])
+  sum(dnorm(tot_pop_yr_us[6:7,3],V[c(51,61)]*1e6,tot_pop_yr_us[7,3]*0.1/1.96,log=T)*wts[1+5:6*10]) - adj_17b  } # CI = +/- 2mil
 
 ### ### ### TOTAL POP AGE DISTRIBUTION 2014  ### ### ### ### ### ### D
 # Motivation: reported estimates represent pseudo-data for a multinomial likelihood, with ESS = 500
@@ -205,9 +205,9 @@ dth_tot_lLik_st <- function(V,st) {
   data("ST_tot_mort",package="MITUS")
   ST_deaths_tot   <- ST_tot_mort[which(ST_tot_mort$State==StateID[st,1]),]
   ST_deaths_tot   <- ST_deaths_tot[,4]
-  adj_20a         <- sum(dnorm(ST_deaths_tot,ST_deaths_tot,ST_deaths_tot*0.1/1.96,log=T)*wts[30:67])
+  adj_20a         <- sum(dnorm(ST_deaths_tot,ST_deaths_tot,ST_deaths_tot*0.1/1.96,log=T)*wts[67])
   #V is scaled in IMIS script
-  sum(dnorm(ST_deaths_tot,V,ST_deaths_tot*0.1/1.96,log=T)*wts[30:67]) - adj_20a
+  sum(dnorm(ST_deaths_tot,V,ST_deaths_tot*0.1/1.96,log=T)*wts[67]) - adj_20a
 }
 
 #'  #' TOTAL DEATHS AGE DISTRIBUTION 1999-2014
@@ -219,11 +219,11 @@ tot_dth_age_lLik_st <- function(V,rho=0.1) {
   data("death_age_dist",package="MITUS")
   tda <- tot_deaths_age/rowSums(tot_deaths_age)
   tda<-tda[17:18,] #2015-2016
-  adj_20b        <- sum(dDirMult(M=tda+0.1,n=tda+0.1,Rho=0.1)*wts[66:67])
+  adj_20b        <- sum(dDirMult(M=tda,n=tda,Rho=0.1)*wts[66:67])
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
   V2 <- V2[,-5]; V2[,4]  <- V2[,4]+V[,5]
   V2 <- V2[,-3]; V2[,2]  <- V2[,2]+V[,3]
-  sum(dDirMult(M=(V2*1e6),n=tda+.1,Rho=rho)*wts[66:67]) - adj_20b
+  sum(dDirMult(M=(V2*1e6),n=tda,Rho=rho)*wts[66:67]) - adj_20b
   }
 
 #' Mortality Risk Group Distribution 1999-2014
