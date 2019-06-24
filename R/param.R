@@ -46,7 +46,7 @@ param <- function (PV){
   #
   # BgMort[11:12]<-BgMort[11:12]*3
   # BgMort[12]<-BgMort[12]*1.2
-  InitPop          <- init_pop() #Inputs[["InitPop"]] #
+  InitPop          <- Inputs[["InitPop"]] #init_pop()
   Births           <- Inputs[["Births"]]
   ImmigInputs      <- Inputs[["ImmigInputs"]]
   TxInputs         <- Inputs[["TxInputs"]]
