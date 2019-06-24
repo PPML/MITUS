@@ -271,8 +271,8 @@ US_dth_10_tot_lLik <- function(V) {
   rownames(death_age)<-readRDS(system.file("US/US_MortalityCountsByAge.rds", package="MITUS"))[,1]
   death_sum<-colSums(death_age)[67]
 
-  adj_20a         <- sum(dnorm(death_sum,death_sum,death_sum*0.2/1.96,log=T)*wts[67])
-  sum(dnorm(death_sum,V,death_sum*0.2/1.96,log=T)*wts[67]) - adj_20a
+  adj_20a         <- sum(dnorm(death_sum,death_sum,death_sum*0.1/1.96,log=T)*wts[67])
+  sum(dnorm(death_sum,V,death_sum*0.1/1.96,log=T)*wts[67]) - adj_20a
 }
 #' TOTAL DEATHS AGE DISTRIBUTION 1999-2014
 #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
@@ -285,9 +285,9 @@ mortdist<-t(mortdist)
 #   adj_20b               <- sum(log(mort_ag_16_d)*mort_ag_16_d);
 #   sum(log(V2[]/sum(V2))*mort_ag_16_d[])*ESS - adj_20b*ESS
 #   }
-  adj_20b        <- sum(dDirMult(M=mortdist+0.1,n=mortdist+0.1,Rho=rho)*wts[66:67])
+  adj_20b        <- sum(dDirMult(M=mortdist,n=mortdist,Rho=rho)*wts[66:67])
   V<-V/rowSums(V)
-  sum(dDirMult(M=V,n=mortdist+.1,Rho=rho)*wts[66:67]) - adj_20b
+  sum(dDirMult(M=V,n=mortdist,Rho=rho)*wts[66:67]) - adj_20b
 }
 
 #' Mortality Risk Group Distribution 1999-2014
