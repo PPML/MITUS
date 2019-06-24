@@ -1,0 +1,198 @@
+---
+title: "MITUS -- Aging Pt 4"
+geometry: margin=2cm
+output: rmarkdown::pdf_document
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+#Model 1
+This simulation has the aging rates fit with a linear curve; currently these rates are held constant after 2017, as continuing the trend would lead to negative values in the future. 
+```{r,message=FALSE, warning=FALSE, fig.width=4}
+library(MITUS)
+model_load("US")
+prms <-list()
+prms <- param(P)
+IP <- list()
+IP <- param_init(P)
+#read in the life table data
+popdist<-as.matrix(read.csv("~/MITUS/inst/extdata/US_annuallifetable.csv"))[,]
+popdist<-popdist[,-1]
+rownames(popdist)<-read.csv("~/MITUS/inst/extdata/US_annuallifetable.csv")[,1]
+
+#calculate the percentage of the total age band in each single year age 
+# ltd<-matrix(NA,86,68)
+# ltd[1:5,]<-popdist[1:5,]/colSums(popdist[1:5,])
+# ltd[6:15,]<-popdist[6:15,]/colSums(popdist[6:15,])
+# ltd[16:25,]<-popdist[16:25,]/colSums(popdist[16:25,])
+# ltd[26:35,]<-popdist[26:35,]/colSums(popdist[26:35,])
+# ltd[36:45,]<-popdist[36:45,]/colSums(popdist[36:45,])
+# ltd[46:55,]<-popdist[46:55,]/colSums(popdist[46:55,])
+# ltd[56:65,]<-popdist[56:65,]/colSums(popdist[56:65,])
+# ltd[66:75,]<-popdist[66:75,]/colSums(popdist[66:75,])
+# ltd[76:85,]<-popdist[76:85,]/colSums(popdist[76:85,])
+
+# ltd[86:95,]<-popdist[86:95,]/colSums(popdist[86:95,])
+#subset to the "aging" ages 
+# sm_ltd<-ltd[c(5,15,25,35,45,55,65,75,85),]
+#invert this for the aging rate
+sm_ltd<-1/sm_ltd
+
+time<-1950:2017
+time<-((time-1950)*12)+1
+
+fit_list<-list()
+for(i in 1:9){
+  fit_list[i]<-lm(as.numeric(sm_ltd[i,])~time)
+}
+lm_den<-matrix(NA,1201,10)
+for(j in 1:9){
+for(i in 1:805){
+  lm_den[i,j]<-((fit_list[[j]][2]*i)+fit_list[[j]][1])*12
+}} 
+for(i in 1:9){
+lm_den[806:1201,i]<-lm_den[805,i]
+}
+lm_den[,10]<-lm_den[,9]
+#plot splines
+for(i in 1:10){
+  plot(lm_den[1:1201,i])}
+#plot mort rates
+for (i in 1:11){
+  plot(prms$mubt[,i])
+}
+
+##run the model with this denominator 
+   zz<-list()
+    zz <- cSim_demo_ag(nYrs       = 2018-1950         ,
+                      nRes      = 24                  ,
+                      InitPop  = prms[["InitPop" ]]   ,
+                      Birthst  = prms[["Birthst"]]    ,
+                      ImmNon    = prms[["ImmNon"]]   ,
+                      ImmLat   = prms[["ImmLat" ]]  ,
+                      ImmAct  = prms[["ImmAct"]]  ,
+                      ImmFst   = prms[["ImmFst" ]]   ,
+                      mubt       = prms[["mubt"]],
+                      ag_den = lm_den)
+         M <- zz$Outputs
+      colnames(M) <- c(prms$ResNam[1:13],prms$ResNam[121:131]);
+      df<-as.data.frame(M)
+      #plot the results
+      tb_graph_demomod(df)
+```
+
+#model 2
+
+Uses age distribution estimates to create the time variant denominators; the model is ran with the mean of these -- a constant level over time. The denominator for 85-94 is the same as 75-84 age group, because we don't have population distribution data for that age group. 
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=4}
+library(MITUS)
+model_load("US")
+prms <-list()
+prms <- param(P)
+IP <- list()
+IP <- param_init(P)
+#read in the life table data
+popdist<-as.matrix(read.csv("~/MITUS/inst/extdata/US_annuallifetable.csv"))
+popdist<-popdist[,-1]
+rownames(popdist)<-read.csv("~/MITUS/inst/extdata/US_annuallifetable.csv")[,1]
+
+#calculate the percentage of the total age band in each single year age 
+ltd<-matrix(NA,86,68)
+ltd[1:5,]<-popdist[1:5,]/colSums(popdist[1:5,])
+ltd[6:15,]<-popdist[6:15,]/colSums(popdist[6:15,])
+ltd[16:25,]<-popdist[16:25,]/colSums(popdist[16:25,])
+ltd[26:35,]<-popdist[26:35,]/colSums(popdist[26:35,])
+ltd[36:45,]<-popdist[36:45,]/colSums(popdist[36:45,])
+ltd[46:55,]<-popdist[46:55,]/colSums(popdist[46:55,])
+ltd[56:65,]<-popdist[56:65,]/colSums(popdist[56:65,])
+ltd[66:75,]<-popdist[66:75,]/colSums(popdist[66:75,])
+ltd[76:85,]<-popdist[76:85,]/colSums(popdist[76:85,])
+# ltd[86:95,]<-popdist[86:95,]/colSums(popdist[86:95,])
+#subset to the "aging" ages 
+sm_ltd<-ltd[c(5,15,25,35,45,55,65,75,85),]
+#invert this for the aging rate
+sm_ltd<-1/sm_ltd
+
+md<-rep(NA,10)
+for (i in 1:9){
+md[i]<-mean(as.numeric(sm_ltd[i,]))*12}
+md[10]<-md[9]
+mean_den<-matrix(md,1201,length(md),byrow = TRUE)
+
+##run the model with this denominator 
+   zz<-list()
+    zz <- cSim_demo_ag(nYrs       = 2018-1950         ,
+                      nRes      = 24                  ,
+                      InitPop  = prms[["InitPop" ]]   ,
+                      Birthst  = prms[["Birthst"]]    ,
+                      ImmNon    = prms[["ImmNon"]]   ,
+                      ImmLat   = prms[["ImmLat" ]]  ,
+                      ImmAct  = prms[["ImmAct"]]  ,
+                      ImmFst   = prms[["ImmFst" ]]   ,
+                      mubt       = prms[["mubt"]],
+                      ag_den = mean_den)
+         M <- zz$Outputs
+      colnames(M) <- c(prms$ResNam[1:13],prms$ResNam[121:131]);
+      df<-as.data.frame(M)
+      tb_graph_demomod(df)
+```
+
+
+#model 3
+uses the relationship between mort rates to adjust the aging denominators
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=4}
+library(MITUS)
+model_load("US")
+prms <-list()
+prms <- param(P)
+IP <- list()
+IP <- param_init(P)
+#read in the life table data
+popdist<-as.matrix(read.csv("~/MITUS/inst/extdata/US_annuallifetable.csv"))[,]
+popdist<-popdist[,-1]
+rownames(popdist)<-read.csv("~/MITUS/inst/extdata/US_annuallifetable.csv")[,1]
+
+#calculate the percentage of the total age band in each single year age 
+ltd<-matrix(NA,86,68)
+ltd[1:5,]<-popdist[1:5,]/colSums(popdist[1:5,])
+ltd[6:15,]<-popdist[6:15,]/colSums(popdist[6:15,])
+ltd[16:25,]<-popdist[16:25,]/colSums(popdist[16:25,])
+ltd[26:35,]<-popdist[26:35,]/colSums(popdist[26:35,])
+ltd[36:45,]<-popdist[36:45,]/colSums(popdist[36:45,])
+ltd[46:55,]<-popdist[46:55,]/colSums(popdist[46:55,])
+ltd[56:65,]<-popdist[56:65,]/colSums(popdist[56:65,])
+ltd[66:75,]<-popdist[66:75,]/colSums(popdist[66:75,])
+ltd[76:85,]<-popdist[76:85,]/colSums(popdist[76:85,])
+# ltd[86:95,]<-popdist[86:95,]/colSums(popdist[86:95,])
+#subset to the "aging" ages 
+sm_ltd<-ltd[c(5,15,25,35,45,55,65,75,85),]
+#invert this for the aging rate
+sm_ltd<-1/sm_ltd
+
+md<-rep(NA,10)
+for (i in 1:9){
+md[i]<-mean(as.numeric(sm_ltd[i,]))*12}
+md[10]<-md[9]*mean(prms$mubt[,10]/prms$mubt[,9])
+mean_den<-matrix(md,1201,length(md),byrow = TRUE)
+
+##run the model with this denominator 
+   zz<-list()
+    zz <- cSim_demo_ag(nYrs       = 2018-1950         ,
+                      nRes      = 24                  ,
+                      InitPop  = prms[["InitPop" ]]   ,
+                      Birthst  = prms[["Birthst"]]    ,
+                      ImmNon    = prms[["ImmNon"]]   ,
+                      ImmLat   = prms[["ImmLat" ]]  ,
+                      ImmAct  = prms[["ImmAct"]]  ,
+                      ImmFst   = prms[["ImmFst" ]]   ,
+                      mubt       = prms[["mubt"]],
+                      ag_den = mean_den)
+         M <- zz$Outputs
+      colnames(M) <- c(prms$ResNam[1:13],prms$ResNam[121:131]);
+      df<-as.data.frame(M)
+      tb_graph_demomod(df)
+```

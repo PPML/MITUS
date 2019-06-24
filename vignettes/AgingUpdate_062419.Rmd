@@ -1,0 +1,216 @@
+---
+title: "MITUS -- Aging Pt 5"
+geometry: margin=2cm
+output: rmarkdown::pdf_document
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+
+# New Weighted Mortality Calculations
+
+The population data supplied is from mortality.org, the reference that Josh suggested on Tuesday. This source did have the single year population counts all the way to 1950. I used these and the single year mortality counts to create the new weighted mortality rates. Below are a series of plots that show the difference in the annual mortality rates from the original national model and these newly weighted rates. Every age band has been accounted for. 
+
+
+#Pre-Optimization Performance  
+##Model 1 --demographic version 
+This simulation has the aging rates fit with a basic smoothed curve and the newly calculated weighted mortality rates.
+
+```{r,message=FALSE, warning=FALSE, fig.width=4}
+library(MITUS)
+model_load("US")
+prms <-list()
+prms <- param(P)
+IP <- list()
+IP <- param_init(P)
+#read in the population distribution data (file name is misnomer, to be updated)
+popdist<- as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS")))
+  popdist<-popdist[,-1]
+rownames(popdist)<-as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS"))[,1])
+
+#calculate the percentage of the total age band in each single year age 
+ltd<-matrix(NA,10,69)
+
+ltd[1,]<-popdist[5,]/colSums(popdist[1:5,])
+ltd[2,]<-popdist[15,]/colSums(popdist[6:15,])
+ltd[3,]<-popdist[25,]/colSums(popdist[16:25,])
+ltd[4,]<-popdist[35,]/colSums(popdist[26:35,])
+ltd[5,]<-popdist[45,]/colSums(popdist[36:45,])
+ltd[6,]<-popdist[55,]/colSums(popdist[46:55,])
+ltd[7,]<-popdist[65,]/colSums(popdist[56:65,])
+ltd[8,]<-popdist[75,]/colSums(popdist[66:75,])
+ltd[9,]<-popdist[85,]/colSums(popdist[76:85,])
+ltd[10,]<-popdist[95,]/colSums(popdist[86:95,])
+
+
+#invert this for the aging rate
+ltd<-1/ltd
+
+td<-matrix(NA,10,1201)
+for (i in 1:10){
+td[i,1:817]<-SmoCurve(as.numeric(ltd[i,]))
+td[i,818:1201]<-td[i,817]
+}
+
+#plot the spline denominators
+for(i in 1:10){
+plot(t(td)[1:817,i], type="l")}
+
+spl_den<-t(td)*12
+
+##run the model with this denominator 
+   zz<-list()
+    zz <- cSim_demo_ag(nYrs       = 2018-1950         ,
+                      nRes      = 24                  ,
+                      InitPop  = prms[["InitPop" ]]   ,
+                      Birthst  = prms[["Birthst"]]    ,
+                      ImmNon    = prms[["ImmNon"]]   ,
+                      ImmLat   = prms[["ImmLat" ]]  ,
+                      ImmAct  = prms[["ImmAct"]]  ,
+                      ImmFst   = prms[["ImmFst" ]]   ,
+                      mubt       = prms[["mubt"]],
+                      ag_den = spl_den)
+         M <- zz$Outputs
+      colnames(M) <- c(prms$ResNam[1:13],prms$ResNam[121:131]);
+      df<-as.data.frame(M)
+      #plot the results
+      tb_graph_demomod(df)
+```
+
+##Model 2 --full model 
+Everything as above, but the full model without optimization.
+
+```{r,echo=FALSE, message=FALSE, warning=FALSE, fig.width=4}
+library(MITUS)
+model_load("US")
+prms <-list()
+prms <- param(P)
+IP <- list()
+IP <- param_init(P)
+#read in the population distribution data (file name is misnomer, to be updated)
+popdist<- as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS")))
+popdist<-popdist[,-1]
+rownames(popdist)<-as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS"))[,1])
+
+#calculate the percentage of the total age band in each single year age 
+ltd<-matrix(NA,10,69)
+
+ltd[1,]<-popdist[5,]/colSums(popdist[1:5,])
+ltd[2,]<-popdist[15,]/colSums(popdist[6:15,])
+ltd[3,]<-popdist[25,]/colSums(popdist[16:25,])
+ltd[4,]<-popdist[35,]/colSums(popdist[26:35,])
+ltd[5,]<-popdist[45,]/colSums(popdist[36:45,])
+ltd[6,]<-popdist[55,]/colSums(popdist[46:55,])
+ltd[7,]<-popdist[65,]/colSums(popdist[56:65,])
+ltd[8,]<-popdist[75,]/colSums(popdist[66:75,])
+ltd[9,]<-popdist[85,]/colSums(popdist[76:85,])
+ltd[10,]<-popdist[95,]/colSums(popdist[86:95,])
+
+
+#invert this for the aging rate
+ltd<-1/ltd
+
+td<-matrix(NA,10,1201)
+for (i in 1:10){
+td[i,1:817]<-SmoCurve(as.numeric(ltd[i,]))
+td[i,818:1201]<-td[i,817]
+}
+
+spl_den<-t(td)*12
+
+trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
+  zz <- cSim_ag(  nYrs       = 2018-1950         , nRes      = length(prms[["ResNam"]])  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]],
+               Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]  ,
+               rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
+               vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    ,
+               HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat" ]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst" ]]    ,
+               net_mig_usb = prms[["net_mig_usb"]], net_mig_nusb = prms[["net_mig_nusb"]],
+               mubt       = prms[["mubt"]]    , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
+               TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
+               LtDxPar    = prms[["LtDxPar"]]   , rLtScrt   = prms[["rLtScrt"]]       , RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
+               EarlyTrend = prms[["EarlyTrend"]], ag_den=spl_den, NixTrans = IP[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)
+M <- zz$Outputs
+colnames(M) <- prms[["ResNam"]]
+df<-as.data.frame(M)
+tb_graph_demo(df,FALSE)
+```
+
+#Post Optimization 
+##Model 3 -- full model post optimization 
+
+```{r,echo=FALSE, message=FALSE, warning=FALSE, fig.width=4}
+library(MITUS)
+model_load("US")
+#load in the optimization dataset 
+Opt <- readRDS("~/MITUS/inst/US/US_Optim_all_10_620.rds")
+#set the Par 
+Par<-Opt[8,-61]
+#format the parameters 
+# normal to uniform
+Par2 <- pnorm(Par,0,1)
+# uniform to true
+Par3 <- Par2
+Par3[idZ0] <- qbeta( Par2[idZ0], shape1  = ParamInitZ[idZ0,6], shape2 = ParamInitZ[idZ0,7])
+Par3[idZ1] <- qgamma(Par2[idZ1], shape   = ParamInitZ[idZ1,6], rate   = ParamInitZ[idZ1,7])
+Par3[idZ2] <- qnorm( Par2[idZ2], mean    = ParamInitZ[idZ2,6], sd     = ParamInitZ[idZ2,7])
+P[ii] <- Par3
+P <- P
+prms <-list()
+prms <- param(P)
+IP <- list()
+IP <- param_init(P)
+#read in the population distribution data (file name is misnomer, to be updated)
+popdist<- as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS")))
+popdist<-popdist[,-1]
+rownames(popdist)<-as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS"))[,1])
+
+#calculate the percentage of the total age band in each single year age 
+ltd<-matrix(NA,10,69)
+
+ltd[1,]<-popdist[5,]/colSums(popdist[1:5,])
+ltd[2,]<-popdist[15,]/colSums(popdist[6:15,])
+ltd[3,]<-popdist[25,]/colSums(popdist[16:25,])
+ltd[4,]<-popdist[35,]/colSums(popdist[26:35,])
+ltd[5,]<-popdist[45,]/colSums(popdist[36:45,])
+ltd[6,]<-popdist[55,]/colSums(popdist[46:55,])
+ltd[7,]<-popdist[65,]/colSums(popdist[56:65,])
+ltd[8,]<-popdist[75,]/colSums(popdist[66:75,])
+ltd[9,]<-popdist[85,]/colSums(popdist[76:85,])
+ltd[10,]<-popdist[95,]/colSums(popdist[86:95,])
+
+
+#invert this for the aging rate
+ltd<-1/ltd
+
+td<-matrix(NA,10,1201)
+for (i in 1:10){
+td[i,1:817]<-SmoCurve(as.numeric(ltd[i,]))
+td[i,818:1201]<-td[i,817]
+}
+
+spl_den<-t(td)*12
+
+trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
+  zz <- cSim_ag(  nYrs       = 2018-1950         , nRes      = length(prms[["ResNam"]])  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]],
+               Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]  ,
+               rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
+               vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    ,
+               HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat" ]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst" ]]    ,
+               net_mig_usb = prms[["net_mig_usb"]], net_mig_nusb = prms[["net_mig_nusb"]],
+               mubt       = prms[["mubt"]]    , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
+               TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
+               LtDxPar    = prms[["LtDxPar"]]   , rLtScrt   = prms[["rLtScrt"]]       , RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
+               EarlyTrend = prms[["EarlyTrend"]], ag_den=spl_den, NixTrans = IP[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)
+M <- zz$Outputs
+colnames(M) <- prms[["ResNam"]]
+df<-as.data.frame(M)
+tb_graph_demo(df,FALSE)
+```
+
+#Next Steps
+  * Approve these optims
+  * regenerate pre-defined scenarios for US 
+  * attempt to optimize the top 10 states with these national values 
+  * combine program change model version with updated model with new aging denominators 

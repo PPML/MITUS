@@ -1,0 +1,396 @@
+---
+title: "MITUS -- Aging Pt 3"
+geometry: margin=2cm
+output: rmarkdown::pdf_document
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+##Mortality Adjustments
+Below is an estimated age weighted mortality rates. Again, these only went to "85 plus" so there is no age weighting for the 85-94, and 95p age bands; these are also set to the same rates. 
+```{r, message=FALSE, warning=FALSE, fig.width=4}
+library(MITUS)
+model_load("US")
+#load in the original background mort for comparison
+  BgMort           <- Inputs[["BgMort"]]
+#load in annual death counts by age
+  death_age <-as.matrix(readRDS(system.file("US/US_MortalityCountsByAge.rds", package="MITUS"))[,2:69])
+  rownames(death_age)<-readRDS(system.file("US/US_MortalityCountsByAge.rds", package="MITUS"))[,1]
+#load in the population distribution (naming of file incorrect)
+  popdist<-as.matrix(read.csv("~/MITUS/inst/extdata/US_annuallifetable.csv"))[,]
+  popdist<-popdist[,-1]
+  rownames(popdist)<-read.csv("~/MITUS/inst/extdata/US_annuallifetable.csv")[,1]
+  #create the new mortality rates for each year of age 
+  new_mort<-popdist
+  new_mort[1:85,]<-death_age[1:85,]/popdist[1:85,]
+  new_mort[86,]<-colSums(death_age[86:111,])/popdist[86,]
+  ##weighted mort for the age groups
+  weight_mort<-matrix(NA,10,68)
+  colnames(weight_mort)<-colnames(new_mort)
+  weight_mort[1,]<-colSums(new_mort[1:5,]*popdist[1:5,])/colSums(popdist[1:5,])
+  weight_mort[2,]<-colSums(new_mort[6:15,]*popdist[6:15,])/colSums(popdist[6:15,])
+  weight_mort[3,]<-colSums(new_mort[16:25,]*popdist[16:25,])/colSums(popdist[16:25,])
+  weight_mort[4,]<-colSums(new_mort[26:35,]*popdist[26:35,])/colSums(popdist[26:35,])
+  weight_mort[5,]<-colSums(new_mort[36:45,]*popdist[36:45,])/colSums(popdist[36:45,])
+  weight_mort[6,]<-colSums(new_mort[46:55,]*popdist[46:55,])/colSums(popdist[46:55,])
+  weight_mort[7,]<-colSums(new_mort[56:65,]*popdist[56:65,])/colSums(popdist[56:65,])
+  weight_mort[8,]<-colSums(new_mort[66:75,]*popdist[66:75,])/colSums(popdist[66:75,])
+  weight_mort[9,]<-colSums(new_mort[76:85,]*popdist[76:85,])/colSums(popdist[76:85,])
+  weight_mort[10,]<-as.numeric(new_mort[86,])
+  
+#create a subset of BgMort
+  BgMort_sm   <- t(BgMort[1:68,2:11])
+  #plot the difference in mortality rates & print the range of the difference
+  for (i in 1:10){
+    plot(BgMort_sm[i,]-weight_mort[i,])
+      print(range(BgMort_sm[i,]-weight_mort[i,]))
+
+  }
+
+```
+
+##using the annual population distribution data
+Because this data only went to 85+, I have temporarily used the the data from life tables for the aging calculation from 94 to 95p. This data was collected only on a decade basis so the splines are calculated a bit differently. 
+```{r, message=FALSE, warning=FALSE, fig.width=4}
+library(MITUS)
+model_load("US")
+prms <-list()
+prms <- param(P)
+IP <- list()
+IP <- param_init(P)
+#load in the population distribution (naming of file incorrect)
+popdist<-as.matrix(read.csv("~/MITUS/inst/extdata/US_annuallifetable.csv"))[,]
+popdist<-popdist[,-1]
+rownames(popdist)<-read.csv("~/MITUS/inst/extdata/US_annuallifetable.csv")[,1]
+#calculate the percentage of the total age band in each single year age 
+ltd<-matrix(NA,86,68)
+ltd[1:5,]<-popdist[1:5,]/colSums(popdist[1:5,])
+ltd[6:15,]<-popdist[6:15,]/colSums(popdist[6:15,])
+ltd[16:25,]<-popdist[16:25,]/colSums(popdist[16:25,])
+ltd[26:35,]<-popdist[26:35,]/colSums(popdist[26:35,])
+ltd[36:45,]<-popdist[36:45,]/colSums(popdist[36:45,])
+ltd[46:55,]<-popdist[46:55,]/colSums(popdist[46:55,])
+ltd[56:65,]<-popdist[56:65,]/colSums(popdist[56:65,])
+ltd[66:75,]<-popdist[66:75,]/colSums(popdist[66:75,])
+ltd[76:85,]<-popdist[76:85,]/colSums(popdist[76:85,])
+# ltd[86:95,]<-popdist[86:95,]/colSums(popdist[86:95,])
+#subset to the "aging" ages 
+sm_ltd<-ltd[c(5,15,25,35,45,55,65,75,85),]
+#invert this for the aging rate
+sm_ltd<-1/sm_ltd
+
+#using the smoothing spline
+td<-matrix(NA,10,1201)
+for (i in 1:9){
+  td[i,1:805]<-SmoCurve(as.numeric(sm_ltd[i,]))
+  # td[i,1:805]<-smooth.spline(sm_ltd[i,])
+  td[i,806:1201]<-td[i,805]
+}
+
+#oldest age group
+#update this code -- original copy and pasted does not need all calculations
+#read in the life table data
+#load in the population distribution (naming of file incorrect)
+popdist<-as.matrix(read.csv("~/MITUS/inst/extdata/US_lifetable.csv")[,2:8])
+rownames(popdist)<-read.csv("~/MITUS/inst/extdata/US_lifetable.csv")[,1]
+#calculate the percentage of the total age band in each single year age 
+ltd<-matrix(NA,95,7)
+ltd[1:5,]<-popdist[1:5,]/colSums(popdist[1:5,])
+ltd[6:15,]<-popdist[6:15,]/colSums(popdist[6:15,])
+ltd[16:25,]<-popdist[16:25,]/colSums(popdist[16:25,])
+ltd[26:35,]<-popdist[26:35,]/colSums(popdist[26:35,])
+ltd[36:45,]<-popdist[36:45,]/colSums(popdist[36:45,])
+ltd[46:55,]<-popdist[46:55,]/colSums(popdist[46:55,])
+ltd[56:65,]<-popdist[56:65,]/colSums(popdist[56:65,])
+ltd[66:75,]<-popdist[66:75,]/colSums(popdist[66:75,])
+ltd[76:85,]<-popdist[76:85,]/colSums(popdist[76:85,])
+ltd[86:95,]<-popdist[86:95,]/colSums(popdist[86:95,])
+#subset to the "aging" ages 
+dec_sm_ltd<-matrix(NA,10,7)
+dec_sm_ltd<-ltd[c(5,15,25,35,45,55,65,75,85,95),]
+#invert this for the aging rate
+dec_sm_ltd<-1/dec_sm_ltd
+#print(sm_ltd)
+#using the smoothing spline
+dec_td<-matrix(NA,10,1201)
+for (i in 1:10){
+dec_td[i,1:721]<-SmoCurve_decade(as.numeric(dec_sm_ltd[i,]))
+dec_td[i,722:1201]<-dec_td[i,721]
+}
+
+fin_td<-dec_td
+fin_td[1:9,]<-td[1:9,]
+fin_td<-t(fin_td)*12
+for(i in 1:9){
+  plot(fin_td[1:722,i])}
+
+
+##run the model with this denominator 
+trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
+zz <- cSim_ag(  nYrs       = 2018-1950         , nRes      = length(prms[["ResNam"]])  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]],
+                Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]  ,
+                rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
+                vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    ,
+                HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat" ]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst" ]]    ,
+                net_mig_usb = prms[["net_mig_usb"]], net_mig_nusb = prms[["net_mig_nusb"]],
+                mubt       = prms[["mubt"]]    , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
+                TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
+                LtDxPar    = prms[["LtDxPar"]]   , rLtScrt   = prms[["rLtScrt"]]       , RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
+                EarlyTrend = prms[["EarlyTrend"]], ag_den=fin_td, NixTrans = IP[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)
+M <- zz$Outputs
+colnames(M) <- prms[["ResNam"]]
+df<-as.data.frame(M)
+tb_graph_demo(df,FALSE)
+```
+
+##using the annual population distribution data
+Same as above but limited the number of spline knots to 7. 
+```{r, message=FALSE, warning=FALSE, fig.width=4}
+library(MITUS)
+model_load("US")
+prms <-list()
+prms <- param(P)
+IP <- list()
+IP <- param_init(P)
+#load in the population distribution (naming of file incorrect)
+popdist<-as.matrix(read.csv("~/MITUS/inst/extdata/US_annuallifetable.csv"))[,]
+popdist<-popdist[,-1]
+rownames(popdist)<-read.csv("~/MITUS/inst/extdata/US_annuallifetable.csv")[,1]
+#calculate the percentage of the total age band in each single year age 
+ltd<-matrix(NA,86,68)
+ltd[1:5,]<-popdist[1:5,]/colSums(popdist[1:5,])
+ltd[6:15,]<-popdist[6:15,]/colSums(popdist[6:15,])
+ltd[16:25,]<-popdist[16:25,]/colSums(popdist[16:25,])
+ltd[26:35,]<-popdist[26:35,]/colSums(popdist[26:35,])
+ltd[36:45,]<-popdist[36:45,]/colSums(popdist[36:45,])
+ltd[46:55,]<-popdist[46:55,]/colSums(popdist[46:55,])
+ltd[56:65,]<-popdist[56:65,]/colSums(popdist[56:65,])
+ltd[66:75,]<-popdist[66:75,]/colSums(popdist[66:75,])
+ltd[76:85,]<-popdist[76:85,]/colSums(popdist[76:85,])
+# ltd[86:95,]<-popdist[86:95,]/colSums(popdist[86:95,])
+#subset to the "aging" ages 
+sm_ltd<-ltd[c(5,15,25,35,45,55,65,75,85),]
+#invert this for the aging rate
+sm_ltd<-1/sm_ltd
+
+#using the smoothing spline
+td<-matrix(NA,10,1201)
+for (i in 1:9){
+  td[i,1:805]<-SmoCurve_knots(as.numeric(sm_ltd[i,]),7)
+  # td[i,1:805]<-smooth.spline(sm_ltd[i,])
+  td[i,806:1201]<-td[i,805]
+}
+
+#####oldest age group
+#read in the life table data
+popdist<-as.matrix(read.csv("~/MITUS/inst/extdata/US_lifetable.csv")[,2:8])
+rownames(popdist)<-read.csv("~/MITUS/inst/extdata/US_lifetable.csv")[,1]
+#calculate the percentage of the total age band in each single year age 
+ltd<-popdist
+ltd[1:5,]<-popdist[1:5,]/colSums(popdist[1:5,])
+ltd[6:15,]<-popdist[6:15,]/colSums(popdist[6:15,])
+ltd[16:25,]<-popdist[16:25,]/colSums(popdist[16:25,])
+ltd[26:35,]<-popdist[26:35,]/colSums(popdist[26:35,])
+ltd[36:45,]<-popdist[36:45,]/colSums(popdist[36:45,])
+ltd[46:55,]<-popdist[46:55,]/colSums(popdist[46:55,])
+ltd[56:65,]<-popdist[56:65,]/colSums(popdist[56:65,])
+ltd[66:75,]<-popdist[66:75,]/colSums(popdist[66:75,])
+ltd[76:85,]<-popdist[76:85,]/colSums(popdist[76:85,])
+ltd[86:95,]<-popdist[86:95,]/colSums(popdist[86:95,])
+#subset to the "aging" ages 
+dec_sm_ltd<-matrix(NA,10,7)
+dec_sm_ltd<-ltd[c(5,15,25,35,45,55,65,75,85,95),]
+#invert this for the aging rate
+dec_sm_ltd<-1/dec_sm_ltd
+#print(sm_ltd)
+#using the smoothing spline
+dec_td<-matrix(NA,10,1201)
+for (i in 1:10){
+dec_td[i,1:721]<-SmoCurve_decade(as.numeric(dec_sm_ltd[i,]))
+dec_td[i,722:1201]<-dec_td[i,721]
+}
+
+fin_td<-dec_td
+fin_td[1:9,]<-td[1:9,]
+fin_td<-t(fin_td)*12
+#plot the spline denominators 
+for(i in 1:9){
+  plot(fin_td[1:722,i])}
+
+
+##run the model with this denominator 
+trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
+zz <- cSim_ag(  nYrs       = 2018-1950         , nRes      = length(prms[["ResNam"]])  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]],
+                Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]  ,
+                rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
+                vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    ,
+                HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat" ]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst" ]]    ,
+                net_mig_usb = prms[["net_mig_usb"]], net_mig_nusb = prms[["net_mig_nusb"]],
+                mubt       = prms[["mubt"]]    , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
+                TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
+                LtDxPar    = prms[["LtDxPar"]]   , rLtScrt   = prms[["rLtScrt"]]       , RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
+                EarlyTrend = prms[["EarlyTrend"]], ag_den=fin_td, NixTrans = IP[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)
+M <- zz$Outputs
+colnames(M) <- prms[["ResNam"]]
+df<-as.data.frame(M)
+tb_graph_demo(df,FALSE)
+```
+
+
+##using the annual population distribution data
+Same as above but limited the number of spline knots to 7. 
+```{r, message=FALSE, warning=FALSE, fig.width=4}
+library(MITUS)
+model_load("US")
+prms <-list()
+prms <- param(P)
+
+#load in the population distribution (naming of file incorrect)
+popdist<-as.matrix(read.csv("~/MITUS/inst/extdata/US_annuallifetable.csv"))[,]
+popdist<-popdist[,-1]
+rownames(popdist)<-read.csv("~/MITUS/inst/extdata/US_annuallifetable.csv")[,1]
+#calculate the percentage of the total age band in each single year age 
+ltd<-matrix(NA,86,68)
+ltd[1:5,]<-popdist[1:5,]/colSums(popdist[1:5,])
+ltd[6:15,]<-popdist[6:15,]/colSums(popdist[6:15,])
+ltd[16:25,]<-popdist[16:25,]/colSums(popdist[16:25,])
+ltd[26:35,]<-popdist[26:35,]/colSums(popdist[26:35,])
+ltd[36:45,]<-popdist[36:45,]/colSums(popdist[36:45,])
+ltd[46:55,]<-popdist[46:55,]/colSums(popdist[46:55,])
+ltd[56:65,]<-popdist[56:65,]/colSums(popdist[56:65,])
+ltd[66:75,]<-popdist[66:75,]/colSums(popdist[66:75,])
+ltd[76:85,]<-popdist[76:85,]/colSums(popdist[76:85,])
+# ltd[86:95,]<-popdist[86:95,]/colSums(popdist[86:95,])
+#subset to the "aging" ages 
+sm_ltd<-ltd[c(5,15,25,35,45,55,65,75,85),]
+#invert this for the aging rate
+sm_ltd<-1/sm_ltd
+
+#using the smoothing spline
+td<-matrix(NA,10,1201)
+for (i in 1:9){
+  td[i,1:805]<-SmoCurve_knots(as.numeric(sm_ltd[i,]),7)
+  # td[i,1:805]<-smooth.spline(sm_ltd[i,])
+  td[i,806:1201]<-td[i,805]
+}
+
+#####oldest age group
+#read in the life table data
+popdist<-as.matrix(read.csv("~/MITUS/inst/extdata/US_lifetable.csv")[,2:8])
+rownames(popdist)<-read.csv("~/MITUS/inst/extdata/US_lifetable.csv")[,1]
+#calculate the percentage of the total age band in each single year age 
+ltd<-matrix(NA,95,7)
+ltd[1:5,]<-popdist[1:5,]/colSums(popdist[1:5,])
+ltd[6:15,]<-popdist[6:15,]/colSums(popdist[6:15,])
+ltd[16:25,]<-popdist[16:25,]/colSums(popdist[16:25,])
+ltd[26:35,]<-popdist[26:35,]/colSums(popdist[26:35,])
+ltd[36:45,]<-popdist[36:45,]/colSums(popdist[36:45,])
+ltd[46:55,]<-popdist[46:55,]/colSums(popdist[46:55,])
+ltd[56:65,]<-popdist[56:65,]/colSums(popdist[56:65,])
+ltd[66:75,]<-popdist[66:75,]/colSums(popdist[66:75,])
+ltd[76:85,]<-popdist[76:85,]/colSums(popdist[76:85,])
+ltd[86:95,]<-popdist[86:95,]/colSums(popdist[86:95,])
+#subset to the "aging" ages 
+dec_sm_ltd<-matrix(NA,10,7)
+dec_sm_ltd<-ltd[c(5,15,25,35,45,55,65,75,85,95),]
+#invert this for the aging rate
+dec_sm_ltd<-1/dec_sm_ltd
+#print(sm_ltd)
+#using the smoothing spline
+dec_td<-matrix(NA,10,1201)
+for (i in 1:10){
+dec_td[i,1:721]<-SmoCurve_decade(as.numeric(dec_sm_ltd[i,]))
+dec_td[i,722:1201]<-dec_td[i,721]
+}
+
+fin_td<-dec_td
+fin_td[1:9,]<-td[1:9,]
+fin_td<-t(fin_td)*12
+#plot the spline denominators 
+for(i in 1:9){
+  plot(fin_td[1:722,i])}
+
+
+##run the model with this denominator 
+   zz<-list()
+    zz <- cSim_demo_ag(nYrs       = 2018-1950         ,
+                      nRes      = 24                  ,
+                      InitPop  = prms[["InitPop" ]]   ,
+                      Birthst  = prms[["Birthst"]]    ,
+                      ImmNon    = prms[["ImmNon"]]   ,
+                      ImmLat   = prms[["ImmLat" ]]  ,
+                      ImmAct  = prms[["ImmAct"]]  ,
+                      ImmFst   = prms[["ImmFst" ]]   ,
+                      mubt       = prms[["mubt"]],
+                      ag_den = fin_td)
+         M <- zz$Outputs
+      colnames(M) <- c(prms$ResNam[1:13],prms$ResNam[121:131]);
+      df<-as.data.frame(M)
+      tb_graph_demomod(df)
+```
+
+
+
+
+##comparison to with the life table data (not population distributions)
+```{r,echo=FALSE, message=FALSE, warning=FALSE, fig.width=4}
+library(MITUS)
+model_load("US")
+prms <-list()
+prms <- param(P)
+IP <- list()
+IP <- param_init(P)
+#read in the life table data
+lifetab<-as.data.frame(read.csv("~/MITUS/inst/extdata/US_lifetable.csv")[,2:8])
+rownames(lifetab)<-read.csv("~/MITUS/inst/extdata/US_lifetable.csv")[,1]
+#calculate the percentage of the total age band in each single year age 
+ltd<-lifetab
+ltd[1:5,]<-lifetab[1:5,]/colSums(lifetab[1:5,])
+ltd[6:15,]<-lifetab[6:15,]/colSums(lifetab[6:15,])
+ltd[16:25,]<-lifetab[16:25,]/colSums(lifetab[16:25,])
+ltd[26:35,]<-lifetab[26:35,]/colSums(lifetab[26:35,])
+ltd[36:45,]<-lifetab[36:45,]/colSums(lifetab[36:45,])
+ltd[46:55,]<-lifetab[46:55,]/colSums(lifetab[46:55,])
+ltd[56:65,]<-lifetab[56:65,]/colSums(lifetab[56:65,])
+ltd[66:75,]<-lifetab[66:75,]/colSums(lifetab[66:75,])
+ltd[76:85,]<-lifetab[76:85,]/colSums(lifetab[76:85,])
+ltd[86:95,]<-lifetab[86:95,]/colSums(lifetab[86:95,])
+#subset to the "aging" ages 
+sm_ltd<-matrix(NA,10,7)
+sm_ltd<-ltd[c(5,15,25,35,45,55,65,75,85,95),]
+#invert this for the aging rate
+sm_ltd<-1/sm_ltd
+print(sm_ltd)
+#using the smoothing spline
+td<-matrix(NA,10,1201)
+for (i in 1:10){
+td[i,1:721]<-SmoCurve_decade(as.numeric(sm_ltd[i,]))
+td[i,722:1201]<-td[i,721]
+}
+
+#plot the spline denominators
+for(i in 1:10){
+plot(t(td)[1:721,i])}
+
+spl_den<-t(td)*12
+
+
+##run the model with this denominator 
+trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
+  zz <- cSim_ag(  nYrs       = 2018-1950         , nRes      = length(prms[["ResNam"]])  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]],
+               Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]  ,
+               rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
+               vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    ,
+               HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat" ]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst" ]]    ,
+               net_mig_usb = prms[["net_mig_usb"]], net_mig_nusb = prms[["net_mig_nusb"]],
+               mubt       = prms[["mubt"]]    , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
+               TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
+               LtDxPar    = prms[["LtDxPar"]]   , rLtScrt   = prms[["rLtScrt"]]       , RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
+               EarlyTrend = prms[["EarlyTrend"]], ag_den=spl_den, NixTrans = IP[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)
+M <- zz$Outputs
+colnames(M) <- prms[["ResNam"]]
+df<-as.data.frame(M)
+tb_graph_demo(df,FALSE)
+```
+

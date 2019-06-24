@@ -1,0 +1,43 @@
+---
+title: "MITUS aging rates over time"
+geometry: margin=2cm
+output: rmarkdown::pdf_document
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+  
+#here is the aging by single year over time 
+
+```{r,message=FALSE, warning=FALSE, fig.width=4}
+library(MITUS)
+model_load("US")
+prms <-list()
+prms <- param(P)
+IP <- list()
+IP <- param_init(P)
+#read in the life table data
+popdist<-as.matrix(read.csv("~/MITUS/inst/extdata/US_annuallifetable.csv"))[,]
+popdist<-popdist[,-1]
+rownames(popdist)<-read.csv("~/MITUS/inst/extdata/US_annuallifetable.csv")[,1]
+
+#calculate the percentage of the total age band in each single year age 
+ltd<-matrix(NA,86,68)
+ltd[1:5,]<-popdist[1:5,]/colSums(popdist[1:5,])
+ltd[6:15,]<-popdist[6:15,]/colSums(popdist[6:15,])
+ltd[16:25,]<-popdist[16:25,]/colSums(popdist[16:25,])
+ltd[26:35,]<-popdist[26:35,]/colSums(popdist[26:35,])
+ltd[36:45,]<-popdist[36:45,]/colSums(popdist[36:45,])
+ltd[46:55,]<-popdist[46:55,]/colSums(popdist[46:55,])
+ltd[56:65,]<-popdist[56:65,]/colSums(popdist[56:65,])
+ltd[66:75,]<-popdist[66:75,]/colSums(popdist[66:75,])
+ltd[76:85,]<-popdist[76:85,]/colSums(popdist[76:85,])
+for (i in 1:85){
+  plot(1/ltd[i,], type="l")
+}
+```
+
+
+
+

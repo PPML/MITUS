@@ -1,0 +1,123 @@
+---
+title: "MITUS Mortality Update"
+geometry: margin=2cm
+output: rmarkdown::pdf_document
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+Over the last few months, we have implemented a number of structural changes in the MITUS model in order to make rebalancing across the mortality risk strata more effective. After these changes, we still have a descrepancy between modelled mortality and targets.
+
+Below are presented a number of analyses that explore the dynamics of the model. 
+All of the full model simulations below use:    
+
+*  NCHS provided mortality rates 
+*  a mortality ceiling of .5/month (applied on total mortality rate)
+*  the original initial population (no obserable difference from new/old)
+
+
+
+#original model 
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=4}
+
+library(MITUS)
+model_load("US")
+ prms <-list()
+prms <- param(P)
+# prms$mubt[,10:11]<-prms$mubt[,10:11]/3
+
+   zz<-list()
+    zz <- cSim_demo_ag(nYrs       = 2018-1950         ,
+                      nRes      = 24                  ,
+                      InitPop  = prms[["InitPop" ]]   ,
+                      Birthst  = prms[["Birthst"]]    ,
+                      ImmNon    = prms[["ImmNon"]]    ,
+                      ImmLat   = prms[["ImmLat" ]]    ,
+                      ImmAct  = prms[["ImmAct"]]      ,
+                      ImmFst   = prms[["ImmFst" ]]    ,
+                      mubt       = prms[["mubt"]])
+         M <- zz$Outputs
+      colnames(M) <- c(prms$ResNam[1:13],prms$ResNam[121:131]);
+      df<-as.data.frame(M)
+      tb_graph_demomod(df)
+      
+```
+
+#model with immigration * .7
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=4}
+
+library(MITUS)
+model_load("US")
+ prms <-list()
+prms <- param(P)
+# prms$mubt[,10:11]<-prms$mubt[,10:11]/3
+
+   zz<-list()
+    zz <- cSim_demo_ag(nYrs       = 2018-1950         ,
+                      nRes      = 24                  ,
+                      InitPop  = prms[["InitPop" ]]   ,
+                      Birthst  = prms[["Birthst"]]    ,
+                      ImmNon    = prms[["ImmNon"]]*.7    ,
+                      ImmLat   = prms[["ImmLat" ]] *.7   ,
+                      ImmAct  = prms[["ImmAct"]]*.7     ,
+                      ImmFst   = prms[["ImmFst" ]]*.7   ,
+                      mubt       = prms[["mubt"]])
+         M <- zz$Outputs
+      colnames(M) <- c(prms$ResNam[1:13],prms$ResNam[121:131]);
+      df<-as.data.frame(M)
+      tb_graph_demomod(df)
+      
+```
+
+#model with immigration * .7 and mort reduced 95+ by .7
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=4}
+
+library(MITUS)
+model_load("US")
+ prms <-list()
+prms <- param(P)
+prms$mubt[,11]<-prms$mubt[,11]*.7
+
+   zz<-list()
+    zz <- cSim_demo_ag(nYrs       = 2018-1950         ,
+                      nRes      = 24                  ,
+                      InitPop  = prms[["InitPop" ]]   ,
+                      Birthst  = prms[["Birthst"]]    ,
+                      ImmNon    = prms[["ImmNon"]]*.7    ,
+                      ImmLat   = prms[["ImmLat" ]] *.7   ,
+                      ImmAct  = prms[["ImmAct"]]*.7     ,
+                      ImmFst   = prms[["ImmFst" ]]*.7   ,
+                      mubt       = prms[["mubt"]])
+         M <- zz$Outputs
+      colnames(M) <- c(prms$ResNam[1:13],prms$ResNam[121:131]);
+      df<-as.data.frame(M)
+      tb_graph_demomod(df)
+      
+```
+
+#model with  births * .9 
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=4}
+
+library(MITUS)
+model_load("US")
+ prms <-list()
+prms <- param(P)
+
+   zz<-list()
+    zz <- cSim_demo_ag(nYrs       = 2018-1950         ,
+                      nRes      = 24                  ,
+                      InitPop  = prms[["InitPop" ]]   ,
+                      Birthst  = prms[["Birthst"]]*.9    ,
+                      ImmNon    = prms[["ImmNon"]]   ,
+                      ImmLat   = prms[["ImmLat" ]]  ,
+                      ImmAct  = prms[["ImmAct"]]  ,
+                      ImmFst   = prms[["ImmFst" ]]   ,
+                      mubt       = prms[["mubt"]])
+         M <- zz$Outputs
+      colnames(M) <- c(prms$ResNam[1:13],prms$ResNam[121:131]);
+      df<-as.data.frame(M)
+      tb_graph_demomod(df)
+      
+```

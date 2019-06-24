@@ -1,0 +1,119 @@
+---
+title: "MITUS -- Aging Pt 2"
+geometry: margin=2cm
+output: rmarkdown::pdf_document
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+##Crude denominators from life tables 
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=4}
+data("aging_denominators",package="MITUS")
+print(aging_denominators)
+```
+
+##Refining these denominators by the age distribution in each age group
+
+```{r,echo=FALSE, message=FALSE, warning=FALSE, fig.width=4}
+library(MITUS)
+model_load("US")
+prms <-list()
+prms <- param(P)
+IP <- list()
+IP <- param_init(P)
+#read in the life table data
+lifetab<-as.data.frame(read.csv("~/MITUS/inst/extdata/US_lifetable.csv")[,2:8])
+rownames(lifetab)<-read.csv("~/MITUS/inst/extdata/US_lifetable.csv")[,1]
+#calculate the percentage of the total age band in each single year age 
+ltd<-lifetab
+ltd[1:5,]<-lifetab[1:5,]/colSums(lifetab[1:5,])
+ltd[6:15,]<-lifetab[6:15,]/colSums(lifetab[6:15,])
+ltd[16:25,]<-lifetab[16:25,]/colSums(lifetab[16:25,])
+ltd[26:35,]<-lifetab[26:35,]/colSums(lifetab[26:35,])
+ltd[36:45,]<-lifetab[36:45,]/colSums(lifetab[36:45,])
+ltd[46:55,]<-lifetab[46:55,]/colSums(lifetab[46:55,])
+ltd[56:65,]<-lifetab[56:65,]/colSums(lifetab[56:65,])
+ltd[66:75,]<-lifetab[66:75,]/colSums(lifetab[66:75,])
+ltd[76:85,]<-lifetab[76:85,]/colSums(lifetab[76:85,])
+ltd[86:95,]<-lifetab[86:95,]/colSums(lifetab[86:95,])
+#subset to the "aging" ages 
+sm_ltd<-matrix(NA,10,7)
+sm_ltd<-ltd[c(5,15,25,35,45,55,65,75,85,95),]
+#invert this for the aging rate
+sm_ltd<-1/sm_ltd
+print(sm_ltd)
+#using the smoothing spline
+td<-matrix(NA,10,1201)
+for (i in 1:10){
+td[i,1:721]<-SmoCurve_decade(as.numeric(sm_ltd[i,]))
+td[i,722:1201]<-td[i,721]
+}
+
+#plot the spline denominators
+for(i in 1:10){
+plot(t(td)[1:721,i])}
+
+spl_den<-t(td)*12
+
+
+##run the model with this denominator 
+trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
+  zz <- cSim_ag(  nYrs       = 2018-1950         , nRes      = length(prms[["ResNam"]])  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]],
+               Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]  ,
+               rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
+               vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    ,
+               HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat" ]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst" ]]    ,
+               net_mig_usb = prms[["net_mig_usb"]], net_mig_nusb = prms[["net_mig_nusb"]],
+               mubt       = prms[["mubt"]]    , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
+               TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
+               LtDxPar    = prms[["LtDxPar"]]   , rLtScrt   = prms[["rLtScrt"]]       , RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
+               EarlyTrend = prms[["EarlyTrend"]], ag_den=spl_den, NixTrans = IP[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)
+M <- zz$Outputs
+colnames(M) <- prms[["ResNam"]]
+df<-as.data.frame(M)
+tb_graph_demo(df,FALSE)
+```
+
+
+## Using the raw denominators from the top of the page 
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=4}
+library(MITUS)
+model_load("US")
+prms <-list()
+prms <- param(P)
+IP <- list()
+IP <- param_init(P)
+data("aging_denominators",package="MITUS")
+
+td<-matrix(NA,10,1201)
+for (i in 1:10){
+td[i,1:721]<-SmoCurve_decade(as.numeric(aging_denominators[i,2:8]))
+td[i,722:1201]<-td[i,721]
+}
+#plot the smoothing spline
+for(i in 1:10){
+plot(t(td)[1:721,i])}
+
+spl_den<-t(td)*12
+
+
+trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
+  zz <- cSim_ag(  nYrs       = 2018-1950         , nRes      = length(prms[["ResNam"]])  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]],
+               Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]  ,
+               rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
+               vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    ,
+               HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat" ]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst" ]]    ,
+               net_mig_usb = prms[["net_mig_usb"]], net_mig_nusb = prms[["net_mig_nusb"]],
+               mubt       = prms[["mubt"]]    , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
+               TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
+               LtDxPar    = prms[["LtDxPar"]]   , rLtScrt   = prms[["rLtScrt"]]       , RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
+               EarlyTrend = prms[["EarlyTrend"]], ag_den=spl_den, NixTrans = IP[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)
+M <- zz$Outputs
+colnames(M) <- prms[["ResNam"]]
+df<-as.data.frame(M)
+tb_graph_demo(df,FALSE)
+
+```
+
