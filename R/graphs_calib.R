@@ -94,6 +94,9 @@ legend("topright",c("US born","Non-US Born","Reported data"),cex=1.0,
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 V  <- cbind(rowSums(df[1:66,255:265]), rowSums(df[1:66,266:276]))
 V1c <- rowSums(df[1:66,121:131])
+death_age <-(readRDS(system.file("US/US_MortalityCountsByAge.rds", package="MITUS"))[,2:69])/1e6
+rownames(death_age)<-readRDS(system.file("US/US_MortalityCountsByAge.rds", package="MITUS"))[,1]
+mort_tt<-colSums(death_age)
 plot(1,1,ylim=c(0,3.5),xlim=c(1950,2015),xlab="",ylab="",axes=F)
 axis(1);axis(2,las=2);box()
 abline(h=axTicks(2),col="grey85")
@@ -101,8 +104,8 @@ abline(h=axTicks(2),col="grey85")
 lines(1950:2015,V[,2],lwd=2,col="red3")
 lines(1950:2015,V[,1],lwd=2,col="blue")
 lines(1950:2015,V1c,lwd=2,col="grey50")
-points(CalibDat$US_mort_age[,1],rowSums((CalibDat$US_mort_age[,2:9]))/1e6,pch=19,cex=0.6,col="grey50")
-lines(CalibDat$US_mort_age[,1],rowSums((CalibDat$US_mort_age[,2:9]))/1e6,lty=3,col="grey50")
+points(1950:2015,mort_tt[1:66],pch=19,cex=0.6,col="grey50")
+lines(1950:2015,mort_tt[1:66],lty=3,col="grey50")
 
 mtext("Year",1,2.5,cex=1.2)
 mtext("Mortality: Total, US, and Non-US Born (mil)",3,.8,font=2,cex=1.2)
