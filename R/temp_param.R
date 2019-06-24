@@ -58,13 +58,13 @@ new_param <- function (PV, prg_chng){
   #   }
 
   for(i in 1:11){
-    mubt[,i] <- SmoCurve(BgMort[,i+1])*PV[["TunmuAg11"]] /12
+    mubt[,i] <- SmoCurve(BgMort[,i+1])*PV[["TunMubt"]] /12
   }
   mubt[,]<-1-exp(-mubt[,])
 
   mubt<-mubt[1:month,]
   for(i in 1:11){
-    mubt[,i] <- mubt[,i]*exp((PV[["TunmuAg1"]]-1)*i)
+    mubt[,i] <- mubt[,i]*exp((PV[["TunmuAg"]]-1)*i)
   }
 
   #  mubt[1:6]<-0
