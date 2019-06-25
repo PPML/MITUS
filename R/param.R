@@ -81,10 +81,6 @@ param <- function (PV){
     td[i,818:1201]<-td[i,817]
   }
 
-  #plot the spline denominators
-  for(i in 1:10){
-    plot(t(td)[1:817,i], type="l")}
-
   spl_den<-t(td)*12
 
   ########## DEFINE A VARIABLE THAT WILL DETERMINE HOW LONG THE TIME DEPENDENT
