@@ -42,6 +42,7 @@ using namespace Rcpp;
 //'@param rRecov rate of recovery from latent slow to safe tb state
 //'@param pImmScen lack of reactivitiy to IGRA for Sp
 //'@param EarlyTrend ramp down of TB in burn-in
+//'@param ag_den denominator used in the aging process
 //'@param pReTx probability of re-treatment for TB
 //'@param NixTrans reduction of transmission over time
 //'@param dist_gen general distribution across tb progression and mort
@@ -93,6 +94,7 @@ Rcpp::List new_cSim(
     double              pImmScen,
     std::vector<double>  EarlyTrend,
     std::vector<double> pReTx,
+    Rcpp::NumericMatrix ag_den,
     std::vector<double> NixTrans,
     Rcpp::NumericMatrix       dist_gen,
     Rcpp::NumericMatrix       trans_mat_tot_ages
@@ -110,6 +112,8 @@ Rcpp::List new_cSim(
   double        MpslowPIN[MpfastPI.nrow()][MpfastPI.ncol()];
   double        MrslowN[Mrslow.nrow()][Mrslow.ncol()];
   double        vTMortN[vTMort.nrow()][vTMort.ncol()];
+  double        ag_denN[ag_den.nrow()][ag_den.ncol()];
+
   // double        RRs_muN[RRs_mu.nrow()][RRs_mu.ncol()];
   // double        vIsxtoIsyN[vIsxtoIsy.nrow()][vIsxtoIsy.ncol()];
   // double        vNmxtoNmyN[vNmxtoNmy.nrow()][vNmxtoNmy.ncol()];
@@ -194,6 +198,10 @@ Rcpp::List new_cSim(
   for(int i=0; i<vTMort.nrow(); i++) {
     for(int j=0; j<vTMort.ncol(); j++) {
       vTMortN[i][j] = vTMort(i,j);
+    } }
+  for(int i=0; i<ag_den.nrow(); i++) {
+    for(int j=0; j<ag_den.ncol(); j++) {
+      ag_denN[i][j] = ag_den(i,j);
     } }
   // for(int i=0; i<RRs_mu.nrow(); i++) {
   //   for(int j=0; j<RRs_mu.ncol(); j++) {
@@ -467,14 +475,7 @@ Rcpp::List new_cSim(
           for(int nm=0; nm<4; nm++) {
             for(int rg=0; rg<2; rg++) {
               for(int na=0; na<3; na++) {
-                /////          IF AGE > 4, IT TAKES 120 MONTHS TO LEAVE AGE GROUP          /////
-                if(ag>0) {
-                  temp2 = 120;
-                  /////          IF AGE < 4, IT TAKES 60 MONTHS TO LEAVE AGE GROUP           /////
-                } else {
-                  temp2 = 60;
-                }
-                temp = V0[ag][tb][0][im][nm][rg][na]/temp2;
+                temp = V0[ag][tb][0][im][nm][rg][na]/ag_denN[0][ag];
                 V1[ag  ][tb][0][im][nm][rg][na]  -= temp;
                 V1[ag+1][tb][0][im][nm][rg][na]  += temp;
               } } } } } }
@@ -1034,20 +1035,13 @@ Rcpp::List new_cSim(
       //             } } } } } } }
       /////////////////////////////////////AGING///////////////////////////////////////
       for(int ag=0; ag<10; ag++) {
-        /////          IF AGE > 4, IT TAKES 120 MONTHS TO LEAVE AGE GROUP          /////
-        if(ag>0) {
-          temp2 = 120;
-          /////          IF AGE < 4, IT TAKES 60 MONTHS TO LEAVE AGE GROUP           /////
-        } else {
-          temp2 = 60;
-        }
         for(int tb=0; tb<6; tb++) {
           for(int lt=0; lt<2; lt++){
             for (int im=0; im<4; im++){
               for (int nm=0; nm<4; nm++){
                 for(int rg=0; rg<2; rg++) {
                   for(int na=0; na<3; na++){
-                    temp = V0[ag  ][tb][lt][im][nm][rg][na]/temp2;
+                    temp = V0[ag  ][tb][lt][im][nm][rg][na]/ag_denN[s][ag];
                     V1[ag  ][tb][lt][im][nm][rg][na]  -= temp;
                     V1[ag+1][tb][lt][im][nm][rg][na]  += temp;
                   } } } } } } }
