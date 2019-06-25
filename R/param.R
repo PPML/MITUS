@@ -641,8 +641,13 @@ TxQualt<-TxQualt[1:month]
               paste("N_ag_8",StatList[[5]],sep="_" ),
               paste("N_ag_9",StatList[[5]],sep="_" ),
               paste("N_ag_10",StatList[[5]],sep="_" ),
-              paste("N_ag_11",StatList[[5]],sep="_" )
+              paste("N_ag_11",StatList[[5]],sep="_" ),
+
+              ### new infections
+              paste("N_newinf_USB",StatList[[1]],sep="_" ),
+              paste("N_newinf_NUSB",StatList[[1]],sep="_" )
   )
+
 
   Params<-list()
   Params[["rDxt"]]      <- rDxt

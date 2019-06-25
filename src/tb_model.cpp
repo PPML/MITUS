@@ -1942,6 +1942,23 @@ Rcpp::List cSim(
                       Outputs[y][520+nm+(ag*4)] += V1[ag][tb][lt][im][nm][rg][na];
                     } } } } } } }
 
+        ///  NEW INFECTIONS + SUPER INFECTION BY AGE AND NAT GROUP
+        for(int ag=0; ag<11; ag++) {
+          for(int lt=0; lt<2 ; lt++) {
+            for(int im=0; im<4 ; im++) {
+              for(int nm=0; nm<4 ; nm++) {
+                for(int rg=0; rg<2; rg++) {
+                  for(int na=0; na<3; na++){
+                    if (na <1){
+                      Outputs[y][564+ag] += (V0[ag][0][lt][im][nm][rg][na]+V0[ag][1][lt][im][nm][rg][na]+V0[ag][2][lt][im][nm][rg][na])*VLjkl[rg][na]*NixTrans[s];
+                    } else {
+                      Outputs[y][575+ag] += (V0[ag][0][lt][im][nm][rg][na]+V0[ag][1][lt][im][nm][rg][na]+V0[ag][2][lt][im][nm][rg][na])*VLjkl[rg][na]*NixTrans[s];}
+
+                  }
+                } } } } }
+        ////////////     CREATE YEARLY VALUES FROM THE MONTH ESTIMATE     ////////////
+        for(int i=564; i<586; i++) { Outputs[y][i] = Outputs[y][i]*12; }
+
 
       } ////end of mid-year results bracket
       ///////////////////////////////////////////////////////////////////////////////////
