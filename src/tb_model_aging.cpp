@@ -42,6 +42,7 @@ using namespace Rcpp;
 //'@param rRecov rate of recovery from latent slow to safe tb state
 //'@param pImmScen lack of reactivitiy to IGRA for Sp
 //'@param EarlyTrend ramp down of TB in burn-in
+//'@param pReTx probability of re-treatment for TB
 //'@param ag_den denominator used in the aging process
 //'@param NixTrans reduction of transmission over time
 //'@param dist_gen general distribution across tb progression and mort
