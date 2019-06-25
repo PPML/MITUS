@@ -95,7 +95,7 @@ new_OutputsInt <- function(loc,ParMatrix,n_cores=1,endyr=2050,Int1=0,Int2=0,Int3
   } else {
     out0 <- mclapply(X=1:nrow(ParMatrix),FUN=new_OutputsZint,mc.cores=n_cores,
                      ParMatrix=ParMatrix,endyr=2050,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3,prg_chng=prg_chng)
-    out <- array(NA,dim=c(length(out0),100,564))
+    out <- array(NA,dim=c(length(out0),100,586))
     for(i in 1:length(out0)) out[i,,] <- as.matrix(out0[[i]])
   }
   if (sum(Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3)==0) intv<-1;
