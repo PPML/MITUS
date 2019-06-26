@@ -26,7 +26,10 @@ new_calib<-function(samp_i,optim_mat, loc){
   # P["TunrslowAge"]<-oldpar["TunrslowAge"]
   # # p[[""]]
   # P[["ImmigVol"]]<-1.1
-  prgchng<-c(2020,2,.90,.95,.85,.90,.8,.25)
+  ##approximation of baseline values
+  prgchng<-c(2020,1,.80,.80,.67,.91,.43,.07)
+
+  prgchng<-c(2020,1,.90,.95,.85,.90,.8,.25)
   names(prgchng)<-c("start_yr", #year in which the program change starts (discontinuous step up to the values below at this year)
                      "scrn_cov", #Screening Coverage Rate as a Multiple of the Current Rate
                      "IGRA_frc", #Fraction of Individuals Receiving IGRA
