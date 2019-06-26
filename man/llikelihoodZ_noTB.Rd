@@ -18,15 +18,14 @@ lLik
 format P
 if any output is missing or negative or if any model state population is negative
 set the likelihood to a hugely negative number (penalized)
+TOTAL POP EACH DECADE, BY US/FB - index updated (maybe)
 TOTAL POP AGE DISTRIBUTION 2016 index updated
-Total DEATHS 1979-2016
-
-Total deaths by decade
-v20a<-M[c(11,21,31,41,51,61),121:131]
-addlik <-US_dth_10_tot_lLik(V=v20a); addlik
-lLik <- lLik + addlik
+TOTAL DEATHS WITH TB 1999-2014 - index updated
+TB DEATHS 1999-2014 BY AGE - index updated above
+#' Total DEATHS 1999-2016
 
 #' Total DEATHS 1999-2016 BY AGE
+#' Mort_dist 2016
 #' Mort_dist 2016
 HOMELESS POP 2010 - index updated
 }

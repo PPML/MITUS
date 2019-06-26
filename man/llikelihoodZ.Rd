@@ -15,7 +15,6 @@ llikelihoodZ(samp_i, start_mat)
 }
 \value{
 lLik
-load the necessary libraries
 if any output is missing or negative or if any model state population is negative
 set the likelihood to a hugely negative number (penalized)
 TOTAL DIAGNOSED CASES 1953-2016 - index is same

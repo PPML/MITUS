@@ -2,7 +2,8 @@
 % Please edit documentation in R/IMIS_functions_st.r
 \name{llikelihoodZ_st}
 \alias{llikelihoodZ_st}
-\title{Total DEATHS 1979-2016
+\title{if any output is missing or negative or if any model state population is negative
+Total DEATHS 1979-2016
 #' Total DEATHS 2015-2016 BY AGE
 #' Mort_dist 2016 dirchlet
 mort_dist norm
@@ -11,6 +12,7 @@ LIKELIHOOD FOR BORGDORFF, FEREBEE & SUTHERLAND ESTIMATES}
 llikelihoodZ_st(samp_i, ParMatrix, loc = "MA")
 }
 \description{
+if any output is missing or negative or if any model state population is negative
 Total DEATHS 1979-2016
 #' Total DEATHS 2015-2016 BY AGE
 #' Mort_dist 2016 dirchlet
