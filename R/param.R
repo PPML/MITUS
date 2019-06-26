@@ -180,8 +180,17 @@ param <- function (PV){
 
   TotImmig0       <- (c(ImmigInputs[[1]][1:151])+c(rep(0,65),cumsum(rep(PV["ImmigVolFut"],86))))/12*PV["ImmigVol"]
   TotImmig1       <- TotImmig0
-  TotImmig        <- SmoCurve(TotImmig1)
-  TotImmAge       <- outer(TotImmig,ImmigInputs[["AgeDist"]])
+  TotImmig        <- SmoCurve(TotImmig1)/1e6
+ AgeDist<-matrix(NA,11,1801)
+ TotImmAge<-matrix(NA,1801,11)
+  for (i in 1:11){
+  AgeDist[i,]         <- SmoCurve(ImmigInputs[["AgeDist"]][i,])}
+  for (i in 1:1801){
+    for (j in 1:11){
+      # TotImmAge[i,j]   <- outer(TotImmig[i],AgeDist[j,i])
+      TotImmAge[i,j]   <- TotImmig[i]*AgeDist[j,i]
+
+  }}
 
   ######################           LTBI IMM.             ########################
   PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:65]^PV["TunLtbiTrend"]*ImmigInputs[["PrevTrend25_34"]][65]^(1-PV["TunLtbiTrend"]),
