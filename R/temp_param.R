@@ -314,7 +314,7 @@ new_param <- function (PV, prg_chng){
 
   rDefLt        <- PV["pDefLt"]/(1-PV["pDefLt"])  # based on 50% tx completion with 6 mo INH regimen 2.0 [1.0,3.0] from Menzies Ind J Med Res 2011
 
-  if (prg_chng["ltbi_eff_frc"] != 1-(round(PV["EffLt"], 2))){
+  if (prg_chng["ltbi_eff_frc"] != round(PV["EffLt"], 2)){
     EffLt         <- prg_chng["ltbi_eff_frc"]
   } else {
     EffLt         <- PV["EffLt"]
