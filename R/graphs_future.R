@@ -206,6 +206,28 @@
            col=c("red3",4,1,1),lty=c(NA,NA,3,1),bg="white",pt.cex=c(1.8,1.8,0.6,NA))
 
 
+    # total tb deaths over time 2004-2014
+    V   <- rowSums(df[55:(endyr-1949),227:237])*1e6
+    tb_death_tot<-rowSums(CalibDat$tb_deaths[6:16,-1])
+
+    #format the plot
+    plot(0,0,ylim=c(0,max(V,tb_death_tot)*1.2),xlim=c(2006,2050),xlab="",ylab="",axes=F)
+    axis(1);axis(2,las=2);box()
+    abline(h=axTicks(2),col="grey85")
+
+    #plot the model data
+    lines(2006:2050,V,lwd=2,col="blue")
+
+    #reported data for comparison
+    points(2006:2016,tb_death_tot,pch=19,cex=0.6,col="black")
+    lines (2006:2016,tb_death_tot,lty=3,col="black")
+
+    #plot text
+
+    mtext("Year",1,2.5,cex=1.2)
+    mtext("Total TB Deaths by Year 2004-2050",3,.8,font=2,cex=1.2)
+    legend("topright",c("Reported data","Model"),pch=c(19,NA),lwd=c(1,2),
+           col=c("black","blue"),lty=c(3,1),bg="white",pt.cex=c(0.6,NA))################################################################################
 
 
     dev.off() # code for ma
