@@ -141,7 +141,7 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
   #################                IMMIGRATION              #####################
   TotImmig0       <- (c(ImmigInputs[[1]][1:151])+c(rep(0,65),cumsum(rep(PV["ImmigVolFut"],86))))/12*PV["ImmigVol"]
   TotImmig1       <- TotImmig0
-  TotImmig        <- SmoCurve(TotImmig1)/1e6
+  TotImmig        <- SmoCurve(TotImmig1)
   AgeDist<-matrix(NA,11,1801)
   TotImmAge<-matrix(NA,1801,11)
   for (i in 1:11){

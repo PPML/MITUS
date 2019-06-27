@@ -180,7 +180,7 @@ param <- function (PV){
 
   TotImmig0       <- (c(ImmigInputs[[1]][1:151])+c(rep(0,65),cumsum(rep(PV["ImmigVolFut"],86))))/12*PV["ImmigVol"]
   TotImmig1       <- TotImmig0
-  TotImmig        <- SmoCurve(TotImmig1)/1e6
+  TotImmig        <- SmoCurve(TotImmig1)
  AgeDist<-matrix(NA,11,1801)
  TotImmAge<-matrix(NA,1801,11)
   for (i in 1:11){
