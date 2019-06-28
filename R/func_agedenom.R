@@ -65,7 +65,7 @@ age_denom<-function(loc){
     ltd[8,]<-popdist[75,]/colSums(popdist[66:75,])
     ltd[9,]<-popdist[85,]/colSums(popdist[76:85,])
     ltd[10,]<-popdist[95,]/colSums(popdist[86:95,])
-}
+
     #invert this for the aging rate
 
     ltd<-1/ltd
@@ -78,5 +78,6 @@ age_denom<-function(loc){
       td[i,1:817]<-SmoCurve_decade(as.numeric(ltd[i,]))
       td[i,818:1201]<-td[i,817]
     }
+  } #end of else statement
   return(age_den)
 }
