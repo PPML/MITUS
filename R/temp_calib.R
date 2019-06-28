@@ -27,10 +27,10 @@ new_calib<-function(samp_i,optim_mat, loc){
   # # p[[""]]
   # P[["ImmigVol"]]<-1.1
   ##approximation of baseline values
-  # prgchng<-c(2020,1,.80,.80,.67,.91,.43,.07)
+  prgchng<-c(2020,1,.80,.80,.67,.91,.43,.07)
   #change only screening rate
   # prgchng<-c(2020,2,.80,.80,.67,.91,.43,.07)
-  prgchng<-c(2020,1,.90,.95,.85,.90,.8,.25)
+  # prgchng<-c(2020,1,.90,.95,.85,.90,.8,.25)
   names(prgchng)<-c("start_yr", #year in which the program change starts (discontinuous step up to the values below at this year)
                      "scrn_cov", #Screening Coverage Rate as a Multiple of the Current Rate
                      "IGRA_frc", #Fraction of Individuals Receiving IGRA
@@ -41,7 +41,7 @@ new_calib<-function(samp_i,optim_mat, loc){
                      "tb_txdef_frc" #Fraction Discontinuing/Defaulting from Treatment
   )
   prms <-list()
-  prms <- new_param(P,prgchng)
+  prms <- fin_param(P,prgchng)
   IP <- list()
   IP <- param_init(P)
   # data("trans_mat_nat",package="MITUS")
@@ -51,7 +51,7 @@ new_calib<-function(samp_i,optim_mat, loc){
   # trans_mat_tot_ages<<-matrix(tm,16,176)
   trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
   if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
-  zz <- new_cSim( nYrs       = 2018-1950         , nRes      = length(prms[["ResNam"]])  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
+  zz <- fin_cSim( nYrs       = 2050-1950         , nRes      = length(prms[["ResNam"]])  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
               Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]  ,
               rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
               vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    ,
@@ -60,7 +60,7 @@ new_calib<-function(samp_i,optim_mat, loc){
               mubt       = prms[["mubt"]]    , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
               TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
               LtDxPar_lt    = prms[["LtDxPar_lt"]]   , LtDxPar_nolt    = prms[["LtDxPar_nolt"]]   , rLtScrt   = prms[["rLtScrt"]]       , RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
-              EarlyTrend = prms[["EarlyTrend"]], NixTrans = IP[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)
+              EarlyTrend = prms[["EarlyTrend"]], ag_den=prms[["aging_denom"]],   NixTrans = IP[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)
   M <- zz$Outputs
   colnames(M) <- prms[["ResNam"]]
   v21a<- v21  <- M[51:67,521:564]
@@ -70,6 +70,7 @@ new_calib<-function(samp_i,optim_mat, loc){
       v21a[,(1:4)+4*(i-1)]<-v21[,(1:4)+4*(i-1)]/denom
     } }
   print(v21a)
+  df<-as.data.frame(M)
   future_graphs(df,2050)
 }
 # calib_par<-function(samp_i,par_vec, loc){

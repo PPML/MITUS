@@ -18,7 +18,7 @@
 #'@return InputParams list
 #'@export
 param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0){
-  InputParams <-vector("list", 42)   #Create an empty list to hold the formatted intitial parameters
+  InputParams <-vector("list", 43)   #Create an empty list to hold the formatted intitial parameters
   names(InputParams) <- c("rDxt","TxQualt", "InitPop", "Mpfast", "ExogInf", "MpfastPI",
                           "Mrslow", "rrSlowFB", "rfast"    ,"RRcurDef"      , "rSlfCur"  ,
                           "p_HR"        , "dist_gen" , "vTMort"   ,"RRmuRF"          , "RRmuHR",
@@ -28,6 +28,7 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
                           "pReTx"      , "LtTxPar"  , "LtDxPar"  , "rLtScrt"      , "RRdxAge"  ,
                           "rRecov"      , "pImmScen"  ,   "EarlyTrend","aging_denom", "NixTrans"   ,
                           "net_mig_usb", "net_mig_nusb", "ResNam")
+  month<-1201
   ################################################################################
   ##### INTERVENTION
   ################################################################################
