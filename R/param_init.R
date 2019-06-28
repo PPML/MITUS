@@ -7,6 +7,7 @@
 #' This function takes the same inputs as the Outputs
 #'@name param_init
 #'@param PV vector of Inputs to format
+#'@param loc two digit location for the model run
 #'@param Int1 boolean for intervention 1
 #'@param Int2 boolean for intervention 2
 #'@param Int3 boolean for intervention 3
@@ -17,7 +18,7 @@
 #'@param Scen3 boolean for scenario 3
 #'@return InputParams list
 #'@export
-param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0){
+param_init <- function(PV,loc="US",Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0){
   InputParams <-vector("list", 42)   #Create an empty list to hold the formatted intitial parameters
   names(InputParams) <- c("rDxt","TxQualt", "InitPop", "Mpfast", "ExogInf", "MpfastPI",
                           "Mrslow", "rrSlowFB", "rfast"    ,"RRcurDef"      , "rSlfCur"  ,
@@ -49,10 +50,8 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
   ################################################################################
   ################################################################################
   BgMort           <- Inputs[["BgMort"]]
-  NCHS_mort        <-readRDS(system.file("US/US_NCHS_mort.rds", package="MITUS"))[,2:12]
-  BgMort[1:68,2:12]<-NCHS_mort
-  InitPop          <- init_pop() #Inputs[["InitPop"]]
-  InputParams[["InitPop"]] <- InitPop
+  BgMort[1:68,2:12]<-weight_mort(loc)
+  InputParams[["InitPop"]] <- Inputs[["InitPop"]]
   Births           <- Inputs[["Births"]]
   ImmigInputs      <- Inputs[["ImmigInputs"]]
   #In order for proper scenario/Interventions, creation of a variable to limit the
@@ -76,6 +75,8 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
     InputParams[["mubt"]][,i] <- SmoCurve(BgMort[,i+1])*PV["TunMubt"]/12
     InputParams[["mubt"]][,i]<-InputParams[["mubt"]][,i]*RRmuAg[i]
   }
+  ##########                CALCULATION OF AGING DENOMINATORS           ##########
+  InputParams[["aging_denom"]] <-age_denom(loc)
   #########################     DISEASE SPECIFIC       ###########################
   #############    ACTIVE TB RATES DEFAULT TO THE SMEAR POS LEVELS   #############
   muIp  	  <- PV["muIp"]/12
@@ -672,8 +673,10 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
               paste("N_ag_8",StatList[[5]],sep="_" ),
               paste("N_ag_9",StatList[[5]],sep="_" ),
               paste("N_ag_10",StatList[[5]],sep="_" ),
-              paste("N_ag_11",StatList[[5]],sep="_" )
-
+              paste("N_ag_11",StatList[[5]],sep="_" ),
+              ### new infections
+              paste("N_newinf_USB",StatList[[1]],sep="_" ),
+              paste("N_newinf_NUSB",StatList[[1]],sep="_" )
   )
 
   InputParams[["ResNam"]]<-ResNam
