@@ -415,8 +415,8 @@ fin_param <- function (PV, prg_chng){
   ######################           PROVIDER DELAY         ########################
   DelaySp    <- rep(PV["DelaySp"],month)
 
-  if (prg_chng["tb_tim2tx_frc"] !=round(DelaySp[prg_m], 2)){
-    DelaySp[prg_m:length(DelaySp)] <- prg_chng["tb_tim2tx_frc"];
+  if (prg_chng["tb_tim2tx_frc"] !=100){
+    DelaySp[prg_m:length(DelaySp)] <- PV["DelaySp"]*(prg_chng["tb_tim2tx_frc"])/100;
   }
 
   #######################     PROVIDER DELAY RR ELDERLY     ########################
