@@ -18,7 +18,7 @@
 #'@return InputParams list
 #'@export
 param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0){
-  InputParams <-vector("list", 41)   #Create an empty list to hold the formatted intitial parameters
+  InputParams <-vector("list", 42)   #Create an empty list to hold the formatted intitial parameters
   names(InputParams) <- c("rDxt","TxQualt", "InitPop", "Mpfast", "ExogInf", "MpfastPI",
                           "Mrslow", "rrSlowFB", "rfast"    ,"RRcurDef"      , "rSlfCur"  ,
                           "p_HR"        , "dist_gen" , "vTMort"   ,"RRmuRF"          , "RRmuHR",
@@ -26,8 +26,8 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
                           "ImmAct"      , "ImmFst" , "mubt"     ,"RelInf"        , "RelInfRg" ,
                           "Vmix"       , "rEmmigFB" , "TxVec"    , "TunTxMort"    , "rDeft"    ,
                           "pReTx"      , "LtTxPar"  , "LtDxPar"  , "rLtScrt"      , "RRdxAge"  ,
-                          "rRecov"      , "pImmScen"  ,   "EarlyTrend","adj_fact", "NixTrans"   ,
-                          "ResNam")
+                          "rRecov"      , "pImmScen"  ,   "EarlyTrend","aging_denom", "NixTrans"   ,
+                          "net_mig_usb", "net_mig_nusb", "ResNam")
   ################################################################################
   ##### INTERVENTION
   ################################################################################
@@ -35,8 +35,8 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
     Int1 = Int2 = Int3 = Int4 = 1
   }
   # adj_fact<-exp(.0001*(10:0)/11 + .0011*(0:10)/11)
-  adj_fact <- exp(PV[["adj_ag1"]]*(10:0)/11 + PV[["adj_ag11"]]*(0:10)/11)
-  InputParams[["adj_fact"]] <- adj_fact;
+  # adj_fact <- exp(PV[["adj_ag1"]]*(10:0)/11 + PV[["adj_ag11"]]*(0:10)/11)
+  # InputParams[["adj_fact"]] <- adj_fact
 
   #params from general reblnc_pop:
   InputParams[["dist_gen"]] <- dist_gen;
@@ -48,30 +48,116 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
   ###########################          INPUTS            #########################
   ################################################################################
   ################################################################################
-  BgMort           <- Inputs[["BgMort"]]
-  InputParams[["InitPop"]]          <- Inputs[["InitPop"]]
+  BgMort           <- as.matrix(Inputs[["BgMort"]])
+  death_age <-readRDS(system.file("US/US_MortalityCountsByAge.rds", package="MITUS"))[,2:69]
+  rownames(death_age)<-readRDS(system.file("US/US_MortalityCountsByAge.rds", package="MITUS"))[,1]
+  death_age<-as.matrix(death_age)
+
+  popdist<- as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS")))
+  popdist<-popdist[,-1]
+  popdist<-popdist[,-69]
+  rownames(popdist)<-as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS"))[,1])
+  new_mort<-popdist
+  new_mort<-death_age/popdist
+  ##weighted mort for the age groups
+  weight_mort<-matrix(NA,11,68)
+  colnames(weight_mort)<-colnames(new_mort)
+  weight_mort[1,]<-colSums(new_mort[1:5,]*popdist[1:5,])/colSums(popdist[1:5,])
+  weight_mort[2,]<-colSums(new_mort[6:15,]*popdist[6:15,])/colSums(popdist[6:15,])
+  weight_mort[3,]<-colSums(new_mort[16:25,]*popdist[16:25,])/colSums(popdist[16:25,])
+  weight_mort[4,]<-colSums(new_mort[26:35,]*popdist[26:35,])/colSums(popdist[26:35,])
+  weight_mort[5,]<-colSums(new_mort[36:45,]*popdist[36:45,])/colSums(popdist[36:45,])
+  weight_mort[6,]<-colSums(new_mort[46:55,]*popdist[46:55,])/colSums(popdist[46:55,])
+  weight_mort[7,]<-colSums(new_mort[56:65,]*popdist[56:65,])/colSums(popdist[56:65,])
+  weight_mort[8,]<-colSums(new_mort[66:75,]*popdist[66:75,])/colSums(popdist[66:75,])
+  weight_mort[9,]<-colSums(new_mort[76:85,]*popdist[76:85,])/colSums(popdist[76:85,])
+  weight_mort[10,]<-colSums(new_mort[86:95,]*popdist[86:95,])/colSums(popdist[86:95,])
+  weight_mort[11,]<-colSums(new_mort[96:111,]*popdist[96:111,])/colSums(popdist[96:111,])
+
+  weight_mort<-t(weight_mort)
+
+
+  # NCHS_mort        <-readRDS(system.file("US/US_NCHS_mort.rds", package="MITUS"))[,2:12]
+  BgMort[1:68,2:12]<-weight_mort
+  # BgMort<-BgMort*.8
+  #
+  # BgMort[11:12]<-BgMort[11:12]*3
+  # BgMort[12]<-BgMort[12]*1.2
+  InitPop          <- Inputs[["InitPop"]] #init_pop()
   Births           <- Inputs[["Births"]]
   ImmigInputs      <- Inputs[["ImmigInputs"]]
-  #In order for proper scenario/Interventions, creation of a variable to limit the
   TxInputs         <- Inputs[["TxInputs"]]
+  NetMig           <- Inputs[["NetMigrState"]]
+
+  ##########                CALCULATION OF AGING DENOMINATORS           ##########
+  popdist<- as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS")))
+  popdist<-popdist[,-1]
+  rownames(popdist)<-as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS"))[,1])
+
+  #calculate the percentage of the total age band in each single year age
+  ltd<-matrix(NA,10,69)
+
+  ltd[1,]<-popdist[5,]/colSums(popdist[1:5,])
+  ltd[2,]<-popdist[15,]/colSums(popdist[6:15,])
+  ltd[3,]<-popdist[25,]/colSums(popdist[16:25,])
+  ltd[4,]<-popdist[35,]/colSums(popdist[26:35,])
+  ltd[5,]<-popdist[45,]/colSums(popdist[36:45,])
+  ltd[6,]<-popdist[55,]/colSums(popdist[46:55,])
+  ltd[7,]<-popdist[65,]/colSums(popdist[56:65,])
+  ltd[8,]<-popdist[75,]/colSums(popdist[66:75,])
+  ltd[9,]<-popdist[85,]/colSums(popdist[76:85,])
+  ltd[10,]<-popdist[95,]/colSums(popdist[86:95,])
+
+
+  #invert this for the aging rate
+  ltd<-1/ltd
+
+  td<-matrix(NA,10,1201)
+  for (i in 1:10){
+    td[i,1:817]<-SmoCurve(as.numeric(ltd[i,]))
+    td[i,818:1201]<-td[i,817]
+  }
+
+  spl_den<-t(td)*12
+  InputParams[["aging_denom"]]<-spl_den
 
   ##########                PARAMETER DEFINITIONS                      ###########
+  ##########                RISK FACTOR DISTRIBUTIONS   ##########################
+  #turned off because the rebalancing has been moved back into the model
+  adj_fact <- exp(PV[["adj_ag1"]]*(10:0)/11 + PV[["adj_ag11"]]*(0:10)/11)
+
   #######################           BIRTHS                 #######################
   ####### INDEXED BY TIME, ABSOLUTE NUMBER OF NEW ADULT ENTRANTS OVER TIME #######
 
-  InputParams[["Birthst"]]  <- SmoCurve(Births)*PV["TunBirths"]/12
+  Birthst   <- SmoCurve(Births)*PV["TunBirths"]/12
+  Birthst   <- Birthst[1:month]
+  #  Birthst[1:6]<-0
 
   ##########################      MORTALITY RATES       ##########################
   ########################## BACKGROUND MORTALITY BY TIME ########################
-  InputParams[["mubt"]]    <- matrix(NA,1801,11)
+  mubt      <- matrix(NA,1801,11)
+  #mortality calculation version 1
+  # linear multiple on background mortality and exponential scaling of mort by age
+  # TunmuAg <- PV["TunmuAg"]
+  #   RRmuAg <- exp((1:11)*TunmuAg)
+  # # RRmuT<-seq(TunmuAg,PV["TunMubt"],length.out=month)/12
+  #   for(i in 1:11) {
+  #     mubt[,i] <- SmoCurve(BgMort[,i+1])*PV[["TunMubt"]]/12
+  #     # mubt[1:1201,i] <- mubt[1:1201,i]*RRmuT
+  #     mubt[,i] <- mubt[,i]*RRmuAg[i]
+  #   }
 
-  TunmuAg <- PV["TunmuAg"]
-  RRmuAg <- exp((1:11)*TunmuAg)
-
-  for(i in 1:11) {
-    InputParams[["mubt"]][,i] <- SmoCurve(BgMort[,i+1])*PV["TunMubt"]/12
-    InputParams[["mubt"]][,i]<-InputParams[["mubt"]][,i]*RRmuAg[i]
+  for(i in 1:11){
+    mubt[,i] <- SmoCurve(BgMort[,i+1])*PV[["TunMubt"]] /12
   }
+  # mubt[,]<-1-exp(-mubt[,])
+
+  mubt<-mubt[1:month,]
+  for(i in 1:11){
+    mubt[,i] <- mubt[,i]*exp((PV[["TunmuAg"]]-1))
+  }
+  InputParams[["mubt"]] <-mubt
+
   #########################     DISEASE SPECIFIC       ###########################
   #############    ACTIVE TB RATES DEFAULT TO THE SMEAR POS LEVELS   #############
   muIp  	  <- PV["muIp"]/12
@@ -135,15 +221,20 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
   TunmuTbAg <- PV["TunmuTbAg"]
 
   #################                IMMIGRATION              #####################
-  TotImmig1       <- c(ImmigInputs[[1]][1:65],(ImmigInputs[[1]][66:151]-ImmigInputs[[1]][66])*PV["ImmigVolFut"]+ImmigInputs[[1]][66])/12*PV["ImmigVol"]
   TotImmig0       <- (c(ImmigInputs[[1]][1:151])+c(rep(0,65),cumsum(rep(PV["ImmigVolFut"],86))))/12*PV["ImmigVol"]
-
-  #set.seed( rand_seed)
-  # TotImmig1       <-   c(TotImmig0[1:66],exp(mvrnorm(1, log(TotImmig0[-(1:66)]), vcv_gp_l10_sd0.1))) # Add gaussian process noise
-  TotImmig1       <-   TotImmig0
+  TotImmig1       <- TotImmig0
   TotImmig        <- SmoCurve(TotImmig1)
-  TotImmAge       <- outer(TotImmig,ImmigInputs[["AgeDist"]])
-  TotImmAge       <- TotImmAge[1:1201,1:11]
+  AgeDist<-matrix(NA,11,1801)
+  TotImmAge<-matrix(NA,1801,11)
+  for (i in 1:11){
+    AgeDist[i,]         <- SmoCurve(ImmigInputs[["AgeDist"]][i,])}
+  for (i in 1:1801){
+    for (j in 1:11){
+      # TotImmAge[i,j]   <- outer(TotImmig[i],AgeDist[j,i])
+      TotImmAge[i,j]   <- TotImmig[i]*AgeDist[j,i]
+
+    }}
+  TotImmAge<-TotImmAge[1:1201,1:11]
   #######################   IMMIGRATION WITH LATENT TB   #######################
 
   PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:65]^PV["TunLtbiTrend"]*ImmigInputs[["PrevTrend25_34"]][65]^(1-PV["TunLtbiTrend"]),
@@ -168,7 +259,10 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
   PrevTrend25_34a  <- SmoCurve(PrevTrend25_341a)
   PrevTrend25_34a  <-PrevTrend25_34a[1:1201]
 
-  InputParams[["ImmAct"]]        <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*PV["pImAct"]
+  # ImDxChngV      <- SmoCurve(c(rep(1,57),seq(1,PV["ImDxChng"],length.out=6)[-1],rep(PV["ImDxChng"],89)))
+  # ImDxChngV      <-ImDxChngV[1:1201]
+  # ImmAct         <- outer(PrevTrend25_34a*PV["RRtbprev"]*ImDxChngV,ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*PV["pImAct"]
+  InputParams[["ImmAct"]]          <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*PV["pImAct"]
   InputParams[["ImmFst"]]        <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*(1-PV["pImAct"])
 
   InputParams[["ImmAct"]]    <-InputParams[["ImmAct"]][1:1201,1:11]
@@ -177,12 +271,11 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
   InputParams[["ImmNon"]]        <- TotImmAge-InputParams[["ImmAct"]]-InputParams[["ImmFst"]]-InputParams[["ImmLat"]]
 
   #### #### #### INT 1 #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
-  #### should this be for five years
   pctDoc <- (1-0.28)
   if(Int1==1) {
-    for(i in 1:11) InputParams[["ImmLat"]][,i] <- InputParams[["ImmLat"]][,i]*(1-LgtCurve(2018,2023,1)*PV["SensLt"]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
-    for(i in 1:11) InputParams[["ImmAct"]][,i] <- InputParams[["ImmAct"]][,i]*(1-LgtCurve(2018,2023,1)*PV["SensLt"]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
-    for(i in 1:11) InputParams[["ImmFst"]][,i] <- InputParams[["ImmFst"]][,i]*(1-LgtCurve(2018,2023,1)*PV["SensLt"]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
+    for(i in 1:11) InputParams[["ImmLat"]][,i] <- InputParams[["ImmLat"]][,i]*(1-LgtCurve(2016,2021,1)*PV["SensLt"]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
+    for(i in 1:11) InputParams[["ImmAct"]][,i] <- InputParams[["ImmAct"]][,i]*(1-LgtCurve(2016,2021,1)*PV["SensLt"]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
+    for(i in 1:11) InputParams[["ImmFst"]][,i] <- InputParams[["ImmFst"]][,i]*(1-LgtCurve(2016,2021,1)*PV["SensLt"]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
     InputParams[["ImmNon"]]        <- TotImmAge-InputParams[["ImmAct"]]-InputParams[["ImmFst"]]-InputParams[["ImmLat"]]
   }
 
@@ -190,9 +283,9 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
   #### #### #### SCEN 2 #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
   if(Scen2==1) {
-    for(i in 1:11) InputParams[["ImmLat"]][,i] <- InputParams[["ImmLat"]][,i]*(1-LgtCurve(2018,2019,1))
-    for(i in 1:11) InputParams[["ImmAct"]][,i] <- InputParams[["ImmAct"]][,i]*(1-LgtCurve(2018,2019,1))
-    for(i in 1:11) InputParams[["ImmFst"]][,i] <- InputParams[["ImmFst"]][,i]*(1-LgtCurve(2018,2019,1))
+    for(i in 1:11) InputParams[["ImmLat"]][,i] <- InputParams[["ImmLat"]][,i]*(1-LgtCurve(2016,2017,1))
+    for(i in 1:11) InputParams[["ImmAct"]][,i] <- InputParams[["ImmAct"]][,i]*(1-LgtCurve(2016,2017,1))
+    for(i in 1:11) InputParams[["ImmFst"]][,i] <- InputParams[["ImmFst"]][,i]*(1-LgtCurve(2016,2017,1))
     InputParams[["ImmNon"]]         <- TotImmAge-InputParams[["ImmAct"]]-InputParams[["ImmFst"]]-InputParams[["ImmLat"]]
 
   }
@@ -201,10 +294,10 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
   #### #### #### SCEN 3 #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
   if(Scen3==1) {
-    adjf <- (1-0.5)^(1/10/12);  adjfV <- adjf^(0:384)
-    for(i in 1:11) InputParams[["ImmLat"]][817:1201,i] <- InputParams[["ImmLat"]][817:1201,i]*adjfV
-    for(i in 1:11) InputParams[["ImmAct"]][817:1201,i] <- InputParams[["ImmAct"]][817:1201,i]*adjfV
-    for(i in 1:11) InputParams[["ImmFst"]][817:1201,i] <- InputParams[["ImmFst"]][817:1201,i]*adjfV
+    adjf <- (1-0.5)^(1/10/12);  adjfV <- adjf^(0:408)
+    for(i in 1:11) InputParams[["ImmLat"]][793:1201,i] <- InputParams[["ImmLat"]][793:1201,i]*adjfV
+    for(i in 1:11) InputParams[["ImmAct"]][793:1201,i] <- InputParams[["ImmAct"]][793:1201,i]*adjfV
+    for(i in 1:11) InputParams[["ImmFst"]][793:1201,i] <- InputParams[["ImmFst"]][793:1201,i]*adjfV
     InputParams[["ImmNon"]]         <- TotImmAge-InputParams[["ImmAct"]]-InputParams[["ImmFst"]]-InputParams[["ImmLat"]]
   }
 
@@ -218,6 +311,10 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
 
   InputParams[["rEmmigFB"]] <- c(PV["rEmmigF1"],PV["rEmmigF2"])/12
 
+  ######################          NET MIGRATION          #########################
+
+  InputParams[["net_mig_usb"]]  <- (NetMig[,"usb" ]*PV["TunNetMig"])^(1/12)-1
+  InputParams[["net_mig_nusb"]] <- (NetMig[,"nusb"]*PV["TunNetMig"])^(1/12)-1
 
   ##########################  HIGH-RISK ENTRY/EXIT  #############################
 
@@ -273,7 +370,7 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
 
   #vector of ORpfastRF
   vORpfastPIRF<-vORpfastRF  <-c(1,1,1,1)
-  vORpfastRF  <- pfast*(exp((0:3)/3*log(ORpfastRF)))
+  vORpfastRF  <- (exp((0:3)/3*log(ORpfastRF)))
   vORpfastPIRF  <- vORpfastRF*ORpfastPI
 
   ############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
@@ -295,8 +392,8 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
   rslowRF    <- PV["rslowH"]/12
   RRrslowRF  <- rslowRF/rslow
   InputParams[["rfast"]]    <- PV["rfast"]/12
-  rrSlowFB0  <- PV["rrSlowFB"]
-  InputParams[["rrSlowFB"]]   <- c(1,rrSlowFB0,rrSlowFB0)
+  # rrSlowFB0  <- PV["rrSlowFB"]
+  InputParams[["rrSlowFB"]]   <- c(1,1,1)
 
   ############# CREATE A VECTOR FOR RATE OF SLOW PROGRESSION THAT WILL
   ############# VARY BASED ON LEVELS OF TB REACTIVATION RATES
@@ -320,7 +417,7 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
   InputParams[["rSlfCur"]]      <- PV["rSlfCur"]/12
 
   ##################### __         LTBI DIAGNOSIS           #######################
-  InputParams[["rLtScrt"]]       <- LgtCurve(1985,2017,PV["rLtScr"])/12
+  InputParams[["rLtScrt"]]       <- LgtCurve(1985,2015,PV["rLtScr"])/12
   SensLt        <- PV["SensLt"]    #  sens of test for latent TB infection (based on IGRA QFT-GIT)
   ###removed sens for HIV
   SpecLt        <- PV["SpecLt"]    #  spec of test for latent TB infection (based on IGRA QFT-GIT)
@@ -337,14 +434,14 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
 
   #dLtt          <- (1-LgtCurve(2016,2021,0)) * 1/9
 
-  EffLt0        <- LgtCurve(2018,2023,0)+1
+  EffLt0        <- LgtCurve(2016,2021,0)+1
   EffLtX        <- cbind(EffLt0,0,EffLt0,0,0)
 
   #### #### #### INT 2 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
-  if(Int2==1) { InputParams[["rLtScrt"]]    <- InputParams[["rLtScrt"]] + LgtCurve(2018,2023,1)*InputParams[["rLtScrt"]]*1
-  EffLtX[,2] <- LgtCurve(2018,2023,1)
-  dLtt       <- (1-LgtCurve(2018,2023,1))*(1/9) + LgtCurve(2018,2023,1)*(1/3)  }
+  if(Int2==1) { InputParams[["rLtScrt"]]    <- InputParams[["rLtScrt"]] + LgtCurve(2016,2021,1)*InputParams[["rLtScrt"]]*1
+  EffLtX[,2] <- LgtCurve(2016,2021,1)
+  dLtt       <- (1-LgtCurve(2016,2021,1))*(1/9) + LgtCurve(2016,2021,1)*(1/3)  }
 
   #### #### #### INT 2 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
@@ -391,7 +488,7 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
   InputParams[["rDxt"]]<-InputParams[["rDxt"]][1:1201,1:2]
   #### #### #### INT 3 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
-  if(Int3==1) { for(i in 1:2) { InputParams[["rDxt"]][,i] <- InputParams[["rDxt"]][,i]+ InputParams[["rDxt"]][,i]*LgtCurve(2018,2023,1)     }   }
+  if(Int3==1) { for(i in 1:2) { InputParams[["rDxt"]][,i] <- InputParams[["rDxt"]][,i]+ InputParams[["rDxt"]][,i]*LgtCurve(2016,2021,1)     }   }
 
   #### #### #### INT 3 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
@@ -400,7 +497,7 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
 
   #### #### #### INT 4 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
-  if(Int4==1) {  pDstt <- 1-(1-pDstt)*(1-LgtCurve(2018,2023,0.5))      }
+  if(Int4==1) {  pDstt <- 1-(1-pDstt)*(1-LgtCurve(2016,2021,0.5))      }
 
   #### #### #### INT 4 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
@@ -427,8 +524,8 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
   rDeftH        <-rDeftH[1:1201]
   #### #### #### INT 4 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
-  if(Int4==1) {  rDeftH <- rDeftH*(1-LgtCurve(2018,2023,0.5))      }
-  if(Int4==1) {  InputParams[["rDeft"]]<-InputParams[["rDeft"]][1:1201];InputParams[["rDeft"]]  <- InputParams[["rDeft"]] * (1-LgtCurve(2018,2023,0.5))      }
+  if(Int4==1) {  rDeftH <- rDeftH*(1-LgtCurve(2016,2021,0.5))      }
+  if(Int4==1) {  InputParams[["rDeft"]]<-InputParams[["rDeft"]][1:1201];InputParams[["rDeft"]]  <- InputParams[["rDeft"]] * (1-LgtCurve(2016,2021,0.5))      }
 
   #### #### #### INT 4 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
@@ -444,13 +541,13 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
 
   #### #### #### INT 4 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
-  if(Int4==1) {  InputParams[["TxQualt"]] <- 1-(1-InputParams[["TxQualt"]])*(1-LgtCurve(2018,2023,0.5))      }
+  if(Int4==1) {  InputParams[["TxQualt"]] <- 1-(1-InputParams[["TxQualt"]])*(1-LgtCurve(2016,2021,0.5))      }
 
   #### #### #### INT 4 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
   #### #### #### SCEN 1 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
-  InputParams[["NixTrans"]] <- 1-LgtCurve(2018,2019,1)
+  InputParams[["NixTrans"]] <- 1-LgtCurve(2016,2017,1)
   if(Scen1==0) {  InputParams[["NixTrans"]][] <- 1      }
 
   #### #### #### SCEN 1 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
