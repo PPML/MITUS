@@ -70,14 +70,8 @@ new_calib<-function(samp_i,optim_mat, loc){
       v21a[,(1:4)+4*(i-1)]<-v21[,(1:4)+4*(i-1)]/denom
     } }
   print(v21a)
-  pub_list<-list(prms[["Mpfast"]],prms[["Mrslow"]], prms[["rfast"]],prms[["rRecov"]])
-  # print(pub_list)
-  if (loc=="US"){
-    calib_graphs(M, pub_list)
-  } else calib_graphs_st(M,loc, pub_list)
-  return(M)
+  future_graphs(df,2050)
 }
-
 # calib_par<-function(samp_i,par_vec, loc){
 #
 #   P <-oldpar
