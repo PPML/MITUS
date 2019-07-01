@@ -28,7 +28,7 @@ def_prgchng<-function(ParVec){
   #once this is set it should not be changed
   DefPrgChngVec[4]<-.8
   #LTBI treatment completion fraction
-  DefPrgChngVec[5]<-ParVec["pDefLt"]
+  DefPrgChngVec[5]<- 1-ParVec["pDefLt"]
   #LTBI Efficacy
   DefPrgChngVec[6]<-ParVec["EffLt"]
   #Time to Treatment //Duration of Infectiousness Percent of Current Value
