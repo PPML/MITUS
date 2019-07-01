@@ -3,8 +3,8 @@
 
   future_graphs <- function(df,endyr){
     df<-as.data.frame(df)
-    pdf(file=paste("MITUS_results/future_graphs",Sys.time(),".pdf"), width = 11, height = 8.5)
-    par(mfrow=c(2,2),mar=c(4,4.5,3,1))
+    # pdf(file=paste("MITUS_results/future_graphs",Sys.time(),".pdf"), width = 11, height = 8.5)
+    # par(mfrow=c(2,2),mar=c(4,4.5,3,1))
 
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
     ### ### ### ### ### ###   TOTAL POP EACH DECADE, BY US/FB   ### ### ### ### ### ###
@@ -56,7 +56,8 @@
     V2 <- df[44:(endyr-1949),"NOTIF_F1"]+df[44:(endyr-1949),"NOTIF_F2"]+df[44:(endyr-1949),"NOTIF_MORT_F1"]+df[44:(endyr-1949),"NOTIF_MORT_F2"]   #non-US born population
 
     #'format the plot
-    plot(1,1,ylim=c(2,100),xlim=c(1954,endyr),xlab="",ylab="",axes=F, log = "y")
+    plot(1,1,ylim=c(min(range(V1),range(V2)),max(range(V0)))*1e3,xlim=c(1954,endyr),xlab="",ylab="",axes=F)
+
     axis(1);axis(2,las=2);box()
     abline(h=axTicks(2),col="grey85")
 
@@ -93,7 +94,7 @@
     V2 <- df[51:(endyr-1949),"NOTIF_F1"]+df[51:(endyr-1949),"NOTIF_F2"]+df[51:(endyr-1949),"NOTIF_MORT_F1"]+df[51:(endyr-1949),"NOTIF_MORT_F2"]   #non-US born population
 
     #'format the plot
-    plot(1,1,ylim=c(2,20),xlim=c(2000,endyr),xlab="",ylab="",axes=F, log = "y")
+    plot(1,1,ylim=c(min(range(V1),range(V2)),max(range(V0)))*1e3,xlim=c(2000,endyr),xlab="",ylab="",axes=F)
     axis(1);axis(2,las=2);box()
     abline(h=axTicks(2),col="grey85")
 
@@ -208,7 +209,7 @@
 
 
 
-    dev.off() # code for ma
+    # dev.off() # code for ma
 
   }
 
