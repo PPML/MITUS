@@ -117,11 +117,11 @@ fin_param <- function (PV, prg_chng){
   for(i in 1:11){
     mubt[,i] <- SmoCurve(BgMort[,i+1])*PV[["TunMubt"]] /12
   }
-  mubt[,]<-1-exp(-mubt[,])
+  # mubt[,]<-1-exp(-mubt[,])
 
   mubt<-mubt[1:month,]
   for(i in 1:11){
-    mubt[,i] <- mubt[,i]*exp((PV[["TunmuAg"]]-1)*i)
+    mubt[,i] <- mubt[,i]*exp(PV[["TunmuAg"]]-1)
   }
 
   #  mubt[1:6]<-0
@@ -343,42 +343,68 @@ fin_param <- function (PV, prg_chng){
 
   ######################          LTBI DIAGNOSIS           ########################
   #check what happens to this parameter post 2018
+  # rLtScrt       <- LgtCurve(1985,2015,PV["rLtScr"])/12
+  # if (prg_chng["scrn_cov"] !=1) {
+  #   rLtScrt[prg_m:length(rLtScrt)]<-rLtScrt[prg_m:length(rLtScrt)]*prg_chng["scrn_cov"];
+  # }
+  # # rLtScrt       <- c(rep(0,888),LgtCurve(1985,2015,PV["rLtScr"])/12)
+  # Sens_IGRA <-78.0
+  # Spec_IGRA <-97.9
+  # IGRA_frc <- .80
+  # Sens_TST <-54.0
+  # Spec_TST <-96.5
+  #
+  # SensLt<-Sens_IGRA*IGRA_frc + (1-IGRA_frc)*Sens_TST
+  # SpecLt<-Spec_IGRA*IGRA_frc + (1-IGRA_frc)*Spec_TST
+  # ######################
+  # SensLt_v        <- rep(SensLt, month)    #  sens of test for latent TB infection (based on IGRA QFT-GIT)
+  # SpecLt_v        <- rep(SpecLt, month)    #  spec of test for latent TB infection (based on IGRA QFT-GIT)
+  # if (prg_chng["IGRA_frc"] != IGRA_frc){
+  #   SensLt_v[prg_m:length(SensLt_v)]<-prg_chng["IGRA_frc"]*Sens_IGRA + (1-prg_chng["IGRA_frc"])*Sens_TST
+  #   SpecLt_v[prg_m:length(SensLt_v)]<-prg_chng["IGRA_frc"]*Spec_IGRA + (1-prg_chng["IGRA_frc"])*Spec_TST
+  # }
+  #
+  # SpecLtFb_v      <- SpecLt_v         #  spec of test for latent TB infection (based on IGRA QFT-GIT) in foreign-born (assumed BCG exposed)
+  # rrTestHr      <- PV["rrTestHr"]# RR of LTBI screening for HIV and HR as cmpared to general
+  # rrTestLrNoTb  <- PV["rrTestLrNoTb"] # RR of LTBI screening for individuals with no risk factors
+  #
+  LtDxPar_lt <- LtDxPar_nolt <- matrix(NA,3,month);
+  # colnames(LtDxPar) <- c("latent","no latent");
+  rownames(LtDxPar_lt) <- rownames(LtDxPar_nolt) <- c("LR","HR","FB")
+  # LtDxPar_lt[,] <- rbind(SensLt_v                 , rrTestHr*SensLt_v    , SensLt_v)
+  # LtDxPar_nolt[,] <- rbind(rrTestLrNoTb*(100-SpecLt_v), rrTestHr*(100-SpecLt_v), (100-SpecLtFb_v))
+
+  ######################          LTBI DIAGNOSIS           ########################
   rLtScrt       <- LgtCurve(1985,2015,PV["rLtScr"])/12
   if (prg_chng["scrn_cov"] !=1) {
     rLtScrt[prg_m:length(rLtScrt)]<-rLtScrt[prg_m:length(rLtScrt)]*prg_chng["scrn_cov"];
   }
+
+  # # rLtScrt       <- c(rep(0,888),LgtCurve(1985,2015,PV["rLtScr"])/12)
   # rLtScrt       <- c(rep(0,888),LgtCurve(1985,2015,PV["rLtScr"])/12)
-  Sens_IGRA <-78.0
-  Spec_IGRA <-97.9
-  IGRA_frc <- .80
-  Sens_TST <-54.0
-  Spec_TST <-96.5
-
-  SensLt<-Sens_IGRA*IGRA_frc + (1-IGRA_frc)*Sens_TST
-  SpecLt<-Spec_IGRA*IGRA_frc + (1-IGRA_frc)*Spec_TST
-  ######################
-  SensLt_v        <- rep(SensLt, month)    #  sens of test for latent TB infection (based on IGRA QFT-GIT)
-  SpecLt_v        <- rep(SpecLt, month)    #  spec of test for latent TB infection (based on IGRA QFT-GIT)
-  if (prg_chng["IGRA_frc"] != IGRA_frc){
-    SensLt_v[prg_m:length(SensLt_v)]<-prg_chng["IGRA_frc"]*Sens_IGRA + (1-prg_chng["IGRA_frc"])*Sens_TST
-    SpecLt_v[prg_m:length(SensLt_v)]<-prg_chng["IGRA_frc"]*Spec_IGRA + (1-prg_chng["IGRA_frc"])*Spec_TST
-  }
-
-  SpecLtFb_v      <- SpecLt_v         #  spec of test for latent TB infection (based on IGRA QFT-GIT) in foreign-born (assumed BCG exposed)
-  rrTestHr      <- 1# RR of LTBI screening for HIV and HR as cmpared to general
-  rrTestLrNoTb  <- PV["rrTestLrNoTb"] # RR of LTBI screening for individuals with no risk factors
-
-  LtDxPar_lt <- LtDxPar_nolt <- matrix(NA,3,month);
-  # colnames(LtDxPar) <- c("latent","no latent");
-  rownames(LtDxPar_lt) <- rownames(LtDxPar_nolt) <- c("LR","HR","FB")
-  LtDxPar_lt[,] <- rbind(SensLt_v                 , rrTestHr*SensLt_v    , SensLt_v)
-  LtDxPar_nolt[,] <- rbind(rrTestLrNoTb*(100-SpecLt_v), rrTestHr*(100-SpecLt_v), (100-SpecLtFb_v))
-
-
+  SensLt        <- PV["SensLt"]    #  sens of test for latent TB infection (based on IGRA QFT-GIT)
+  SpecLt        <- PV["SpecLt"]    #  spec of test for latent TB infection (based on IGRA QFT-GIT)
+  SpecLtFb      <- SpecLt         #  spec of test for latent TB infection (based on IGRA QFT-GIT) in foreign-born (assumed BCG exposed)
   ###########   WILL THIS PARAMETER NEED TO BE REDUCED?
-  rrTestHr      <- 1 # RR of LTBI screening for HIV and HR as cmpared to general
+  rrTestHr      <- PV["rrTestHr"] # RR of LTBI screening for HIV and HR as cmpared to general
   rrTestLrNoTb  <- PV["rrTestLrNoTb"] # RR of LTBI screening for individuals with no risk factors
   #  dLt           <- 1/9
+
+  #rDefLt        <- PV["pDefLt"]/(1-PV["pDefLt"])  # based on 50% tx completion with 6 mo INH regimen 2.0 [1.0,3.0] from Menzies Ind J Med Res 2011
+  EffLt         <- PV["EffLt"]
+  ######NEW PARAMETER FOR MITUS MODEL
+  pTlInt        <- .80
+  LtTxPar       <- c(pTlInt,PV["pDefLt"],EffLt)
+
+  LtDxPar <- matrix(NA,3,2);
+  colnames(LtDxPar) <- c("latent","no latent");
+  rownames(LtDxPar) <- c("LR","HR","FB")
+  LtDxPar[,1] <- c(SensLt                 , rrTestHr*SensLt    , SensLt)
+  LtDxPar[,2] <- c(rrTestLrNoTb*(1-SpecLt), rrTestHr*(1-SpecLt), (1-SpecLtFb))
+  LtDxPar_lt[,]<-matrix(LtDxPar[,1],3,1201)
+  LtDxPar_nolt[,]<-matrix(LtDxPar[,2],3,1201)
+
+
 
   rDefLt        <- PV["pDefLt"]/(1-PV["pDefLt"])  # based on 50% tx completion with 6 mo INH regimen 2.0 [1.0,3.0] from Menzies Ind J Med Res 2011
 
@@ -445,16 +471,11 @@ fin_param <- function (PV, prg_chng){
   rDx[62:151]    <- rDx[61] + (rDx[61]-rDx[60])*cumsum((0.75^(1:90)))
   rDxt0          <- SmoCurve(rDx)/12;
   rDxt1          <- cbind(rDxt0,rDxt0)
-  rDxt1<-rDxt1[1:month,]
+  rDxt1<-rDxt1[1:1201,]
 
-  rDxt<-matrix(NA,1201,2)
   # Put it all together
-  for (i in 1:nrow(rDxt)){
-    rDxt[i,1]           <- 1/(1/rDxt1[i,1]+DelaySp[i])*SensSp
-  }
-  for (i in 1:nrow(rDxt)){
-    rDxt[i,2]       <- (rDxt[i,1]-min(rDxt[,1]))/PV["rrDxH"]+min(rDxt[i,1])
-  } #check this with Nick
+  rDxt           <- 1/(1/rDxt1+DelaySp)*SensSp
+  rDxt[,2]       <- (rDxt[,1]-min(rDxt[,1]))/PV["rrDxH"]+min(rDxt[,1]) #check this with Nick
   colnames(rDxt) <- c("Active","Active_HighRisk")
 
   ################################################################################
@@ -482,7 +503,7 @@ fin_param <- function (PV, prg_chng){
   rDeft<-rDeft[1:month]
 
 
-  if (prg_chng["tb_txdef_frc"] !=round(rDeft[prg_m], 2)){
+  if (round(prg_chng["tb_txdef_frc"],2) !=round(rDeft[prg_m], 2)){
     rDeft[prg_m:length(rDeft)] <- prg_chng["tb_txdef_frc"];
   }
 
