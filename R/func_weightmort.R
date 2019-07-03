@@ -53,18 +53,9 @@ weight_mort<-function(loc){
     ###load in the mortality rate from the life tables
     #find the state ID number (this is ordinal, not fips)
     st<-which(StateID$USPS==loc)
-    #load in the state life table
-    ST_lifetable<-readRDS(system.file("ST/ST_lifetables.rds", package="MITUS"))
-    lt<-ST_lifetable[[st]]
-    lt_d<-reshape2::dcast(lt,Age~Year,value.var = "mx")
-    lt_d$Age<-as.character(lt_d$Age)
-    lt_d$Age[lt_d$Age == '110+'] <- '110'
-    mort_rate<-dplyr::arrange(lt_d,as.integer(Age))
-    mort_rate<-matrix(as.numeric(unlist(mort_rate)),111,7)
-   rownames(mort_rate)<-mort_rate[,1]
-     mort_rate<-mort_rate[,-1]
-     colnames(mort_rate)<-c("1960","1970","1980","1990","2000","2010")
-     mort_rate<-mort_rate[1:101,]
+    #load in the crude mort rate
+    mort_rate<-readRDS(system.file(paste0(loc,"/",loc,"_mortrate.rds"),package="MITUS"))
+
     dec_weight_mort<-matrix(NA,11,6)
     popdist<-popdist[,2:7]
     dec_weight_mort[1,]<-colSums(mort_rate[1:5,]*popdist[1:5,])/colSums(popdist[1:5,])
