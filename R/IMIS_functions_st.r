@@ -8,8 +8,6 @@ library(lhs)
   llikelihoodZ_st <-  function(samp_i,ParMatrix,loc="MA") { # ParMatrix = ParInit
       data("stateID",package="MITUS")
       StateID<-as.data.frame(stateID)
-    # model_inputs<-paste0(loc,"_ModelInputs_11-13-18")
-    # data(list=model_inputs, package = 'MITUS')
     Par <- ParMatrix[samp_i,]
     # norm2unif
     Par2 <- pnorm(Par,0,1)
@@ -23,9 +21,9 @@ library(lhs)
 
     jj <- tryCatch({
       prms <-list()
-      prms <- param(P)
+      prms <- param(P,loc)
       IP <- list()
-      IP <- param_init(P)
+      IP <- param_init(P,loc)
       # tm<-matrix(0,16,16)
       # diag(tm)<-1
       # trans_mat_tot_ages<<-matrix(tm,16,176)
@@ -50,8 +48,8 @@ library(lhs)
         colnames(M) <- prms[["ResNam"]]
         lLik <- 0
         st<-which(StateID$USPS==loc)
-        ### ### ### TOTAL DIAGNOSED CASES 1993-2016  ### ### ### ### ### ### D
-      v1   <- M[44:67,"NOTIF_ALL"]+M[44:67,"NOTIF_MORT_ALL"]
+        ### ### ### TOTAL DIAGNOSED CASES 1993-2017  ### ### ### ### ### ### D
+      v1   <- M[44:68,"NOTIF_ALL"]+M[44:68,"NOTIF_MORT_ALL"]
       addlik <- notif_tot_lLik_st(V=v1,st=st); addlik
       lLik <- lLik + addlik
       ### ### ### ANN DECLINE IN CASES 1953-2015  ### ### ### ### ### ### D
@@ -59,21 +57,21 @@ library(lhs)
       addlik <- notif_decline_lLik_st(V=v1b,st=st); addlik
       lLik <- lLik + addlik
       ### ### ### US CASES AGE DISTRIBUTION 1993-2016  ### ### ### ### ### ### D
-      v2a   <- M[44:67,205:215]+M[44:67,216:226]
+      v2a   <- M[44:68,205:215]+M[44:68,216:226]
       addlik <- notif_age_us_lLik_st(V=v2a,st=st); addlik
       lLik <- lLik + addlik
       ### ### ### FB CASES AGE DISTRIBUTION 1993-2013  ### ### ### ### ### ### D
-      v2b   <- (M[44:67,136:146]+M[44:67,189:199]) - (M[44:67,205:215]+M[44:67,216:226])
+      v2b   <- (M[44:68,136:146]+M[44:68,189:199]) - (M[44:68,205:215]+M[44:68,216:226])
       addlik <- notif_age_fb_lLik_st(V=v2b,st=st); addlik
       lLik <- lLik + addlik
       ### ### ### CASES FB DISTRIBUTION 1993-2014  ### ### ### ### ### ### D
-      v3   <-  cbind(M[44:67,148]+M[44:67,149]+(M[44:67,201]+M[44:67,202]),
-                     M[44:67,147]+M[44:67,200])
+      v3   <-  cbind(M[44:68,148]+M[44:68,149]+(M[44:68,201]+M[44:68,202]),
+                     M[44:68,147]+M[44:68,200])
       addlik <- notif_fb_lLik_st(V=v3,st=st); addlik
       lLik <- lLik + addlik
       ### ### ### CASES FB, US 2010-2014  SLOPE ### ### ### ### ### ### D
-      v3   <- cbind(M[62:67,148]+M[62:67,149]+(M[62:67,201]+M[62:67,202]),
-                    M[62:67,147]+M[62:67,200])
+      v3   <- cbind(M[63:68,148]+M[63:68,149]+(M[63:68,201]+M[63:68,202]),
+                    M[63:68,147]+M[63:68,200])
       addlik <- notif_fbus_slp_lLik_st(V=v3,st=st); addlik
       lLik <- lLik + addlik
 
@@ -86,7 +84,7 @@ library(lhs)
   #    addlik <- notif_fb_rec_lLik_st(V=v6); addlik
   #    lLik <- lLik + addlik
    ### ### ### TREATMENT OUTCOMES 1993-2012  ### ### ### ### ### ### D
-      v11  <- M[44:63,132:134]
+      v11  <- M[44:66,132:134]
       addlik <- tx_outcomes_lLik_st(V=v11); addlik
       lLik <- lLik + addlik
       ### ### ### TOTAL LTBI TREATMENT INITS 2002  ### ### ### ### ### ### D
@@ -115,8 +113,8 @@ library(lhs)
       # v17b  <- M[,30]
       # addlik <- tot_pop_yr_us_lLik_st_00_10(V=v17b,st=st); addlik
       # lLik <- lLik + addlik
-      ### ### ### TOTAL POP AGE DISTRIBUTION 2014  ### ### ### ### ### ### D
-      v18  <- cbind(M[65,33:43],M[65,44:54])
+      ### ### ### TOTAL POP AGE DISTRIBUTION 2017  ### ### ### ### ### ### D
+      v18  <- cbind(M[67,33:43],M[67,44:54])
       addlik <- tot_pop14_ag_fb_lLik_st(V=v18,st=st); addlik
       lLik <- lLik + addlik
       ### ### ### TOTAL DEATHS WITH TB 1999-2016 ### ### ### ### ### ###  D

@@ -9,10 +9,10 @@
 #'@name notif_tot_lLik_st
 #'@param V vector of total notifications 1953-2014
 #'@return likelihood
-notif_tot_lLik_st <- function(V,st) { # V = vector of total notifications 1993-2016
+notif_tot_lLik_st <- function(V,st) { # V = vector of total notifications 1993-2017
   notif_tot     <- CalibDatState[["cases_yr_st"]][[st]][,2];
-  adj_1         <- sum(dnorm(notif_tot,notif_tot,notif_tot*0.1/1.96,log=T)*wtZ)
-  sum(dnorm(notif_tot,V*1e6,notif_tot*0.1/1.96,log=T)*wtZ) - adj_1  }
+  adj_1         <- sum(dnorm(notif_tot,notif_tot,notif_tot*0.1/1.96,log=T)*wtZ[1:25])
+  sum(dnorm(notif_tot,V*1e6,notif_tot*0.1/1.96,log=T)*wtZ[1:25]) - adj_1  }
 
 ### ### ### ANN DECLINE IN CASES 1953-1994  ### ### ### ### ### ### D
 # notif_decline      <- CalibDatState[["cases_prop_change_53_94"]]
@@ -36,9 +36,9 @@ notif_decline_lLik_st <- function(V, st=st) {
 notif_age_us_lLik_st <- function(V,st,rho=0.015) { # V = table of us notifications by age 1993-2016 (row=24 years, col=11 ages)
   notif_age_us0     <- CalibDatState[["cases_yr_ag_nat_st"]][[st]][,,"usb"]
   notif_age_us      <- notif_age_us0[,-c(1,12)]*notif_age_us0[,12]
-  adj_2a            <- sum(dDirMult(M=notif_age_us+0.01,n=notif_age_us,Rho=0.015)*wts[44:67])
+  adj_2a            <- sum(dDirMult(M=notif_age_us+0.01,n=notif_age_us,Rho=0.015)*wts[44:68])
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
-  sum(dDirMult(M=V2,n=notif_age_us,Rho=rho)*wts[44:67]) - adj_2a  }
+  sum(dDirMult(M=V2,n=notif_age_us,Rho=rho)*wts[44:68]) - adj_2a  }
 
 ### ### ### FB CASES AGE DISTRIBUTION 1993-2016  ### ### ### ### ### ### D
 # Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
@@ -46,9 +46,9 @@ notif_age_us_lLik_st <- function(V,st,rho=0.015) { # V = table of us notificatio
 notif_age_fb_lLik_st <- function(V,st,rho=0.015) { # V = table of fb notifications by age 1993-2013 (row=21 years, col=11 ages)
   notif_age_fb0     <- CalibDatState[["cases_yr_ag_nat_st"]][[st]][,,"nusb"]
   notif_age_fb      <- notif_age_fb0[,-c(1,12)]*notif_age_fb0[,12]
-  adj_2b            <- sum(dDirMult(M=notif_age_fb+0.01,n=notif_age_fb,Rho=0.015)*wts[44:67])
+  adj_2b            <- sum(dDirMult(M=notif_age_fb+0.01,n=notif_age_fb,Rho=0.015)*wts[44:68])
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
-  sum(dDirMult(M=V2,n=notif_age_fb,Rho=rho)*wts[44:67]) - adj_2b  }
+  sum(dDirMult(M=V2,n=notif_age_fb,Rho=rho)*wts[44:68]) - adj_2b  }
 
 ### ### ### CASES FB DISTRIBUTION 1993-2016  ### ### ### ### ### ###  D
 # Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
@@ -58,13 +58,13 @@ notif_fb_lLik_st <- function(V,st,rho=0.005) { # V = table of notifications by f
   notif_age_us0     <- CalibDatState[["cases_yr_ag_nat_st"]][[st]][,,"usb"]
 
   notif_fb      <- cbind(notif_age_fb0[,12],notif_age_us0[,12])
-  adj_3         <- sum(dDirMult(M=notif_fb+0.01,n=notif_fb,Rho=0.005)*wts[44:67])
-  sum(dDirMult(M=V,n=notif_fb,Rho=rho)*wts[44:67]) - adj_3  }
+  adj_3         <- sum(dDirMult(M=notif_fb+0.01,n=notif_fb,Rho=0.005)*wts[44:68])
+  sum(dDirMult(M=V,n=notif_fb,Rho=rho)*wts[44:68]) - adj_3  }
 
 ### ### ### CASES FB DISTRIBUTION SLOPES OVER PAST 5 year  ### ### ### ### ### ### D
 
 notif_fbus_slp_lLik_st <- function(V,st) {
-  notif_fbus_slp5     <- CalibDatState[["case_change_5"]][[st]];
+  notif_fbus_slp5     <- CalibDatState[["case_change_5"]][st,3]
   adj_3a              <- sum(dnorm(notif_fbus_slp5,notif_fbus_slp5,0.005,log=T))# V = table of notifications by fb 2011-2016 (row=6 years, col=fb then us)
   V2 <- c(mean(diff(log(V[,2]))),mean(diff(log(V[,1]))))
   sum(dnorm(V2,notif_fbus_slp5,0.005,log=T)) - adj_3a  }
@@ -92,8 +92,8 @@ notif_fb_rec_lLik_st <- function(V,rho=0.02) { # V = table of notifications by r
 
 tx_outcomes_lLik_st <- function(V,rho=0.01) {
   tx_outcomes      <- cbind(1-rowSums(CalibDatState[["tx_outcomes"]][,2:3]),CalibDatState[["tx_outcomes"]][,2],CalibDatState[["tx_outcomes"]][,3])*CalibDatState[["tx_outcomes"]][,4]
-  adj_11           <- sum(dDirMult(M=tx_outcomes+0.01,n=tx_outcomes,Rho=0.01)*wts[44:63])# V = table of treatment outcomes 1993-2012 (row=20 years, col= complete, discontinue, dead)
-  sum(dDirMult(M=V,n=tx_outcomes,Rho=rho)*wts[44:63]) - adj_11  }
+  adj_11           <- sum(dDirMult(M=tx_outcomes+0.01,n=tx_outcomes,Rho=0.01)*wts[44:66])# V = table of treatment outcomes 1993-2012 (row=20 years, col= complete, discontinue, dead)
+  sum(dDirMult(M=V,n=tx_outcomes,Rho=rho)*wts[44:66]) - adj_11  }
 
 ### ### ### TOTAL LTBI TREATMENT INITS 2002  ### ### ### ### ### ### D
 
@@ -146,22 +146,31 @@ ltbi_fb_11_dp_lLik_st <- function(V) { # V = LTBI in FB pop 2011 (row=11 ages, c
 # Motivation: norm, mean centered with CI = +/- 2 million wts[1+0:6*10]
 
 tot_pop_yr_fb_lLik_st <- function(V,st) { # V = total pop (rows=year, cols=us, fb)
-  tot_pop_yr      <- CalibDatState[["tot_pop_yr_fb"]][[st]]
+  tot_pop_yr      <- CalibDatState[["pop_50_10"]][[st]]
   tot_pop_yr_fb   <- tot_pop_yr[tot_pop_yr$usb==0,]
-  adj_17          <- sum(dnorm(tot_pop_yr_fb[-1,3],tot_pop_yr_fb[-1,3],tot_pop_yr_fb[7,3]*0.1/1.96,log=T)*wts[1+1:6*10])
-  sum(dnorm(tot_pop_yr_fb[-1,3],V[c(11,21,31,41,51,61)]*1e6,tot_pop_yr_fb[7,3]*0.1/1.96,log=T)*wts[1+1:6*10]) - adj_17  } # CI = +/- 2mil
+  tot_pop_yr_fb<-colSums(as.matrix(tot_pop_yr_fb)[,-c(1:2)])
+  adj_17          <- sum(dnorm(tot_pop_yr_fb[-1],tot_pop_yr_fb[-1],tot_pop_yr_fb[7]*0.1/1.96,log=T)*wts[1+1:6*10])
+  sum(dnorm(tot_pop_yr_fb[-1],V[c(11,21,31,41,51,61)]*1e6,tot_pop_yr_fb[7]*0.1/1.96,log=T)*wts[1+1:6*10]) - adj_17  } # CI = +/- 2mil
 
 ### D
 tot_pop_yr_us_lLik_st_00_10 <- function(V,st) {
-  tot_pop_yr      <- CalibDatState[["tot_pop_yr_fb"]][[st]]
+  tot_pop_yr      <- CalibDatState[["pop_50_10"]][[st]]
   # V = total pop (rows=year, cols=us, fb)
   tot_pop_yr_us  <- tot_pop_yr[tot_pop_yr$usb==1,]
-  adj_17b        <- sum(dnorm(tot_pop_yr_us[6:7,3],tot_pop_yr_us[6:7,3],tot_pop_yr_us[7,3]*0.1/1.96,log=T)*wts[1+5:6*10])
-  sum(dnorm(tot_pop_yr_us[6:7,3],V[c(51,61)]*1e6,tot_pop_yr_us[7,3]*0.1/1.96,log=T)*wts[1+5:6*10]) - adj_17b  } # CI = +/- 2mil
+  tot_pop_yr_us<-as.matrix(tot_pop_yr_us)
+  tot_pop_yr_us<-colSums(as.matrix(tot_pop_yr_us)[,-c(1:2)])
+  adj_17b        <- sum(dnorm(tot_pop_yr_us[6:7],tot_pop_yr_us[6:7],tot_pop_yr_us[7]*0.1/1.96,log=T)*wts[1+5:6*10])
+  sum(dnorm(tot_pop_yr_us[6:7],V[c(51,61)]*1e6,tot_pop_yr_us[7]*0.1/1.96,log=T)*wts[1+5:6*10]) - adj_17b  } # CI = +/- 2mil
 
-### ### ### TOTAL POP AGE DISTRIBUTION 2014  ### ### ### ### ### ### D
+### ### ### TOTAL POP AGE DISTRIBUTION 2017  ### ### ### ### ### ### D
 # Motivation: reported estimates represent pseudo-data for a multinomial likelihood, with ESS = 500
 
+# tot_pop17_ag_fb_lLik_st <- function(V,st,ESS=500) { # V =  US pop in 2014 (row=11 ages, col= us, fb)
+#   pop_ag_11_170  <- CalibDatState[["pop_00_17"]][[st]][,-c(1,3:19)]
+#   pop_ag_11_17   <- cbind(pop_ag_11_170[pop_ag_11_170$usb==1,2]/sum(pop_ag_11_170[pop_ag_11_170$usb==1,2]),
+#                           pop_ag_11_170[pop_ag_11_170$usb==0,2]/sum(pop_ag_11_170[pop_ag_11_170$usb==0,2]))
+#   adj_18         <- sum(log(pop_ag_11_17[,1])*pop_ag_11_17[,1])+sum(log(pop_ag_11_17[,2])*pop_ag_11_17[,2])
+#   (sum(log(V[,1]/sum(V[,1]))*pop_ag_11_17[,1])+sum(log(V[,2]/sum(V[,2]))*pop_ag_11_17[,2]))*ESS - adj_18*ESS  }
 tot_pop14_ag_fb_lLik_st <- function(V,st,ESS=500) { # V =  US pop in 2014 (row=11 ages, col= us, fb)
   pop_ag_11_160  <- CalibDatState[["tot_pop_ag_fb_11_16"]][[st]]
   pop_ag_11_16   <- cbind(pop_ag_11_160$pop[pop_ag_11_160$usb==1]/sum(pop_ag_11_160$pop[pop_ag_11_160$usb==1]),
