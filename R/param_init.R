@@ -50,11 +50,15 @@ param_init <- function(PV,loc="US",Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sc
   ################################################################################
   ################################################################################
   BgMort           <- Inputs[["BgMort"]]
-  BgMort[1:68,2:12]<-weight_mort(loc)
+  if(loc=="US"){
+    BgMort[1:68,2:12]<-weight_mort(loc)
+  } else{
+    BgMort[11:61,2:12]<-weight_mort(loc)
+  }
   InputParams[["InitPop"]] <- Inputs[["InitPop"]]
   Births           <- Inputs[["Births"]]
   ImmigInputs      <- Inputs[["ImmigInputs"]]
-  #In order for proper scenario/Interventions, creation of a variable to limit the
+  ImmigInputs$PrevTrend25_34[1:69]<-ImmigInputs$TBBurdenImmig*(90/1e5)
   TxInputs         <- Inputs[["TxInputs"]]
   NetMig           <- Inputs[["NetMigrState"]]
 
@@ -76,7 +80,7 @@ param_init <- function(PV,loc="US",Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sc
     InputParams[["mubt"]][,i]<-InputParams[["mubt"]][,i]*RRmuAg[i]
   }
   ##########                CALCULATION OF AGING DENOMINATORS           ##########
-  InputParams[["aging_denom"]] <-age_denom(loc)
+  InputParams[["aging_denom"]] <-age_denom("US")
   #########################     DISEASE SPECIFIC       ###########################
   #############    ACTIVE TB RATES DEFAULT TO THE SMEAR POS LEVELS   #############
   muIp  	  <- PV["muIp"]/12

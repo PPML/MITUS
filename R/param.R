@@ -13,15 +13,20 @@ param <- function (PV, loc="US"){
   ###########################          INPUTS            #########################
   ################################################################################
   BgMort           <- as.matrix(Inputs[["BgMort"]])
+  if(loc=="US"){
   BgMort[1:68,2:12]<-weight_mort(loc)
+  } else{
+  BgMort[11:61,2:12]<-weight_mort(loc)
+  }
   InitPop          <- Inputs[["InitPop"]]
   Births           <- Inputs[["Births"]]
   ImmigInputs      <- Inputs[["ImmigInputs"]]
+  ImmigInputs$PrevTrend25_34[1:69]<-ImmigInputs$TBBurdenImmig*(90/1e5)
   TxInputs         <- Inputs[["TxInputs"]]
   NetMig           <- Inputs[["NetMigrState"]]
 
   ##########                CALCULATION OF AGING DENOMINATORS           ##########
-  spl_den <-age_denom(loc)
+  spl_den <-age_denom("US")
   ########## DEFINE A VARIABLE THAT WILL DETERMINE HOW LONG THE TIME DEPENDENT
   ########## VARIABLES SHOULD BE (IN MONTHS)
   month<-1201;
@@ -129,7 +134,7 @@ param <- function (PV, loc="US"){
       # TotImmAge[i,j]   <- outer(TotImmig[i],AgeDist[j,i])
       TotImmAge[i,j]   <- TotImmig[i]*AgeDist[j,i]
 
-  }}
+    }}
 
   ######################           LTBI IMM.             ########################
   PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:65]^PV["TunLtbiTrend"]*ImmigInputs[["PrevTrend25_34"]][65]^(1-PV["TunLtbiTrend"]),
