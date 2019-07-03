@@ -9,7 +9,7 @@ format_as_restab <- function(loc) {
   # to reflect that we're working on custom scenarios
   for (intv in 1:9){
     #load the results for all the runs (need to make this dataset)
-  o<-readRDS(system.file(paste0(loc,"/results_", intv, "_2019-05-08.rds"), package="MITUS"))
+  o<-readRDS(system.file(paste0(loc,"/",loc,"_results_", intv, "_2019_07_03.rds"), package="MITUS"))
   # for (i in 1:564){
   #   o[,,i]<-o[,,i]*1e3
   # }
@@ -93,7 +93,7 @@ format_as_restab <- function(loc) {
   ResTabfb <- ResTabus <- ResTab <- array(NA,dim=c(90,length(age_id),5,4))
   for (intv in 1:9){
     #load the results for all the runs (need to make this dataset)
-    o<-readRDS(system.file(paste0(loc,"/results_", intv, "_2019-05-08.rds"), package="MITUS"))
+    o<-readRDS(system.file(paste0(loc,"/",loc,"_results_", intv, "_2019_07_03.rds"), package="MITUS"))
     # for (i in 1:564){
     #   o[,,i]<-o[,,i]*1e3
     # }
