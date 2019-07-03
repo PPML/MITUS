@@ -129,8 +129,7 @@ llikelihoodZ <-  function(samp_i, start_mat) {
       # v20b<-v20b[-11]
       addlik <- tot_dth_age_lLik(V=v20b); addlik
       lLik <- lLik + addlik
-      addlik <- tot_dth_age_lLik(V=v20b); addlik
-      lLik <- lLik + addlik
+
       #' #' Mort_dist 2016
       v21a<- v21  <- M[66:67,521:564]
       for (i in 1:11){
