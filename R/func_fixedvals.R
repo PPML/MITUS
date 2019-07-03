@@ -11,7 +11,7 @@ fixed_vals<-function(samp_i){
   pr_x<-as.vector(unlist(pr_x[,1]))
 #load the most up to date national optimized data set
 # and format the data back to their original distributions
-US_opt_all<-readRDS(system.file("US/US_Optim_all_10_603.rds", package="MITUS"))
+US_opt_all<-readRDS(system.file("US/US_Optim_all_10_626.rds", package="MITUS"))
 Par<-US_opt_all[samp_i,-(ncol(US_opt_all))]
 Par2 <- pnorm(Par,0,1)
 # uniform to true
