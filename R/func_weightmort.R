@@ -65,30 +65,31 @@ weight_mort<-function(loc){
      mort_rate<-mort_rate[,-1]
      colnames(mort_rate)<-c("1960","1970","1980","1990","2000","2010")
      mort_rate<-mort_rate[1:101,]
-    weight_mort<-matrix(NA,11,6)
+    dec_weight_mort<-matrix(NA,11,6)
     popdist<-popdist[,2:7]
-    weight_mort[1,]<-colSums(mort_rate[1:5,]*popdist[1:5,])/colSums(popdist[1:5,])
-    weight_mort[2,]<-colSums(mort_rate[6:15,]*popdist[6:15,])/colSums(popdist[6:15,])
-    weight_mort[3,]<-colSums(mort_rate[16:25,]*popdist[16:25,])/colSums(popdist[16:25,])
-    weight_mort[4,]<-colSums(mort_rate[26:35,]*popdist[26:35,])/colSums(popdist[26:35,])
-    weight_mort[5,]<-colSums(mort_rate[36:45,]*popdist[36:45,])/colSums(popdist[36:45,])
-    weight_mort[6,]<-colSums(mort_rate[46:55,]*popdist[46:55,])/colSums(popdist[46:55,])
-    weight_mort[7,]<-colSums(mort_rate[56:65,]*popdist[56:65,])/colSums(popdist[56:65,])
-    weight_mort[8,]<-colSums(mort_rate[66:75,]*popdist[66:75,])/colSums(popdist[66:75,])
-    weight_mort[9,]<-colSums(mort_rate[76:85,]*popdist[76:85,])/colSums(popdist[76:85,])
-    weight_mort[10,]<-colSums(mort_rate[86:95,]*popdist[86:95,])/colSums(popdist[86:95,])
-    weight_mort[11,]<-colSums(mort_rate[96:101,]*popdist[96:101,])/colSums(popdist[96:101,])
+    dec_weight_mort[1,]<-colSums(mort_rate[1:5,]*popdist[1:5,])/colSums(popdist[1:5,])
+    dec_weight_mort[2,]<-colSums(mort_rate[6:15,]*popdist[6:15,])/colSums(popdist[6:15,])
+    dec_weight_mort[3,]<-colSums(mort_rate[16:25,]*popdist[16:25,])/colSums(popdist[16:25,])
+    dec_weight_mort[4,]<-colSums(mort_rate[26:35,]*popdist[26:35,])/colSums(popdist[26:35,])
+    dec_weight_mort[5,]<-colSums(mort_rate[36:45,]*popdist[36:45,])/colSums(popdist[36:45,])
+    dec_weight_mort[6,]<-colSums(mort_rate[46:55,]*popdist[46:55,])/colSums(popdist[46:55,])
+    dec_weight_mort[7,]<-colSums(mort_rate[56:65,]*popdist[56:65,])/colSums(popdist[56:65,])
+    dec_weight_mort[8,]<-colSums(mort_rate[66:75,]*popdist[66:75,])/colSums(popdist[66:75,])
+    dec_weight_mort[9,]<-colSums(mort_rate[76:85,]*popdist[76:85,])/colSums(popdist[76:85,])
+    dec_weight_mort[10,]<-colSums(mort_rate[86:95,]*popdist[86:95,])/colSums(popdist[86:95,])
+    dec_weight_mort[11,]<-colSums(mort_rate[96:101,]*popdist[96:101,])/colSums(popdist[96:101,])
 
-    for (i in 1:length(weight_mort)){
-    if(is.nan(weight_mort[i])==TRUE) weight_mort[i]<-0
+    for (i in 1:length(dec_weight_mort)){
+    if(is.nan(dec_weight_mort[i])==TRUE) dec_weight_mort[i]<-0
 }
-spl_mort<-matrix(NA,11,601)
-    for (i in 1:nrow(weight_mort)){
-      spl_mort[i,]<-SmoCurve_decade(weight_mort[i,])
+spl_mort<-matrix(NA,11,51)
+    for (i in 1:nrow(dec_weight_mort)){
+      spl_mort[i,]<-SmoCurve_decade_year(dec_weight_mort[i,])
     }
-for (i in 1:11){
-  plot(spl_mort[i,],type="l")
-}
+# for (i in 1:11){
+#   plot(spl_mort[i,],type="l")
+# }
+weight_mort<-t(spl_mort)
 }
   return (weight_mort)
 }
