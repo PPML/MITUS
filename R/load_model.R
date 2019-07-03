@@ -18,10 +18,10 @@ if (loc=="US"){
   Inputs<<-readRDS(system.file("US/US_Inputs_06-26-19.rds", package="MITUS"))
 
 } else {
-  CalibDat<<-CalibDatState<<-readRDS(system.file("ST/ST_CalibDat_06-18-19.rds", package="MITUS"))
-  ParamInit_st<<-ParamInit<<-readRDS(system.file("ST/ST_ParamInit_2019-06-24.rds", package="MITUS"))
-  StartVal_st<<-StartVal<<-readRDS(system.file("ST/ST_StartVal_02-09-19.rds", package="MITUS"))
-  Inputs<<-readRDS(system.file(paste0(loc,"/",loc,"_ModelInputs_01-24-19.rds"), package="MITUS"))
+  CalibDat<<-CalibDatState<<-readRDS(system.file("ST/ST_CalibDat_07-03-19.rds", package="MITUS"))
+  ParamInit_st<<-ParamInit<<-readRDS(system.file("ST/ST_ParamInit_2019-07-02.rds", package="MITUS"))
+  StartVal_st<<-StartVal<<-readRDS(system.file("ST/ST_StartVal_2019-07-02.rds", package="MITUS"))
+  Inputs<<-readRDS(system.file(paste0(loc,"/",loc,"_ModelInputs_07-03-19.rds"), package="MITUS"))
 }
 
 if (loc=="US"){
@@ -36,7 +36,7 @@ if (loc=="US"){
   idZ2 <<- ParamInitZ[,4]==2
 } else {
   wts <<- CalibDatState[["ImptWeights"]]
-  W <- wts[44:67];  W["2016"] <- 4
+  W <- wts[44:69];  W["2016"] <- 4
   wtZ <<-W
 
   #creation of background parameters
