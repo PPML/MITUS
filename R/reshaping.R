@@ -1,7 +1,7 @@
 rehaping<-function(loc){
 
 ###format as restab
-ResTabC <- format_as_restab(out)
+ResTabC <- format_as_restab("US")
 # Make an empty res_tab2 for comparison to res_tab2_1
 library(dplyr)
 res_tab2_2 <- make_empty_res_tab2()
