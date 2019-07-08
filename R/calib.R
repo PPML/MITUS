@@ -27,9 +27,9 @@ P <- P
 # P[["ImmigVol"]]<-1.1
 
   prms <-list()
-  prms <- param(P)
+  prms <- param(P,loc)
   IP <- list()
-  IP <- param_init(P)
+  IP <- param_init(P,loc)
   # data("trans_mat_nat",package="MITUS")
   # trans_mat_tot_ages<-trans_mat_tot_ages_nat
   # tm<-matrix(0,16,16)
