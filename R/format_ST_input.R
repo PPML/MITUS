@@ -10,7 +10,7 @@ state_input <- function() {
     pop<-readRDS(system.file("ST/ST_decennialpop.rds", package="MITUS"))[[i]][,1:3]
     pop2<-reshape2::dcast(pop,age_group~usb,value.var = "1950")
     rownames(pop2)<-pop2[,1]
-    pop2<-pop2[,-1]
+    pop2<-cbind(pop2[,3],pop2[,2])
     colnames(pop2)<-c("US","NUS")
     Inputs$InitPop<-as.matrix(pop2)/1e6
     Inputs$Births<-as.matrix(InputsState$BirthsState[[i]])
