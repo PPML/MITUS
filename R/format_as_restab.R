@@ -4,6 +4,7 @@ format_as_restab <- function(loc) {
   tt<-0
   #create 3 lists to hold output
   ResTabfb <- ResTabus <- ResTab <- array(NA,dim=c(90,length(age_id),7,11))
+  mResTabfb <- mResTabus <- mResTab <- array(NA,dim=c(9,length(age_id),7,11))
 
   # For now just set intv = 1 for a base-case scenario, but later we need to change this
   # to reflect that we're working on custom scenarios
@@ -77,10 +78,18 @@ format_as_restab <- function(loc) {
     ResTabfb[1:nr+((intv-1)*10),,7,ag]<-o[, age_id,98+ag]/o[, age_id,2+ag]*1e6
   }
   }
-  results<-list(ResTab = ResTab,
-    ResTabus = ResTabus,
-    ResTabfb = ResTabfb)
-  saveRDS(results, file=paste0("~/MITUS/inst/", loc, "/sm_resTab_", Sys.Date(), ".rds"))
+  for(l in 1:9){
+    for (i in 1:length(age_id)){
+      for (j in 1:7){
+        for (k in 1:11){
+          mResTab[l,i,j,k]<-mean(na.omit(ResTab[1:nr+((l-1)*10),i,j,k]))
+          mResTabus[l,i,j,k]<-mean(na.omit(ResTabus[1:nr+((l-1)*10),i,j,k]))
+          mResTabfb[l,i,j,k]<-mean(na.omit(ResTabfb[1:nr+((l-1)*10),i,j,k]))
+        } } }}
+
+
+  ResTabC <- list(mResTab,mResTabus,mResTabfb)
+  saveRDS(ResTabC, file=paste0("~/MITUS/inst/", loc, "/sm_resTab_", Sys.Date(), ".rds"))
 
 
 ################ BIG RESULTS TAB #############################################
@@ -154,9 +163,17 @@ format_as_restab <- function(loc) {
   # ResTabAllus[[tt]] <- ResTabus
   # }
   #concatenate all lists
+#take the mean
+  for(l in 1:9){
+    for (i in 1:length(age_id)){
+      for (j in 1:5){
+        for (k in 1:4){
+          mResTab[l,i,j,k]<-mean(na.omit(ResTab[1:nr+((l-1)*10),i,j,k]))
+          mResTabus[l,i,j,k]<-mean(na.omit(ResTabus[1:nr+((l-1)*10),i,j,k]))
+          mResTabfb[l,i,j,k]<-mean(na.omit(ResTabfb[1:nr+((l-1)*10),i,j,k]))
+        } } }}
 
-  results<-list(ResTab = ResTab,
-                ResTabus = ResTabus,
-                ResTabfb = ResTabfb)
-  saveRDS(results, file=paste0("~/MITUS/inst/", loc, "/bg_resTab_", Sys.Date(), ".rds"))
+
+  ResTabC <- list(mResTab,mResTabus,mResTabfb)
+  saveRDS(ResTabC, file=paste0("~/MITUS/inst/", loc, "/bg_resTab_", Sys.Date(), ".rds"))
 }
