@@ -1,4 +1,4 @@
-make_empty_res_tab2sm <- function(intvs) {
+make_empty_res_tab2sm <- function() {
   # Specify the levels of each dimension to the data
   CatList <- list()
   CatList[[1]] <- c(
@@ -8,7 +8,7 @@ make_empty_res_tab2sm <- function(intvs) {
     "tb_incidence_per_mil",
     "tb_mortality_000s",
     "tb_mortality_per_mil")
-  CatList[[2]] <- intvs
+  CatList[[2]] <- c('base_case', paste0('intervention_', 1:5), paste0('scenario_', 1:3))
   CatList[[3]] <- c("all_populations","usb_population","fb_population")
   CatList[[4]] <- c("0-4",paste(0:8*10+5,1:9*10+4,sep="-"),"95+")
   CatList[[5]] <- c("absolute_value","pct_basecase_same_year","pct_basecase_2016")
@@ -36,7 +36,8 @@ make_empty_res_tab2sm <- function(intvs) {
   return(res_tab2)
 }
 
-make_empty_res_tab2bg <- function(intvs) {
+
+make_empty_res_tab2bg <- function() {
   # Specify the levels of each dimension to the data
   CatList <- list()
   CatList[[1]] <- c(
@@ -44,9 +45,9 @@ make_empty_res_tab2bg <- function(intvs) {
     "tb_infection_per_mil",
     "tb_incidence_per_mil",
     "tb_deaths_per_mil")
-  CatList[[2]] <- intvs
+  CatList[[2]] <- c('base_case', paste0('intervention_', 1:5), paste0('scenario_', 1:3))
   CatList[[3]] <- c("all_populations","usb_population","fb_population")
-  CatList[[4]] <- c("all_ages", "age_0_24","age_25_64","age_65p")
+  CatList[[4]] <- c("all", "0-24","25-64","65+")
   CatList[[5]] <- c("absolute_value","pct_basecase_same_year","pct_basecase_2016")
   CatList[[6]] <- 2018:2049
   # CatList[[7]] <- c("mean","ci_low","ci_high")

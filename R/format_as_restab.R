@@ -1,4 +1,4 @@
-format_as_restab <- function(loc) {
+format_as_restab_sm <- function(loc) {
 
   age_id = (2018:2049)-1949
   tt<-0
@@ -91,8 +91,9 @@ format_as_restab <- function(loc) {
   ResTabC <- list(mResTab,mResTabus,mResTabfb)
   saveRDS(ResTabC, file=paste0("~/MITUS/inst/", loc, "/sm_resTab_", Sys.Date(), ".rds"))
 
-
+}
 ################ BIG RESULTS TAB #############################################
+format_as_restab_bg <- function(loc) {
 
   age_id = (2018:2049)-1949
   tt<-0
@@ -177,3 +178,4 @@ format_as_restab <- function(loc) {
   ResTabC <- list(mResTab,mResTabus,mResTabfb)
   saveRDS(ResTabC, file=paste0("~/MITUS/inst/", loc, "/bg_resTab_", Sys.Date(), ".rds"))
 }
+

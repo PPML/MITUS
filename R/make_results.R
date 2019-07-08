@@ -46,9 +46,10 @@
 # }
 #
 #   #format these results as restabs
-# format_as_restab(loc)
+# ResTabC<-format_as_restab_sm(loc)
+#
 # #make the empty restabs
-# sm_restab_ints <- sm_restab <- make_empty_res_tab2sm(9)
+# sm_restab_ints <- sm_restab <- make_empty_res_tab2sm()
 # sm_restab_ints %<>% mutate_if(is.factor, as.integer) %>% as.matrix
 # #run the reshaper
 # #small
@@ -56,8 +57,10 @@
 # sm_restab[,ncol(sm_restab)] <- sm_restab_ints[,ncol(sm_restab_ints)]
 #
 # saveRDS(sm_restab2,file=paste0("~/MITUS/inst/",loc, "/sm_restab2.rds"))
+# #######
+# ResTabC<-format_as_restab_bg(loc)
 #
-# bg_restab_ints <- bg_restab <- make_empty_res_tab2bg(9)
+# bg_restab_ints <- bg_restab <- make_empty_res_tab2bg()
 # bg_restab_ints %<>% mutate_if(is.factor, as.integer) %>% as.matrix
 #
 # #big
@@ -66,12 +69,12 @@
 #
 # saveRDS(bg_restab,file=paste0("~/MITUS/inst/",loc, "/bg_restab2.rds"))
 # } }
-####Make the CalibGraphs for Tabby2
- # for (i in 1:length(locs)){
- #   loc<-locs[i]
- #   print(loc)
- # tabby_calib_graphs(loc)
- #   }
+# ###Make the CalibGraphs for Tabby2
+# for (i in 1:length(locs)){
+#   loc<-locs[i]
+#   print(loc)
+# tabby_calib_graphs(loc)
+#   }
 #
 # for (i in 1:length(locs)){
 #   loc<-locs[i]
