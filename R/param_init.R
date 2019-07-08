@@ -58,7 +58,7 @@ param_init <- function(PV,loc="US",Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sc
   InputParams[["InitPop"]] <- Inputs[["InitPop"]]
   Births           <- Inputs[["Births"]]
   ImmigInputs      <- Inputs[["ImmigInputs"]]
-  # ImmigInputs$PrevTrend25_34[1:69]<-ImmigInputs$TBBurdenImmig*(90/1e5)
+  ImmigInputs$PrevTrend25_34[1:69]<-ImmigInputs$TBBurdenImmig*(90/1e5)
   TxInputs         <- Inputs[["TxInputs"]]
   NetMig           <- Inputs[["NetMigrState"]]
 
