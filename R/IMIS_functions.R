@@ -26,9 +26,9 @@ llikelihoodZ <-  function(samp_i, start_mat) {
 
   jj <- tryCatch({
     prms <-list()
-    prms <- param(P)
+    prms <- param(P,"US")
     IP <- list()
-    IP <- param_init(P)
+    IP <- param_init(P,"US")
 
     trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
     zz <- cSim_ag(  nYrs       = 2018-1950         , nRes      = length(prms[["ResNam"]])  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]],
