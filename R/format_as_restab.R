@@ -31,15 +31,15 @@ format_as_restab_sm <- function(loc) {
     #number of ltbi prevalence in thousands
     ResTab[1:nr+((intv-1)*10),,2,ag]<-apply(o[,age_id,c(54,65)+ag],c(1,2),sum)*1e3
     #percentage of ltbi prevalence
-    ResTab[1:nr+((intv-1)*10),,3,ag]<-apply(o[,age_id,c(54,65)+ag],c(1,2),sum)/o[, age_id,32+ag]*1e2
+    ResTab[1:nr+((intv-1)*10),,3,ag]<-apply(o[,age_id,c(54,65)+ag],c(1,2),sum)/o[, age_id,2+ag]*1e2
     #TB notifications (incidence) (alive+dead at diagnosis) in thousands
     ResTab[1:nr+((intv-1)*10),,4,ag]<-apply(o[,age_id,c(135,188)+ag],c(1,2),sum)*1e3
     #TB notifications (incidence) (alive+dead at diagnosis) per million
-    ResTab[1:nr+((intv-1)*10),,5,ag]<-apply(o[,age_id,c(135,188)+ag],c(1,2),sum)/o[, age_id,32+ag]*1e6
+    ResTab[1:nr+((intv-1)*10),,5,ag]<-apply(o[,age_id,c(135,188)+ag],c(1,2),sum)/o[, age_id,2+ag]*1e6
     #tb attributable deaths in thousands
     ResTab[1:nr+((intv-1)*10),,6,ag]<-apply(o[,age_id,c(87,98)+ag],c(1,2),sum)*1e3
     #  tb attributable deaths per million
-    ResTab[1:nr+((intv-1)*10),,7,ag]<-apply(o[,age_id,c(87,98)+ag],c(1,2),sum)/o[, age_id,32+ag]*1e6
+    ResTab[1:nr+((intv-1)*10),,7,ag]<-apply(o[,age_id,c(87,98)+ag],c(1,2),sum)/o[, age_id,2+ag]*1e6
 
     ################################################################################
     #US Born population
@@ -49,15 +49,15 @@ format_as_restab_sm <- function(loc) {
     #number of ltbi prevalence in thousands
     ResTabus[1:nr+((intv-1)*10),,2,ag]<-o[, age_id,54+ag]*1e3
     #percentage of ltbi prevalence
-    ResTabus[1:nr+((intv-1)*10),,3,ag]<-o[, age_id,54+ag]/o[, age_id,43+ag]*1e2
+    ResTabus[1:nr+((intv-1)*10),,3,ag]<-o[, age_id,54+ag]/o[, age_id,32+ag]*1e2
     #TB notifications (alive+dead at diagnosis) in thousands
     ResTabus[1:nr+((intv-1)*10),,4,ag]<-apply(o[, age_id,c(204,215)+ag],c(1,2),sum)*1e3
     #TB notifications (alive+dead at diagnosis) per million
-    ResTabus[1:nr+((intv-1)*10),,5,ag]<-apply(o[, age_id,c(204,215)+ag],c(1,2),sum)/o[, age_id,43+ag]*1e6
+    ResTabus[1:nr+((intv-1)*10),,5,ag]<-apply(o[, age_id,c(204,215)+ag],c(1,2),sum)/o[, age_id,32+ag]*1e6
     #tb attributable deaths in thousands
     ResTabus[1:nr+((intv-1)*10),,6,ag]<-o[, age_id,87+ag]*1e3
     #  tb attributable deaths per million
-    ResTabus[1:nr+((intv-1)*10),,7,ag]<-o[, age_id,87+ag]/o[, age_id,43+ag]*1e6
+    ResTabus[1:nr+((intv-1)*10),,7,ag]<-o[, age_id,87+ag]/o[, age_id,32+ag]*1e6
 
     ################################################################################
     #non-US Born population
@@ -66,7 +66,7 @@ format_as_restab_sm <- function(loc) {
     #number of ltbi prevalence in thousands
     ResTabfb[1:nr+((intv-1)*10),,2,ag]<-o[, age_id,65+ag]*1e3
     #percentage of ltbi prevalence
-    ResTabfb[1:nr+((intv-1)*10),,3,ag]<-o[, age_id,65+ag]/o[, age_id,2+ag]*1e2
+    ResTabfb[1:nr+((intv-1)*10),,3,ag]<-o[, age_id,65+ag]/o[, age_id,43+ag]*1e2
     #TB notifications (alive+dead at diagnosis)
     #calculated as total notifications minus US only notifications in thousands
     ResTabfb[1:nr+((intv-1)*10),,4,ag]<-(apply(o[, age_id,c(135,188)+ag],c(1,2),sum)-apply(o[, age_id,c(204,215)+ag],c(1,2),sum))*1e3
@@ -75,7 +75,7 @@ format_as_restab_sm <- function(loc) {
     #tb attributable deaths
     ResTabfb[1:nr+((intv-1)*10),,6,ag]<-o[, age_id,98+ag]*1e3
     # percentage tb attributable deaths
-    ResTabfb[1:nr+((intv-1)*10),,7,ag]<-o[, age_id,98+ag]/o[, age_id,2+ag]*1e6
+    ResTabfb[1:nr+((intv-1)*10),,7,ag]<-o[, age_id,98+ag]/o[, age_id,43+ag]*1e6
   }
   }
   for(l in 1:9){
