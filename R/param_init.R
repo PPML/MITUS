@@ -53,7 +53,7 @@ param_init <- function(PV,loc="US",Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sc
   if(loc=="US"){
     BgMort[1:68,2:12]<-weight_mort(loc)
   } else{
-    BgMort[11:61,2:12]<-weight_mort(loc)
+    BgMort[10:67,2:12]<-weight_mort(loc)
   }
   InputParams[["InitPop"]] <- Inputs[["InitPop"]]
   Births           <- Inputs[["Births"]]

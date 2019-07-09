@@ -16,7 +16,7 @@ param <- function (PV, loc="US"){
   if(loc=="US"){
   BgMort[1:68,2:12]<-weight_mort(loc)
   } else{
-  BgMort[11:61,2:12]<-weight_mort(loc)
+  BgMort[10:67,2:12]<-weight_mort(loc)
   }
   InitPop          <- Inputs[["InitPop"]]
   Births           <- Inputs[["Births"]]
