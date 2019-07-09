@@ -19,7 +19,7 @@
 #'@return InputParams list
 #'@export
 fin_param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,prg_chng){
-  InputParams <-vector("list", 44)   #Create an empty list to hold the formatted intitial parameters
+  InputParams <-vector("list", 45)   #Create an empty list to hold the formatted intitial parameters
   names(InputParams) <- c("rDxt","TxQualt", "InitPop", "Mpfast", "ExogInf", "MpfastPI",
                           "Mrslow", "rrSlowFB", "rfast"    ,"RRcurDef"      , "rSlfCur"  ,
                           "p_HR"        , "dist_gen" , "vTMort"   ,"RRmuRF"          , "RRmuHR",
@@ -27,8 +27,8 @@ fin_param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
                           "ImmAct"      , "ImmFst" , "mubt"     ,"RelInf"        , "RelInfRg" ,
                           "Vmix"       , "rEmmigFB" , "TxVec"    , "TunTxMort"    , "rDeft"    ,
                           "pReTx"      , "LtTxPar"  , "LtDxPar_lt"  ,"LtDxPar_nolt"  , "rLtScrt"      , "RRdxAge"  ,
-                          "rRecov"      , "pImmScen"  ,   "EarlyTrend","aging_denom", "NixTrans"   ,
-                          "net_mig_usb", "net_mig_nusb", "ResNam")
+                          "rRecov"      , "pImmScen"  ,   "EarlyTrend","net_mig_usb", "net_mig_nusb",
+                          "aging_denom", "adj_fact","NixTrans"   ,"ResNam")
   ########## DEFINE A VARIABLE THAT WILL DETERMINE HOW LONG THE TIME DEPENDENT
   ########## VARIABLES SHOULD BE (IN MONTHS)
   month<-1201;
@@ -125,8 +125,7 @@ fin_param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
 
   Birthst   <- SmoCurve(Births)*PV["TunBirths"]/12
   Birthst   <- Birthst[1:month]
-  #  Birthst[1:6]<-0
-
+  InputParams[["Birthst"]]<-Birthst
   ##########################      MORTALITY RATES       ##########################
   ########################## BACKGROUND MORTALITY BY TIME ########################
   mubt      <- matrix(NA,1801,11)
@@ -179,14 +178,16 @@ fin_param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
 
   ############### CREATE A MATRIX OF TB MORTALITIES BY AGE GROUP ###############
 
-  InputParams[["vTMort"]]  <- matrix(0,11,6);
-  rownames(InputParams[["vTMort"]]) <- c("0_4",paste(0:8*10+5,1:9*10+4,sep="_"),"95p")
-  colnames(InputParams[["vTMort"]]) <- c("Su","Sp","Ls","Lf","Ac","Tx")
-  InputParams[["vTMort"]][,5:6] <- muIp #active disease rates default to smear positive
-  for(i in 1:11) {
-    InputParams[["vTMort"]][i,] <-  InputParams[["vTMort"]][i,]*c(3,1+0:9*TunmuTbAg)[i]
-  }
 
+  vTMort   <- matrix(0,11,6);
+  rownames(vTMort) <- c("0_4",paste(0:8*10+5,1:9*10+4,sep="_"),"95p")
+  colnames(vTMort) <- c("Su","Sp","Ls","Lf","Ac","Tx")
+  vTMort[,5:6] <- muIp #active disease rates default to smear positive
+  RRmuTbAg <- exp(c(0,0,1:9)*TunmuTbAg)
+  for(i in 1:ncol(vTMort)) {
+    vTMort[,i] <- vTMort[,i] * RRmuTbAg
+  }
+  InputParams[["vTMort"]]  <- vTMort
 
   ######################## MULTIPLER OF MORT RATE ABOVE ########################
 
@@ -314,9 +315,8 @@ fin_param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
 
   #########################   TB NATURAL HISTORY  ###############################
   #########################__   EARLY EPIDEMTIC   ###############################
-
   Early0 <- PV["Early0"]
-  InputParams[["EarlyTrend"]] <- c(rep(1+Early0,75*12),seq(1+Early0,1.0,length.out=25*12+2))
+  InputParams[["EarlyTrend"]] <- c(rep(1+Early0,200*12),seq(1+Early0,1.0,length.out=50*12+2))
 
   ######################     PROGRESSION TO DISEASE     ##########################
 

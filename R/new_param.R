@@ -497,7 +497,7 @@ fin_param <- function (PV, prg_chng){
   names(TxVec) <- c("TxCompRate","TxEff")
   TxVec[1]       <-  d1st
   TxVec[2]       <-  pCurPs
-  NixTrans<- 1-LgtCurve(2016,2017,1)
+  NixTrans<- rep(1,1201)
 
   ################################################################################
   ##### CREATE A LIST TO HOLD THE VECTORS
