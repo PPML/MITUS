@@ -13,13 +13,14 @@ return(x)
 tabby_calib_graphs <- function(loc) {
   require(MCMCpack)
   #load the results data file
-  results <- readRDS(system.file(paste0(loc,"/results_1_2019-04-11.rds"), package="MITUS"))
+
+  results <- load(system.file(paste0(loc,"/",loc,"_results_1.rda"), package="MITUS"))
   #load appropriate calibration file
   if (loc=="US")
   {
-    calib_dat<-readRDS(system.file("US/US_CalibDat_2018-09-17.rds", package="MITUS"))
+    calib_dat<-readRDS(system.file("US/US_CalibDat_03-06-19.rds", package="MITUS"))
   } else {
-    calib_dat<-readRDS(system.file("ST/CalibDatState_7-2-18.rds", package="MITUS"))
+    calib_dat<-readRDS(system.file("ST/CalibDatState_06-18-19.rds", package="MITUS"))
   }
   index<-out_i(loc)
   print(index)
