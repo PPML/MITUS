@@ -1,7 +1,7 @@
 #include <Rcpp.h>
 #include <math.h>
 using namespace Rcpp;
-//'@name new_cSim
+//'@name fin_cSim
 //'@description runs a simulation of the tb model
 //'@param nYrs number of years to run the model.
 //'@param nRes number of results of the model
@@ -36,21 +36,22 @@ using namespace Rcpp;
 //'@param TunTxMort Tuning parameter for mortality on TB Tx
 //'@param rDeft rate of default from TB treatment over time
 //'@param rLtScrt rate of latent screening over time
-//'@param LtDxPar matrix of latent diagnosis parameters
+//'@param LtDxPar_lt matrix of latent diagnosis parameters
+//'@param LtDxPar_nolt matrix of latent diagnosis parameters
 //'@param LtTxPar matrix of latent treatment parameters
 //'@param RRdxAge vector of rate ratios for TB diagnosis by age
 //'@param rRecov rate of recovery from latent slow to safe tb state
 //'@param pImmScen lack of reactivitiy to IGRA for Sp
 //'@param EarlyTrend ramp down of TB in burn-in
-//'@param ag_den denominator used in the aging process
 //'@param pReTx probability of re-treatment for TB
+//'@param ag_den denominator used in the aging process
 //'@param NixTrans reduction of transmission over time
 //'@param dist_gen general distribution across tb progression and mort
 //'@param trans_mat_tot_ages
 //'@return Outputs a list of outputs
 //[[Rcpp::export]]
 
-Rcpp::List new_cSim(
+Rcpp::List fin_cSim(
     int                 nYrs,
     int                 nRes,
     Rcpp::NumericMatrix rDxt,
@@ -68,7 +69,6 @@ Rcpp::List new_cSim(
     Rcpp::NumericMatrix       vTMort,
     std::vector<double> RRmuRF,
     std::vector<double> RRmuHR,
-
     std::vector<double> Birthst,
     Rcpp::NumericMatrix       HrEntEx,
     Rcpp::NumericMatrix       ImmNon,
@@ -475,6 +475,13 @@ Rcpp::List new_cSim(
           for(int nm=0; nm<4; nm++) {
             for(int rg=0; rg<2; rg++) {
               for(int na=0; na<3; na++) {
+                // /////          IF AGE > 4, IT TAKES 120 MONTHS TO LEAVE AGE GROUP          /////
+                // if(ag>0) {
+                //   temp2 = 120;
+                //   /////          IF AGE < 4, IT TAKES 60 MONTHS TO LEAVE AGE GROUP           /////
+                // } else {
+                //   temp2 = 60;
+                // }
                 temp = V0[ag][tb][0][im][nm][rg][na]/ag_denN[0][ag];
                 V1[ag  ][tb][0][im][nm][rg][na]  -= temp;
                 V1[ag+1][tb][0][im][nm][rg][na]  += temp;
@@ -1035,6 +1042,13 @@ Rcpp::List new_cSim(
       //             } } } } } } }
       /////////////////////////////////////AGING///////////////////////////////////////
       for(int ag=0; ag<10; ag++) {
+        /////          IF AGE > 4, IT TAKES 120 MONTHS TO LEAVE AGE GROUP          /////
+        // if(ag>0) {
+        //   temp2 = 120;
+        //   /////          IF AGE < 4, IT TAKES 60 MONTHS TO LEAVE AGE GROUP           /////
+        // } else {
+        //   temp2 = 60;
+        // }
         for(int tb=0; tb<6; tb++) {
           for(int lt=0; lt<2; lt++){
             for (int im=0; im<4; im++){
@@ -1934,7 +1948,22 @@ Rcpp::List new_cSim(
                     for(int na=0; na<3; na++) {
                       Outputs[y][520+nm+(ag*4)] += V1[ag][tb][lt][im][nm][rg][na];
                     } } } } } } }
+        ///  NEW INFECTIONS + SUPER INFECTION BY AGE AND NAT GROUP
+        for(int ag=0; ag<11; ag++) {
+          for(int lt=0; lt<2 ; lt++) {
+            for(int im=0; im<4 ; im++) {
+              for(int nm=0; nm<4 ; nm++) {
+                for(int rg=0; rg<2; rg++) {
+                  for(int na=0; na<3; na++){
+                    if (na <1){
+                      Outputs[y][564+ag] += (V0[ag][0][lt][im][nm][rg][na]+V0[ag][1][lt][im][nm][rg][na]+V0[ag][2][lt][im][nm][rg][na])*VLjkl[rg][na]*NixTrans[s];
+                    } else {
+                      Outputs[y][575+ag] += (V0[ag][0][lt][im][nm][rg][na]+V0[ag][1][lt][im][nm][rg][na]+V0[ag][2][lt][im][nm][rg][na])*VLjkl[rg][na]*NixTrans[s];}
 
+                  }
+                } } } } }
+        ////////////     CREATE YEARLY VALUES FROM THE MONTH ESTIMATE     ////////////
+        for(int i=564; i<586; i++) { Outputs[y][i] = Outputs[y][i]*12; }
 
       } ////end of mid-year results bracket
       ///////////////////////////////////////////////////////////////////////////////////
@@ -1969,24 +1998,24 @@ Rcpp::List new_cSim(
               for (int na=0; na<3; na++){
                 for(int lt=0; lt<2; lt++){
                   for(int tb=0; tb<6; tb++) {
-                      V0[ag][tb][lt][im][nm][rg][na] = V1[ag][tb][lt][im][nm][rg][na];
-                    }
-                  } } } } }
-        }
+                    V0[ag][tb][lt][im][nm][rg][na] = V1[ag][tb][lt][im][nm][rg][na];
+                  }
+                } } } } }
+      }
 
-        // for(int ag=0; ag<11; ag++) {
-        //   for(int tb=0; tb<6; tb++) {
-        //     for(int lt=0; lt<2; lt++){
-        //       for(int im=0; im<4; im++){
-        //         for(int nm=0; nm<4; nm++){
-        //           for(int rg=0; rg<2; rg++) {
-        //             for(int na=0; na<3; na++) {
-        //               if (std::any_of(V1[ag][tb][lt][im][nm][rg][na]<0)){
-        //                 //Rcpp::Rcout << "after rblnc pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
-        //              //   Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-        //              Rcpp::Rcout << "after rblnc pop is negative /n";
-        //               }
-        //             } } } } } } }
+      // for(int ag=0; ag<11; ag++) {
+      //   for(int tb=0; tb<6; tb++) {
+      //     for(int lt=0; lt<2; lt++){
+      //       for(int im=0; im<4; im++){
+      //         for(int nm=0; nm<4; nm++){
+      //           for(int rg=0; rg<2; rg++) {
+      //             for(int na=0; na<3; na++) {
+      //               if (std::any_of(V1[ag][tb][lt][im][nm][rg][na]<0)){
+      //                 //Rcpp::Rcout << "after rblnc pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+      //              //   Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+      //              Rcpp::Rcout << "after rblnc pop is negative /n";
+      //               }
+      //             } } } } } } }
 
 
       //     //

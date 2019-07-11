@@ -13,8 +13,8 @@ model_load<-function(loc="US"){
 #'Model Input
 if (loc=="US"){
   CalibDat<<-readRDS(system.file("US/US_CalibDat_03-06-19.rds", package="MITUS"))
-  ParamInit<<-readRDS(system.file("US/US_ParamInit_02-28-19.rds", package="MITUS"))
-  StartVal<<-readRDS(system.file("US/US_StartVal_02-28-19.rds", package="MITUS"))
+  ParamInit<<-readRDS(system.file("US/US_ParamInit_07-11-19.rds", package="MITUS"))
+  StartVal<<-readRDS(system.file("US/US_StartVal_07-11-19.rds", package="MITUS"))
   Inputs<<-readRDS(system.file("US/US_Inputs_06-26-19.rds", package="MITUS"))
 
 } else {
