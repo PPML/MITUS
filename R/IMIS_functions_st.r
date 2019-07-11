@@ -1,7 +1,7 @@
 ###################### Par = par_1
 # Function for calculating likelihood
 
-llikelihoodZ_st <-  function(samp_i,ParMatrix,loc="MA", TB=TRUE) { # ParMatrix = ParInit
+llikelihoodZ_st <-  function(samp_i,ParMatrix,loc="MA") { # ParMatrix = ParInit
   data("stateID",package="MITUS")
   StateID<-as.data.frame(stateID)
   Par <- ParMatrix[samp_i,]
@@ -16,10 +16,10 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc="MA", TB=TRUE) { # ParMatrix =
   P <- P
 
   jj <- tryCatch({
-    prg_chng<-def_prgchng(P)
+    defpc<-def_prgchng(P)
 
     prms <-list()
-    prms <- fin_param(P,prg_chng)
+    prms <- fin_param(P,loc,defpc)
 
     # data("trans_mat_nat",package="MITUS")
     # trans_mat_tot_ages<-trans_mat_tot_ages_nat
@@ -40,7 +40,7 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc="MA", TB=TRUE) { # ParMatrix =
                    EarlyTrend = prms[["EarlyTrend"]], ag_den=prms[["aging_denom"]],  NixTrans = prms[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)
     #'if any output is missing or negative or if any model state population is negative
 
-    if(sum(is.na(zz$Outputs[69,]))>0 | min(zz$Outputs[69,])<0 | min(zz$V1)<0 ) { lLik <- -10^12  } else {
+    if(sum(is.na(zz$Outputs[68,]))>0 | min(zz$Outputs[68,])<0 | min(zz$V1)<0 ) { lLik <- -10^12  } else {
 
       ######  ####  ######  ######  ####  ######  ######  ####  ######
       M <- zz$Outputs
@@ -49,7 +49,7 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc="MA", TB=TRUE) { # ParMatrix =
       st<-which(StateID$USPS==loc)
 
       ### ### ### TB SPECIFIC LIKELIHOODS
-      if(TB==TRUE){
+      # if(TB==1){
         ### ### ### TOTAL DIAGNOSED CASES 1993-2017  ### ### ### ### ### ### D
         v1   <- M[44:68,"NOTIF_ALL"]+M[44:68,"NOTIF_MORT_ALL"]
         addlik <- notif_tot_lLik_st(V=v1,st=st); addlik
@@ -133,10 +133,9 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc="MA", TB=TRUE) { # ParMatrix =
         v35   <- c(P["rSlfCur"],P["muIp"])
         addlik <- tiemersma_lLik_st(Par=v35); addlik
         lLik <- lLik + addlik
-      } ### END OF TB LIKELIHOODS
+      # } ### END OF TB LIKELIHOODS
 
-      ### ### ###  ALL LIKELIHOODS DONE !!  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-    }
+
     ### ### ### DEMOGRAPHIC LIKELIHOOD FUNCTIONS  ### ### ### ### ### ###
     ### ### ### TOTAL FB POP EACH DECADE, FOR FB  ### ### ### ### ### ###  D
     v17  <- M[,31]+M[,32]
@@ -159,26 +158,17 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc="MA", TB=TRUE) { # ParMatrix =
     v20a  <- sum(M[67,121:131])
     addlik <- dth_tot_lLik_st(V=v20a,st=st); addlik
     lLik <- lLik + addlik
-    #' #' Total DEATHS 2015-2016 BY AGE
+    #' #' #' Total DEATHS 2015-2016 BY AGE
     v20b  <- M[66:67,121:131]
-    addlik <- tot_dth_age_lLik_st(V=v20b); addlik
+    addlik <- tot_dth_age_lLik_st(V=v20b,st=st); addlik
     lLik <- lLik + addlik
-
-    #' #' Mort_dist 2016 dirchlet
+    #'
+    #' #' #' Mort_dist 2016 dirchlet
     v21a<- v21  <- M[66:67,521:564]
-    for (i in 1:11){
-      denom<-M[66:67,2+i]
-      for (j in 1:ncol(v21)){
-        v21a[,(1:4)+4*(i-1)]<-v21[,(1:4)+4*(i-1)]/denom
-      } }
-    addlik <- mort_dist_lLik(V=v21a); addlik
+    addlik <- mort_dist_lLik_st(V=v21a); addlik
     lLik <- lLik + addlik
-
-    #'mort_dist norm
-    # addlik<-mort_dist_lLik_norm_st(V=v21a); addlik
-    # lLik <- lLik + addlik
-
-  }, error = function(e) NA)
+    ### ### ###  ALL LIKELIHOODS DONE !!  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+} }, error = function(e) NA)
   if(is.na(jj))         { lLik <- -10^12 - sum((ParamInitZ[,8]-Par)^2) }
   if(jj%in%c(-Inf,Inf)) { lLik <- -10^12 - sum((ParamInitZ[,8]-Par)^2) }
 
@@ -186,9 +176,10 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc="MA", TB=TRUE) { # ParMatrix =
 
 
 ###################### local parallelization via multicore
-llikelihood_st <- function(ParMatrix,loc="MA",TB=TRUE,n_cores=1) {
+llikelihood_st <- function(ParMatrix,loc="MA",n_cores=1) {
   if(dim(as.data.frame(ParMatrix))[2]==1) {
-    lLik <- llikelihoodZ_st(1,t(as.data.frame(ParMatrix)),loc=loc, TB=TB)  } else {
-      lLik <- unlist(mclapply(1:nrow(ParMatrix),llikelihoodZ_st,ParMatrix=ParMatrix,loc=loc,TB=TB,mc.cores=n_cores))
+    lLik <- llikelihoodZ_st(1,t(as.data.frame(ParMatrix)),loc=loc)
+    } else {
+      lLik <- unlist(mclapply(1:nrow(ParMatrix),llikelihoodZ_st,ParMatrix=ParMatrix,loc=loc,mc.cores=n_cores))
     }
   return((lLik)) }
