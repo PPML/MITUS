@@ -3,6 +3,8 @@
 #'@param loc two letter postal abbreviation for states; US for national
 #'@return void
 model_load<-function(loc="US"){
+#' add loc as a global variable
+loc<<-loc
   library(mnormt)
   library(parallel)
   library(lhs)
@@ -52,6 +54,7 @@ if (loc=="US"){
   idZ2 <<- ParamInitZ[,4]==2
   ParamInit<-ParamInit_st
 }
+  prgchng<<-def_prgchng(P)
 
 return(invisible(NULL))
 }
@@ -113,6 +116,7 @@ model_load_demo<-function(loc="US"){
   # targets[["idZ1"]]<-idZ1
   # targets[["idZ2"]]<-idZ2
   # targets[["P"]]<-P
-
+  ## ALSO LOAD IN THE BASELINE PROGRAM CHANGE VECTOR
+  prgchng<<-def_prgchng(P)
   return(invisible(NULL))
 }
