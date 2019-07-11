@@ -262,75 +262,68 @@ fin_param <- function (PV,loc,prg_chng){
   rSlfCur      <- PV["rSlfCur"]/12
 
   ######################          LTBI DIAGNOSIS           ########################
+
+  ######################        TEST SPECIFICATIONS          ######################
   Sens_IGRA <-.780
   Spec_IGRA <-.979
   IGRA_frc <- .33
   Sens_TST <-.726
   Spec_TST <-.921
-
+  ###calculate the weighted mean of sensitivity and specificity
   SensLt<-Sens_IGRA*IGRA_frc + (1-IGRA_frc)*Sens_TST
   SpecLt<-Spec_IGRA*IGRA_frc + (1-IGRA_frc)*Spec_TST
-  # ######################
-  SensLt_v        <- rep(SensLt, month)    #  sens of test for latent TB infection (based on IGRA QFT-GIT)
-  SpecLt_v        <- rep(SpecLt, month)    #  spec of test for latent TB infection (based on IGRA QFT-GIT)
+  ###sensitivity and specificity must be time varying parameters in order to allow the user to change the
+  ###percentage of IGRA used at a specific time range
+  SensLt_v        <- rep(SensLt, month)    #  sens of test for latent TB infection
+  SpecLt_v        <- rep(SpecLt, month)    #  spec of test for latent TB infection
+  ######################     IGRA FRACTION PROGRAM CHANGE    ########################
   if (prg_chng["IGRA_frc"] != IGRA_frc){
     SensLt_v[prg_m:length(SensLt_v)]<-prg_chng["IGRA_frc"]*Sens_IGRA + (1-prg_chng["IGRA_frc"])*Sens_TST
     SpecLt_v[prg_m:length(SensLt_v)]<-prg_chng["IGRA_frc"]*Spec_IGRA + (1-prg_chng["IGRA_frc"])*Spec_TST
   }
-
+  ### ADJUST THIS FOR THE FOREIGN BORN
   SpecLtFb_v      <- SpecLt_v         #  spec of test for latent TB infection (based on IGRA QFT-GIT) in foreign-born (assumed BCG exposed)
-
-  # LtDxPar_lt <- LtDxPar_nolt <- matrix(NA,3,month);
-  # # colnames(LtDxPar) <- c("latent","no latent");
-  # rownames(LtDxPar_lt) <- rownames(LtDxPar_nolt) <- c("LR","HR","FB")
-  # LtDxPar_lt[,] <- rbind(SensLt_v                 , rrTestHr*SensLt_v    , SensLt_v)
-  # LtDxPar_nolt[,] <- rbind(rrTestLrNoTb*(100-SpecLt_v), rrTestHr*(100-SpecLt_v), (100-SpecLtFb_v))
-
-  ######################          LTBI DIAGNOSIS           ########################
+  ######################        SCREENING RATES          ######################
   rLtScrt       <- LgtCurve(1985,2015,PV["rLtScr"])/12
+  ######################  SCREENING RATE PROGRAM CHANGE ########################
   if (prg_chng["scrn_cov"] !=1) {
     rLtScrt[prg_m:length(rLtScrt)]<-rLtScrt[prg_m:length(rLtScrt)]*prg_chng["scrn_cov"];
   }
-
-  # SensLt        <- PV["SensLt"]    #  sens of test for latent TB infection (based on IGRA QFT-GIT)
-  # SpecLt        <- PV["SpecLt"]    #  spec of test for latent TB infection (based on IGRA QFT-GIT)
-  # SpecLtFb      <- SpecLt         #  spec of test for latent TB infection (based on IGRA QFT-GIT) in foreign-born (assumed BCG exposed)
-  ###########   WILL THIS PARAMETER NEED TO BE REDUCED?
+  ###adjustments to the screening rates dependent on risk and TB status
   rrTestHr      <- PV["rrTestHr"] # RR of LTBI screening for HIV and HR as cmpared to general
   rrTestLrNoTb  <- PV["rrTestLrNoTb"] # RR of LTBI screening for individuals with no risk factors
-
+  ### because of the introduction of new time varying parameters, we will create 2 matrices to
+  ### hold the three different sensitivity and specificity measures; one will be for those whose
+  ### true LTBI status is positive and the other is for those whose true TB status is negative.
   LtDxPar_nolt <- LtDxPar_lt <- matrix(NA,3,month);
   rownames(LtDxPar_lt) <- rownames(LtDxPar_nolt) <- c("LR","HR","FB")
   LtDxPar_lt[,]   <- rbind(SensLt_v                 , rrTestHr*SensLt_v    , SensLt_v)
   LtDxPar_nolt[,] <- rbind(rrTestLrNoTb*(1-SpecLt_v), rrTestHr*(1-SpecLt_v), (1-SpecLtFb_v))
-  # LtDxPar_lt[,]<-matrix(LtDxPar[,1],3,1201)
-  # LtDxPar_nolt[,]<-matrix(LtDxPar[,2],3,1201)
 
-  #  dLt           <- 1/9
-  #rDefLt        <- PV["pDefLt"]/(1-PV["pDefLt"])  # based on 50% tx completion with 6 mo INH regimen 2.0 [1.0,3.0] from Menzies Ind J Med Res 2011
-  # EffLt         <- PV["EffLt"]
-
+  ######################          LTBI DIAGNOSIS           ########################
+  ###################### LTBI TX EFFECTIVENESS PROGRAM CHANGE ########################
   if (prg_chng["ltbi_eff_frc"] != round(PV["EffLt"], 2)){
     EffLt         <- c(rep(PV["EffLt"],prg_m-1),rep(prg_chng["ltbi_eff_frc"],1+1201-prg_m))
   } else {
     EffLt         <- rep(PV["EffLt"],month)
   }
-  ######NEW PARAMETER FOR MITUS MODEL
-  pTlInt        <- rep(.80,month)
 
+  ### PROBABILITY OF LATENT TREATMENT INTIATION
+  pTlInt        <- rep(.80,month)
+  ###################### LTBI TX INITIATION PROGRAM CHANGE ########################
   if (prg_chng["ltbi_init_frc"] !=pTlInt[prg_m]){
     pTlInt[prg_m:length(pTlInt)] <- prg_chng["ltbi_init_frc"];
   }
-
-  #LtTxPar can no longer be a vector, could be a matrix over time
-  pDefLt<-rep(PV["pDefLt"],month)
-
+  ######################    LTBI TREATMENT DEFAULT          ######################
+  pDefLt<-rep(PV["pDefLt"],month)   ### PROBABILITY OF LATENT TREATMENT DEFAULT
+  ###################### LTBI TREATMENT COMPLETION PROGRAM CHANGE ######################
   if (prg_chng["ltbi_comp_frc"] != 1-(round(pDefLt[prg_m], 2))){
     pDefLt[prg_m:length(pDefLt)]<-(1-prg_chng["ltbi_comp_frc"])
-    LtTxPar       <- cbind(pTlInt,pDefLt,EffLt)
-  } else {
-    LtTxPar       <- cbind(pTlInt,pDefLt,EffLt)
   }
+  ### because of the introduction of new time varying parameters, we will create a matrix to
+  ### hold the latent treatment parameters
+  LtTxPar       <- matrix(NA,3,month)
+  LtTxPar       <- cbind(pTlInt,pDefLt,EffLt)
 
   pImmScen    <- PV["pImmScen"] # lack of reactivitiy to IGRA for Sp
 

@@ -4,11 +4,13 @@
 \alias{fin_param_init}
 \title{This function takes the same inputs as the Outputs}
 \usage{
-fin_param_init(PV, Int1 = 0, Int2 = 0, Int3 = 0, Int4 = 0, Int5 = 0,
-  Scen1 = 0, Scen2 = 0, Scen3 = 0, prg_chng)
+fin_param_init(PV, loc, Int1 = 0, Int2 = 0, Int3 = 0, Int4 = 0,
+  Int5 = 0, Scen1 = 0, Scen2 = 0, Scen3 = 0, prg_chng)
 }
 \arguments{
 \item{PV}{vector of Inputs to format}
+
+\item{loc}{two letter abbreviation}
 
 \item{Int1}{boolean for intervention 1}
 
