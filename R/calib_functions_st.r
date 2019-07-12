@@ -12,7 +12,8 @@
 notif_tot_lLik_st <- function(V,st) { # V = vector of total notifications 1993-2017
   notif_tot     <- CalibDatState[["cases_yr_st"]][[st]][,2];
   adj_1         <- sum(dnorm(notif_tot,notif_tot,notif_tot*0.1/1.96,log=T)*wtZ[1:25])
-  sum(dnorm(notif_tot,V,notif_tot*0.1/1.96,log=T)*wtZ[1:25]) - adj_1  }
+  sum(dnorm(notif_tot,V*1e6,notif_tot*0.1/1.96,log=T)*wtZ[1:25]) - adj_1
+  }
 
 ### ### ### ANN DECLINE IN CASES 1953-1994  ### ### ### ### ### ### D
 # notif_decline      <- CalibDatState[["cases_prop_change_53_94"]]
@@ -62,7 +63,7 @@ notif_fb_lLik_st <- function(V,st,rho=0.005) { # V = table of notifications by f
   notif_age_us0     <- CalibDatState[["cases_yr_ag_nat_st"]][[st]][,,"usb"]
   notif_fb      <- cbind(notif_age_fb0[,12],notif_age_us0[,12])
   adj_3         <- sum(dDirMult(M=notif_fb+0.01,n=notif_fb,Rho=0.005)*wts[44:68])
-  sum(dDirMult(M=notif_fb,n=notif_fb,Rho=rho)*wts[44:68]) - adj_3
+  sum(dDirMult(M=V+0.01,n=notif_fb,Rho=rho)*wts[44:68]) - adj_3
   }
 
 ### ### ### CASES FB DISTRIBUTION SLOPES OVER PAST 5 year  ### ### ### ### ### ### D
@@ -192,8 +193,9 @@ tot_pop14_ag_fb_lLik_st <- function(V,st,ESS=500) { # V =  US pop in 2014 (row=1
 
 tbdeaths_lLik_st <- function(V,st) { # V = vector of total notifications 1999-2016
   tb_deaths <- CalibDatState[["tbdeaths"]][[st]]$Deaths
+  V2<-rowSums(V)
   adj_19    <- sum((dnorm(tb_deaths,tb_deaths,tb_deaths*0.2/1.96,log=T)*wts[50:67])[is.na(tb_deaths)==F])
-  sum((dnorm(V,tb_deaths,tb_deaths*0.2/1.96,log=T)*wts[50:67])[is.na(tb_deaths)==F]) - adj_19}
+  sum((dnorm(V2,tb_deaths,tb_deaths*0.2/1.96,log=T)*wts[50:67])[is.na(tb_deaths)==F]) - adj_19}
 ### ### ### ANN DECLINE IN TB DEATHS 1968-2015  ### ### ### ### ### ### D
 
 tbdeaths_decline_lLik_st <- function(V) { # V = vector of tb deaths 1968-2015
@@ -236,10 +238,10 @@ dth_tot_lLik_st <- function(V,st) {
 #'@param rho correlation parameter
 #'@return likelihood
 tot_dth_age_lLik_st <- function(V,st,rho=0.1) {
-  tda <- readRDS(system.file("ST/STdeathbyAge.rds",package="MITUS"))[[st]][47:48,-c(1,2)]
+  tda <- readRDS(system.file("ST/STdeathbyAge.rds",package="MITUS"))[[st]][47:48,-c(1,12)]
   adj_20b        <- sum(dDirMult(M=tda+0.01,n=tda,Rho=rho)*wts[66:67])
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
-  sum(dDirMult(M=(V2*1e6)+0.01,n=tda,Rho=rho)*wts[66:67]) - adj_20b
+  sum(dDirMult(M=V2+0.01,n=tda,Rho=rho)*wts[66:67]) - adj_20b
   }
 
 #' Mortality Risk Group Distribution 1999-2014
