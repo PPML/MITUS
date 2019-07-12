@@ -417,7 +417,7 @@ legend("topright",c("Discontinued","Died","Reported data","Model"),pch=c(15,15,1
 #LTBI Prevalance by Age in 2011, US born
 
 V  <- cbind(t(df[62,55:65]),t(df[62,33:43]-df[62,55:65]))
-Va <- outer(V[,1],c(P[["SensLt"]],1-P[["SensLt"]]))+outer(V[,2],c(1-P[["SpecLt"]],P[["SpecLt"]]))
+Va <- outer(V[,1],c(0.74382,(1-0.74382)))+outer(V[,2],c((1-0.94014),0.94014))
 colnames(V) <- c("LTBI", "No-LTBI")
 
 V1 <- Va[-11,]; V1<-V1[-10,]
@@ -453,7 +453,7 @@ legend("topleft",c("Reported data","Model"),pch=c(19,15),lwd=c(0,NA),
 #LTBI Prevalance by Age in 2011, non-US born
 
 V  <- cbind(t(df[62,66:76]),t(df[62,44:54]-df[62,66:76]))
-Va <- outer(V[,1],c(P[["SensLt"]],1-P[["SensLt"]]))+outer(V[,2],c(1-P[["SpecLt"]],P[["SpecLt"]]))
+Va <- outer(V[,1],c(0.74382,(1-0.74382)))+outer(V[,2],c((1-0.94014),0.94014))
 
 colnames(V) <- c("LTBI", "No-LTBI")
 
