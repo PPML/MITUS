@@ -99,12 +99,12 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc="MA") { # ParMatrix = ParInit
         lLik <- lLik + addlik
         ### ### ### LTBI PREVALENCE BY AGE 2011, US  ### ### ### ### ### ###  D
         v15  <- cbind(M[62,55:65],M[62,33:43]-M[62,55:65])
-        v15a <- outer(v15[,1],c(P[["SensLt"]],1-P[["SensLt"]]))+outer(v15[,2],c(1-P[["SpecLt"]],P[["SpecLt"]]))
+        v15a <- outer(v15[,1],c(0.74382,(1-0.74382)))+outer(v15[,2],c((1-0.94014),0.94014))
         addlik <- ltbi_us_11_lLik_st(V=v15a)*2; addlik
         lLik <- lLik + addlik
         ### ### ### LTBI PREVALENCE BY AGE 2011, FB  ### ### ### ### ### ### D
         v16  <- cbind(M[62,66:76],M[62,44:54]-M[62,66:76])
-        v16a <- outer(v16[,1],c(P[["SensLt"]],1-P[["SensLt"]]))+outer(v16[,2],c(1-P[["SpecLt"]],P[["SpecLt"]]))
+        v16a <- outer(v16[,1],c(0.74382,(1-0.74382)))+outer(v16[,2],c((1-0.94014),0.94014))
         addlik <- ltbi_fb_11_lLik_st(V=v16a)*2; addlik
         lLik <- lLik + addlik
 
