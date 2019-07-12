@@ -6,9 +6,10 @@
 #'@name fin_param
 #' @param P vector of
 #' @param prg_chng vector of program change values
+#' @param loc
 #' @return Params list
 #' @export
-fin_param <- function (PV, prg_chng){
+fin_param <- function (PV,loc,prg_chng){
   # load("~/MITUS/data/US_ModelInputs_9-6-18.rda")
   ########## DEFINE A VARIABLE THAT WILL DETERMINE HOW LONG THE TIME DEPENDENT
   ########## VARIABLES SHOULD BE (IN MONTHS)
@@ -19,74 +20,20 @@ fin_param <- function (PV, prg_chng){
   ###########################          INPUTS            #########################
   ################################################################################
   BgMort           <- as.matrix(Inputs[["BgMort"]])
-  death_age <-readRDS(system.file("US/US_MortalityCountsByAge.rds", package="MITUS"))[,2:69]
-  rownames(death_age)<-readRDS(system.file("US/US_MortalityCountsByAge.rds", package="MITUS"))[,1]
-  death_age<-as.matrix(death_age)
-
-  popdist<- as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS")))
-  popdist<-popdist[,-1]
-  popdist<-popdist[,-69]
-  rownames(popdist)<-as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS"))[,1])
-  new_mort<-popdist
-  new_mort<-death_age/popdist
-  ##weighted mort for the age groups
-  weight_mort<-matrix(NA,11,68)
-  colnames(weight_mort)<-colnames(new_mort)
-  weight_mort[1,]<-colSums(new_mort[1:5,]*popdist[1:5,])/colSums(popdist[1:5,])
-  weight_mort[2,]<-colSums(new_mort[6:15,]*popdist[6:15,])/colSums(popdist[6:15,])
-  weight_mort[3,]<-colSums(new_mort[16:25,]*popdist[16:25,])/colSums(popdist[16:25,])
-  weight_mort[4,]<-colSums(new_mort[26:35,]*popdist[26:35,])/colSums(popdist[26:35,])
-  weight_mort[5,]<-colSums(new_mort[36:45,]*popdist[36:45,])/colSums(popdist[36:45,])
-  weight_mort[6,]<-colSums(new_mort[46:55,]*popdist[46:55,])/colSums(popdist[46:55,])
-  weight_mort[7,]<-colSums(new_mort[56:65,]*popdist[56:65,])/colSums(popdist[56:65,])
-  weight_mort[8,]<-colSums(new_mort[66:75,]*popdist[66:75,])/colSums(popdist[66:75,])
-  weight_mort[9,]<-colSums(new_mort[76:85,]*popdist[76:85,])/colSums(popdist[76:85,])
-  weight_mort[10,]<-colSums(new_mort[86:95,]*popdist[86:95,])/colSums(popdist[86:95,])
-  weight_mort[11,]<-colSums(new_mort[96:111,]*popdist[96:111,])/colSums(popdist[96:111,])
-
-  weight_mort<-t(weight_mort)
-
-
-  # NCHS_mort        <-readRDS(system.file("US/US_NCHS_mort.rds", package="MITUS"))[,2:12]
-  BgMort[1:68,2:12]<-weight_mort
-  InitPop          <- Inputs[["InitPop"]] #init_pop() #
+  if(loc=="US"){
+    BgMort[1:68,2:12]<-weight_mort(loc)
+  } else{
+    BgMort[10:67,2:12]<-weight_mort(loc)
+  }
+  InitPop          <- Inputs[["InitPop"]]
   Births           <- Inputs[["Births"]]
   ImmigInputs      <- Inputs[["ImmigInputs"]]
+  ImmigInputs$PrevTrend25_34[1:69]<-ImmigInputs$TBBurdenImmig*(90/1e5)
   TxInputs         <- Inputs[["TxInputs"]]
   NetMig           <- Inputs[["NetMigrState"]]
+
   ##########                CALCULATION OF AGING DENOMINATORS           ##########
-  popdist<- as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS")))
-  popdist<-popdist[,-1]
-  rownames(popdist)<-as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS"))[,1])
-
-  #calculate the percentage of the total age band in each single year age
-  ltd<-matrix(NA,10,69)
-
-  ltd[1,]<-popdist[5,]/colSums(popdist[1:5,])
-  ltd[2,]<-popdist[15,]/colSums(popdist[6:15,])
-  ltd[3,]<-popdist[25,]/colSums(popdist[16:25,])
-  ltd[4,]<-popdist[35,]/colSums(popdist[26:35,])
-  ltd[5,]<-popdist[45,]/colSums(popdist[36:45,])
-  ltd[6,]<-popdist[55,]/colSums(popdist[46:55,])
-  ltd[7,]<-popdist[65,]/colSums(popdist[56:65,])
-  ltd[8,]<-popdist[75,]/colSums(popdist[66:75,])
-  ltd[9,]<-popdist[85,]/colSums(popdist[76:85,])
-  ltd[10,]<-popdist[95,]/colSums(popdist[86:95,])
-
-
-  #invert this for the aging rate
-  ltd<-1/ltd
-
-  td<-matrix(NA,10,1201)
-  for (i in 1:10){
-    td[i,1:817]<-SmoCurve(as.numeric(ltd[i,]))
-    td[i,818:1201]<-td[i,817]
-  }
-
-  spl_den<-t(td)*12
-  ########## DEFINE A VARIABLE THAT WILL DETERMINE HOW LONG THE TIME DEPENDENT
-  ########## VARIABLES SHOULD BE (IN MONTHS)
-  month<-1201;
+  spl_den <-age_denom("US")
 
   ##########                PARAMETER DEFINITIONS                      ###########
   ##########                RISK FACTOR DISTRIBUTIONS   ##########################
@@ -315,85 +262,72 @@ fin_param <- function (PV, prg_chng){
   rSlfCur      <- PV["rSlfCur"]/12
 
   ######################          LTBI DIAGNOSIS           ########################
-  # Sens_IGRA <-78.0
-  # Spec_IGRA <-97.9
-  # IGRA_frc <- .80
-  # Sens_TST <-54.0
-  # Spec_TST <-96.5
-  #
-  # SensLt<-Sens_IGRA*IGRA_frc + (1-IGRA_frc)*Sens_TST
-  # SpecLt<-Spec_IGRA*IGRA_frc + (1-IGRA_frc)*Spec_TST
-  # ######################
-  # SensLt_v        <- rep(SensLt, month)    #  sens of test for latent TB infection (based on IGRA QFT-GIT)
-  # SpecLt_v        <- rep(SpecLt, month)    #  spec of test for latent TB infection (based on IGRA QFT-GIT)
-  # if (prg_chng["IGRA_frc"] != IGRA_frc){
-  #   SensLt_v[prg_m:length(SensLt_v)]<-prg_chng["IGRA_frc"]*Sens_IGRA + (1-prg_chng["IGRA_frc"])*Sens_TST
-  #   SpecLt_v[prg_m:length(SensLt_v)]<-prg_chng["IGRA_frc"]*Spec_IGRA + (1-prg_chng["IGRA_frc"])*Spec_TST
-  # }
-  #
-  # SpecLtFb_v      <- SpecLt_v         #  spec of test for latent TB infection (based on IGRA QFT-GIT) in foreign-born (assumed BCG exposed)
 
-  LtDxPar_lt <- LtDxPar_nolt <- matrix(NA,3,month);
-  # colnames(LtDxPar) <- c("latent","no latent");
-  rownames(LtDxPar_lt) <- rownames(LtDxPar_nolt) <- c("LR","HR","FB")
-  # LtDxPar_lt[,] <- rbind(SensLt_v                 , rrTestHr*SensLt_v    , SensLt_v)
-  # LtDxPar_nolt[,] <- rbind(rrTestLrNoTb*(100-SpecLt_v), rrTestHr*(100-SpecLt_v), (100-SpecLtFb_v))
-
-  ######################          LTBI DIAGNOSIS           ########################
+  ######################        TEST SPECIFICATIONS          ######################
+  Sens_IGRA <-.780
+  Spec_IGRA <-.979
+  IGRA_frc <- .33
+  Sens_TST <-.726
+  Spec_TST <-.921
+  ###calculate the weighted mean of sensitivity and specificity
+  SensLt<-Sens_IGRA*IGRA_frc + (1-IGRA_frc)*Sens_TST
+  SpecLt<-Spec_IGRA*IGRA_frc + (1-IGRA_frc)*Spec_TST
+  ###sensitivity and specificity must be time varying parameters in order to allow the user to change the
+  ###percentage of IGRA used at a specific time range
+  SensLt_v        <- rep(SensLt, month)    #  sens of test for latent TB infection
+  SpecLt_v        <- rep(SpecLt, month)    #  spec of test for latent TB infection
+  ######################     IGRA FRACTION PROGRAM CHANGE    ########################
+  if (prg_chng["IGRA_frc"] != IGRA_frc){
+    SensLt_v[prg_m:length(SensLt_v)]<-prg_chng["IGRA_frc"]*Sens_IGRA + (1-prg_chng["IGRA_frc"])*Sens_TST
+    SpecLt_v[prg_m:length(SensLt_v)]<-prg_chng["IGRA_frc"]*Spec_IGRA + (1-prg_chng["IGRA_frc"])*Spec_TST
+  }
+  ### ADJUST THIS FOR THE FOREIGN BORN
+  SpecLtFb_v      <- SpecLt_v         #  spec of test for latent TB infection (based on IGRA QFT-GIT) in foreign-born (assumed BCG exposed)
+  ######################        SCREENING RATES          ######################
   rLtScrt       <- LgtCurve(1985,2015,PV["rLtScr"])/12
+  ######################  SCREENING RATE PROGRAM CHANGE ########################
   if (prg_chng["scrn_cov"] !=1) {
     rLtScrt[prg_m:length(rLtScrt)]<-rLtScrt[prg_m:length(rLtScrt)]*prg_chng["scrn_cov"];
   }
-
-  SensLt        <- PV["SensLt"]    #  sens of test for latent TB infection (based on IGRA QFT-GIT)
-  SpecLt        <- PV["SpecLt"]    #  spec of test for latent TB infection (based on IGRA QFT-GIT)
-  SpecLtFb      <- SpecLt         #  spec of test for latent TB infection (based on IGRA QFT-GIT) in foreign-born (assumed BCG exposed)
-  ###########   WILL THIS PARAMETER NEED TO BE REDUCED?
+  ###adjustments to the screening rates dependent on risk and TB status
   rrTestHr      <- PV["rrTestHr"] # RR of LTBI screening for HIV and HR as cmpared to general
   rrTestLrNoTb  <- PV["rrTestLrNoTb"] # RR of LTBI screening for individuals with no risk factors
-  #  dLt           <- 1/9
+  ### because of the introduction of new time varying parameters, we will create 2 matrices to
+  ### hold the three different sensitivity and specificity measures; one will be for those whose
+  ### true LTBI status is positive and the other is for those whose true TB status is negative.
+  LtDxPar_nolt <- LtDxPar_lt <- matrix(NA,3,month);
+  rownames(LtDxPar_lt) <- rownames(LtDxPar_nolt) <- c("LR","HR","FB")
+  LtDxPar_lt[,]   <- rbind(SensLt_v                 , rrTestHr*SensLt_v    , SensLt_v)
+  LtDxPar_nolt[,] <- rbind(rrTestLrNoTb*(1-SpecLt_v), rrTestHr*(1-SpecLt_v), (1-SpecLtFb_v))
 
-  #rDefLt        <- PV["pDefLt"]/(1-PV["pDefLt"])  # based on 50% tx completion with 6 mo INH regimen 2.0 [1.0,3.0] from Menzies Ind J Med Res 2011
-  EffLt         <- PV["EffLt"]
-  ######NEW PARAMETER FOR MITUS MODEL
-  pTlInt        <- .80
-  LtTxPar       <- c(pTlInt,PV["pDefLt"],EffLt)
-
-  LtDxPar <- matrix(NA,3,2);
-  colnames(LtDxPar) <- c("latent","no latent");
-  rownames(LtDxPar) <- c("LR","HR","FB")
-  LtDxPar[,1] <- c(SensLt                 , rrTestHr*SensLt    , SensLt)
-  LtDxPar[,2] <- c(rrTestLrNoTb*(1-SpecLt), rrTestHr*(1-SpecLt), (1-SpecLtFb))
-  LtDxPar_lt[,]<-matrix(LtDxPar[,1],3,1201)
-  LtDxPar_nolt[,]<-matrix(LtDxPar[,2],3,1201)
-
-
-
-  rDefLt        <- PV["pDefLt"]/(1-PV["pDefLt"])  # based on 50% tx completion with 6 mo INH regimen 2.0 [1.0,3.0] from Menzies Ind J Med Res 2011
-
+  ######################          LTBI DIAGNOSIS           ########################
+  ###################### LTBI TX EFFECTIVENESS PROGRAM CHANGE ########################
   if (prg_chng["ltbi_eff_frc"] != round(PV["EffLt"], 2)){
-    EffLt         <- prg_chng["ltbi_eff_frc"]
+    EffLt         <- c(rep(PV["EffLt"],prg_m-1),rep(prg_chng["ltbi_eff_frc"],1+1201-prg_m))
   } else {
-    EffLt         <- PV["EffLt"]
+    EffLt         <- rep(PV["EffLt"],month)
   }
-  ######NEW PARAMETER FOR MITUS MODEL
-  pTlInt        <- rep(.80,month)
 
+  ### PROBABILITY OF LATENT TREATMENT INTIATION
+  pTlInt        <- rep(.80,month)
+  ###################### LTBI TX INITIATION PROGRAM CHANGE ########################
   if (prg_chng["ltbi_init_frc"] !=pTlInt[prg_m]){
     pTlInt[prg_m:length(pTlInt)] <- prg_chng["ltbi_init_frc"];
   }
-
-  #LtTxPar can no longer be a vector, could be a matrix over time
-  pDefLt<-rep(PV["pDefLt"],month)
-
+  ######################    LTBI TREATMENT DEFAULT          ######################
+  pDefLt<-rep(PV["pDefLt"],month)   ### PROBABILITY OF LATENT TREATMENT DEFAULT
+  ###################### LTBI TREATMENT COMPLETION PROGRAM CHANGE ######################
   if (prg_chng["ltbi_comp_frc"] != 1-(round(pDefLt[prg_m], 2))){
     pDefLt[prg_m:length(pDefLt)]<-(1-prg_chng["ltbi_comp_frc"])
-    LtTxPar       <- cbind(pTlInt,pDefLt,EffLt)
-  } else {
-    LtTxPar       <- c(pTlInt,pDefLt,EffLt)
   }
+  ### because of the introduction of new time varying parameters, we will create a matrix to
+  ### hold the latent treatment parameters
+  LtTxPar       <- matrix(NA,3,month)
+  LtTxPar       <- cbind(pTlInt,pDefLt,EffLt)
 
   pImmScen    <- PV["pImmScen"] # lack of reactivitiy to IGRA for Sp
+
+
 
   ################################################################################
   #######################         TB DIAGNOSIS            ########################

@@ -8,10 +8,12 @@ Use to check both with and without tb in the model
 Create a function to be run on a specific model run output to
 create simple graphs of all the output for a selected year range}
 \usage{
-tb_graph_demo(df)
+tb_graph_demo(df, dist = FALSE)
 }
 \arguments{
 \item{df}{dataframe of output for all years}
+
+\item{dist}{boolean, if you want generic risk group functions}
 }
 \value{
 .pdf of the graphs

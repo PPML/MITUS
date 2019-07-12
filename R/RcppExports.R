@@ -111,7 +111,8 @@ cSim_noTB <- function(nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, Mpfas
 #'@param TunTxMort Tuning parameter for mortality on TB Tx
 #'@param rDeft rate of default from TB treatment over time
 #'@param rLtScrt rate of latent screening over time
-#'@param LtDxPar matrix of latent diagnosis parameters
+#'@param LtDxPar_lt matrix of latent diagnosis parameters
+#'@param LtDxPar_nolt matrix of latent diagnosis parameters
 #'@param LtTxPar matrix of latent treatment parameters
 #'@param RRdxAge vector of rate ratios for TB diagnosis by age
 #'@param rRecov rate of recovery from latent slow to safe tb state

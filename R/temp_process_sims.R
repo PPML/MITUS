@@ -38,8 +38,6 @@ new_OutputsZint <-  function(samp_i=1,ParMatrix,startyr=1950, endyr=2050,Int1=0,
   Scen3 <<- Scen3
 
   # P <- Par
-  prms <-list()
-  prms <- fin_param(P,prg_chng)
   IP <- list()
   IP <- fin_param_init(P,Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3,prg_chng)
   # data("trans_mat_nat",package="MITUS")
@@ -47,7 +45,7 @@ new_OutputsZint <-  function(samp_i=1,ParMatrix,startyr=1950, endyr=2050,Int1=0,
   # tm<-matrix(0,16,16)
   # diag(tm)<-1
   # trans_mat_tot_ages<<-matrix(tm,16,176)
-  trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
+  trans_mat_tot_ages<<-reblncd(mubt = IP$mubt,can_go = can_go,RRmuHR = IP$RRmuHR[2], RRmuRF = IP$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=IP[["adj_fact"]])
   if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
   m <- fin_cSim( nYrs       = 2050-1950         , nRes      = length(IP[["ResNam"]])  , rDxt     = IP[["rDxt"]]  , TxQualt    = IP[["TxQualt"]]   , InitPop  = IP[["InitPop"]]    ,
                   Mpfast     = IP[["Mpfast"]]    , ExogInf   = IP[["ExogInf"]]       , MpfastPI = IP[["MpfastPI"]], Mrslow     = IP[["Mrslow"]]    , rrSlowFB = IP[["rrSlowFB"]]  ,
@@ -59,7 +57,7 @@ new_OutputsZint <-  function(samp_i=1,ParMatrix,startyr=1950, endyr=2050,Int1=0,
                   TxVec      = IP[["TxVec"]]     , TunTxMort = IP[["TunTxMort"]]     , rDeft    = IP[["rDeft"]]   , pReTx      = IP[["pReTx"]]     , LtTxPar  = IP[["LtTxPar"]]    ,
                   LtDxPar_lt    = IP[["LtDxPar_lt"]]   , LtDxPar_nolt    = IP[["LtDxPar_nolt"]]   , rLtScrt   = IP[["rLtScrt"]]       , RRdxAge  = IP[["RRdxAge"]] , rRecov     = IP[["rRecov"]]    , pImmScen = IP[["pImmScen"]]   ,
                   EarlyTrend = IP[["EarlyTrend"]], ag_den=IP[["aging_denom"]],  NixTrans = IP[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)$Outputs
-  colnames(m) <- prms[["ResNam"]];
+  colnames(m) <- IP[["ResNam"]];
   results<<-as.matrix(m)
 
   return(results)

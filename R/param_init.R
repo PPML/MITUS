@@ -7,6 +7,7 @@
 #' This function takes the same inputs as the Outputs
 #'@name param_init
 #'@param PV vector of Inputs to format
+#'@param loc two digit location for the model run
 #'@param Int1 boolean for intervention 1
 #'@param Int2 boolean for intervention 2
 #'@param Int3 boolean for intervention 3
@@ -17,8 +18,8 @@
 #'@param Scen3 boolean for scenario 3
 #'@return InputParams list
 #'@export
-param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0){
-  InputParams <-vector("list", 43)   #Create an empty list to hold the formatted intitial parameters
+param_init <- function(PV,loc="US",Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0){
+  InputParams <-vector("list", 42)   #Create an empty list to hold the formatted intitial parameters
   names(InputParams) <- c("rDxt","TxQualt", "InitPop", "Mpfast", "ExogInf", "MpfastPI",
                           "Mrslow", "rrSlowFB", "rfast"    ,"RRcurDef"      , "rSlfCur"  ,
                           "p_HR"        , "dist_gen" , "vTMort"   ,"RRmuRF"          , "RRmuHR",
@@ -26,9 +27,8 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
                           "ImmAct"      , "ImmFst" , "mubt"     ,"RelInf"        , "RelInfRg" ,
                           "Vmix"       , "rEmmigFB" , "TxVec"    , "TunTxMort"    , "rDeft"    ,
                           "pReTx"      , "LtTxPar"  , "LtDxPar"  , "rLtScrt"      , "RRdxAge"  ,
-                          "rRecov"      , "pImmScen"  ,   "EarlyTrend","aging_denom", "NixTrans"   ,
+                          "rRecov"      , "pImmScen"  ,   "EarlyTrend", "NixTrans"   ,
                           "net_mig_usb", "net_mig_nusb", "ResNam")
-  month<-1201
   ################################################################################
   ##### INTERVENTION
   ################################################################################
@@ -49,116 +49,38 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
   ###########################          INPUTS            #########################
   ################################################################################
   ################################################################################
-  BgMort           <- as.matrix(Inputs[["BgMort"]])
-  death_age <-readRDS(system.file("US/US_MortalityCountsByAge.rds", package="MITUS"))[,2:69]
-  rownames(death_age)<-readRDS(system.file("US/US_MortalityCountsByAge.rds", package="MITUS"))[,1]
-  death_age<-as.matrix(death_age)
-
-  popdist<- as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS")))
-  popdist<-popdist[,-1]
-  popdist<-popdist[,-69]
-  rownames(popdist)<-as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS"))[,1])
-  new_mort<-popdist
-  new_mort<-death_age/popdist
-  ##weighted mort for the age groups
-  weight_mort<-matrix(NA,11,68)
-  colnames(weight_mort)<-colnames(new_mort)
-  weight_mort[1,]<-colSums(new_mort[1:5,]*popdist[1:5,])/colSums(popdist[1:5,])
-  weight_mort[2,]<-colSums(new_mort[6:15,]*popdist[6:15,])/colSums(popdist[6:15,])
-  weight_mort[3,]<-colSums(new_mort[16:25,]*popdist[16:25,])/colSums(popdist[16:25,])
-  weight_mort[4,]<-colSums(new_mort[26:35,]*popdist[26:35,])/colSums(popdist[26:35,])
-  weight_mort[5,]<-colSums(new_mort[36:45,]*popdist[36:45,])/colSums(popdist[36:45,])
-  weight_mort[6,]<-colSums(new_mort[46:55,]*popdist[46:55,])/colSums(popdist[46:55,])
-  weight_mort[7,]<-colSums(new_mort[56:65,]*popdist[56:65,])/colSums(popdist[56:65,])
-  weight_mort[8,]<-colSums(new_mort[66:75,]*popdist[66:75,])/colSums(popdist[66:75,])
-  weight_mort[9,]<-colSums(new_mort[76:85,]*popdist[76:85,])/colSums(popdist[76:85,])
-  weight_mort[10,]<-colSums(new_mort[86:95,]*popdist[86:95,])/colSums(popdist[86:95,])
-  weight_mort[11,]<-colSums(new_mort[96:111,]*popdist[96:111,])/colSums(popdist[96:111,])
-
-  weight_mort<-t(weight_mort)
-
-
-  # NCHS_mort        <-readRDS(system.file("US/US_NCHS_mort.rds", package="MITUS"))[,2:12]
-  BgMort[1:68,2:12]<-weight_mort
-  # BgMort<-BgMort*.8
-  #
-  # BgMort[11:12]<-BgMort[11:12]*3
-  # BgMort[12]<-BgMort[12]*1.2
-  InitPop          <- Inputs[["InitPop"]] #init_pop()
+  BgMort           <- Inputs[["BgMort"]]
+  if(loc=="US"){
+    BgMort[1:68,2:12]<-weight_mort(loc)
+  } else{
+    BgMort[10:67,2:12]<-weight_mort(loc)
+  }
+  InputParams[["InitPop"]] <- Inputs[["InitPop"]]
   Births           <- Inputs[["Births"]]
   ImmigInputs      <- Inputs[["ImmigInputs"]]
+  ImmigInputs$PrevTrend25_34[1:69]<-ImmigInputs$TBBurdenImmig*(90/1e5)
   TxInputs         <- Inputs[["TxInputs"]]
   NetMig           <- Inputs[["NetMigrState"]]
 
-  ##########                CALCULATION OF AGING DENOMINATORS           ##########
-  popdist<- as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS")))
-  popdist<-popdist[,-1]
-  rownames(popdist)<-as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS"))[,1])
-
-  #calculate the percentage of the total age band in each single year age
-  ltd<-matrix(NA,10,69)
-
-  ltd[1,]<-popdist[5,]/colSums(popdist[1:5,])
-  ltd[2,]<-popdist[15,]/colSums(popdist[6:15,])
-  ltd[3,]<-popdist[25,]/colSums(popdist[16:25,])
-  ltd[4,]<-popdist[35,]/colSums(popdist[26:35,])
-  ltd[5,]<-popdist[45,]/colSums(popdist[36:45,])
-  ltd[6,]<-popdist[55,]/colSums(popdist[46:55,])
-  ltd[7,]<-popdist[65,]/colSums(popdist[56:65,])
-  ltd[8,]<-popdist[75,]/colSums(popdist[66:75,])
-  ltd[9,]<-popdist[85,]/colSums(popdist[76:85,])
-  ltd[10,]<-popdist[95,]/colSums(popdist[86:95,])
-
-
-  #invert this for the aging rate
-  ltd<-1/ltd
-
-  td<-matrix(NA,10,1201)
-  for (i in 1:10){
-    td[i,1:817]<-SmoCurve(as.numeric(ltd[i,]))
-    td[i,818:1201]<-td[i,817]
-  }
-
-  spl_den<-t(td)*12
-  InputParams[["aging_denom"]]<-spl_den
-
   ##########                PARAMETER DEFINITIONS                      ###########
-  ##########                RISK FACTOR DISTRIBUTIONS   ##########################
-  #turned off because the rebalancing has been moved back into the model
-  adj_fact <- exp(PV[["adj_ag1"]]*(10:0)/11 + PV[["adj_ag11"]]*(0:10)/11)
-
   #######################           BIRTHS                 #######################
   ####### INDEXED BY TIME, ABSOLUTE NUMBER OF NEW ADULT ENTRANTS OVER TIME #######
 
-  Birthst   <- SmoCurve(Births)*PV["TunBirths"]/12
-  Birthst   <- Birthst[1:month]
-  #  Birthst[1:6]<-0
+  InputParams[["Birthst"]]  <- SmoCurve(Births)*PV["TunBirths"]/12
 
   ##########################      MORTALITY RATES       ##########################
   ########################## BACKGROUND MORTALITY BY TIME ########################
-  mubt      <- matrix(NA,1801,11)
-  #mortality calculation version 1
-  # linear multiple on background mortality and exponential scaling of mort by age
-  # TunmuAg <- PV["TunmuAg"]
-  #   RRmuAg <- exp((1:11)*TunmuAg)
-  # # RRmuT<-seq(TunmuAg,PV["TunMubt"],length.out=month)/12
-  #   for(i in 1:11) {
-  #     mubt[,i] <- SmoCurve(BgMort[,i+1])*PV[["TunMubt"]]/12
-  #     # mubt[1:1201,i] <- mubt[1:1201,i]*RRmuT
-  #     mubt[,i] <- mubt[,i]*RRmuAg[i]
-  #   }
+  InputParams[["mubt"]]    <- matrix(NA,1801,11)
 
-  for(i in 1:11){
-    mubt[,i] <- SmoCurve(BgMort[,i+1])*PV[["TunMubt"]] /12
+  TunmuAg <- PV["TunmuAg"]
+  RRmuAg <- exp((1:11)*(TunmuAg-1))
+
+  for(i in 1:11) {
+    InputParams[["mubt"]][,i] <- SmoCurve(BgMort[,i+1])*PV["TunMubt"]/12
+    InputParams[["mubt"]][,i]<-InputParams[["mubt"]][,i]*RRmuAg[i]
   }
-  # mubt[,]<-1-exp(-mubt[,])
-
-  mubt<-mubt[1:month,]
-  for(i in 1:11){
-    mubt[,i] <- mubt[,i]*exp((PV[["TunmuAg"]]-1))
-  }
-  InputParams[["mubt"]] <-mubt
-
+  ##########                CALCULATION OF AGING DENOMINATORS           ##########
+  InputParams[["aging_denom"]] <-age_denom("US")
   #########################     DISEASE SPECIFIC       ###########################
   #############    ACTIVE TB RATES DEFAULT TO THE SMEAR POS LEVELS   #############
   muIp  	  <- PV["muIp"]/12
@@ -759,7 +681,6 @@ param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Sce
               ### new infections
               paste("N_newinf_USB",StatList[[1]],sep="_" ),
               paste("N_newinf_NUSB",StatList[[1]],sep="_" )
-
   )
 
   InputParams[["ResNam"]]<-ResNam

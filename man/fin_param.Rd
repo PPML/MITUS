@@ -7,7 +7,7 @@ IN THE OUTPUTSINTZ FUNCTION THAT CALLS CSIM FROM THE TB_MODEL.CPP
 FUNCTION FILE. ALL VARIABLE NAMES THAT END IN t ARE INDEXED BY TIME
 VARIABLE NAMES BEGINNING WITH m ARE MATRICES & V ARE VECTORS.}
 \usage{
-fin_param(PV, prg_chng)
+fin_param(PV, loc, prg_chng)
 }
 \arguments{
 \item{prg_chng}{vector of program change values}

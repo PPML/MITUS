@@ -23,7 +23,7 @@ def_prgchng<-function(ParVec){
   DefPrgChngVec[2]<-1
   #the default IGRA fraction is a constant that is not calibrated or calculated
   #once this is set it should not be changed
-  DefPrgChngVec[3]<-.8
+  DefPrgChngVec[3]<-.33
   #Treatment Initiation Fraction is a constant that is not calibrated or calculated
   #once this is set it should not be changed
   DefPrgChngVec[4]<-.8
