@@ -6,7 +6,7 @@
 fixed_vals<-function(samp_i){
   library(dplyr)
   model_load("US")
-  fixed_prior<-c("SensLt","SpecLt","EffLt","SensSp","pCurPs")
+  fixed_prior<-c("EffLt","SensSp","pCurPs")
   pr_x<-filter(ParamInit, rownames(ParamInit) %in% fixed_prior)
   pr_x<-as.vector(unlist(pr_x[,1]))
 #load the most up to date national optimized data set
