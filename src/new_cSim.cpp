@@ -1365,18 +1365,18 @@ Rcpp::List fin_cSim(
           for(int na=0; na<3; na++) {
             ////////////// US BORN, LOW RISK  //////////////////
             if( rg==0 & na==0) {
-              rTbP = rLtScrt[s]*LtDxPar_ltN[0][m];
-              rTbN = rLtScrt[s]*LtDxPar_noltN[0][m];
+              rTbP = rLtScrt[s]*LtDxPar_ltN[0][s];
+              rTbN = rLtScrt[s]*LtDxPar_noltN[0][s];
             }
             //////////// NON US BORN  ////////////////
             if(rg==0 & na > 0) {
-              rTbP = rLtScrt[s]*LtDxPar_ltN[2][m];
-              rTbN = rLtScrt[s]*LtDxPar_noltN[2][m];
+              rTbP = rLtScrt[s]*LtDxPar_ltN[2][s];
+              rTbN = rLtScrt[s]*LtDxPar_noltN[2][s];
             }
             ////////////// US BORN, HIGH RISK  /////////////////
             if(rg==1) {
-              rTbP = rLtScrt[s]*LtDxPar_ltN[1][m];
-              rTbN = rLtScrt[s]*LtDxPar_noltN[1][m];
+              rTbP = rLtScrt[s]*LtDxPar_ltN[1][s];
+              rTbN = rLtScrt[s]*LtDxPar_noltN[1][s];
             }
             for(int ag=0; ag<11; ag++) {
               for(int nm=0; nm<4; nm++) {
@@ -1411,18 +1411,26 @@ Rcpp::List fin_cSim(
             for(int nm=0; nm<4; nm++) {
               for(int rg=0; rg<2; rg++) {
                 for(int na=0; na<3; na++) {
-                  //N(latent)*r(posLTBIscreen)*p(TLTBI Initiation)*p(TLTBI completion)
-                  temp  = V0[ag][2][0][im][nm][rg][na]*rTbP*LtTxParN[m][0]*(1-LtTxParN[m][1]); // tx completion
-                  temp2 = V0[ag][3][0][im][nm][rg][na]*rTbP*LtTxParN[m][0]*(1-LtTxParN[m][1]); // tx completion
 
-                  temp3 = V0[ag][2][0][im][nm][rg][na]*rTbP*LtTxParN[m][0]*LtTxParN[m][1]; // default
-                  temp4 = V0[ag][3][0][im][nm][rg][na]*rTbP*LtTxParN[m][0]*LtTxParN[m][1]; // default
+                  // if (S==1000){
+                  // Rcpp::Rcout << "LtTxPar 1 is = "<<  LtTxParN[s][0] << "at time step" << m << "\n";
+                  // Rcpp::Rcout << "LtTxPar 2 is = "<<  LtTxParN[s][1] << "at time step" << m << "\n";
+                  // Rcpp::Rcout << "LtTxPar 3 is = "<<  LtTxParN[s][2] << "at time step" << m << "\n";
+                  // }
+                  //N(latent)*r(posLTBIscreen)*p(TLTBI Initiation)*p(TLTBI completion)
+                  temp  = V0[ag][2][0][im][nm][rg][na]*rTbP*LtTxParN[s][0]*(1-LtTxParN[s][1]); // tx completion
+                  temp2 = V0[ag][3][0][im][nm][rg][na]*rTbP*LtTxParN[s][0]*(1-LtTxParN[s][1]); // tx completion
+                  // Rcpp::Rcout << "temp is = "<<  temp << "at time step" << m << "\n";
+                  // Rcpp::Rcout << "temp2 is = "<<  temp2 << "at time step" << m << "\n";
+
+                  temp3 = V0[ag][2][0][im][nm][rg][na]*rTbP*LtTxParN[s][0]*LtTxParN[s][1]; // default
+                  temp4 = V0[ag][3][0][im][nm][rg][na]*rTbP*LtTxParN[s][0]*LtTxParN[s][1]; // default
 
                   V1[ag][2][0][im][nm][rg][na]  -=  (temp+temp3); //remove from latent slow
                   V1[ag][3][0][im][nm][rg][na]  -=  (temp2+temp4);  //remove from latent fast
 
-                  V1[ag][1][1][im][nm][rg][na]   += (temp+temp2)*LtTxParN[m][2]; //*EffLt0[s]; //exit to cure
-                  V1[ag][2][1][im][nm][rg][na]   += (temp+temp2)*(1-LtTxParN[m][2]); //*(1-EffLt0[s]) //tx comp fail to latent slow
+                  V1[ag][1][1][im][nm][rg][na]   += (temp+temp2)*LtTxParN[s][2]; //*EffLt0[s]; //exit to cure
+                  V1[ag][2][1][im][nm][rg][na]   += (temp+temp2)*(1-LtTxParN[s][2]); //*(1-EffLt0[s]) //tx comp fail to latent slow
 
                   ///defaults are placed in tx naive because it is considered the same tb infection
                   V1[ag][2][0][im][nm][rg][na]  += (temp3+temp4); //latent tx default to latent slow
@@ -1669,32 +1677,32 @@ Rcpp::List fin_cSim(
           for(int na=0; na<3; na++) {
             ////////////// US BORN, LOW RISK  //////////////////
             if( rg==0 & na==0) {
-              rTbP = rLtScrt[s]*LtDxPar_ltN[0][m];
-              rTbN = rLtScrt[s]*LtDxPar_noltN[0][m];
+              rTbP = rLtScrt[s]*LtDxPar_ltN[0][s];
+              rTbN = rLtScrt[s]*LtDxPar_noltN[0][s];
             }
             //////////// NON US BORN  ////////////////
             if(rg==0 & na > 0) {
-              rTbP = rLtScrt[s]*LtDxPar_ltN[2][m];
-              rTbN = rLtScrt[s]*LtDxPar_noltN[2][m];
+              rTbP = rLtScrt[s]*LtDxPar_ltN[2][s];
+              rTbN = rLtScrt[s]*LtDxPar_noltN[2][s];
             }
             ////////////// US BORN, HIGH RISK  /////////////////
             if(rg==1) {
-              rTbP = rLtScrt[s]*LtDxPar_ltN[1][m];
-              rTbN = rLtScrt[s]*LtDxPar_noltN[1][m];
+              rTbP = rLtScrt[s]*LtDxPar_ltN[1][s];
+              rTbN = rLtScrt[s]*LtDxPar_noltN[1][s];
             }
             for(int im=0; im<4; im++) {
               for(int nm=0; nm<4; nm++) {
                 for(int ag=0; ag<11; ag++) {
-                  Outputs[y][151] += (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP*LtTxParN[m][0] +
-                    (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxParN[m][0]; //all init
+                  Outputs[y][151] += (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP*LtTxParN[s][0] +
+                    (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxParN[s][0]; //all init
                   if(na>0) {
-                    Outputs[y][152] += (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP*LtTxParN[m][0] +
-                      (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxParN[m][0]; } // FB inits
+                    Outputs[y][152] += (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP*LtTxParN[s][0] +
+                      (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxParN[s][0]; } // FB inits
                   if(rg==1) {
-                    Outputs[y][153] +=  (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP*LtTxParN[m][0] +
-                      (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxParN[m][0]; } // high risk inits
+                    Outputs[y][153] +=  (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP*LtTxParN[s][0] +
+                      (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxParN[s][0]; } // high risk inits
 
-                  Outputs[y][154] += (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP*LtTxParN[m][0]; // inits with LTBI
+                  Outputs[y][154] += (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP*LtTxParN[s][0]; // inits with LTBI
                 } } } } }
         for(int i=151; i<155; i++) { Outputs[y][i] = Outputs[y][i]*12; } // annualize
 
