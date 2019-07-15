@@ -166,9 +166,9 @@ tot_pop_yr_fb_lLik <- function(V) {
 tot_pop16_ag_fb_lLik <- function(V,ESS=500) {
   tot_pop16_ag_fb      <- cbind(CalibDat[["tot_pop16_ag_fb"]][-9,3]/sum(CalibDat[["tot_pop16_ag_fb"]][-9,3]),
                                 CalibDat[["tot_pop16_ag_fb"]][-9,4]/sum(CalibDat[["tot_pop16_ag_fb"]][-9,4]))
-  adj_18               <- sum(log(tot_pop16_ag_fb[,1])*tot_pop16_ag_fb[,1])+sum(log(tot_pop16_ag_fb[,2])*tot_pop16_ag_fb[,2])
+  adj_18               <- (sum(log(tot_pop16_ag_fb[,1])*tot_pop16_ag_fb[,1])+sum(log(tot_pop16_ag_fb[,2])*tot_pop16_ag_fb[,2]))*ESS
   V1 <- rbind(V[1,],V[2,]+V[3,],V[4,]+V[5,],V[6,],V[7,],V[8,],V[9,],V[10,]+V[11,])
-  (sum(log(V1[,1]/sum(V1[,1]))*tot_pop16_ag_fb[,1])+sum(log(V1[,2]/sum(V1[,2]))*tot_pop16_ag_fb[,2]))*ESS - adj_18*ESS  }
+  (sum(log(V1[,1]/sum(V1[,1]))*tot_pop16_ag_fb[,1])+sum(log(V1[,2]/sum(V1[,2]))*tot_pop16_ag_fb[,2]))*ESS - adj_18  }
 
 # US_pop_tot_lLik_2<-function(X,ESS=500){
 #   #target data

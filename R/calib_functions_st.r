@@ -79,10 +79,11 @@ notif_fbus_slp_lLik_st <- function(V,st) {
 
 notif_us_hr_lLik_st <- function(V,st,rho=0.005) { # V = table of notifications by tx history (row=97:16, col=n then e)
   notif_us_hr0     <- CalibDatState[["hr_cases"]][[st]]
-  notif_us_hr      <- cbind(notif_us_hr0$pct_hr,1-notif_us_hr0$pct_hr)*notif_us_hr0$sample_size
-  adj_5b           <- sum(dDirMult(M=notif_us_hr+0.01,n=notif_us_hr,Rho=0.005)*wts[c(50,55,60,65)])
+  notif_us_hr      <- cbind(notif_us_hr0[1,],1-notif_us_hr0[,1])*notif_us_hr0[,2]
+  adj_5b           <- sum(dDirMult(M=notif_us_hr+0.01,n=notif_us_hr,Rho=rho)*wts[c(50,55,60,65)])
   V2 <- rbind(colSums(V[1:5,]),colSums(V[6:10,]),colSums(V[11:15,]),colSums(V[16:20,]))
-  sum(dDirMult(M=V2,n=notif_us_hr,Rho=rho)*wts[c(50,55,60,65)]) - adj_5b  }
+  sum(dDirMult(M=V2+0.01,n=notif_us_hr,Rho=rho)*wts[c(50,55,60,65)]) - adj_5b
+  }
 
 ### ### ### CASES FB RECENT ENTRY DISTRIBUTION 1993-2013  ### ### ### ### ### ### D
 # Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
@@ -157,8 +158,8 @@ ltbi_fb_11_dp_lLik_st <- function(V) { # V = LTBI in FB pop 2011 (row=11 ages, c
 
 tot_pop_yr_fb_lLik_st <- function(V,st) { # V = total pop (rows=year, cols=us, fb)
   tot_pop_yr      <- CalibDatState[["pop_50_10"]][[st]]
-  tot_pop_yr_fb   <- tot_pop_yr[tot_pop_yr$usb==0,]
-  tot_pop_yr_fb<-colSums(as.matrix(tot_pop_yr_fb)[,-c(1:2)])
+  tot_pop_yr_fb   <- tot_pop_yr[tot_pop_yr[,2]==0,]
+  tot_pop_yr_fb   <-colSums(tot_pop_yr_fb[,-c(1:2)])
   adj_17          <- sum(dnorm(tot_pop_yr_fb[-1],tot_pop_yr_fb[-1],tot_pop_yr_fb[7]*0.1/1.96,log=T)*wts[1+1:6*10])
   sum(dnorm(tot_pop_yr_fb[-1],V[c(11,21,31,41,51,61)]*1e6,tot_pop_yr_fb[7]*0.1/1.96,log=T)*wts[1+1:6*10]) - adj_17  } # CI = +/- 2mil
 
@@ -183,19 +184,21 @@ tot_pop_yr_us_lLik_st_00_10 <- function(V,st) {
 #   (sum(log(V[,1]/sum(V[,1]))*pop_ag_11_17[,1])+sum(log(V[,2]/sum(V[,2]))*pop_ag_11_17[,2]))*ESS - adj_18*ESS  }
 tot_pop14_ag_fb_lLik_st <- function(V,st,ESS=500) { # V =  US pop in 2014 (row=11 ages, col= us, fb)
   pop_ag_11_160  <- CalibDatState[["tot_pop_ag_fb_11_16"]][[st]]
-  pop_ag_11_16   <- cbind(pop_ag_11_160$pop[pop_ag_11_160$usb==1]/sum(pop_ag_11_160$pop[pop_ag_11_160$usb==1]),
-                          pop_ag_11_160$pop[pop_ag_11_160$usb==0]/sum(pop_ag_11_160$pop[pop_ag_11_160$usb==0]))
-  adj_18         <- sum(log(pop_ag_11_16[,1])*pop_ag_11_16[,1])+sum(log(pop_ag_11_16[,2])*pop_ag_11_16[,2])
+
+  pop_ag_11_16   <- cbind(pop_ag_11_160[pop_ag_11_160[,2]==1,3]/sum(pop_ag_11_160[pop_ag_11_160[,2]==1,3]),
+                          pop_ag_11_160[pop_ag_11_160[,2]==0,3]/sum(pop_ag_11_160[pop_ag_11_160[,2]==0,3]))
+  adj_18         <- sum(log(pop_ag_11_16[,1])*pop_ag_11_16[,1])+sum(log(pop_ag_11_16[,2])*pop_ag_11_16[,2])*ESS
   V1 <- rbind(V[1:9,],V[10,]+V[11,])
-  (sum(log(V1[,1]/sum(V1[,1]))*pop_ag_11_16[,1])+sum(log(V1[,2]/sum(V1[,2]))*pop_ag_11_16[,2]))*ESS - adj_18*ESS  }
+  (sum(log(V1[,1]/sum(V1[,1]))*pop_ag_11_16[,1])+sum(log(V1[,2]/sum(V1[,2]))*pop_ag_11_16[,2]))*ESS - adj_18  }
 
 ### ### ### Total TB DEATHS 1999-2016 ### ### ### ### ### ### D
 
 tbdeaths_lLik_st <- function(V,st) { # V = vector of total notifications 1999-2016
-  tb_deaths <- CalibDatState[["tbdeaths"]][[st]]$Deaths
-  V2<-rowSums(V)
+  tb_deaths <- CalibDatState[["tbdeaths"]][[st]][,2]
+  V2<-rowSums(V)*1e6
   adj_19    <- sum((dnorm(tb_deaths,tb_deaths,tb_deaths*0.2/1.96,log=T)*wts[50:67])[is.na(tb_deaths)==F])
-  sum((dnorm(V2,tb_deaths,tb_deaths*0.2/1.96,log=T)*wts[50:67])[is.na(tb_deaths)==F]) - adj_19}
+  sum((dnorm(V2,tb_deaths,tb_deaths*0.2/1.96,log=T)*wts[50:67])[is.na(tb_deaths)==F]) - adj_19
+  }
 ### ### ### ANN DECLINE IN TB DEATHS 1968-2015  ### ### ### ### ### ### D
 
 tbdeaths_decline_lLik_st <- function(V) { # V = vector of tb deaths 1968-2015

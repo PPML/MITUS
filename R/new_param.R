@@ -218,18 +218,18 @@ fin_param <- function (PV,loc,prg_chng){
   vORpfastRF  <-(exp((0:3)/3*log(ORpfastRF)))
   vORpfastPIRF  <- vORpfastRF*ORpfastPI
 
-  ############ UPDATE PROBS FOR LEVEL 1 OF REACTIVATION ###########
+  ############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
   Mpfast[,1]   <- vORpfastRF[1]*Mpfast[,1]
-  MpfastPI[,1]   <- vORpfastPIRF[1]*Mpfast[,1]
+  MpfastPI[,1]   <- vORpfastPIRF[1]*MpfastPI[,1]
   ############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
   Mpfast[,2]   <- vORpfastRF[2]*Mpfast[,2]
-  MpfastPI[,2]   <- vORpfastPIRF[2]*Mpfast[,2]
+  MpfastPI[,2]   <- vORpfastPIRF[2]*MpfastPI[,2]
   ############ UPDATE PROBS FOR LEVEL 3 OF REACTIVATION ###########
   Mpfast[,3]   <- vORpfastRF[3]*Mpfast[,3]
-  MpfastPI[,3]   <- vORpfastPIRF[3]*Mpfast[,3]
+  MpfastPI[,3]   <- vORpfastPIRF[3]*MpfastPI[,3]
   ############ UPDATE PROBS FOR LEVEL 4 OF REACTIVATION ###########
   Mpfast[,4]   <- vORpfastRF[4]*Mpfast[,4]
-  MpfastPI[,4]   <- vORpfastPIRF[4]*Mpfast[,4]
+  MpfastPI[,4]   <- vORpfastPIRF[4]*MpfastPI[,4]
 
   ##### UPDATE BOTH MATRICES WITH PROBABILITIES, NOT RATES
   Mpfast[,]    <- Mpfast[,]  /(1+Mpfast[,]);

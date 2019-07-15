@@ -23,17 +23,24 @@ calib_graphs_st <- function(df,loc, Par_list){
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
   V  <- cbind(df[1:66,30], df[1:66,31]+df[1:66,32])
-  pop_tot<-(CalibDatState$tot_pop_yr_fb[[st]][8:14,3]+CalibDatState$tot_pop_yr_fb[[st]][1:7,3])/1e6
 
-  plot(1,1,ylim=c(min(V)*.5,max(V)*2),xlim=c(1950,2015),xlab="",ylab="",axes=F,log="y")
+  tot_pop<-CalibDatState[["pop_50_10"]][[st]]
+  tot_pop_yr_us  <- tot_pop[tot_pop$usb==1,]
+  tot_pop_yr_us<-as.numeric(colSums(as.matrix(tot_pop_yr_us)[,-c(1:2)]))/1e6
+
+  tot_pop_yr_nus  <- tot_pop[tot_pop$usb==0,]
+  tot_pop_yr_nus<-as.numeric(colSums(as.matrix(tot_pop_yr_nus)[,-c(1:2)]))/1e6
+
+  tot_pop_yr<-tot_pop_yr_nus+tot_pop_yr_us
+  time<-c(1950,1960,1970,1980,1990,2000,2010)
+  plot(1,1,ylim=c(min(V,tot_pop_yr)*.5,max(V,tot_pop_yr)*2),xlim=c(1950,2015),xlab="",ylab="",axes=F,log="y")
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
-  points(CalibDatState$tot_pop_yr_fb[[st]][1:7,1],pop_tot,pch=19,cex=0.6,col="grey50")
-  points(CalibDatState$tot_pop_yr_fb[[st]][1:7,1],CalibDatState$tot_pop_yr_fb[[st]][8:14,3]/1e6,pch=19,cex=0.6,col="blue")
-  points(CalibDatState$tot_pop_yr_fb[[st]][1:7,1],CalibDatState$tot_pop_yr_fb[[st]][1:7,3]/1e6,pch=19,cex=0.6,col="red3")
-  lines(CalibDatState$tot_pop_yr_fb[[st]][1:7,1],pop_tot,lty=3,col="grey50")
-  lines(CalibDatState$tot_pop_yr_fb[[st]][1:7,1],CalibDatState$tot_pop_yr_fb[[st]][8:14,3]/1e6,lty=3,col="blue")
-  lines(CalibDatState$tot_pop_yr_fb[[st]][1:7,1],CalibDatState$tot_pop_yr_fb[[st]][1:7,3]/1e6,lty=3,col="red3")
+  points(time,tot_pop_yr,pch=19,cex=0.6,col="grey50");  lines(time,tot_pop_yr,lty=3,col="grey50")
+  points(time,tot_pop_yr_us,pch=19,cex=0.6,col="blue"); lines(time,tot_pop_yr_us,lty=3,col="blue")
+  points(time,tot_pop_yr_nus,pch=19,cex=0.6,col="red3");lines(time,tot_pop_yr_nus,lty=3,col="red3")
+
+
   lines(1950:2015,V[,2],lwd=2,col="red3")
   lines(1950:2015,V[,1],lwd=2,col="blue")
   lines(1950:2015,rowSums(V),lwd=2,col="grey50")
@@ -199,16 +206,17 @@ calib_graphs_st <- function(df,loc, Par_list){
   ### ### ### ### ### ###   TOTAL MORT EACH DECADE, BY US/FB  ### ### ### ### ### ###
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   # V  <- cbind(rowSums(df[30:67,255:265]), rowSums(df[30:67,266:276]))*1e6
-  V1c <- rowSums(df[30:67,121:131])*1e6
-  plot(1,1,ylim=c(min(V1c)*.5,max(V1c)*2),xlim=c(1979,2016),xlab="",ylab="",axes=F)
-  axis(1);axis(2,las=2);box()
-  abline(h=axTicks(2),col="grey85")
-
+  V1c <- rowSums(df[30:67,121:131])
   #format calibdat
   data("ST_tot_mort",package="MITUS")
   #1979-2016 total deaths
-  ST_deaths_tot   <- ST_tot_mort[which(ST_tot_mort$State==StateID[st,1]),]
-  ST_deaths_tot   <- ST_deaths_tot[,3:4]
+  ST_deaths_tot   <- as.matrix(ST_tot_mort[which(ST_tot_mort$State==StateID[st,1]),][,3:4])
+  ST_deaths_tot[,2]<-ST_deaths_tot[,2]/1e6
+  plot(1,1,ylim=c(min(V1c,ST_deaths_tot[,2])*.5,max(V1c,ST_deaths_tot[,2])*2),xlim=c(1979,2016),xlab="",ylab="",axes=F)
+  axis(1);axis(2,las=2);box()
+  abline(h=axTicks(2),col="grey85")
+
+
 
 
   # lines(1979:2016,V[,2],lwd=2,col="red3")
@@ -235,10 +243,9 @@ calib_graphs_st <- function(df,loc, Par_list){
   V3[8] <- V3[8]+V2[9]
   V3<-V3/tot
 
-  data("death_age_dist",package="MITUS")
-  tda <- tot_deaths_age/rowSums(tot_deaths_age)
-  tda<-tda[18,]
-  plot(0,0,ylim=c(min(range(V3))*.5,max(range(V3))*2),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA)
+  tda <- readRDS(system.file("ST/STdeathbyAge.rds",package="MITUS"))[[st]][47,-c(1,12)]
+  tda<-tda/sum(tda)
+  plot(0,0,ylim=c(min(range(V3,tda))*.5,max(range(V3,tda))*2),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA)
   axis(1,1:8,paste(c("0-4","5-24","25-44","45-54","55-64","65-74","75-84","85+"),"\nyears",sep=""),tick=F,cex.axis=0.75)
   axis(1,1:9-0.5,rep("",9))
   axis(2,c(0,.2,.4,.6,.8,1.0,1.2),las=2);box()
@@ -338,8 +345,8 @@ calib_graphs_st <- function(df,loc, Par_list){
   lines(2006:2016,V*100,lwd=2,col=4)
 
   #reported data for comparison
-  points(2006:2016,CalibDatState$cases_yr_ag_nat_st[[st]][14:24,12,2]/tot_cases*100,pch=19,cex=0.6)
-  lines(2006:2016,CalibDatState$cases_yr_ag_nat_st[[st]][14:24,12,2]/tot_cases*100,lty=3)
+  points(2006:2016,CalibDatState$cases_yr_ag_nat_st[[st]][14:24,12,"nusb"]/tot_cases*100,pch=19,cex=0.6)
+  lines(2006:2016,CalibDatState$cases_yr_ag_nat_st[[st]][14:24,12,"nusb"]/tot_cases*100,lty=3)
 
   #plot text
   mtext("Year",1,2.5,cex=1.2)
@@ -349,22 +356,21 @@ calib_graphs_st <- function(df,loc, Par_list){
   ################################################################################
   #Percent of Non-US Born Cases from Recent Immigrant Population
 
-  V <- cbind(df[55:65,"NOTIF_F1"]+df[55:65,"NOTIF_MORT_F1"],df[55:65,"NOTIF_F2"]+df[55:65,"NOTIF_MORT_F2"])
+  V <- cbind(df[58:68,"NOTIF_F1"]+df[58:68,"NOTIF_MORT_F1"],df[58:68,"NOTIF_F2"]+df[58:68,"NOTIF_MORT_F2"])
   V <- V[,1]/rowSums(V)*100
   #reported data for comparison
-  notif_fb_rec   <- cbind(CalibDatState$fb_recent_cases[,2],1-CalibDatState$fb_recent_cases[,2])*CalibDatState$fb_recent_cases[,3]
-  notif_fb_rec <-notif_fb_rec[12:22,1]/rowSums(notif_fb_rec[12:22,])*100
+  notif_fb_per          <- as.numeric(as.matrix(CalibDatState[["rt_fb_cases"]])[as.character(CalibDatState[["rt_fb_cases"]][,1])==loc,][8:18,c(2,7)])
   #format the plot
-  plot(0,0,ylim=c(min(V)*.25,min(max(V,notif_fb_rec)*1.5,100)),xlim=c(2004,2014),xlab="",ylab="",axes=F)
+  plot(0,0,ylim=c(min(V,notif_fb_per[,2])*.25,min(max(V,notif_fb_per[,2])*1.5,100)),xlim=c(2007,2017),xlab="",ylab="",axes=F)
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
 
   #plot the model data
-  lines(2004:2014,V,lwd=2,col=4)
+  lines(2007:2017,V,lwd=2,col=4)
 
   #reported data for comparison
-  points(2004:2014,notif_fb_rec,pch=19,cex=0.6)
-  lines(2004:2014,notif_fb_rec,lty=3)
+  points(2007:2017,notif_fb_per[,2],pch=19,cex=0.6)
+  lines(2007:2017,notif_fb_per[,2],lty=3)
 
   #plot text
   mtext("Year",1,2.5,cex=1.2)
