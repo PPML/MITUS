@@ -101,17 +101,17 @@ llikelihoodZ <-  function(samp_i, start_mat) {
       v15  <- cbind(M[62,55:65],M[62,33:43]-M[62,55:65])
       #make this IGRA positive
       pIGRA<-.33
-      Sens_IGRA <-(1/.780)*pIGRA
-      Spec_IGRA <-(1/.979)*pIGRA
-      v15a <- outer(v15[,1],c(Sens_IGRA,(1-Sens_IGRA)))+outer(v15[,2],c((1-Spec_IGRA),Spec_IGRA))
-      addlik <- ltbi_us_11_lLik(V=v15a)*2; addlik
+      v15a<-v15*pIGRA
+      Sens_IGRA <-(.780)
+      Spec_IGRA <-(.979)
+      v15b <- outer(v15a[,1],c(Sens_IGRA,(1-Sens_IGRA)))+outer(v15a[,2],c((1-Spec_IGRA),Spec_IGRA))
+      addlik <- ltbi_us_11_lLik(V=v15b)*2; addlik
       lLik <- lLik + addlik
       #' LTBI PREVALENCE BY AGE 2011, FB - index updated
       v16  <- cbind(M[62,66:76],M[62,44:54]-M[62,66:76])
-      v16a <- outer(v16[,1],c(Sens_IGRA,(1-Sens_IGRA)))+outer(v16[,2],c((1-Spec_IGRA),Spec_IGRA))
-
-      # v16a <- outer(v16[,1],c(1/0.74382,1/(1-0.74382)))+outer(v16[,2],c(1/(1-0.94014),1/0.94014))
-      addlik <- ltbi_fb_11_lLik(V=v16a)*2; addlik
+      v16a <- v16*pIGRA
+      v16b <- outer(v16a[,1],c(Sens_IGRA,(1-Sens_IGRA)))+outer(v16a[,2],c((1-Spec_IGRA),Spec_IGRA))
+      addlik <- ltbi_us_11_lLik(V=v16b)*2; addlik
       lLik <- lLik + addlik
       #' TOTAL POP EACH DECADE, BY US/FB - index updated (maybe)
       v17  <- M[,31]+M[,32]

@@ -418,11 +418,13 @@ legend("topright",c("Discontinued","Died","Reported data","Model"),pch=c(15,15,1
 
 V  <- cbind(t(df[62,55:65]),t(df[62,33:43]-df[62,55:65]))
 pIGRA<-.33
-Sens_IGRA <-(1/.780)*pIGRA
-Spec_IGRA <-(1/.979)*pIGRA
+v1<-V*pIGRA
+Sens_IGRA <-(.780)
+Spec_IGRA <-(.979)
+Va <- outer(v1[,1],c(Sens_IGRA,(1-Sens_IGRA)))+outer(v1[,2],c((1-Spec_IGRA),Spec_IGRA))
 
 # Va <- outer(V[,1],c(0.74382,(1-0.74382)))+outer(V[,2],c((1-0.94014),0.94014))
-Va <- outer(V[,1],c(Sens_IGRA,(1-Sens_IGRA)))+outer(V[,2],c((1-Spec_IGRA),Spec_IGRA))
+# Va <- outer(V[,1],c(Sens_IGRA,(1-Sens_IGRA)))+outer(V[,2],c((1-Spec_IGRA),Spec_IGRA))
 # Va<-V
 colnames(V) <- c("LTBI", "No-LTBI")
 
@@ -461,8 +463,12 @@ legend("topleft",c("Reported data","Model"),pch=c(19,15),lwd=c(0,NA),
 V  <- cbind(t(df[62,66:76]),t(df[62,44:54]-df[62,66:76]))
 
 # Va <- outer(V[,1],c(0.74382,(1-0.74382)))+outer(V[,2],c((1-0.94014),0.94014))
-
-Va <- outer(V[,1],c(Sens_IGRA,(1-Sens_IGRA)))+outer(V[,2],c((1-Spec_IGRA),Spec_IGRA))
+#make this IGRA positive
+pIGRA<-.33
+v1<-V*pIGRA
+Sens_IGRA <-(.780)
+Spec_IGRA <-(.979)
+Va <- outer(v1[,1],c(Sens_IGRA,(1-Sens_IGRA)))+outer(v1[,2],c((1-Spec_IGRA),Spec_IGRA))
 colnames(V) <- c("LTBI", "No-LTBI")
 
 V1 <- Va[-11,]; V1<-V1[-10,]
