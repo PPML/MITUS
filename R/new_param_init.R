@@ -408,8 +408,8 @@ fin_param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   SensLt_v        <- rep(SensLt, month)    #  sens of test for latent TB infection
   SpecLt_v        <- rep(SpecLt, month)    #  spec of test for latent TB infection
   ######################     IGRA FRACTION PROGRAM CHANGE    ########################
-  if (prg_chng["IGRA_frc"] != (IGRA_frc)*100){
-    frc<-prg_chng["IGRA_frc"]/100
+  if (prg_chng["IGRA_frc"] != (IGRA_frc)){
+    frc<-prg_chng["IGRA_frc"]
     SensLt_v[prg_m:length(SensLt_v)]<-frc*Sens_IGRA + (1-frc)*Sens_TST
     SpecLt_v[prg_m:length(SensLt_v)]<-frc*Spec_IGRA + (1-frc)*Spec_TST
   }
