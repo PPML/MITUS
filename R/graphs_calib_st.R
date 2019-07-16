@@ -482,12 +482,26 @@ calib_graphs_st <- function(df,loc, Par_list){
 
   V  <- cbind(t(df[62,55:65]),t(df[62,33:43]-df[62,55:65]))
   colnames(V) <- c("LTBI", "No-LTBI")
+  pIGRA<-.33
+  Sens_IGRA <-(1/.780)*pIGRA
+  Spec_IGRA <-(1/.979)*pIGRA
 
-  V1 <- V[-11,]; V1<-V1[-10,]
-  V1[9,] <- V1[9,]+V[10,]+V[11,]
+  # Va <- outer(V[,1],c(0.74382,(1-0.74382)))+outer(V[,2],c((1-0.94014),0.94014))
+  Va <- outer(V[,1],c(Sens_IGRA,(1-Sens_IGRA)))+outer(V[,2],c((1-Spec_IGRA),Spec_IGRA))
+  # Va<-V
+  colnames(V) <- c("LTBI", "No-LTBI")
+
+  V1 <- Va[-11,]; V1<-V1[-10,]
+  V1[9,] <- V1[9,]+Va[10,]+Va[11,]
 
   V2 <- rep(NA,8)
   V2 <- V1[2:9,1]/rowSums(V1[2:9,])*100
+  #
+  # V1 <- V[-11,]; V1<-V1[-10,]
+  # V1[9,] <- V1[9,]+V[10,]+V[11,]
+  #
+  # V2 <- rep(NA,8)
+  # V2 <- V1[2:9,1]/rowSums(V1[2:9,])*100
   #reported data for comparison
   ltbi_us_11      <- CalibDatState[["LTBI_prev_US_11_IGRA"]]
   ltbi_fb_11      <- CalibDatState[["LTBI_prev_FB_11_IGRA"]]
@@ -521,11 +535,17 @@ calib_graphs_st <- function(df,loc, Par_list){
 
   colnames(V) <- c("LTBI", "No-LTBI")
 
-  V1 <- V[-11,]; V1<-V1[-10,]
-  V1[9,] <- V[9,]+V[10,]+V[11,]
+  V1 <- Va[-11,]; V1<-V1[-10,]
+  V1[9,] <- V[9,]+Va[10,]+Va[11,]
 
   V2 <- rep(NA,8)
   V2 <- V1[2:9,1]/rowSums(V1[2:9,])*100
+
+  # V1 <- V[-11,]; V1<-V1[-10,]
+  # V1[9,] <- V[9,]+V[10,]+V[11,]
+  #
+  # V2 <- rep(NA,8)
+  # V2 <- V1[2:9,1]/rowSums(V1[2:9,])*100
 
   #format the plot
   plot(0,0,ylim=c(0,max(V2)*2),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA)
