@@ -483,12 +483,16 @@ calib_graphs_st <- function(df,loc, Par_list){
   V  <- cbind(t(df[62,55:65]),t(df[62,33:43]-df[62,55:65]))
   colnames(V) <- c("LTBI", "No-LTBI")
 
-  pIGRA<-.33
+  pIGRA<-1
   v1<-V*pIGRA
-  Sens_IGRA <-(.780)
-  Spec_IGRA <-(.979)
-  Va <- outer(v1[,1],c(Sens_IGRA,(1-Sens_IGRA)))+outer(v1[,2],c((1-Spec_IGRA),Spec_IGRA))
+  Sens_IGRA <-c(.780,.675,.712,.789,.591)
+  Spec_IGRA <-c(.979,.958,.989,.985,.931)
+  names(Sens_IGRA)<- names(Spec_IGRA)<-c("lrUS","hrUS","youngNUS","NUS","hrNUS")
+  Va <- outer(v1[,1],c(Sens_IGRA[1],(1-Sens_IGRA[1])))+outer(v1[,2],c((1-Spec_IGRA[1]),Spec_IGRA[1]))
 
+  # Va <- outer(V[,1],c(0.74382,(1-0.74382)))+outer(V[,2],c((1-0.94014),0.94014))
+  # Va <- outer(V[,1],c(Sens_IGRA,(1-Sens_IGRA)))+outer(V[,2],c((1-Spec_IGRA),Spec_IGRA))
+  # Va<-V
 
   V1 <- Va[-11,]; V1<-V1[-10,]
   V1[9,] <- V1[9,]+Va[10,]+Va[11,]
@@ -533,14 +537,17 @@ calib_graphs_st <- function(df,loc, Par_list){
   V  <- cbind(t(df[62,66:76]),t(df[62,44:54]-df[62,66:76]))
   colnames(V) <- c("LTBI", "No-LTBI")
 
-  pIGRA<-.33
+  pIGRA<-1
   v1<-V*pIGRA
-  Sens_IGRA <-(.780)
-  Spec_IGRA <-(.979)
-  Va <- outer(v1[,1],c(Sens_IGRA,(1-Sens_IGRA)))+outer(v1[,2],c((1-Spec_IGRA),Spec_IGRA))
+  #under age 5
+  v1b <- (v1[1,1]*c(Sens_IGRA[3],(1-Sens_IGRA[3])))+(v1[1,2]*c((1-Spec_IGRA[3]),Spec_IGRA[3]))
+  #over age 5
+  v1c <- outer(v1[2:11,1],c(Sens_IGRA[4],(1-Sens_IGRA[4])))+outer(v1[2:11,2],c((1-Spec_IGRA[4]),Spec_IGRA[4]))
+  v1d<-rbind(v1b,v1c)
+  colnames(V) <- c("LTBI", "No-LTBI")
 
-  V1 <- Va[-11,]; V1<-V1[-10,]
-  V1[9,] <- V[9,]+Va[10,]+Va[11,]
+  V1 <- Vd[-11,]; V1<-V1[-10,]
+  V1[9,] <- V[9,]+Vd[10,]+Vd[11,]
 
   V2 <- rep(NA,8)
   V2 <- V1[2:9,1]/rowSums(V1[2:9,])*100

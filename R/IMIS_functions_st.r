@@ -99,18 +99,24 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc="MA") { # ParMatrix = ParInit
         lLik <- lLik + addlik
         ### ### ### LTBI PREVALENCE BY AGE 2011, US  ### ### ### ### ### ###  D
         v15  <- cbind(M[62,55:65],M[62,33:43]-M[62,55:65])
-        pIGRA<-.33
+        #make this IGRA positive
+        pIGRA<-1
         v15a<-v15*pIGRA
-        Sens_IGRA <-(.780)
-        Spec_IGRA <-(.979)
-        v15b <- outer(v15a[,1],c(Sens_IGRA,(1-Sens_IGRA)))+outer(v15a[,2],c((1-Spec_IGRA),Spec_IGRA))
-        addlik <- ltbi_us_11_lLik(V=v15b_st)*2; addlik
+        Sens_IGRA <-c(.780,.675,.712,.789,.591)
+        Spec_IGRA <-c(.979,.958,.989,.985,.931)
+        names(Sens_IGRA)<- names(Spec_IGRA)<-c("lrUS","hrUS","youngNUS","NUS","hrNUS")
+        v15b <- outer(v15a[,1],c(Sens_IGRA[1],(1-Sens_IGRA[1])))+outer(v15a[,2],c((1-Spec_IGRA[1]),Spec_IGRA[1]))
+        addlik <- ltbi_us_11_lLik(V=v15b)*2; addlik
         lLik <- lLik + addlik
         #' LTBI PREVALENCE BY AGE 2011, FB - index updated
         v16  <- cbind(M[62,66:76],M[62,44:54]-M[62,66:76])
         v16a <- v16*pIGRA
-        v16b <- outer(v16a[,1],c(Sens_IGRA,(1-Sens_IGRA)))+outer(v16a[,2],c((1-Spec_IGRA),Spec_IGRA))
-        addlik <- ltbi_us_11_lLik_st(V=v16b)*2; addlik
+        #under age 5
+        v16b <- (v16a[1,1]*c(Sens_IGRA[3],(1-Sens_IGRA[3])))+(v16a[1,2]*c((1-Spec_IGRA[3]),Spec_IGRA[3]))
+        #over age 5
+        v16c <- outer(v16a[2:11,1],c(Sens_IGRA[4],(1-Sens_IGRA[4])))+outer(v16a[2:11,2],c((1-Spec_IGRA[4]),Spec_IGRA[4]))
+        v16d<-rbind(v16b,v16c)
+        addlik <- ltbi_us_11_lLik_st(V=v16d)*2; addlik
         lLik <- lLik + addlik
         ### ### ### TOTAL DEATHS WITH TB 1999-2016 ### ### ### ### ### ###  D
         v19  <- M[50:67,227:237]   ### THIS NOW ALL TB DEATHS
