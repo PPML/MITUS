@@ -1,0 +1,106 @@
+model_calib_outputs<-function(loc="US",samp_i=1){
+  load(system.file(paste0(loc,"/",loc,"_results_1.rda"),package="MITUS"))
+  res<-as.data.frame(out[samp_i,,])
+  ############                   demographic targets                     ############
+  ### ### ### ### ### ###   TOTAL POP EACH DECADE, BY US/FB   ### ### ### ### ### ###
+  V  <- cbind(res[1:68,30], res[1:68,31]+res[1:68,32])
+  saveRDS(V,file = paste0("~/MITUS/inst/",loc,"/calibration_outputs/",loc,"_pop_yr_nat_07-18-19.rds"))
+  ### ### ### ### ### ### TOTAL POP AGE DISTRIBUTION 2014  ### ### ### ### ### ###
+  V  <- cbind(t(res[68,33:43]), t(res[68,44:54]))
+  V1  <- V[-3,]
+  V1[2,] <- V1[2,]+V[3,]
+  V2 <- V1[-4,]
+  V2[3,] <- V2[3,]+V1[4,]
+  V3 <- V2[-9,]
+  V3[8,] <- V3[8,]+V2[9,]
+  saveRDS(V3,file = paste0("~/MITUS/inst/",loc,"/calibration_outputs/",loc,"_pop_ag_nat_07-18-19.rds"))
+
+  ### ### ### ### ### ###   TOTAL MORT EACH DECADE, BY US/FB  ### ### ### ### ### ###
+  V  <- cbind(rowSums(res[1:67,255:265]), rowSums(res[1:67,266:276]))
+  V1c <- rowSums(res[1:67,121:131])
+  saveRDS(V1c,file = paste0("~/MITUS/inst/",loc,"/calibration_outputs/",loc,"_mort_yr_nat_07-18-19.rds"))
+
+  ### ### ### ### ### ###   TOTAL MORT AGE DISTRIBUTION 2014  ### ### ### ### ### ###
+  V  <- cbind((res[67,255:265])+(res[67,266:276]))
+  V1  <- V[,-3]
+  V1[,2] <- V1[,2]+V[,3]
+  V2 <- V1[,-4]
+  V2[,3] <- V2[,3]+V1[,4]
+  V3 <- V2[,-9]
+  V3[,8] <- V3[,8]+V2[,9]
+  saveRDS(V3,file = paste0("~/MITUS/inst/",loc,"/calibration_outputs/",loc,"_mort_ag_nat_07-18-19.rds"))
+
+  ############                   tb specific targets                     ############
+  # graph of total diagnosed cases
+  # by total population, US born population, and non-US born population
+  V0 <- res[4:67,"NOTIF_ALL"]+res[4:67,"NOTIF_MORT_ALL"] #total population
+  V1 <- res[44:67,"NOTIF_US"]+res[44:67,"NOTIF_MORT_US"]   #US born population
+  V2 <- res[44:67,"NOTIF_F1"]+res[44:67,"NOTIF_F2"]+res[44:67,"NOTIF_MORT_F1"]+res[44:67,"NOTIF_MORT_F2"]   #non-US born population
+  tot_cases<-list()
+  tot_cases[["allpop"]]<-V0
+  tot_cases[["USBpop"]]<-V1
+  tot_cases[["NUSBpop"]]<-V2
+  saveRDS(tot_cases,file = paste0("~/MITUS/inst/",loc,"/calibration_outputs/",loc,"_TBcases_07-18-19.rds"))
+
+  #Percent of Total Cases Non-US Born Population
+  V <- cbind(res[44:67,"NOTIF_US"]+res[44:67,"NOTIF_MORT_US"], #US born population
+             res[44:67,"NOTIF_F1"]+res[44:67,"NOTIF_F2"]+  #non-US born population
+               res[44:67,"NOTIF_MORT_F1"]+res[44:67,"NOTIF_MORT_F2"])
+  V <- V[,2]/rowSums(V)
+  #Percent of Non-US Born Cases from Recent Immigrant Population
+  V <- cbind(res[44:65,"NOTIF_F1"]+res[44:65,"NOTIF_MORT_F1"],res[44:65,"NOTIF_F2"]+res[44:65,"NOTIF_MORT_F2"])
+  V <- V[,1]/rowSums(V)
+  #Age distribution of Cases
+  #0-24 yrs, 25-44 yrs, 45-64 yrs, 65+ yrs
+  V   <- (res[51:67,136:146]+res[51:67,189:199])
+  V2  <- V[,-11]
+  V2[,10] <- V2[,10]+V[,11]
+  # Treatment Outcomes 1993-2014
+  V   <- res[44:65,132:134]
+  Vdisc <- V[,2]/rowSums(V)
+  Vdead <- V[,3]/rowSums(V)
+  #LTBI Prevalance by Age in 2011, US born
+  V  <- cbind(t(res[62,55:65]),t(res[62,33:43]-res[62,55:65]))
+  pIGRA<-1
+  v1<-V*pIGRA
+  Sens_IGRA <-c(.780,.675,.712,.789,.591)
+  Spec_IGRA <-c(.979,.958,.989,.985,.931)
+  names(Sens_IGRA)<- names(Spec_IGRA)<-c("lrUS","hrUS","youngNUS","NUS","hrNUS")
+  Va <- outer(v1[,1],c(Sens_IGRA[1],(1-Sens_IGRA[1])))+outer(v1[,2],c((1-Spec_IGRA[1]),Spec_IGRA[1]))
+  V1 <- Va[-11,]; V1<-V1[-10,]
+  V1[9,] <- V1[9,]+Va[10,]+Va[11,]
+  V2 <- rep(NA,8)
+  V2 <- V1[2:9,1]/rowSums(V1[2:9,])*100
+  # colnames(V2) <- c("LTBI", "No-LTBI")
+
+  saveRDS(V2,file = paste0("~/MITUS/inst/",loc,"/calibration_outputs/",loc,"_US_LTBI_pct_07-18-19.rds"))
+
+  #LTBI Prevalance by Age in 2011, non-US born
+  V  <- cbind(t(res[62,66:76]),t(res[62,44:54]-res[62,66:76]))
+  pIGRA<-1
+  v1<-V*pIGRA
+  #under age 5
+  v1b <- (v1[1,1]*c(Sens_IGRA[3],(1-Sens_IGRA[3])))+(v1[1,2]*c((1-Spec_IGRA[3]),Spec_IGRA[3]))
+  #over age 5
+  v1c <- outer(v1[2:11,1],c(Sens_IGRA[4],(1-Sens_IGRA[4])))+outer(v1[2:11,2],c((1-Spec_IGRA[4]),Spec_IGRA[4]))
+  v1d<-rbind(v1b,v1c)
+  colnames(v1d) <- c("LTBI", "No-LTBI")
+  V1 <- v1d[-11,]; V1<-V1[-10,]
+  V1[9,] <- V[9,]+v1d[10,]+v1d[11,]
+  V2 <- rep(NA,8)
+  V2 <- V1[2:9,1]/rowSums(V1[2:9,])*100
+  saveRDS(V2,file = paste0("~/MITUS/inst/",loc,"/calibration_outputs/",loc,"_US_LTBI_pct_07-18-19.rds"))
+
+  # Age Distribution of TB Deaths 1999-2014
+
+  # V  <- res[50:65,227:237]
+  #
+  # V2 <- V[,-11]; V2[,10] <- V[,10]+V[,11]
+  # V3 <- colSums(V2)*1e6
+
+  # total tb deaths over time 2004-2014
+  V   <- rowSums(res[55:65,227:237])
+  saveRDS(V,file = paste0("~/MITUS/inst/",loc,"/calibration_outputs/",loc,"_TBdeaths_07-18-19.rds"))
+
+
+}
