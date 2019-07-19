@@ -314,6 +314,9 @@ fin_param <- function (PV,loc,prg_chng){
   #adjust for no latent
   LtDxPar_nolt[1,]<-LtDxPar_nolt[1,]*rrTestLrNoTb
 
+  LtDxPar_lt[,]<-LtDxPar_lt[,]/(1+LtDxPar_lt[,])
+  LtDxPar_nolt[,]<-LtDxPar_nolt[,]/(1+LtDxPar_nolt[,])
+
   ######################          LTBI DIAGNOSIS           ########################
   ###################### LTBI TX EFFECTIVENESS PROGRAM CHANGE ########################
   if (prg_chng["ltbi_eff_frc"] != round(PV["EffLt"], 2)){
