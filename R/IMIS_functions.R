@@ -99,9 +99,7 @@ llikelihoodZ <-  function(samp_i, start_mat) {
       lLik <- lLik + addlik
       #' LTBI PREVALENCE BY AGE 2011, US - index updated
       v15  <- cbind(M[62,55:65],M[62,33:43]-M[62,55:65])
-      #make this IGRA positive
-      pIGRA<-1
-      v15a<-v15*pIGRA
+      v15a<-v15
       Sens_IGRA <-c(.780,.675,.712,.789,.591)
       Spec_IGRA <-c(.979,.958,.989,.985,.931)
       names(Sens_IGRA)<- names(Spec_IGRA)<-c("lrUS","hrUS","youngNUS","NUS","hrNUS")
@@ -110,7 +108,7 @@ llikelihoodZ <-  function(samp_i, start_mat) {
       lLik <- lLik + addlik
       #' LTBI PREVALENCE BY AGE 2011, FB - index updated
       v16  <- cbind(M[62,66:76],M[62,44:54]-M[62,66:76])
-      v16a <- v16*pIGRA
+      v16a <- v16
       #under age 5
       v16b <- (v16a[1,1]*c(Sens_IGRA[3],(1-Sens_IGRA[3])))+(v16a[1,2]*c((1-Spec_IGRA[3]),Spec_IGRA[3]))
       #over age 5
