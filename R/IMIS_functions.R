@@ -114,7 +114,7 @@ llikelihoodZ <-  function(samp_i, start_mat) {
       #over age 5
       v16c <- outer(v16a[2:11,1],c(Sens_IGRA[4],(1-Sens_IGRA[4])))+outer(v16a[2:11,2],c((1-Spec_IGRA[4]),Spec_IGRA[4]))
       v16d<-rbind(v16b,v16c)
-      addlik <- ltbi_us_11_lLik(V=v16d)*2; addlik
+      addlik <- ltbi_fb_11_lLik(V=v16d)*2; addlik
       lLik <- lLik + addlik
       #' TOTAL POP EACH DECADE, BY US/FB - index updated (maybe)
       v17  <- M[,31]+M[,32]
