@@ -475,7 +475,7 @@ v1d<-rbind(v1b,v1c)
 colnames(v1d) <- c("LTBI", "No-LTBI")
 
 V1 <- v1d[-11,]; V1<-V1[-10,]
-V1[9,] <- V[9,]+v1d[10,]+v1d[11,]
+V1[9,] <- V1[9,]+v1d[10,]+v1d[11,]
 
 V2 <- rep(NA,8)
 V2 <- V1[2:9,1]/rowSums(V1[2:9,])*100
