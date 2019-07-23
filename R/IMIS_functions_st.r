@@ -116,7 +116,7 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc="MA") { # ParMatrix = ParInit
         #over age 5
         v16c <- outer(v16a[2:11,1],c(Sens_IGRA[4],(1-Sens_IGRA[4])))+outer(v16a[2:11,2],c((1-Spec_IGRA[4]),Spec_IGRA[4]))
         v16d<-rbind(v16b,v16c)
-        addlik <- ltbi_us_11_lLik_st(V=v16d)*2; addlik
+        addlik <- ltbi_fb_11_lLik_st(V=v16d)*2; addlik
         lLik <- lLik + addlik
         ### ### ### TOTAL DEATHS WITH TB 1999-2016 ### ### ### ### ### ###  D
         v19  <- M[50:67,227:237]   ### THIS NOW ALL TB DEATHS
