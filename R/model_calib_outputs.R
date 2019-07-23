@@ -60,7 +60,12 @@ model_calib_outputs<-function(loc="US",samp_i=1){
   V2<-matrix(NA,length(51:67),4)
   V2[,1]<-rowSums(V[,1:3]); V2[,2]<-rowSums(V[,4:5])
   V2[,3]<-rowSums(V[,6:8]); V2[,4]<-rowSums(V[,9:11])
-  saveRDS(V2*1e6,file = paste0("~/MITUS/inst/",loc,"/calibration_outputs/",loc,"_age_cases_tot_07-18-19.rds"))
+  saveRDS(V2*1e6,file = paste0("~/MITUS/inst/",loc,"/calibration_outputs/",loc,"_age_cases_4grps_07-18-19.rds"))
+  #Age distribution of Cases
+  #all age bands
+  V   <- (res[51:67,136:146]+res[51:67,189:199])
+  V2  <- cbind(2000:2016,V)
+  saveRDS(V2,file = paste0("~/MITUS/inst/",loc,"/calibration_outputs/",loc,"_age_cases_tot_07-18-19.rds"))
 
   # Treatment Outcomes 1993-2014
   V   <- res[44:65,132:134]
@@ -88,7 +93,7 @@ model_calib_outputs<-function(loc="US",samp_i=1){
   V2 <- V1[2:9,1]/rowSums(V1[2:9,])*100
   # colnames(V2) <- c("LTBI", "No-LTBI")
 
-  saveRDS(V2,file = paste0("~/MITUS/inst/",loc,"/calibration_outputs/",loc,"_US_LTBI_pct_07-18-19.rds"))
+  saveRDS(V2,file = paste0("~/MITUS/inst/",loc,"/calibration_outputs/",loc,"_USB_LTBI_pct_07-18-19.rds"))
 
   #LTBI Prevalance by Age in 2011, non-US born
   V  <- cbind(t(res[62,66:76]),t(res[62,44:54]-res[62,66:76]))
@@ -104,14 +109,15 @@ model_calib_outputs<-function(loc="US",samp_i=1){
   V1[9,] <- V[9,]+v1d[10,]+v1d[11,]
   V2 <- rep(NA,8)
   V2 <- V1[2:9,1]/rowSums(V1[2:9,])*100
-  saveRDS(V2,file = paste0("~/MITUS/inst/",loc,"/calibration_outputs/",loc,"_US_LTBI_pct_07-18-19.rds"))
+  saveRDS(V2,file = paste0("~/MITUS/inst/",loc,"/calibration_outputs/",loc,"_NUSB_LTBI_pct_07-18-19.rds"))
 
   # Age Distribution of TB Deaths 1999-2014
 
-  # V  <- res[50:65,227:237]
-  #
-  # V2 <- V[,-11]; V2[,10] <- V[,10]+V[,11]
-  # V3 <- colSums(V2)*1e6
+  V  <- res[50:65,227:237]
+  V2 <- V[,-11]; V2[,10] <- V[,10]+V[,11]
+  V3 <- colSums(V2)*1e6
+
+  saveRDS(V3,file = paste0("~/MITUS/inst/",loc,"/calibration_outputs/",loc,"_TBdeathsAge_07-18-19.rds"))
 
   # total tb deaths over time 2004-2014
   V   <- rowSums(res[55:65,227:237])
