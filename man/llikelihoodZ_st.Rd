@@ -3,19 +3,13 @@
 \name{llikelihoodZ_st}
 \alias{llikelihoodZ_st}
 \title{if any output is missing or negative or if any model state population is negative
+LTBI PREVALENCE BY AGE 2011, FB - index updated
 LIKELIHOOD FOR BORGDORFF, FEREBEE & SUTHERLAND ESTIMATES
 Total DEATHS 1979-2016
-#' Total DEATHS 2015-2016 BY AGE
-#' Mort_dist 2016 dirchlet
-mort_dist norm}
+#' #' Total DEATHS 2015-2016 BY AGE}
 \usage{
-llikelihoodZ_st(samp_i, ParMatrix, loc = "MA", TB = TRUE)
+llikelihoodZ_st(samp_i, ParMatrix, loc = "MA")
 }
 \description{
-if any output is missing or negative or if any model state population is negative
-LIKELIHOOD FOR BORGDORFF, FEREBEE & SUTHERLAND ESTIMATES
-Total DEATHS 1979-2016
-#' Total DEATHS 2015-2016 BY AGE
-#' Mort_dist 2016 dirchlet
-mort_dist norm
+#' #' Mort_dist 2016 dirchlet
 }

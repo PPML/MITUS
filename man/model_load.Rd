@@ -11,6 +11,7 @@ model_load(loc = "US")
 }
 \value{
 void
+add loc as a global variable
 load necessary datasets
 Model Input
 }
