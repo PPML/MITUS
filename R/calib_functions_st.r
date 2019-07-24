@@ -29,8 +29,7 @@ notif_decline_lLik_st <- function(V, st=st) {
   notif_decline  <- CalibDatState[["cases_prop_change_53_94"]]
   notif_tot2     <- cumprod(notif_decline)/prod(notif_decline)*notif_tot[1]
   adj_1b         <- sum(dnorm(notif_tot2,notif_tot2,notif_tot2*0.2/1.96,log=T)*wts[4:44])
-  V2<-V*1e6
-  sum(dnorm(notif_tot2,V2,notif_tot2*0.2/1.96,log=T)*wts[4:44]) - adj_1b
+  sum(dnorm(notif_tot2,V*1e6,notif_tot2*0.2/1.96,log=T)*wts[4:44]) - adj_1b
   }
 
 ### ### ### US CASES AGE DISTRIBUTION 1993-2016  ### ### ### ### ### ### D
@@ -244,6 +243,7 @@ tot_dth_age_lLik_st <- function(V,st,rho=0.1) {
   tda <- readRDS(system.file("ST/STdeathbyAge.rds",package="MITUS"))[[st]][47:48,-c(1,12)]
   adj_20b        <- sum(dDirMult(M=tda+0.01,n=tda,Rho=rho)*wts[66:67])
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
+  V2<-V2*1e6
   sum(dDirMult(M=V2+0.01,n=tda,Rho=rho)*wts[66:67]) - adj_20b
   }
 
