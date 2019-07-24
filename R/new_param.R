@@ -309,8 +309,8 @@ fin_param <- function (PV,loc,prg_chng){
   LtDxPar_lt   <-SensLt
   LtDxPar_nolt <- 1-SpecLt
   #adjust for High Risk Populations
-  LtDxPar_lt[c(2:5),]     <-rrTestHr*LtDxPar_lt[c(2:5),]
-  LtDxPar_nolt[c(2:5),]   <-  rrTestHr*LtDxPar_nolt[c(2:5),]
+  LtDxPar_lt[c(2,5),]     <-rrTestHr*LtDxPar_lt[c(2,5),]
+  LtDxPar_nolt[c(2,5),]   <-rrTestHr*LtDxPar_nolt[c(2,5),]
   #adjust for no latent
   LtDxPar_nolt[1,]<-LtDxPar_nolt[1,]*rrTestLrNoTb
 
