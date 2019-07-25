@@ -68,10 +68,16 @@ notif_fb_lLik_st <- function(V,st,rho=0.005) { # V = table of notifications by f
 ### ### ### CASES FB DISTRIBUTION SLOPES OVER PAST 5 year  ### ### ### ### ### ### D
 
 notif_fbus_slp_lLik_st <- function(V,st) {
-  notif_fbus_slp5     <- as.numeric(CalibDatState[["case_change_5"]][st,2:3])
+  # notif_fbus_slp5     <- as.numeric(CalibDatState[["case_change_5"]][st,2:3])
+  notif_age_fb0     <- CalibDatState[["cases_yr_ag_nat_st"]][[st]][,,"nusb"]
+  notif_age_us0     <- CalibDatState[["cases_yr_ag_nat_st"]][[st]][,,"usb"]
+  tot_case_nat<-cbind(notif_age_us0[,2],notif_age_us0 [,2])
+  #calculate the slopes
+  notif_fbus_slp5<-apply(log(tot_case_nat[20:25,]),2,function(x) lm(x~I(1:6))$coef[2])
   adj_3a              <- sum(dnorm(notif_fbus_slp5,notif_fbus_slp5,0.005,log=T))# V = table of notifications by fb 2011-2016 (row=6 years, col=fb then us)
-  V2 <- apply(log(V[1:6,]),2,function(x) lm(x~I(1:6))$coef[2])
-  sum(dnorm(V2,notif_fbus_slp5,0.005,log=T)) - adj_3a  }
+  V2 <- apply(log(V[,]),2,function(x) lm(x~I(1:6))$coef[2])
+  sum(dnorm(V2,notif_fbus_slp5,0.005,log=T)) - adj_3a
+  }
 
 ### ### ### CASES HR DISTRIBUTION 1993-2014  ### ### ### ### ### ### D
 # Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
