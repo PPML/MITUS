@@ -124,6 +124,7 @@ fin_param <- function (PV,loc,prg_chng){
       TotImmAge[i,j]   <- TotImmig[i]*AgeDist[j,i]
 
     }}
+  TotImmAge<-TotImmAge[1:1201,1:11]
 
   ######################           LTBI IMM.             ########################
   PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:65]^PV["TunLtbiTrend"]*ImmigInputs[["PrevTrend25_34"]][65]^(1-PV["TunLtbiTrend"]),
@@ -218,18 +219,18 @@ fin_param <- function (PV,loc,prg_chng){
   vORpfastRF  <-(exp((0:3)/3*log(ORpfastRF)))
   vORpfastPIRF  <- vORpfastRF*ORpfastPI
 
-  ############ UPDATE PROBS FOR LEVEL 1 OF REACTIVATION ###########
+  ############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
   Mpfast[,1]   <- vORpfastRF[1]*Mpfast[,1]
-  MpfastPI[,1]   <- vORpfastPIRF[1]*Mpfast[,1]
+  MpfastPI[,1]   <- vORpfastPIRF[1]*MpfastPI[,1]
   ############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
   Mpfast[,2]   <- vORpfastRF[2]*Mpfast[,2]
-  MpfastPI[,2]   <- vORpfastPIRF[2]*Mpfast[,2]
+  MpfastPI[,2]   <- vORpfastPIRF[2]*MpfastPI[,2]
   ############ UPDATE PROBS FOR LEVEL 3 OF REACTIVATION ###########
   Mpfast[,3]   <- vORpfastRF[3]*Mpfast[,3]
-  MpfastPI[,3]   <- vORpfastPIRF[3]*Mpfast[,3]
+  MpfastPI[,3]   <- vORpfastPIRF[3]*MpfastPI[,3]
   ############ UPDATE PROBS FOR LEVEL 4 OF REACTIVATION ###########
   Mpfast[,4]   <- vORpfastRF[4]*Mpfast[,4]
-  MpfastPI[,4]   <- vORpfastPIRF[4]*Mpfast[,4]
+  MpfastPI[,4]   <- vORpfastPIRF[4]*MpfastPI[,4]
 
   ##### UPDATE BOTH MATRICES WITH PROBABILITIES, NOT RATES
   Mpfast[,]    <- Mpfast[,]  /(1+Mpfast[,]);
@@ -262,27 +263,33 @@ fin_param <- function (PV,loc,prg_chng){
   rSlfCur      <- PV["rSlfCur"]/12
 
   ######################          LTBI DIAGNOSIS           ########################
-
   ######################        TEST SPECIFICATIONS          ######################
-  Sens_IGRA <-.780
-  Spec_IGRA <-.979
-  IGRA_frc <- .33
-  Sens_TST <-.726
-  Spec_TST <-.921
+  Sens_IGRA <-c(.780,.675,.712,.789,.591)
+  Spec_IGRA <-c(.979,.958,.989,.985,.931)
+  IGRA_frc<-.33
+  Sens_TST <-c(.726,.540,.691,.807,.570)
+  Spec_TST <-c(.921,.965,.739,.70,.885)
+  names(Sens_TST)<- names(Spec_TST)<-names(Sens_IGRA)<- names(Spec_IGRA)<-c("lrUS","hrUS","youngNUS","NUS","hrNUS")
+
   ###calculate the weighted mean of sensitivity and specificity
-  SensLt<-Sens_IGRA*IGRA_frc + (1-IGRA_frc)*Sens_TST
-  SpecLt<-Spec_IGRA*IGRA_frc + (1-IGRA_frc)*Spec_TST
+  SensLt<-matrix(NA,length(Sens_IGRA),month)
+  SpecLt<-matrix(NA,length(Spec_IGRA),month)
+  rownames(SensLt)<-rownames(SpecLt)<-names(Sens_IGRA)
   ###sensitivity and specificity must be time varying parameters in order to allow the user to change the
   ###percentage of IGRA used at a specific time range
-  SensLt_v        <- rep(SensLt, month)    #  sens of test for latent TB infection
-  SpecLt_v        <- rep(SpecLt, month)    #  spec of test for latent TB infection
+  for (i in 1:nrow(SensLt)){
+    SensLt[i,]          <-rep((Sens_IGRA[i]*IGRA_frc + (1-IGRA_frc)*Sens_TST[i]),month)
+    SpecLt[i,]          <-rep((Spec_IGRA[i]*IGRA_frc + (1-IGRA_frc)*Spec_TST[i]),month)
+  }
+
   ######################     IGRA FRACTION PROGRAM CHANGE    ########################
   if (prg_chng["IGRA_frc"] != IGRA_frc){
-    SensLt_v[prg_m:length(SensLt_v)]<-prg_chng["IGRA_frc"]*Sens_IGRA + (1-prg_chng["IGRA_frc"])*Sens_TST
-    SpecLt_v[prg_m:length(SensLt_v)]<-prg_chng["IGRA_frc"]*Spec_IGRA + (1-prg_chng["IGRA_frc"])*Spec_TST
-  }
+    for (i in 1:nrow(SensLt)){
+      SensLt[i,prg_m:ncol(SensLt)]    <-rep((Sens_IGRA[i]*prg_chng["IGRA_frc"] + (1-prg_chng["IGRA_frc"])*Sens_TST[i]),1+1201-prg_m)
+      SpecLt[i,prg_m:ncol(SpecLt)]    <-rep((Spec_IGRA[i]*prg_chng["IGRA_frc"] + (1-prg_chng["IGRA_frc"])*Spec_TST[i]),1+1201-prg_m)
+    }}
+
   ### ADJUST THIS FOR THE FOREIGN BORN
-  SpecLtFb_v      <- SpecLt_v         #  spec of test for latent TB infection (based on IGRA QFT-GIT) in foreign-born (assumed BCG exposed)
   ######################        SCREENING RATES          ######################
   rLtScrt       <- LgtCurve(1985,2015,PV["rLtScr"])/12
   ######################  SCREENING RATE PROGRAM CHANGE ########################
@@ -295,10 +302,20 @@ fin_param <- function (PV,loc,prg_chng){
   ### because of the introduction of new time varying parameters, we will create 2 matrices to
   ### hold the three different sensitivity and specificity measures; one will be for those whose
   ### true LTBI status is positive and the other is for those whose true TB status is negative.
-  LtDxPar_nolt <- LtDxPar_lt <- matrix(NA,3,month);
-  rownames(LtDxPar_lt) <- rownames(LtDxPar_nolt) <- c("LR","HR","FB")
-  LtDxPar_lt[,]   <- rbind(SensLt_v                 , rrTestHr*SensLt_v    , SensLt_v)
-  LtDxPar_nolt[,] <- rbind(rrTestLrNoTb*(1-SpecLt_v), rrTestHr*(1-SpecLt_v), (1-SpecLtFb_v))
+  LtDxPar_nolt <- LtDxPar_lt <- matrix(NA,nrow(SensLt),month);
+  rownames(LtDxPar_lt) <- rownames(LtDxPar_nolt) <- rownames(SensLt)
+
+  ##adjust for no latent
+  LtDxPar_lt   <-SensLt
+  LtDxPar_nolt <- 1-SpecLt
+  #adjust for High Risk Populations
+  LtDxPar_lt[c(2,5),]     <-rrTestHr*LtDxPar_lt[c(2,5),]
+  LtDxPar_nolt[c(2,5),]   <-rrTestHr*LtDxPar_nolt[c(2,5),]
+  #adjust for no latent
+  LtDxPar_nolt[1,]<-LtDxPar_nolt[1,]*rrTestLrNoTb
+
+  LtDxPar_lt[,]<-LtDxPar_lt[,]/(1+LtDxPar_lt[,])
+  LtDxPar_nolt[,]<-LtDxPar_nolt[,]/(1+LtDxPar_nolt[,])
 
   ######################          LTBI DIAGNOSIS           ########################
   ###################### LTBI TX EFFECTIVENESS PROGRAM CHANGE ########################
@@ -678,4 +695,3 @@ fin_param <- function (PV,loc,prg_chng){
   Params[["ResNam"]]    <- ResNam
   return(Params)
 }
-

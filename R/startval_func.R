@@ -19,8 +19,9 @@ gen_st_val <-function(n=10, samp="LHS"){
 #or optimized data opt_all
 #'@name gen_par_matrix
 #'@param startMat a matrix of values in the normal space
+#'@param savefile boolean, should this matrix be saved
 #'@return matrix of Params in their original distributions
-gen_par_matrix<-function(startMat){
+gen_par_matrix<-function(startMat,savefile=FALSE ){
   ParMatrix<-matrix(NA,nrow(startMat),nrow(ParamInit))
   colnames(ParMatrix)<-rownames(ParamInit)
   for(i in 1:nrow(startMat)){
@@ -42,9 +43,9 @@ gen_par_matrix<-function(startMat){
   P <- P
   ParMatrix[i,]<-P
   }
-saveRDS(ParMatrix,file=paste("parAll",nrow(startMat),"_",Sys.time(),".rds", sep=""))
-  # saveRDS(ParMatrix,file="/Users/nis100/Desktop/GoodStateOptims/parAll_MA_10_2018_11_27.rds")
-
+  if (savefile==TRUE){
+    saveRDS(ParMatrix,file=paste("parAll",nrow(startMat),"_",Sys.time(),".rds", sep=""))
+  }
   return(ParMatrix)
 
 }

@@ -40,6 +40,9 @@ new_OutputsZint <-  function(samp_i=1,ParMatrix,startyr=1950, endyr=2050,Int1=0,
   # P <- Par
   IP <- list()
   IP <- fin_param_init(P,Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3,prg_chng)
+
+
+
   # data("trans_mat_nat",package="MITUS")
   # trans_mat_tot_ages<-trans_mat_tot_ages_nat
   # tm<-matrix(0,16,16)

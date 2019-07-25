@@ -1,23 +1,14 @@
-#' THIS FUNCTION INPUTS A TABLE OF PARAMETERS AND RUNS THE TB MODEL
-#' AND GENERATES AN ARRAY OF OUTPUTS FOR EACH POSSIBLE PREDEFINED
-#' SCENARIO; THIS ARRAY IS THEN SAVED TO THE DATA FOLDER FOR THAT
-#' LOCATION
+#' THIS FUNCTION RESHAPES THE 9 INDIVIDUAL FILES INTO THE
+#' FORMAT NEEDED FOR TABBY2 VISUALIZATION
 
 #'@name reshape_results
 #'@param loc two character location code for the model location
-
-reshape_results<-function(loc){
+#'@param results is a list of results to be reshaped
+#'@export
+#'
+reshape_results<-function(loc,results){
 #load tabus
 library(tabus)
-
-#load mitus sims into data structure
-load_data <- function(i) {
-  data_name <-
-    load(system.file(paste0(loc, "/", loc, "_results_",i,".rda"), package='MITUS'))
-  return(get(data_name))
-}
-
-results <- lapply(1:9, load_data)
 
 #make some lists of reformatted data
 ResTabC <- list()

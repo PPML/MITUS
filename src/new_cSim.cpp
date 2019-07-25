@@ -1360,7 +1360,6 @@ Rcpp::List fin_cSim(
         //               }
         //             } } } } } } }
         /// LTBI SCREENING AND TLTBI INITIATION /// only for no previous TB or LTBI tx
-
         for(int rg=0; rg<2; rg++) {
           for(int na=0; na<3; na++) {
             ////////////// US BORN, LOW RISK  //////////////////
@@ -1368,17 +1367,27 @@ Rcpp::List fin_cSim(
               rTbP = rLtScrt[s]*LtDxPar_ltN[0][s];
               rTbN = rLtScrt[s]*LtDxPar_noltN[0][s];
             }
-            //////////// NON US BORN  ////////////////
-            if(rg==0 & na > 0) {
-              rTbP = rLtScrt[s]*LtDxPar_ltN[2][s];
-              rTbN = rLtScrt[s]*LtDxPar_noltN[2][s];
-            }
             ////////////// US BORN, HIGH RISK  /////////////////
-            if(rg==1) {
+            if(rg==1 & na==0) {
               rTbP = rLtScrt[s]*LtDxPar_ltN[1][s];
               rTbN = rLtScrt[s]*LtDxPar_noltN[1][s];
             }
             for(int ag=0; ag<11; ag++) {
+              ////////////// Young NUS (under 5)  /////////////////
+              if(rg==0 & na > 0 & ag==0) {
+                rTbP = rLtScrt[s]*LtDxPar_ltN[2][s];
+                rTbN = rLtScrt[s]*LtDxPar_noltN[2][s];
+              }
+              //////////// NON US BORN  ////////////////
+              if(rg==0 & na > 0 & ag < 0) {
+                rTbP = rLtScrt[s]*LtDxPar_ltN[3][s];
+                rTbN = rLtScrt[s]*LtDxPar_noltN[3][s];
+              }
+              ////////////// NON US BORN, HIGH RISK  /////////////////
+              if(rg==1 & na >0) {
+                rTbP = rLtScrt[s]*LtDxPar_ltN[4][s];
+                rTbN = rLtScrt[s]*LtDxPar_noltN[4][s];
+              }
               for(int nm=0; nm<4; nm++) {
                 for(int im=0; im<4; im++) {
                   ////////////// Dont have LTBI
@@ -1411,17 +1420,9 @@ Rcpp::List fin_cSim(
             for(int nm=0; nm<4; nm++) {
               for(int rg=0; rg<2; rg++) {
                 for(int na=0; na<3; na++) {
-
-                  // if (S==1000){
-                  // Rcpp::Rcout << "LtTxPar 1 is = "<<  LtTxParN[s][0] << "at time step" << m << "\n";
-                  // Rcpp::Rcout << "LtTxPar 2 is = "<<  LtTxParN[s][1] << "at time step" << m << "\n";
-                  // Rcpp::Rcout << "LtTxPar 3 is = "<<  LtTxParN[s][2] << "at time step" << m << "\n";
-                  // }
                   //N(latent)*r(posLTBIscreen)*p(TLTBI Initiation)*p(TLTBI completion)
                   temp  = V0[ag][2][0][im][nm][rg][na]*rTbP*LtTxParN[s][0]*(1-LtTxParN[s][1]); // tx completion
                   temp2 = V0[ag][3][0][im][nm][rg][na]*rTbP*LtTxParN[s][0]*(1-LtTxParN[s][1]); // tx completion
-                  // Rcpp::Rcout << "temp is = "<<  temp << "at time step" << m << "\n";
-                  // Rcpp::Rcout << "temp2 is = "<<  temp2 << "at time step" << m << "\n";
 
                   temp3 = V0[ag][2][0][im][nm][rg][na]*rTbP*LtTxParN[s][0]*LtTxParN[s][1]; // default
                   temp4 = V0[ag][3][0][im][nm][rg][na]*rTbP*LtTxParN[s][0]*LtTxParN[s][1]; // default
@@ -1680,19 +1681,29 @@ Rcpp::List fin_cSim(
               rTbP = rLtScrt[s]*LtDxPar_ltN[0][s];
               rTbN = rLtScrt[s]*LtDxPar_noltN[0][s];
             }
-            //////////// NON US BORN  ////////////////
-            if(rg==0 & na > 0) {
-              rTbP = rLtScrt[s]*LtDxPar_ltN[2][s];
-              rTbN = rLtScrt[s]*LtDxPar_noltN[2][s];
-            }
             ////////////// US BORN, HIGH RISK  /////////////////
-            if(rg==1) {
+            if(rg==1 & na==0) {
               rTbP = rLtScrt[s]*LtDxPar_ltN[1][s];
               rTbN = rLtScrt[s]*LtDxPar_noltN[1][s];
             }
-            for(int im=0; im<4; im++) {
-              for(int nm=0; nm<4; nm++) {
-                for(int ag=0; ag<11; ag++) {
+            for(int ag=0; ag<11; ag++) {
+              ////////////// Young NUS (under 5)  /////////////////
+              if(rg==0 & na > 0 & ag==0) {
+                rTbP = rLtScrt[s]*LtDxPar_ltN[2][s];
+                rTbN = rLtScrt[s]*LtDxPar_noltN[2][s];
+              }
+              //////////// NON US BORN  ////////////////
+              if(rg==0 & na > 0 & ag < 0) {
+                rTbP = rLtScrt[s]*LtDxPar_ltN[3][s];
+                rTbN = rLtScrt[s]*LtDxPar_noltN[3][s];
+              }
+              ////////////// NON US BORN, HIGH RISK  /////////////////
+              if(rg==1 & na >0) {
+                rTbP = rLtScrt[s]*LtDxPar_ltN[4][s];
+                rTbN = rLtScrt[s]*LtDxPar_noltN[4][s];
+              }
+              for(int im=0; im<4; im++) {
+                for(int nm=0; nm<4; nm++) {
                   Outputs[y][151] += (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP*LtTxParN[s][0] +
                     (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxParN[s][0]; //all init
                   if(na>0) {

@@ -49,70 +49,23 @@ fin_param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   ################################################################################
   ################################################################################
   BgMort           <- as.matrix(Inputs[["BgMort"]])
-  death_age <-readRDS(system.file("US/US_MortalityCountsByAge.rds", package="MITUS"))[,2:69]
-  rownames(death_age)<-readRDS(system.file("US/US_MortalityCountsByAge.rds", package="MITUS"))[,1]
-  death_age<-as.matrix(death_age)
-
-  popdist<- as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS")))
-  popdist<-popdist[,-1]
-  popdist<-popdist[,-69]
-  rownames(popdist)<-as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS"))[,1])
-  new_mort<-popdist
-  new_mort<-death_age/popdist
-  ##weighted mort for the age groups
-  weight_mort<-matrix(NA,11,68)
-  colnames(weight_mort)<-colnames(new_mort)
-  weight_mort[1,]<-colSums(new_mort[1:5,]*popdist[1:5,])/colSums(popdist[1:5,])
-  weight_mort[2,]<-colSums(new_mort[6:15,]*popdist[6:15,])/colSums(popdist[6:15,])
-  weight_mort[3,]<-colSums(new_mort[16:25,]*popdist[16:25,])/colSums(popdist[16:25,])
-  weight_mort[4,]<-colSums(new_mort[26:35,]*popdist[26:35,])/colSums(popdist[26:35,])
-  weight_mort[5,]<-colSums(new_mort[36:45,]*popdist[36:45,])/colSums(popdist[36:45,])
-  weight_mort[6,]<-colSums(new_mort[46:55,]*popdist[46:55,])/colSums(popdist[46:55,])
-  weight_mort[7,]<-colSums(new_mort[56:65,]*popdist[56:65,])/colSums(popdist[56:65,])
-  weight_mort[8,]<-colSums(new_mort[66:75,]*popdist[66:75,])/colSums(popdist[66:75,])
-  weight_mort[9,]<-colSums(new_mort[76:85,]*popdist[76:85,])/colSums(popdist[76:85,])
-  weight_mort[10,]<-colSums(new_mort[86:95,]*popdist[86:95,])/colSums(popdist[86:95,])
-  weight_mort[11,]<-colSums(new_mort[96:111,]*popdist[96:111,])/colSums(popdist[96:111,])
-
-  weight_mort<-t(weight_mort)
-  BgMort[1:68,2:12]<-weight_mort
+  if(loc=="US"){
+    BgMort[1:68,2:12]<-weight_mort(loc)
+  } else{
+    BgMort[10:67,2:12]<-weight_mort(loc)
+  }
 
   InputParams[["InitPop"]]<- Inputs[["InitPop"]]
   Births           <- Inputs[["Births"]]
   ImmigInputs      <- Inputs[["ImmigInputs"]]
+  ImmigInputs$PrevTrend25_34[1:69]<-ImmigInputs$TBBurdenImmig*(90/1e5)
+
   TxInputs         <- Inputs[["TxInputs"]]
   NetMig           <- Inputs[["NetMigrState"]]
 
   ##########                CALCULATION OF AGING DENOMINATORS           ##########
-  popdist<- as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS")))
-  popdist<-popdist[,-1]
-  rownames(popdist)<-as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS"))[,1])
+  spl_den <-age_denom("US")
 
-  #calculate the percentage of the total age band in each single year age
-  ltd<-matrix(NA,10,69)
-
-  ltd[1,]<-popdist[5,]/colSums(popdist[1:5,])
-  ltd[2,]<-popdist[15,]/colSums(popdist[6:15,])
-  ltd[3,]<-popdist[25,]/colSums(popdist[16:25,])
-  ltd[4,]<-popdist[35,]/colSums(popdist[26:35,])
-  ltd[5,]<-popdist[45,]/colSums(popdist[36:45,])
-  ltd[6,]<-popdist[55,]/colSums(popdist[46:55,])
-  ltd[7,]<-popdist[65,]/colSums(popdist[56:65,])
-  ltd[8,]<-popdist[75,]/colSums(popdist[66:75,])
-  ltd[9,]<-popdist[85,]/colSums(popdist[76:85,])
-  ltd[10,]<-popdist[95,]/colSums(popdist[86:95,])
-
-
-  #invert this for the aging rate
-  ltd<-1/ltd
-
-  td<-matrix(NA,10,1201)
-  for (i in 1:10){
-    td[i,1:817]<-SmoCurve(as.numeric(ltd[i,]))
-    td[i,818:1201]<-td[i,817]
-  }
-
-  spl_den<-t(td)*12
   InputParams[["aging_denom"]]<-spl_den
 
   ##########                PARAMETER DEFINITIONS                      ###########
@@ -243,16 +196,6 @@ fin_param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
 
   InputParams[["ImmNon"]]        <- TotImmAge-InputParams[["ImmAct"]]-InputParams[["ImmFst"]]-InputParams[["ImmLat"]]
 
-  #### #### #### INT 1 #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
-  pctDoc <- (1-0.28)
-  if(Int1==1) {
-    for(i in 1:11) InputParams[["ImmLat"]][,i] <- InputParams[["ImmLat"]][,i]*(1-LgtCurve(2018,2023,1)*PV["SensLt"]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
-    for(i in 1:11) InputParams[["ImmAct"]][,i] <- InputParams[["ImmAct"]][,i]*(1-LgtCurve(2018,2023,1)*PV["SensLt"]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
-    for(i in 1:11) InputParams[["ImmFst"]][,i] <- InputParams[["ImmFst"]][,i]*(1-LgtCurve(2018,2023,1)*PV["SensLt"]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
-    InputParams[["ImmNon"]]        <- TotImmAge-InputParams[["ImmAct"]]-InputParams[["ImmFst"]]-InputParams[["ImmLat"]]
-  }
-
-
   #### #### #### SCEN 2 #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
   if(Scen2==1) {
@@ -344,18 +287,18 @@ fin_param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   vORpfastRF  <-(exp((0:3)/3*log(ORpfastRF)))
   vORpfastPIRF  <- vORpfastRF*ORpfastPI
 
-  ############ UPDATE PROBS FOR LEVEL 1 OF REACTIVATION ###########
+  ############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
   Mpfast[,1]   <- vORpfastRF[1]*Mpfast[,1]
-  MpfastPI[,1]   <- vORpfastPIRF[1]*Mpfast[,1]
+  MpfastPI[,1]   <- vORpfastPIRF[1]*MpfastPI[,1]
   ############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
   Mpfast[,2]   <- vORpfastRF[2]*Mpfast[,2]
-  MpfastPI[,2]   <- vORpfastPIRF[2]*Mpfast[,2]
+  MpfastPI[,2]   <- vORpfastPIRF[2]*MpfastPI[,2]
   ############ UPDATE PROBS FOR LEVEL 3 OF REACTIVATION ###########
   Mpfast[,3]   <- vORpfastRF[3]*Mpfast[,3]
-  MpfastPI[,3]   <- vORpfastPIRF[3]*Mpfast[,3]
+  MpfastPI[,3]   <- vORpfastPIRF[3]*MpfastPI[,3]
   ############ UPDATE PROBS FOR LEVEL 4 OF REACTIVATION ###########
   Mpfast[,4]   <- vORpfastRF[4]*Mpfast[,4]
-  MpfastPI[,4]   <- vORpfastPIRF[4]*Mpfast[,4]
+  MpfastPI[,4]   <- vORpfastPIRF[4]*MpfastPI[,4]
 
   ##### UPDATE BOTH MATRICES WITH PROBABILITIES, NOT RATES
   Mpfast[,]    <- Mpfast[,]  /(1+Mpfast[,]);
@@ -395,26 +338,32 @@ fin_param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   ######################          LTBI DIAGNOSIS           ########################
 
   ######################        TEST SPECIFICATIONS          ######################
-  Sens_IGRA <-.780
-  Spec_IGRA <-.979
-  IGRA_frc <- .33
-  Sens_TST <-.726
-  Spec_TST <-.921
+  Sens_IGRA <-c(.780,.675,.712,.789,.591)
+  Spec_IGRA <-c(.979,.958,.989,.985,.931)
+  IGRA_frc<-.33
+  Sens_TST <-c(.726,.540,.691,.807,.570)
+  Spec_TST <-c(.921,.965,.739,.70,.885)
+  names(Sens_TST)<- names(Spec_TST)<-names(Sens_IGRA)<- names(Spec_IGRA)<-c("lrUS","hrUS","youngNUS","NUS","hrNUS")
+
   ###calculate the weighted mean of sensitivity and specificity
-  SensLt<-Sens_IGRA*IGRA_frc + (1-IGRA_frc)*Sens_TST
-  SpecLt<-Spec_IGRA*IGRA_frc + (1-IGRA_frc)*Spec_TST
+  SensLt<-matrix(NA,length(Sens_IGRA),month)
+  SpecLt<-matrix(NA,length(Spec_IGRA),month)
+  rownames(SensLt)<-rownames(SpecLt)<-names(Sens_IGRA)
   ###sensitivity and specificity must be time varying parameters in order to allow the user to change the
   ###percentage of IGRA used at a specific time range
-  SensLt_v        <- rep(SensLt, month)    #  sens of test for latent TB infection
-  SpecLt_v        <- rep(SpecLt, month)    #  spec of test for latent TB infection
-  ######################     IGRA FRACTION PROGRAM CHANGE    ########################
-  if (prg_chng["IGRA_frc"] != (IGRA_frc)){
-    frc<-prg_chng["IGRA_frc"]
-    SensLt_v[prg_m:length(SensLt_v)]<-frc*Sens_IGRA + (1-frc)*Sens_TST
-    SpecLt_v[prg_m:length(SensLt_v)]<-frc*Spec_IGRA + (1-frc)*Spec_TST
+  for (i in 1:nrow(SensLt)){
+    SensLt[i,]          <-rep((Sens_IGRA[i]*IGRA_frc + (1-IGRA_frc)*Sens_TST[i]),month)
+    SpecLt[i,]          <-rep((Spec_IGRA[i]*IGRA_frc + (1-IGRA_frc)*Spec_TST[i]),month)
   }
+
+  ######################     IGRA FRACTION PROGRAM CHANGE    ########################
+  if (prg_chng["IGRA_frc"] != IGRA_frc){
+    for (i in 1:nrow(SensLt)){
+      SensLt[i,prg_m:ncol(SensLt)]    <-rep((Sens_IGRA[i]*prg_chng["IGRA_frc"] + (1-prg_chng["IGRA_frc"])*Sens_TST[i]),1+1201-prg_m)
+      SpecLt[i,prg_m:ncol(SpecLt)]    <-rep((Spec_IGRA[i]*prg_chng["IGRA_frc"] + (1-prg_chng["IGRA_frc"])*Spec_TST[i]),1+1201-prg_m)
+    }}
+
   ### ADJUST THIS FOR THE FOREIGN BORN
-  SpecLtFb_v      <- SpecLt_v         #  spec of test for latent TB infection (based on IGRA QFT-GIT) in foreign-born (assumed BCG exposed)
   ######################        SCREENING RATES          ######################
   rLtScrt       <- LgtCurve(1985,2015,PV["rLtScr"])/12
   ######################  SCREENING RATE PROGRAM CHANGE ########################
@@ -427,12 +376,31 @@ fin_param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   ### because of the introduction of new time varying parameters, we will create 2 matrices to
   ### hold the three different sensitivity and specificity measures; one will be for those whose
   ### true LTBI status is positive and the other is for those whose true TB status is negative.
-  LtDxPar_nolt <- LtDxPar_lt <- matrix(NA,3,month);
-  rownames(LtDxPar_lt) <- rownames(LtDxPar_nolt) <- c("LR","HR","FB")
-  LtDxPar_lt[,]   <- rbind(SensLt_v                 , rrTestHr*SensLt_v    , SensLt_v)
-  LtDxPar_nolt[,] <- rbind(rrTestLrNoTb*(1-SpecLt_v), rrTestHr*(1-SpecLt_v), (1-SpecLtFb_v))
+  LtDxPar_nolt <- LtDxPar_lt <- matrix(NA,nrow(SensLt),month);
+  rownames(LtDxPar_lt) <- rownames(LtDxPar_nolt) <- rownames(SensLt)
+  ##adjust for no latent
+  LtDxPar_lt   <-SensLt
+  LtDxPar_nolt <- 1-SpecLt
+  #adjust for High Risk Populations
+  LtDxPar_lt[c(2,5),]     <-rrTestHr*LtDxPar_lt[c(2,5),]
+  LtDxPar_nolt[c(2,5),]   <-rrTestHr*LtDxPar_nolt[c(2,5),]
+  #adjust for no latent
+  LtDxPar_nolt[1,]<-LtDxPar_nolt[1,]*rrTestLrNoTb
+
+  LtDxPar_lt[,]<-LtDxPar_lt[,]/(1+LtDxPar_lt[,])
+  LtDxPar_nolt[,]<-LtDxPar_nolt[,]/(1+LtDxPar_nolt[,])
   InputParams$LtDxPar_lt<-LtDxPar_lt
   InputParams$LtDxPar_nolt<-LtDxPar_nolt
+
+  #### #### #### INT 1 #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
+  pctDoc <- (1-0.28)
+  if(Int1==1) {
+    for(i in 1:11) InputParams[["ImmLat"]][,i] <- InputParams[["ImmLat"]][,i]*(1-LgtCurve(2018,2023,1)*SensLt[4,1]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
+    for(i in 1:11) InputParams[["ImmAct"]][,i] <- InputParams[["ImmAct"]][,i]*(1-LgtCurve(2018,2023,1)*SensLt[4,1]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
+    for(i in 1:11) InputParams[["ImmFst"]][,i] <- InputParams[["ImmFst"]][,i]*(1-LgtCurve(2018,2023,1)*SensLt[4,1]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
+    InputParams[["ImmNon"]]        <- TotImmAge-InputParams[["ImmAct"]]-InputParams[["ImmFst"]]-InputParams[["ImmLat"]]
+  }
+
 
   ######################          LTBI DIAGNOSIS           ########################
   ###################### LTBI TX EFFECTIVENESS PROGRAM CHANGE ########################
