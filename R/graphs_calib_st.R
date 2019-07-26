@@ -24,7 +24,7 @@ calib_graphs_st <- function(df,loc, Par_list){
 
   V  <- cbind(df[1:66,30], df[1:66,31]+df[1:66,32])
 
-  tot_pop<-CalibDatState[["pop_50_10"]][[st]]
+  tot_pop<-as.data.frame(CalibDatState[["pop_50_10"]][[st]])
   tot_pop_yr_us  <- tot_pop[tot_pop$usb==1,]
   tot_pop_yr_us<-as.numeric(colSums(as.matrix(tot_pop_yr_us)[,-c(1:2)]))/1e6
 
@@ -546,8 +546,8 @@ calib_graphs_st <- function(df,loc, Par_list){
   v1d<-rbind(v1b,v1c)
   colnames(V) <- c("LTBI", "No-LTBI")
 
-  V1 <- Vd[-11,]; V1<-V1[-10,]
-  V1[9,] <- V[9,]+Vd[10,]+Vd[11,]
+  V1 <- v1d[-11,]; V1<-V1[-10,]
+  V1[9,] <- V[9,]+v1d[10,]+v1d[11,]
 
   V2 <- rep(NA,8)
   V2 <- V1[2:9,1]/rowSums(V1[2:9,])*100
