@@ -279,15 +279,11 @@ US_dth_10_tot_lLik <- function(V) {
 #'@param V table of deaths by age 1999-2014 (row=16 years, col=11 ages)
 #'@param rho correlation parameter
 #'@return likelihood
-tot_dth_age_lLik <- function(V,rho=0.1) {
+tot_dth_age_lLik <- function(V,rho=0.01) {
 mortdist<-readRDS(system.file("US/US_deathdist.rds", package="MITUS"))[,66:67]
 mortdist<-t(mortdist)
-#   adj_20b               <- sum(log(mort_ag_16_d)*mort_ag_16_d);
-#   sum(log(V2[]/sum(V2))*mort_ag_16_d[])*ESS - adj_20b*ESS
-#   }
-  adj_20b        <- sum(dDirMult(M=mortdist,n=mortdist,Rho=rho)*wts[66:67])
-  V<-V/rowSums(V)
-  sum(dDirMult(M=V,n=mortdist,Rho=rho)*wts[66:67]) - adj_20b
+  adj_20b        <- sum(dDirMult(M=mortdist+.1,n=mortdist,Rho=rho)*wts[66:67])
+  sum(dDirMult(M=V+.1,n=mortdist,Rho=rho)*wts[66:67]) - adj_20b
 }
 
 #' Mortality Risk Group Distribution 1999-2014
