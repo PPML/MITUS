@@ -55,9 +55,9 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc) { # ParMatrix = ParInit
         addlik <- notif_tot_lLik_st(V=v1,st=st); addlik
         lLik <- lLik + addlik
         ### ### ### ANN DECLINE IN CASES 1953-2015  ### ### ### ### ### ### D
-        v1b   <- M[4:44,"NOTIF_ALL"]+M[4:44,"NOTIF_MORT_ALL"]
-        addlik <- notif_decline_lLik_st(V=v1b,st=st); addlik
-        lLik <- lLik + addlik
+        # v1b   <- M[4:44,"NOTIF_ALL"]+M[4:44,"NOTIF_MORT_ALL"]
+        # addlik <- notif_decline_lLik_st(V=v1b,st=st); addlik
+        # lLik <- lLik + addlik
         ### ### ### US CASES AGE DISTRIBUTION 1993-2016  ### ### ### ### ### ### D
         v2a   <- M[44:68,205:215]+M[44:68,216:226]
         addlik <- notif_age_us_lLik_st(V=v2a,st=st); addlik
