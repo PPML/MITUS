@@ -1,7 +1,7 @@
 ###################### Par = par_1
 # Function for calculating likelihood
 
-llikelihoodZ_st <-  function(samp_i,ParMatrix,loc="MA") { # ParMatrix = ParInit
+llikelihoodZ_st <-  function(samp_i,ParMatrix,loc) { # ParMatrix = ParInit
   data("stateID",package="MITUS")
   StateID<-as.data.frame(stateID)
   Par <- ParMatrix[samp_i,]
@@ -186,7 +186,7 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc="MA") { # ParMatrix = ParInit
 
 
 ###################### local parallelization via multicore
-llikelihood_st <- function(ParMatrix,loc="MA",n_cores=1) {
+llikelihood_st <- function(ParMatrix,loc,n_cores=1) {
   if(dim(as.data.frame(ParMatrix))[2]==1) {
     lLik <- llikelihoodZ_st(1,t(as.data.frame(ParMatrix)),loc=loc)
     } else {
