@@ -17,15 +17,8 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc) { # ParMatrix = ParInit
 
   jj <- tryCatch({
     defpc<-def_prgchng(P)
-
     prms <-list()
     prms <- fin_param(P,loc,defpc)
-
-    # data("trans_mat_nat",package="MITUS")
-    # trans_mat_tot_ages<-trans_mat_tot_ages_nat
-    # tm<-matrix(0,16,16)
-    # diag(tm)<-1
-    # trans_mat_tot_ages<<-matrix(tm,16,176)
     trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
     if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
     zz <- fin_cSim( nYrs       = 2018-1950         , nRes      = length(prms[["ResNam"]])  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
@@ -39,9 +32,10 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc) { # ParMatrix = ParInit
                    LtDxPar_lt    = prms[["LtDxPar_lt"]]   , LtDxPar_nolt    = prms[["LtDxPar_nolt"]]   , rLtScrt   = prms[["rLtScrt"]]       , RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
                    EarlyTrend = prms[["EarlyTrend"]], ag_den=prms[["aging_denom"]],  NixTrans = prms[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)
     #'if any output is missing or negative or if any model state population is negative
-
-    if(sum(is.na(zz$Outputs[68,]))>0 | min(zz$Outputs[68,])<0 | min(zz$V1)<0 ) { lLik <- -10^12  } else {
-
+    if(sum(is.na(zz$Outputs[68,]))>0 | min(zz$Outputs[68,])<0 | min(zz$V1)<0 ) {
+      lLik <- -10^12
+  }
+    else {
       ######  ####  ######  ######  ####  ######  ######  ####  ######
       M <- zz$Outputs
       colnames(M) <- prms[["ResNam"]]
@@ -159,20 +153,18 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc) { # ParMatrix = ParInit
     v18  <- cbind(M[67,33:43],M[67,44:54])
     addlik <- tot_pop14_ag_fb_lLik_st(V=v18,st=st); addlik
     lLik <- lLik + addlik
-    ### ### ### HOMELESS POP 2010  ### ### ### ### ### ###
+    #' ### ### ### HOMELESS POP 2010  ### ### ### ### ### ###
     v23b  <- M[61,29]
     addlik <- homeless_10_lLik_st(V=v23b,st=st); addlik
     lLik <- lLik + addlik
-
-    #' Total DEATHS 1979-2016
+    #' #' Total DEATHS 1979-2016
     v20a  <- sum(M[67,121:131])
     addlik <- dth_tot_lLik_st(V=v20a,st=st); addlik
     lLik <- lLik + addlik
-    #' #' #' Total DEATHS 2015-2016 BY AGE
+    #' #' #' #' Total DEATHS 2015-2016 BY AGE
     v20b  <- M[66:67,121:131]
     addlik <- tot_dth_age_lLik_st(V=v20b,st=st); addlik
     lLik <- lLik + addlik
-    #'
     #' #' #' Mort_dist 2016 dirchlet
     v21a<- v21  <- M[66:67,521:564]
     addlik <- mort_dist_lLik_st(V=v21a); addlik

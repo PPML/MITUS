@@ -5,7 +5,7 @@
 \title{#' TOTAL DEATHS AGE DISTRIBUTION 1999-2014
 Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases}
 \usage{
-tot_dth_age_lLik_st(V, st, rho = 0.1)
+tot_dth_age_lLik_st(V, st, rho = 0.01)
 }
 \arguments{
 \item{V}{table of deaths by age 1999-2014 (row=16 years, col=11 ages)}

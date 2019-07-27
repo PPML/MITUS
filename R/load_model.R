@@ -4,7 +4,7 @@
 #'@return void
 model_load<-function(loc="US"){
 #' add loc as a global variable
-loc<<-loc
+# loc<<-loc
   library(mnormt)
   library(parallel)
   library(lhs)
