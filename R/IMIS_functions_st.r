@@ -157,7 +157,7 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc) { # ParMatrix = ParInit
     v23b  <- M[61,29]
     addlik <- homeless_10_lLik_st(V=v23b,st=st); addlik
     lLik <- lLik + addlik
-    #' #' Total DEATHS 1979-2016
+    #' #' Total DEATHS 2016
     v20a  <- sum(M[67,121:131])
     addlik <- dth_tot_lLik_st(V=v20a,st=st); addlik
     lLik <- lLik + addlik

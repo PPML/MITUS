@@ -205,22 +205,14 @@ calib_graphs_st <- function(df,loc, Par_list){
   ### ### ### ### ### ###   TOTAL MORT EACH DECADE, BY US/FB  ### ### ### ### ### ###
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   # V  <- cbind(rowSums(df[30:67,255:265]), rowSums(df[30:67,266:276]))*1e6
-  V1c <- rowSums(df[30:67,121:131])
-  #format calibdat
-  data("ST_tot_mort",package="MITUS")
+  V1c <- rowSums(df[1:67,121:131])
   #1979-2016 total deaths
-  ST_deaths_tot   <- as.matrix(ST_tot_mort[which(ST_tot_mort$State==stateID[st,1]),][,3:4])
+  ST_deaths_tot <- readRDS(system.file("ST/STdeathbyAge.rds",package="MITUS"))[[st]][,c(1,12)]
   ST_deaths_tot[,2]<-ST_deaths_tot[,2]/1e6
-  plot(1,1,ylim=c(min(V1c,ST_deaths_tot[,2])*.5,max(V1c,ST_deaths_tot[,2])*2),xlim=c(1979,2016),xlab="",ylab="",axes=F)
+  plot(1,1,ylim=c(min(V1c,ST_deaths_tot[,2])*.5,max(V1c,ST_deaths_tot[,2])*2),xlim=c(1950,2016),xlab="",ylab="",axes=F)
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
-
-
-
-
-  # lines(1979:2016,V[,2],lwd=2,col="red3")
-  # lines(1979:2016,V[,1],lwd=2,col="blue")
-  lines(1979:2016,V1c,lwd=2,col="grey50")
+  lines(1950:2016,V1c,lwd=2,col="grey50")
   points(ST_deaths_tot[,1],(ST_deaths_tot[,2]),pch=19,cex=0.6,col="grey50")
   lines(ST_deaths_tot[,1],(ST_deaths_tot[,2]),lty=3,col="grey50")
 
@@ -229,10 +221,10 @@ calib_graphs_st <- function(df,loc, Par_list){
   legend("topright",c("Total","Reported data","model"),cex=1.0,
          pch=c(15,19,NA),lwd=c(NA,1,2),lty=c(NA,3,1),col=c("grey50",1,1),bg="white",pt.cex=c(1.8,0.3,NA))
   # ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-  # ### ### ### ### ### ###   TOTAL MORT AGE DISTRIBUTION 2014  ### ### ### ### ### ###
+  # ### ### ### ### ### ###   TOTAL MORT AGE DISTRIBUTION 2017  ### ### ### ### ### ###
   # ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-  # these are national distributions by age -- might need to update with state specifics
-  V  <- cbind((df[67,255:265])+(df[67,266:276]))
+
+  V  <- cbind((df[68,255:265])+(df[68,266:276]))
   tot<-sum(V)
   V1  <- V[-3]
   V1[2] <- V1[2]+V[3]
@@ -242,7 +234,7 @@ calib_graphs_st <- function(df,loc, Par_list){
   V3[8] <- V3[8]+V2[9]
   V3<-V3/tot
 
-  tda <- readRDS(system.file("ST/STdeathbyAge.rds",package="MITUS"))[[st]][47,-c(1,12)]
+  tda <- readRDS(system.file("ST/STdeathbyAge.rds",package="MITUS"))[[st]][48,-c(1,12)]
   tda<-tda/sum(tda)
   plot(0,0,ylim=c(min(range(V3,tda))*.5,max(range(V3,tda))*2),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA)
   axis(1,1:8,paste(c("0-4","5-24","25-44","45-54","55-64","65-74","75-84","85+"),"\nyears",sep=""),tick=F,cex.axis=0.75)

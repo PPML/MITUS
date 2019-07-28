@@ -238,13 +238,9 @@ tot_pop14_ag_fb_lLik_st <- function(V,st,ESS=500) { # V =  US pop in 2014 (row=1
 #'@param V
 #'@return likelihood
 dth_tot_lLik_st <- function(V,st) {
-  data("stateID",package="MITUS")
-  StateID<-as.data.frame(stateID)
-  data("ST_tot_mort",package="MITUS")
-  ST_deaths_tot   <- ST_tot_mort[which(ST_tot_mort$State==StateID[st,1]),]
-  ST_deaths_tot   <- ST_deaths_tot[38,4]
+  ST_deaths_tot <- readRDS(system.file("ST/STdeathbyAge.rds",package="MITUS"))[[st]][48,c(1,12)]
   adj_20a         <- sum(dnorm(ST_deaths_tot,ST_deaths_tot,ST_deaths_tot*0.1/1.96,log=T)*wts[67])
-  sum(dnorm(ST_deaths_tot,ST_deaths_tot,ST_deaths_tot*0.1/1.96,log=T)*wts[67]) - adj_20a
+  sum(dnorm(V*1e6,ST_deaths_tot,ST_deaths_tot*0.1/1.96,log=T)*wts[67]) - adj_20a
 }
 
 #'  #' TOTAL DEATHS AGE DISTRIBUTION 1999-2014
