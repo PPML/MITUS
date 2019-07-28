@@ -10,9 +10,7 @@ calib_graphs_st <- function(df,loc, Par_list){
   library(MCMCpack)
   data("stateID",package="MITUS")
   StateID<-as.data.frame(stateID)
-
   st<-which(StateID$USPS==loc)
-
   df<-as.data.frame(df)
   pdfname<-paste("MITUS_results/",loc,"_calib_graphs",Sys.time(),".pdf",sep="")
   pdf(file=pdfname, width = 11, height = 8.5)
@@ -137,6 +135,7 @@ calib_graphs_st <- function(df,loc, Par_list){
     lines(2011:2017,est,lty=3,col="blue")
   }
   mtext("Year",1,2.5,cex=1.2)
+
   mtext("Recent Immigration Non-US Born Population (<2 yrs) (000s)",3,.8,font=2,cex=1)
   legend("topleft",c("Total"),cex=1,
          pch=c(15),lwd=c(NA),lty=c(NA),col=c("blue"),bg="white",pt.cex=c(1.8))
@@ -210,7 +209,7 @@ calib_graphs_st <- function(df,loc, Par_list){
   #format calibdat
   data("ST_tot_mort",package="MITUS")
   #1979-2016 total deaths
-  ST_deaths_tot   <- as.matrix(ST_tot_mort[which(ST_tot_mort$State==StateID[st,1]),][,3:4])
+  ST_deaths_tot   <- as.matrix(ST_tot_mort[which(ST_tot_mort$State==stateID[st,1]),][,3:4])
   ST_deaths_tot[,2]<-ST_deaths_tot[,2]/1e6
   plot(1,1,ylim=c(min(V1c,ST_deaths_tot[,2])*.5,max(V1c,ST_deaths_tot[,2])*2),xlim=c(1979,2016),xlab="",ylab="",axes=F)
   axis(1);axis(2,las=2);box()
@@ -359,7 +358,8 @@ calib_graphs_st <- function(df,loc, Par_list){
   V <- cbind(df[58:68,"NOTIF_F1"]+df[58:68,"NOTIF_MORT_F1"],df[58:68,"NOTIF_F2"]+df[58:68,"NOTIF_MORT_F2"])
   V <- V[,1]/rowSums(V)*100
   #reported data for comparison
-  notif_fb_per          <- as.numeric(as.matrix(CalibDatState[["rt_fb_cases"]])[as.character(CalibDatState[["rt_fb_cases"]][,1])==loc,][8:18,c(2,7)])
+  notif_fb_per          <- CalibDatState[["rt_fb_cases"]][CalibDatState[["rt_fb_cases"]][,1]==loc,][8:18,c(2,7)]
+  notif_fb_per[,2]      <-notif_fb_per[,2]*100
   #format the plot
   plot(0,0,ylim=c(min(V,notif_fb_per[,2])*.25,min(max(V,notif_fb_per[,2])*1.5,100)),xlim=c(2007,2017),xlab="",ylab="",axes=F)
   axis(1);axis(2,las=2);box()
@@ -452,7 +452,7 @@ calib_graphs_st <- function(df,loc, Par_list){
   V   <- df[53:63,132:134]
   Vdisc <- V[,2]/rowSums(V)
   Vdead <- V[,3]/rowSums(V)
-  tx_outcomes      <- cbind(1-rowSums(CalibDatState$tx_outcomes[10:20,2:3]),CalibDatState$tx_outcomes[10:20,2],CalibDatState$tx_outcomes[10:20,3])*CalibDatState$tx_outcomes[10:20,4]
+  tx_outcomes      <- CalibDatState$tx_outcomes[10:20,2:3]*100
 
   #format the plot
   plot(0,0,ylim=c(0,10),xlim=c(2002,2012),xlab="",ylab="",axes=F)
@@ -465,10 +465,10 @@ calib_graphs_st <- function(df,loc, Par_list){
 
   #reported data for comparison
 
-  points(2002:2012,tx_outcomes[,2]/rowSums(tx_outcomes)*100,pch=19,cex=0.6,col="red3")
-  points(2002:2012,tx_outcomes[,3]/rowSums(tx_outcomes)*100,pch=19,cex=0.6,col="blue")
-  lines (2002:2012,tx_outcomes[,2]/rowSums(tx_outcomes)*100,lty=3,col="red3")
-  lines (2002:2012,tx_outcomes[,3]/rowSums(tx_outcomes)*100,lty=3,col="blue")
+  points(2002:2012,tx_outcomes[,1],pch=19,cex=0.6,col="red3")
+  points(2002:2012,tx_outcomes[,2],pch=19,cex=0.6,col="blue")
+  lines (2002:2012,tx_outcomes[,1],lty=3,col="red3")
+  lines (2002:2012,tx_outcomes[,2],lty=3,col="blue")
 
   #plot text
 
@@ -580,10 +580,9 @@ calib_graphs_st <- function(df,loc, Par_list){
 
   ################################################################################
   # Age Distribution of TB Deaths 1999-2014
-
   V  <- df[50:67,227:237]
-  tb_death_dist  <- CalibDatState$tbdeaths_age_yr[,-1]/rowSums(CalibDatState$tbdeaths_age_yr[,-1])
-  tb_deaths      <- as.data.frame(CalibDatState$tbdeaths[[st]][,c(-1,-2)]*tb_death_dist[,])
+  tb_deaths_dist  <- CalibDatState$tbdeaths_age_yr[,-1]/rowSums(CalibDatState$tbdeaths_age_yr[,-1])
+  tb_deaths      <- as.data.frame(CalibDatState$tbdeaths[[st]][,2]*tb_death_dist[,])
   tb_deaths[is.na(tb_deaths)]<-0
   V2 <- V[,-11]; V2[,10] <- V[,10]+V[,11]
   V3 <- colSums(V2)*1e6
@@ -610,8 +609,8 @@ calib_graphs_st <- function(df,loc, Par_list){
   ################################################################################
   # total tb deaths over time 1999-2016
   V   <- rowSums(df[57:67,227:237])*1e6
-  tb_death_tot<-CalibDatState$tbdeaths[[st]][8:18,c(-1,-2)]
-    tb_death_tot[is.na(tb_death_tot)]<-0
+  tb_death_tot<-CalibDatState$tbdeaths[[st]][8:18,2]
+  tb_death_tot[is.na(tb_death_tot)]<-0
 
   #format the plot
   plot(0,0,ylim=c(min(V)*.5,max(V,tb_death_tot)*1.5),xlim=c(2006,2016),xlab="",ylab="",axes=F)
@@ -622,8 +621,8 @@ calib_graphs_st <- function(df,loc, Par_list){
   lines(2006:2016,V,lwd=2,col="blue")
 
   #reported data for comparison
-  points(2006:2016,CalibDatState$tbdeaths[[st]][8:18,c(-1,-2)],pch=19,cex=0.6,col="black")
-  lines (2006:2016,CalibDatState$tbdeaths[[st]][8:18,c(-1,-2)],lty=3,col="black")
+  points(2006:2016,CalibDatState$tbdeaths[[st]][8:18,2],pch=19,cex=0.6,col="black")
+  lines (2006:2016,CalibDatState$tbdeaths[[st]][8:18,2],lty=3,col="black")
 
   #plot text
 
