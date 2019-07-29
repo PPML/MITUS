@@ -60,14 +60,15 @@ b<-samp_i
 #'@param df dataframe or matrix of starting values data frame
 #'@param samp_i which rows of the data frame to use
 #'@param loc USPS code of state
+#'@param TB boolean for TB likelihoods
 #'@return 8 datasets from optimization loop
 #'@export
 
 
-optim_b_st <- function(df, samp_i=1, loc="MA"){
+optim_b_st <- function(df, samp_i=1, loc="MA", TB=1){
   # data("StartVal_2018-08-06", package = "MITUS")
   posterior_st = function(theta) {
-    -lprior(theta) - llikelihood_st(theta,loc,n_cores)
+    -lprior(theta) - llikelihood_st(theta,loc,n_cores, TB=TB)
   }
 
   if(min(dim(as.data.frame(df)))==1) {
