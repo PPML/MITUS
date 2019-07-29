@@ -574,7 +574,7 @@ calib_graphs_st <- function(df,loc, Par_list){
   # Age Distribution of TB Deaths 1999-2014
   V  <- df[50:67,227:237]
   tb_deaths_dist  <- CalibDatState$tbdeaths_age_yr[,-1]/rowSums(CalibDatState$tbdeaths_age_yr[,-1])
-  tb_deaths      <- as.data.frame(CalibDatState$tbdeaths[[st]][,2]*tb_death_dist[,])
+  tb_deaths      <- as.data.frame(CalibDatState$tbdeaths[[st]][,2]*tb_deaths_dist[,])
   tb_deaths[is.na(tb_deaths)]<-0
   V2 <- V[,-11]; V2[,10] <- V[,10]+V[,11]
   V3 <- colSums(V2)*1e6
