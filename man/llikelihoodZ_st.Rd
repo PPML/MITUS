@@ -6,18 +6,18 @@
 LTBI PREVALENCE BY AGE 2011, FB - index updated
 LIKELIHOOD FOR BORGDORFF, FEREBEE & SUTHERLAND ESTIMATES
 ### ### ### HOMELESS POP 2010  ### ### ### ### ### ###
-#' Total DEATHS 1979-2016
+#' Total DEATHS 2016
 #' #' #' Total DEATHS 2015-2016 BY AGE
 #' #' Mort_dist 2016 dirchlet}
 \usage{
-llikelihoodZ_st(samp_i, ParMatrix, loc)
+llikelihoodZ_st(samp_i, ParMatrix, loc, TB = 1)
 }
 \description{
 if any output is missing or negative or if any model state population is negative
 LTBI PREVALENCE BY AGE 2011, FB - index updated
 LIKELIHOOD FOR BORGDORFF, FEREBEE & SUTHERLAND ESTIMATES
 ### ### ### HOMELESS POP 2010  ### ### ### ### ### ###
-#' Total DEATHS 1979-2016
+#' Total DEATHS 2016
 #' #' #' Total DEATHS 2015-2016 BY AGE
 #' #' Mort_dist 2016 dirchlet
 }
