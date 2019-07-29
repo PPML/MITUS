@@ -220,15 +220,16 @@ tot_pop_yr_us_lLik_st_00_10 <- function(V,st) {
 #                           pop_ag_11_170[pop_ag_11_170$usb==0,2]/sum(pop_ag_11_170[pop_ag_11_170$usb==0,2]))
 #   adj_18         <- sum(log(pop_ag_11_17[,1])*pop_ag_11_17[,1])+sum(log(pop_ag_11_17[,2])*pop_ag_11_17[,2])
 #   (sum(log(V[,1]/sum(V[,1]))*pop_ag_11_17[,1])+sum(log(V[,2]/sum(V[,2]))*pop_ag_11_17[,2]))*ESS - adj_18*ESS  }
-tot_pop14_ag_fb_lLik_st <- function(V,st,ESS=500) { # V =  US pop in 2014 (row=11 ages, col= us, fb)
-  pop_ag_11_160  <- CalibDatState[["tot_pop_ag_fb_11_16"]][[st]]
+tot_pop17_ag_fb_lLik_st <- function(V,st,ESS=500) { # V =  US pop in 2014 (row=11 ages, col= us, fb)
+  pop_ag_11_170  <- CalibDatState[["pop_00_17"]][[st]][,c(1,2,20)]
+  pop_ag_11_17us <-pop_ag_11_170[pop_ag_11_170[,2]==1,3][-11]
+  pop_ag_11_17nus <-pop_ag_11_170[pop_ag_11_170[,2]==0,3][-11]
 
-  pop_ag_11_16   <- cbind(pop_ag_11_160[pop_ag_11_160[,2]==1,3]/sum(pop_ag_11_160[pop_ag_11_160[,2]==1,3]),
-                          pop_ag_11_160[pop_ag_11_160[,2]==0,3]/sum(pop_ag_11_160[pop_ag_11_160[,2]==0,3]))
-  adj_18         <- sum(log(pop_ag_11_16[,1])*pop_ag_11_16[,1])+sum(log(pop_ag_11_16[,2])*pop_ag_11_16[,2])*ESS
+  pop_ag_11_17   <- cbind(pop_ag_11_17us/sum(pop_ag_11_17us), pop_ag_11_17nus/sum(pop_ag_11_17nus))
+  adj_18         <- (sum(log(pop_ag_11_17[,1])*pop_ag_11_17[,1])+sum(log(pop_ag_11_17[,2])*pop_ag_11_17[,2]))*ESS
   V1 <- rbind(V[1:9,],V[10,]+V[11,])
   V2<-cbind(V1[,1]/sum(V1[,1]),V1[,2]/sum(V1[,2]))
-  (sum(log(V2[,1])*pop_ag_11_16[,1])+sum(log(V2[,2])*pop_ag_11_16[,2]))*ESS - adj_18
+  (sum(log(V2[,1])*pop_ag_11_17[,1])+sum(log(V2[,2])*pop_ag_11_17[,2]))*ESS - adj_18
   }
 
 #' TOTAL US DEATHS
