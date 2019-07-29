@@ -7,6 +7,7 @@
 #' This function takes the same inputs as the Outputs
 #'@name fin_param_init
 #'@param PV vector of Inputs to format
+#'@param loc location of the simulation
 #'@param Int1 boolean for intervention 1
 #'@param Int2 boolean for intervention 2
 #'@param Int3 boolean for intervention 3
@@ -18,7 +19,7 @@
 #'@param prg_chng vector of program change values
 #'@return InputParams list
 #'@export
-fin_param_init <- function(PV,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,prg_chng){
+fin_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,prg_chng){
   InputParams <-vector("list", 45)   #Create an empty list to hold the formatted intitial parameters
   names(InputParams) <- c("rDxt","TxQualt", "InitPop", "Mpfast", "ExogInf", "MpfastPI",
                           "Mrslow", "rrSlowFB", "rfast"    ,"RRcurDef"      , "rSlfCur"  ,
