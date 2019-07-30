@@ -33,7 +33,7 @@ fin_param <- function (PV,loc,prg_chng){
   NetMig           <- Inputs[["NetMigrState"]]
 
   ##########                CALCULATION OF AGING DENOMINATORS           ##########
-  spl_den <-age_denom("US")
+  spl_den <-age_denom(loc)
 
   ##########                PARAMETER DEFINITIONS                      ###########
   ##########                RISK FACTOR DISTRIBUTIONS   ##########################
@@ -55,7 +55,7 @@ fin_param <- function (PV,loc,prg_chng){
   }
   mubt<-mubt[1:month,]
   for(i in 1:11){
-    mubt[,i] <- mubt[,i]*exp(PV[["TunmuAg"]]-1)
+    mubt[,i] <- mubt[,i]*exp(PV[["TunmuAg"]])
   }
 
   #########################     DISEASE SPECIFIC       ###########################
@@ -118,11 +118,13 @@ fin_param <- function (PV,loc,prg_chng){
   TotImmAge<-matrix(NA,1801,11)
   for (i in 1:11){
     AgeDist[i,]         <- SmoCurve(ImmigInputs[["AgeDist"]][i,])}
+  if (loc !="US"){
+  AgeDist[11,]<-.005690661*AgeDist[10,]
+  AgeDist[10,]<-(1-.005690661)*AgeDist[10,]}
   for (i in 1:1801){
     for (j in 1:11){
       # TotImmAge[i,j]   <- outer(TotImmig[i],AgeDist[j,i])
       TotImmAge[i,j]   <- TotImmig[i]*AgeDist[j,i]
-
     }}
 
   ######################           LTBI IMM.             ########################
@@ -309,13 +311,11 @@ fin_param <- function (PV,loc,prg_chng){
   LtDxPar_lt   <-SensLt
   LtDxPar_nolt <- 1-SpecLt
   #adjust for High Risk Populations
-  LtDxPar_lt[c(2,5),]     <-rrTestHr*LtDxPar_lt[c(2,5),]
-  LtDxPar_nolt[c(2,5),]   <-rrTestHr*LtDxPar_nolt[c(2,5),]
+  LtDxPar_lt[c(1,4),]     <-rrTestHr*LtDxPar_lt[c(1,4),]
+  LtDxPar_nolt[c(1,4),]   <-rrTestHr*LtDxPar_nolt[c(1,4),]
   #adjust for no latent
   LtDxPar_nolt[1,]<-LtDxPar_nolt[1,]*rrTestLrNoTb
 
-  LtDxPar_lt[,]<-LtDxPar_lt[,]/(1+LtDxPar_lt[,])
-  LtDxPar_nolt[,]<-LtDxPar_nolt[,]/(1+LtDxPar_nolt[,])
 
   ######################          LTBI DIAGNOSIS           ########################
   ###################### LTBI TX EFFECTIVENESS PROGRAM CHANGE ########################
