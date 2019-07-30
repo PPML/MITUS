@@ -126,14 +126,14 @@ llikelihoodZ <-  function(samp_i, start_mat) {
       lLik <- lLik + addlik
       #' TOTAL DEATHS WITH TB 1999-2014 - index updated
       v19  <- M[50:65,227:237]
-      addlik <- tb_dth_tot_lLik(V=rowSums(v19)); addlik
+      addlik <- tb_dth_tot_lLik(V=v19); addlik
       lLik <- lLik + addlik
       #' TB DEATHS 1999-2014 BY AGE - index updated above
       addlik <- tb_dth_age_lLik(V=v19); addlik
       lLik <- lLik + addlik
-      #' #' Total DEATHS 1999-2016
-      v20a<-sum(M[67,121:131])
-      addlik <-US_dth_10_tot_lLik(V=v20a); addlik
+      #' #' Total DEATHS 2017
+      v20a<-rowSums(M[1:68,121:131])
+      addlik <-US_dth_tot_lLik(V=v20a); addlik
       lLik <- lLik + addlik
 
       #' #' Total DEATHS 1999-2016 BY AGE
