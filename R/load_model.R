@@ -15,10 +15,9 @@ model_load<-function(loc="US"){
 #'Model Input
 if (loc=="US"){
   CalibDat<<-readRDS(system.file("US/US_CalibDat_03-06-19.rds", package="MITUS"))
-  ParamInit<<-readRDS(system.file("US/US_ParamInit_07-11-19.rds", package="MITUS"))
-  StartVal<<-readRDS(system.file("US/US_StartVal_07-11-19.rds", package="MITUS"))
+  ParamInit<<-readRDS(system.file("US/US_ParamInit_07-30-19.rds", package="MITUS"))
+  StartVal<<-readRDS(system.file("US/US_StartVal_07-30-19.rds", package="MITUS"))
   Inputs<<-readRDS(system.file("US/US_Inputs_06-26-19.rds", package="MITUS"))
-
 } else {
   CalibDat<<-CalibDatState<<-readRDS(system.file("ST/ST_CalibDat_07-15-19.rds", package="MITUS"))
   ParamInit_st<<-ParamInit<<-readRDS(system.file("ST/ST_ParamInit_2019-07-25.rds", package="MITUS"))
@@ -52,7 +51,7 @@ if (loc=="US"){
   idZ0 <<- ParamInitZ[,4]==0
   idZ1 <<- ParamInitZ[,4]==1
   idZ2 <<- ParamInitZ[,4]==2
-  ParamInit<-ParamInit_st
+  ParamInit<<-ParamInit_st
 }
   prgchng<<-def_prgchng(P)
 
