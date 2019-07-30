@@ -1379,7 +1379,7 @@ Rcpp::List fin_cSim(
               rTbN = rLtScrt[s]*LtDxPar_noltN[2][s];
             }
             //////////// NON US BORN  ////////////////
-            if(rg==0 & na > 0 & ag < 0) {
+            if(rg==0 & na > 0 & ag > 0) {
               rTbP = rLtScrt[s]*LtDxPar_ltN[3][s];
               rTbN = rLtScrt[s]*LtDxPar_noltN[3][s];
             }
@@ -1693,7 +1693,7 @@ Rcpp::List fin_cSim(
                 rTbN = rLtScrt[s]*LtDxPar_noltN[2][s];
               }
               //////////// NON US BORN  ////////////////
-              if(rg==0 & na > 0 & ag < 0) {
+              if(rg==0 & na > 0 & ag > 0) {
                 rTbP = rLtScrt[s]*LtDxPar_ltN[3][s];
                 rTbN = rLtScrt[s]*LtDxPar_noltN[3][s];
               }
