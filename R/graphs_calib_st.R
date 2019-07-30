@@ -225,25 +225,20 @@ calib_graphs_st <- function(df,loc, Par_list){
   # ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
   V  <- cbind((df[68,255:265])+(df[68,266:276]))
-  tot<-sum(V)
-  V1  <- V[-3]
-  V1[2] <- V1[2]+V[3]
-  V2 <- V1[-4]
-  V2[3] <- V2[3]+V1[4]
-  V3 <- V2[-9]
-  V3[8] <- V3[8]+V2[9]
-  V3<-V3/tot
+  V1<-V[-11]
+  V1[10] <- V1[10]+V[11]
+  V2<-V1/sum(V1)
 
   tda <- readRDS(system.file("ST/STdeathbyAge.rds",package="MITUS"))[[st]][48,-c(1,12)]
   tda<-tda/sum(tda)
-  plot(0,0,ylim=c(min(range(V3,tda))*.5,max(range(V3,tda))*2),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA)
-  axis(1,1:8,paste(c("0-4","5-24","25-44","45-54","55-64","65-74","75-84","85+"),"\nyears",sep=""),tick=F,cex.axis=0.75)
-  axis(1,1:9-0.5,rep("",9))
-  axis(2,c(0,.2,.4,.6,.8,1.0,1.2),las=2);box()
+  plot(0,0,ylim=c(min(range(V2,tda))*.5,max(range(V2,tda))*1.25),xlim=c(0.6,10.4),xlab="",ylab="",axes=F,col=NA)
+  axis(1,1:10,paste(c("0-4","5-14","15-24","25-34","35-44","45-54","55-64","65-74","75-84","85+"),"\nyears",sep=""),tick=F,cex.axis=0.75)
+  axis(1,1:11-0.5,rep("",11))
+  axis(2,c(0,.2,.4,.6,.8),las=2);box()
   abline(h=axTicks(2),col="grey85")
 
-  for(i in 1:8) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V3[i],V3[i]),border=NA,col="gray")
-  for(i in 1:8) points(i+.2,(tda[i]),pch=19,cex=1.2,col="black")
+  for(i in 1:10) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V2[i],V2[i]),border=NA,col="gray")
+  for(i in 1:10) points(i+.2,(tda[i]),pch=19,cex=1.2,col="black")
 
 
   mtext("Age Group",1,2.5,cex=1.2)
@@ -256,35 +251,71 @@ calib_graphs_st <- function(df,loc, Par_list){
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   ### ### ### ### ### ### TOTAL MORT RATE 1950-2013 ### ### ### ### ### ###
   # ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-  V   <- cbind(df[1:65,510:520])
-  x<-seq(6,781,12)
-  BgMort           <- Inputs[["BgMort"]]
-  mubt   <- matrix(NA,1801,11)
-  for(i in 1:11) {
-    mubt[,i] <- SmoCurve(BgMort[,i+1])*P["TunMubt"]/12
-  }
-  V2  <-mubt[x,]
-
-  col<-rainbow(11)
-
-  plot(1,1,ylim=c(.00001,.04),xlim=c(1950,2014),xlab="",ylab="",axes=F, log="y")
-  axis(1);axis(2,las=2);box()
-  abline(h=axTicks(2),col="grey85")
-  # points(1993:2014,CalibDatState$notif_us_hr[,1]/rowSums(CalibDatState$notif_us_hr)*100,pch=19,cex=0.6)
-  for (i in 1:11){
-    lines(1950:2014,V[,i],lwd=3,col=col[i])
-    lines(1950:2014,V2[,i],lty=3,lwd=2, col="black")
-
-    mtext("Year",1,2.5,cex=1.2)
-    mtext("Age Specific Mortality Rates from 1950 to 2014",3,.8,font=2,cex=1.2)
-    legend("bottomleft",colnames(V),cex=1.0,
-           pch=rep(15,i),lwd=rep(NA,i),lty=rep(NA,i),col=col,bg="white",pt.cex=rep(1.8,i))
-  }
+  # V   <- cbind(df[1:65,510:520])
+  # x<-seq(6,781,12)
+  # BgMort           <- Inputs[["BgMort"]]
+  # mubt   <- matrix(NA,1801,11)
+  # for(i in 1:11) {
+  #   mubt[,i] <- SmoCurve(BgMort[,i+1])*P["TunMubt"]/12
+  # }
+  # V2  <-mubt[x,]
+  #
+  # col<-rainbow(11)
+  #
+  # plot(1,1,ylim=c(.00001,.04),xlim=c(1950,2014),xlab="",ylab="",axes=F, log="y")
+  # axis(1);axis(2,las=2);box()
+  # abline(h=axTicks(2),col="grey85")
+  # # points(1993:2014,CalibDatState$notif_us_hr[,1]/rowSums(CalibDatState$notif_us_hr)*100,pch=19,cex=0.6)
+  # for (i in 1:11){
+  #   lines(1950:2014,V[,i],lwd=3,col=col[i])
+  #   lines(1950:2014,V2[,i],lty=3,lwd=2, col="black")
+  #
+  #   mtext("Year",1,2.5,cex=1.2)
+  #   mtext("Age Specific Mortality Rates from 1950 to 2014",3,.8,font=2,cex=1.2)
+  #   legend("bottomleft",colnames(V),cex=1.0,
+  #          pch=rep(15,i),lwd=rep(NA,i),lty=rep(NA,i),col=col,bg="white",pt.cex=rep(1.8,i))
+  # }
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   # graph of total diagnosed cases
   # by total population, US born population, and non-US born population
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+  V0 <- df[44:67,"NOTIF_ALL"]+df[44:67,"NOTIF_MORT_ALL"] #total population
+  V1 <- df[44:67,"NOTIF_US"]+df[44:67,"NOTIF_MORT_US"]   #US born population
+  V2 <- df[44:67,"NOTIF_F1"]+df[44:67,"NOTIF_F2"]+df[44:67,"NOTIF_MORT_F1"]+df[44:67,"NOTIF_MORT_F2"]   #non-US born population
 
+  tot_cases<-(CalibDatState$cases_yr_ag_nat_st[[st]][1:24,12,1]+CalibDatState$cases_yr_ag_nat_st[[st]][1:24,12,2])
+  # tot_cases<-tot_cases/100;
+  #format the plot
+  plot(0,0,ylim=c(min(V2,V1)*.5*1e6,max(V0)*2*1e6),xlim=c(1993,2016),xlab="",ylab="",axes=F)
+  axis(1);axis(2,las=2);box()
+  abline(h=axTicks(2),col="grey85")
+
+  #plot the model data
+  #multiply raw output by 1,000 to convert from millions to hundredscali
+  lines(1993:2016,V0*1e6,lwd=3,col="white"); lines(1993:2016,V0*1e6,lwd=2,col=1) #total population
+  lines(1993:2016,V1*1e6,lwd=3,col="white"); lines(1993:2016,V1*1e6,lwd=2,col=4) #US born population
+  lines(1993:2016,V2*1e6,lwd=3,col="white"); lines(1993:2016,V2*1e6,lwd=2,col=3) #non-US born population
+
+  #reported data for comparison
+  points(1993:2016,tot_cases,pch=19,cex=0.3) #total population
+  lines(1993:2016,tot_cases,lty=3,col=1)
+
+  points(1993:2016,CalibDatState$cases_yr_ag_nat_st[[st]][1:24,12,1],pch=19,cex=0.3,col=4) #US born population
+  lines(1993:2016,CalibDatState$cases_yr_ag_nat_st[[st]][1:24,12,1],pch=19,lty=3,col=4)
+
+  points(1993:2016,CalibDatState$cases_yr_ag_nat_st[[st]][1:24,12,2],pch=19,cex=0.3,col=3) #non-US born population
+  lines(1993:2016,CalibDatState$cases_yr_ag_nat_st[[st]][1:24,12,2],lty=3,col=3)
+
+  #plot text
+  mtext("Year",1,2.5,cex=1.2)
+  mtext("Total TB Cases Identified, 1993-2016",3,.8,font=2,cex=1.2)
+  legend("topright",c("Reported data (all)","Reported data (US born)","Reported data (non-US born)",
+                      "Model (all)","Model (US born)","Model (non-US born)"),
+         pch=c(19,19,19,NA,NA,NA),lwd=c(1,1,1,2,2,2),lty=c(3,3,3,1,1,1),col=c(1,4,3,1,4,3),bg="white",ncol=2,cex=.8,pt.cex=0.4)
+  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+  # graph of total diagnosed cases 2006-2016
+  # by total population, US born population, and non-US born population
+  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   V0 <- df[57:67,"NOTIF_ALL"]+df[57:67,"NOTIF_MORT_ALL"] #total population
   V1 <- df[57:67,"NOTIF_US"]+df[57:67,"NOTIF_MORT_US"]   #US born population
   V2 <- df[57:67,"NOTIF_F1"]+df[57:67,"NOTIF_F2"]+df[57:67,"NOTIF_MORT_F1"]+df[57:67,"NOTIF_MORT_F2"]   #non-US born population
