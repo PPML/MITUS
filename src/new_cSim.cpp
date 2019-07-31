@@ -1413,13 +1413,36 @@ Rcpp::List fin_cSim(
         //               }
         //             } } } } } } }
         /// TLTBI: TX COMPLETION + DEFAULT /// only need to consider tx naive compartment
-
-
         for(int ag=0; ag<11; ag++) {
           for(int im=0; im<4 ; im++) {
             for(int nm=0; nm<4; nm++) {
               for(int rg=0; rg<2; rg++) {
                 for(int na=0; na<3; na++) {
+                  ////////////// US BORN, LOW RISK  //////////////////
+                  if( rg==0 & na==0) {
+                    rTbP = rLtScrt[s]*LtDxPar_ltN[0][s];
+                    rTbN = rLtScrt[s]*LtDxPar_noltN[0][s];
+                  }
+                  ////////////// US BORN, HIGH RISK  /////////////////
+                  if(rg==1 & na==0) {
+                    rTbP = rLtScrt[s]*LtDxPar_ltN[1][s];
+                    rTbN = rLtScrt[s]*LtDxPar_noltN[1][s];
+                  }
+                    ////////////// Young NUS (under 5)  /////////////////
+                    if(rg==0 & na > 0 & ag==0) {
+                      rTbP = rLtScrt[s]*LtDxPar_ltN[2][s];
+                      rTbN = rLtScrt[s]*LtDxPar_noltN[2][s];
+                    }
+                    //////////// NON US BORN  ////////////////
+                    if(rg==0 & na > 0 & ag > 0) {
+                      rTbP = rLtScrt[s]*LtDxPar_ltN[3][s];
+                      rTbN = rLtScrt[s]*LtDxPar_noltN[3][s];
+                    }
+                    ////////////// NON US BORN, HIGH RISK  /////////////////
+                    if(rg==1 & na >0) {
+                      rTbP = rLtScrt[s]*LtDxPar_ltN[4][s];
+                      rTbN = rLtScrt[s]*LtDxPar_noltN[4][s];
+                    }
                   //N(latent)*r(posLTBIscreen)*p(TLTBI Initiation)*p(TLTBI completion)
                   temp  = V0[ag][2][0][im][nm][rg][na]*rTbP*LtTxParN[s][0]*(1-LtTxParN[s][1]); // tx completion
                   temp2 = V0[ag][3][0][im][nm][rg][na]*rTbP*LtTxParN[s][0]*(1-LtTxParN[s][1]); // tx completion
