@@ -24,10 +24,18 @@ P <- P
 
 # P["TunrslowAge"]<-oldpar["TunrslowAge"]
 # # p[[""]]
-# P[["ImmigVol"]]<-1.1
+# P[["ImmigVol"]]<-.95;
+# P[["TunNetMig"]]<-1
+# P[["TunMubt"]]<-1
+# P[["pImAct"]]<-.1
+# P[["LtbiPar1"]]<-.05
+# P[["LtbiPar2"]]<-.2
+# P[["sigmaFb"]]<-.25
+# P[["sigmaHr"]]<-0
+
 prg_chng<-def_prgchng(P)
 prms <-list()
-prms <- fin_param(P,"US",prg_chng)
+prms <- fin_param(P,loc,prg_chng)
 # data("trans_mat_nat",package="MITUS")
 # trans_mat_tot_ages<-trans_mat_tot_ages_nat
 # tm<-matrix(0,16,16)
@@ -50,9 +58,9 @@ zz <- fin_cSim( nYrs       = 2018-1950         , nRes      = length(prms[["ResNa
                 EarlyTrend = prms[["EarlyTrend"]], ag_den=prms[["aging_denom"]],  NixTrans = prms[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)
   M <- zz$Outputs
     colnames(M) <- prms[["ResNam"]]
-    v21a<- v21  <- M[1:2,521:564]
+    v21a<- v21  <- M[51:52,521:564]
     for (i in 1:11){
-      denom<-M[1:2,2+i]
+      denom<-M[51:52,2+i]
       for (j in 1:ncol(v21)){
         v21a[,(1:4)+4*(i-1)]<-v21[,(1:4)+4*(i-1)]/denom
       } }
