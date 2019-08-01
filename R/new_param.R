@@ -25,10 +25,16 @@ fin_param <- function (PV,loc,prg_chng){
   } else{
     BgMort[10:67,2:12]<-weight_mort(loc)
   }
+  x<-rep(NA,11)
+  for (i in 1:11){
+    x[i]<-BgMort[101,i]/BgMort[100,i];
+  for(j in 68:151){
+    BgMort[j,i]<-BgMort[j-1,i]*x[i]
+  } }
   InitPop          <- Inputs[["InitPop"]]
   Births           <- Inputs[["Births"]]
   ImmigInputs      <- Inputs[["ImmigInputs"]]
-  ImmigInputs$PrevTrend25_34[1:69]<-crude_rate(Inputs)
+  ImmigInputs$PrevTrend25_34<-crude_rate(Inputs)
   TxInputs         <- Inputs[["TxInputs"]]
   NetMig           <- Inputs[["NetMigrState"]]
 
