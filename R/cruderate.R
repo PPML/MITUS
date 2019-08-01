@@ -24,8 +24,17 @@ for (i in 1:length(RR)){
   }
 }
 
-cruderate<-newprev/1e5
-  return(cruderate)}
+cruderatepast<-newprev/1e5
+cruderatefuture<-rep(NA,151-69)
+cruderatefuture[1]<-cruderatepast[69]*0.985
+for (i in 2:length(cruderatefuture)){
+  cruderatefuture[i]<-cruderatefuture[i-1]*0.985
+}
+cruderate<-c(cruderatepast,cruderatefuture)
+names(cruderate)<-as.character(seq(1950,2050,1))
+
+
+return(cruderate)}
 #
 # ##what is the total of the old way
 #
