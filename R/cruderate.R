@@ -1,15 +1,16 @@
 # ###Taking the TB burden data to PrevTrend form
-crude_rate<-function(Inputs){
+crude_rate<-function(Inputs, loc){
 totcase<-Inputs$ImmigInputs$TBBurdenImmig*(90/1e5)*(Inputs$ImmigInputs$TotByYear[1:69]*1e6)
 
 #RR of TB prevalence across age groups
 RR<-Inputs$ImmigInputs[["RR_Active_TB_Age"]]
 
 
-AgeDist<-Inputs$ImmigInputs$AgeDist
-
+AgeDist<-as.matrix(Inputs$ImmigInputs$AgeDist)
+if (loc=="US"){
 AgeDist[11,]<-.005690661*AgeDist[10,]
 AgeDist[10,]<-(1-.005690661)*AgeDist[10,]
+}
 
 TotImmigAge<-matrix(NA,11,69)
 for (i in 1:69){
