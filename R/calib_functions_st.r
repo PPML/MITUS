@@ -75,7 +75,7 @@ notif_fbus_slp_lLik_st <- function(V,st) {
   # notif_fbus_slp5     <- as.numeric(CalibDatState[["case_change_5"]][st,2:3])
   notif_age_fb0     <- CalibDatState[["cases_yr_ag_nat_st"]][[st]][,,"nusb"]
   notif_age_us0     <- CalibDatState[["cases_yr_ag_nat_st"]][[st]][,,"usb"]
-  tot_case_nat<-cbind(notif_age_us0[,2],notif_age_us0 [,2])
+  tot_case_nat<-cbind(notif_age_fb0[,12],notif_age_us0 [,12])
   #calculate the slopes
   notif_fbus_slp5<-apply(log(tot_case_nat[20:25,]),2,function(x) lm(x~I(1:6))$coef[2])
   adj_3a              <- sum(dnorm(notif_fbus_slp5,notif_fbus_slp5,0.005,log=T))# V = table of notifications by fb 2011-2016 (row=6 years, col=fb then us)
