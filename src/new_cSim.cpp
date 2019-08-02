@@ -456,10 +456,10 @@ Rcpp::List fin_cSim(
           for(int rg=0; rg<2; rg++) {
             for(int na=0; na<3; na++){
               for(int tb=0; tb<5; tb++) {
-                if ((ag<9) | ((RRmuRFN[nm]*RRmuHR[rg]) < 5)){
+                if ((ag<9) | ((mubtN[0][ag]*RRmuRFN[nm]*RRmuHR[rg]) < .5)){
                   temp = ((RRmuRFN[nm]*RRmuHR[rg])*mubtN[0][ag]);
                 } else {
-                  temp =  (mubtN[0][ag]*5);
+                  temp =  (.5);
                 }
                 V1[ag][tb][0][im][nm][rg][na]  -= (V0[ag][tb][0][im][nm][rg][na]*(temp+vTMortN[ag][tb]));
 
@@ -1004,10 +1004,10 @@ Rcpp::List fin_cSim(
               for(int rg=0; rg<2; rg++) {
                 for(int na=0; na<3; na++) {
                   for(int tb=0; tb<4; tb++) {
-                    if ((ag<9) | ((RRmuRFN[nm]*RRmuHR[rg]) < 5)){
+                    if ((ag<9) | ((mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]) < .5)){
                       temp = ((RRmuRFN[nm]*RRmuHR[rg])*mubtN[s][ag]);}
                     else {
-                      temp =  (mubtN[s][ag]*5);
+                      temp =  .5;
                     }
 
                     VMort[ag][tb ][lt][im][nm][rg][na]  = V0[ag][tb][lt][im][nm][rg][na]*temp;
