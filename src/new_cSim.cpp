@@ -1639,6 +1639,8 @@ Rcpp::List fin_cSim(
         for(int i=87; i<109; i++) { Outputs[y][i] = Outputs[y][i]*12; }
 
         ///////////////////////  RISK FACTOR MORTALITY BY AGE /////////////////////////
+
+        ///this is horribly wrong, using it as a place holder
         for(int ag=0; ag<11; ag++) {
           for(int tb=0; tb<6; tb++) {
             for(int lt=0; lt<2; lt++) {
@@ -1646,8 +1648,9 @@ Rcpp::List fin_cSim(
                 for(int nm=0; nm<4; nm++) {
                   for(int rg=0; rg<2; rg++) {
                     for(int na=0; na<3; na++) {
-                      Outputs[y][109+ag]  += V0[ag][tb][lt][im][nm][rg][na]*RRmuRFN[nm];
+                      Outputs[y][109+ag]  += VMort[ag][tb][lt][im][nm][rg][na]/RRmuRFN[nm];
                     } } } } } } }
+
         ////////////     CREATE YEARLY VALUES FROM THE MONTH ESTIMATE     ////////////
         for(int i=109; i<120; i++) { Outputs[y][i] = Outputs[y][i]*12;  }
         ///////////////////////    TOTAL MORTALITY BY AGE    /////////////////////////
@@ -1926,7 +1929,7 @@ Rcpp::List fin_cSim(
                 for(int nm=0; nm<4; nm++) {
                   for(int rg=0; rg<2; rg++) {
                     for(int na=0; na<3; na++) {
-                      if (na==0){
+                      if (na<1){
                         Outputs[y][296+im]  += V1[ag][tb][lt][im][nm][rg][na];
                         Outputs[y][304+rg]  += V1[ag][tb][lt][im][nm][rg][na];
                         Outputs[y][308+nm]  += V1[ag][tb][lt][im][nm][rg][na];
@@ -1938,8 +1941,6 @@ Rcpp::List fin_cSim(
                       }
 
                     } } } } } } }
-
-        for(int i=296; i<316; i++) { Outputs[y][i] = Outputs[y][i]*12; }
 
         ////total mortality
         for(int ag=0; ag<11; ag++) {
@@ -2045,101 +2046,8 @@ Rcpp::List fin_cSim(
                 } } } } }
       }
 
-      // for(int ag=0; ag<11; ag++) {
-      //   for(int tb=0; tb<6; tb++) {
-      //     for(int lt=0; lt<2; lt++){
-      //       for(int im=0; im<4; im++){
-      //         for(int nm=0; nm<4; nm++){
-      //           for(int rg=0; rg<2; rg++) {
-      //             for(int na=0; na<3; na++) {
-      //               if (std::any_of(V1[ag][tb][lt][im][nm][rg][na]<0)){
-      //                 //Rcpp::Rcout << "after rblnc pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
-      //              //   Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-      //              Rcpp::Rcout << "after rblnc pop is negative /n";
-      //               }
-      //             } } } } } } }
-
-
-      //     //
-      //     //    ///////////////////////////////////////////////////////////////////////////////////
-      //     //    ///////////                       UPDATE V0 as V1                       ///////////
-      // //     //    ///////////////////////////////////////////////////////////////////////////////////
-      // for(int ag=0; ag<11; ag++) {
-      //   for(int tb=0; tb<6; tb++) {
-      //     for(int lt=0; lt<2; lt++){
-      //       for (int im=0; im<4; im++){
-      //         for (int nm=0; nm<4; nm++){
-      //           for(int rg=0; rg<2; rg++) {
-      //             for(int na=0; na<3; na++){
-      //               // if ((reblnc == 1) & ((m==5)|(m==11))){
-      //               //   V0[ag][tb][lt][im][nm][rg][na] = V2[ag][tb][lt][im][nm][rg][na];
-      //               //   V1[ag][tb][lt][im][nm][rg][na] = V2[ag][tb][lt][im][nm][rg][na];
-      //               // } else {
-      //                 V0[ag][tb][lt][im][nm][rg][na] = V1[ag][tb][lt][im][nm][rg][na];
-      //               // }
-      //             } } } } } } }
-      // for(int ag=0; ag<11; ag++) {
-      //
-      // for (int i=0; i<4; i++){
-      //   for (int j=0; j<4; j++){
-      //     temp_mat[i][j]=0; } }
-      // mat_sum=0;
-      // for(int nm=0; nm<4; nm++){
-      //     for(int tb=0; tb<6; tb++) {
-      //       for(int lt=0; lt<2; lt++){
-      //
-      //         for(int im=0; im<4; im++) {
-      //           for(int rg=0; rg<2; rg++){
-      //             for(int na=0; na<3; na++){
-      //               temp_mat[nm][im]  += V1[ag][tb][lt][im][nm][rg][na];
-      //             } } } } }
-      // }
-      // for(int nm=0; nm<4; nm++){
-      //   for(int im=0; im<4; im++){
-      //     mat_sum+=temp_mat[nm][im];
-      //   } }
-      // for(int nm=0; nm<4; nm++){
-      //   for(int im=0; im<4; im++){
-      //
-      //     temp_mat2[nm][im] = temp_mat[nm][im]/mat_sum;
-      //   } }
-      // for(int nm=0; nm<4; nm++){
-      //   for(int im=0; im<4; im++){
-      // Rcpp::Rcout <<"at s "<<s <<"dist is = "<< temp_mat2[nm][im] << "at nm =" << nm <<" at im =" << im << "& ag = " <<ag<< "\n";
-      // } }
-      // }
-
-
     } //// end of month loop!//////////////////////////////////////////////////////////
   } //// end of year loop!///////////////////////////////////////////////////////////
-  // for(int ag=0; ag<11; ag++) {
-  //
-  //   for (int i=0; i<4; i++){
-  //     for (int j=0; j<4; j++){
-  //
-  //       temp_mat[i][j]=0; } }
-  //   mat_sum=0;
-  //   for(int nm=0; nm<4; nm++){
-  //     for(int tb=0; tb<6; tb++) {
-  //       for(int lt=0; lt<2; lt++){
-  //         for(int im=0; im<4; im++) {
-  //           for(int rg=0; rg<2; rg++){
-  //             for(int na=0; na<3; na++){
-  //               temp_mat[nm][im]  += V1[ag][tb][lt][im][nm][rg][na];
-  //             } } } } }
-  //   }
-  //   for(int nm=0; nm<4; nm++){
-  //     for(int im=0; im<4; im++){
-  //       mat_sum+=temp_mat[nm][im];
-  //     } }
-  //   for(int nm=0; nm<4; nm++){
-  //     for(int im=0; im<4; im++){
-  //
-  //       temp_mat[nm][im] = temp_mat[nm][im]/mat_sum;
-  //       Rcpp::Rcout << temp_mat[nm][im] << "at nm = " << nm << "& im "<< im << "at ag "<< ag<< "\n";
-  //
-  //     } } }
-  //
 
   for (int i=0; i<4; i++){
     for (int j=0; j<4; j++){
@@ -2177,21 +2085,6 @@ Rcpp::List fin_cSim(
                 CheckV(ag+tb*11+lt*66+im*132+nm*528+rg*2112+na*4224) = V1[ag][tb][lt][im][nm][rg][na];
               } } } } } } }
 
-  // for (int i=0; i <12672; i++){
-  // if (CheckV(i) <0){
-  //   for(int ag=0; ag<11; ag++) {
-  //     for(int tb=0; tb<6; tb++) {
-  //       for(int lt=0; lt<2; lt++){
-  //         for(int im=0; im<4; im++){
-  //           for(int nm=0; nm<4; nm++){
-  //             for(int rg=0; rg<2; rg++) {
-  //               for(int na=0; na<3; na++) {
-  //   Rcout <<"population is negative at ag = "<< ag << " tb = " << tb <<
-  //     " lt = " << lt << " im = " << im << " nm = " << nm << " rg = " << rg << " & na = " << na << "\n";
-  //               } } } } } } }
-  // // } else {Rcout << "no negatives \n" ;
-  // //        }
-  // } }
   ///////////////////////////////////////////////////////////////////////////////////
   //////                              RETURN STUFF                              /////
   ///////////////////////////////////////////////////////////////////////////////////
