@@ -72,9 +72,9 @@ llikelihoodZ <-  function(samp_i, start_mat) {
                     M[44:67,147]+M[44:67,200])
       addlik <- notif_fb_lLik(V=v3); addlik
       lLik <- lLik + addlik
-      #' CASES FB, US 2010-2014  SLOPE - index updated
-      v3   <- cbind(M[44:66,148]+M[44:66,149]+(M[44:66,201]+M[44:66,202]),
-                    M[44:66,147]+M[44:66,200])
+      #' CASES FB, US 2012-2016  SLOPE - index updated
+      v3   <- cbind(M[63:67,148]+M[63:67,149]+(M[63:67,201]+M[63:67,202]),
+                    M[63:67,147]+M[63:67,200])
       addlik <- notif_fbus_slp_lLik(V=v3); addlik
       lLik <- lLik + addlik
       #' CASES HR DISTRIBUTION 1993-2016 - index updated
@@ -85,7 +85,7 @@ llikelihoodZ <-  function(samp_i, start_mat) {
       v6   <- M[44:65,148:149]+M[44:65,201:202]
       addlik <- notif_fb_rec_lLik(V=v6); addlik
       lLik <- lLik + addlik
-      #' TREATMENT OUTCOMES 1993-2012 - index updated
+      #' TREATMENT OUTCOMES 1993-2014 - index updated
       v11  <- M[44:65,132:134]
       addlik <- tx_outcomes_lLik(V=v11); addlik
       lLik <- lLik + addlik
