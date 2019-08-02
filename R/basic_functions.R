@@ -38,7 +38,7 @@ invlgt <- function(x) 1/(1+exp(-x))
 LgtCurve <- function(StYr,Endyr,EndVal) {
   z <- log(1/0.005-1)
   zz  <- seq(-z*(1+2*(StYr-1950)/(Endyr-StYr)),
-              z*(1+2*(2050-Endyr)/(Endyr-StYr)),
+             z*(1+2*(2050-Endyr)/(Endyr-StYr)),
              by=(2*z)/(Endyr-StYr)/12)
   zz  <- as.numeric(EndVal)/(1+exp(-zz))
   if(StYr>1950) {
@@ -56,6 +56,35 @@ SmoCurve <- function(vec) {
   jj[jj<0] <- 0 ; jj
 }
 
+#'This function creates a smooth curve from a vector of values.
+#'@name SmoCurve_knots
+#'@param vec vector of values that the user would like to have smoothed into a curve
+#'@param nk number of knots
+#'@return expanded vector of values that determine the shape of the smoothing spline
+SmoCurve_knots <- function(vec,nk) {
+  jj <- predict(smooth.spline(x=1:length(vec),y=vec,spar=0.2, nknots = nk),
+                x=seq(1,length(vec),1/12))$y;
+  jj[jj<0] <- 0 ; jj
+}
+
+#'This function creates a smooth curve from a vector of values.
+#'@name SmoCurve_decade_month
+#'@param vec vector of values that the user would like to have smoothed into a curve
+#'@return expanded vector of values that determine the shape of the smoothing spline
+SmoCurve_decade_month <- function(vec) {
+  jj <- predict(smooth.spline(x=1:length(vec),y=vec,spar=0.2),
+                x=seq(1,length(vec),1/120))$y;
+  jj[jj<0] <- 0 ; jj
+}
+#'This function creates a smooth curve from a vector of values.
+#'@name SmoCurve_decade_year
+#'@param vec vector of values that the user would like to have smoothed into a curve
+#'@return expanded vector of values that determine the shape of the smoothing spline
+SmoCurve_decade_year <- function(vec) {
+  jj <- predict(smooth.spline(x=1:length(vec),y=vec,spar=0.2),
+                x=seq(1,length(vec),1/10))$y;
+  jj[jj<0] <- 0 ; jj
+}
 #'This function is for the expit
 #'@name expit
 #'@param x number
@@ -75,11 +104,11 @@ expit <- function(x) {
 bspline <- function(x,k,i,m) {
   if (m==-1) {
     res <- as.numeric(x<k[i+1] & x>=k[i])
-} else {
+  } else {
     z0  <- (x-k[i]) / (k[i+m+1]-k[i]);
     z1  <- (k[i+m+2]-x) / (k[i+m+2]-k[i+1])
     z0*bspline(x,k,i,m-1) + z1*bspline(x,k,i+1,m-1)
-}  }
+  }  }
 
 #'Dirichlet multinomial density function
 #'@name dDirMult
@@ -96,8 +125,6 @@ dDirMult <- function(M,n,Rho) {
   }
   rowSums(lgamma(n+M/Rho))-rowSums(lgamma(M/Rho))
 }
-
-
 #'@name getmode
 #'@param x some vector (character or numeric)
 #'@return mode

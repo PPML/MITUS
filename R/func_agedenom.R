@@ -66,18 +66,20 @@ age_denom<-function(loc){
     ltd[9,]<-popdist[85,]/colSums(popdist[76:85,])
     ltd[10,]<-popdist[95,]/colSums(popdist[86:95,])
 
+
+    for (i in 1:length(ltd)){
+    if (ltd[i]==0){
+      ltd[i]<-0.01980337
+    }}
     #invert this for the aging rate
 
     ltd<-1/ltd
-    if (ltd[,]==Inf){
-      ltd[,]<-0
-    }
-
     td<-matrix(NA,10,1201)
     for (i in 1:10){
-      td[i,1:817]<-SmoCurve_decade(as.numeric(ltd[i,]))
-      td[i,818:1201]<-td[i,817]
+      td[i,1:841]<-SmoCurve_decade_month(as.numeric(ltd[i,]))
+      td[i,842:1201]<-td[i,841]
     }
+  age_den<-t(td)*12
   } #end of else statement
   return(age_den)
 }

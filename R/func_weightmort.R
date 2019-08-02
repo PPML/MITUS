@@ -74,7 +74,7 @@ weight_mort<-function(loc){
     weight_mort[10,]<-colSums(nat_mort[86:95,]*popdist[86:95,10:67]*ratio[86:95,])/colSums(popdist[86:95,10:67])
     weight_mort[11,]<-colSums(nat_mort[96:111,]*popdist[96:111,10:67]*ratio[96:111,])/colSums(popdist[96:111,10:67])
 
-weight_mort<-t(weight_mort)
-}
+    weight_mort<-t(weight_mort)
+  }
   return (weight_mort)
 }
