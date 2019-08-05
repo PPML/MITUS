@@ -73,15 +73,17 @@ llikelihoodZ <-  function(samp_i, start_mat) {
       addlik <- notif_fb_lLik(V=v3); addlik
       lLik <- lLik + addlik
       #' CASES FB, US 2012-2016  SLOPE - index updated
-      v3   <- cbind(M[63:67,148]+M[63:67,149]+(M[63:67,201]+M[63:67,202]),
+      v3a   <- cbind(M[63:67,148]+M[63:67,149]+(M[63:67,201]+M[63:67,202]),
                     M[63:67,147]+M[63:67,200])
-      addlik <- notif_fbus_slp_lLik(V=v3); addlik
+      addlik <- notif_fbus_slp_lLik(V=v3a); addlik
       lLik <- lLik + addlik
       #' CASES HR DISTRIBUTION 1993-2016 - index updated
+      #' high risk first column, low risk second column
       v5b   <- cbind(M[44:67,151],M[44:67,150]) + cbind(M[44:67,204],M[44:67,203])
       addlik <- notif_us_hr_lLik(V=v5b); addlik
       lLik <- lLik + addlik
       #' CASES FB RECENT ENTRY DISTRIBUTION 1993-2014 index updated
+      #' recent immigrants column one; long term in column two
       v6   <- M[44:65,148:149]+M[44:65,201:202]
       addlik <- notif_fb_rec_lLik(V=v6); addlik
       lLik <- lLik + addlik

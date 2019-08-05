@@ -23,7 +23,6 @@ notif_tot_lik <- function(V) {
 #'@param rho correlation parameter
 #'@return likelihood
 notif_age_us_lLik <- function(V,rho=0.005) {
-  notif_age         <- CalibDat[["age_cases"]][,-c(1,12)]*CalibDat[["age_cases"]][,12]
   notif_age_us      <- CalibDat[["age_cases_us"]][,-c(1,12)]*CalibDat[["age_cases_us"]][,12]
   #weighted sum across the years
   adj_2a            <- sum(dDirMult(M=notif_age_us,n=notif_age_us,Rho=0.005)*wts[44:67])
@@ -82,7 +81,8 @@ notif_us_hr_lLik <- function(V,rho=0.005) {
 notif_fb_rec_lLik <- function(V,rho=0.005) {
   notif_fb_rec   <- cbind(CalibDat[["fb_recent_cases"]][,2],1-CalibDat[["fb_recent_cases"]][,2])*CalibDat[["fb_recent_cases"]][,3]
   adj_6          <- sum(dDirMult(M=notif_fb_rec,n=notif_fb_rec,Rho=0.005)*wts[44:65])
-  sum(dDirMult(M=V,n=notif_fb_rec,Rho=rho)*wts[44:65]) - adj_6  }
+  sum(dDirMult(M=V,n=notif_fb_rec,Rho=rho)*wts[44:65]) - adj_6
+  }
 
 #' TREATMENT OUTCOMES 1993-2014
 #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
@@ -153,6 +153,41 @@ ltbi_fb_11_dp_lLik <- function(V) {
   V[9,] <- colSums(V[9:11,])
   (sum( dbeta(V[2:9,1]/rowSums(V[2:9,]),ltbi_fb_11_dp[,2],ltbi_fb_11_dp[,3],log=T) ) - adj_16dp)*2  }
 
+#' Total TB DEATHS 1999-2014
+#' Motivation: overdispersed poisson, modelled with negbin with overdispersion param = 100 *wts[50:65]
+#'@param V TB deaths by age 1999-2013  (row=15 years, col= 11 ages)
+#'@return likelihood
+# tb_deaths_lLik <- function(V,sgsq=50) {
+#   tb_deaths      <- CalibDat[["tb_deaths"]][,-1]
+#   adj_19         <- 0
+#   for(i in 1:16) adj_19 <- adj_19 + sum(dnbinom(as.numeric(tb_deaths[i,]),mu=as.numeric(tb_deaths[i,]),size=50,log=T))*wts[50:65][i]
+#   V2 <- V[,-11]; V2[,10] <- V[,10]+V[,11]
+#   l1 <- 0
+#   for(i in 1:16) l1 <- l1 + sum(dnbinom(as.numeric(tb_deaths[i,]),mu=as.numeric(V2[i,])*1e6,size=sgsq,log=T))*wts[50:65][i]
+#   l1 - adj_19  }
+
+#' TOTAL TB DEATHS 1999-2014
+#' Motivation: norm, mean centered with CI = +/- 5% of mean
+#'@param V vector of TB deaths in fraction of millions
+#'@return likelihood
+tb_dth_tot_lLik <- function(V) {
+  tb_deaths_tot   <- rowSums(CalibDat[["tb_deaths"]][,-1])
+  adj_19a         <- sum(dnorm(tb_deaths_tot,tb_deaths_tot,tb_deaths_tot*0.2/1.96,log=T)*wts[50:65])
+  V2<-rowSums(V)
+  sum(dnorm(tb_deaths_tot,V2*1e6,tb_deaths_tot*0.2/1.96,log=T)*wts[50:65]) - adj_19a  }
+
+#' TB DEATHS AGE DISTRIBUTION 1999-2014
+#' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
+#'@param V table of deaths by age 1999-2014 (row=16 years, col=11 ages)
+#'@param rho correlation parameter
+#'@return likelihood
+tb_dth_age_lLik <- function(V,rho=0.01) {
+  tb_deaths_age  <- CalibDat[["tb_deaths"]][,-1]
+  adj_19b        <- sum(dDirMult(M=tb_deaths_age+0.1,n=tb_deaths_age,Rho=0.01)*wts[50:65])
+  V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
+  sum(dDirMult(M=V+.1,n=tb_deaths_age,Rho=rho)*wts[50:65]) - adj_19b  }
+
+###start demographic log likelihood
 #' TOTAL POP EACH DECADE, FOR FB
 #' Motivation: norm, mean centered with CI = +/- 2 million wts[1+0:6*10]
 #'@param V total pop (rows=year, cols=us, fb)
@@ -215,40 +250,6 @@ tot_pop_age_lLik <- function(V,ESS=500) {
 }
 
 
-#' Total TB DEATHS 1999-2014
-#' Motivation: overdispersed poisson, modelled with negbin with overdispersion param = 100 *wts[50:65]
-#'@param V TB deaths by age 1999-2013  (row=15 years, col= 11 ages)
-#'@return likelihood
-# tb_deaths_lLik <- function(V,sgsq=50) {
-#   tb_deaths      <- CalibDat[["tb_deaths"]][,-1]
-#   adj_19         <- 0
-#   for(i in 1:16) adj_19 <- adj_19 + sum(dnbinom(as.numeric(tb_deaths[i,]),mu=as.numeric(tb_deaths[i,]),size=50,log=T))*wts[50:65][i]
-#   V2 <- V[,-11]; V2[,10] <- V[,10]+V[,11]
-#   l1 <- 0
-#   for(i in 1:16) l1 <- l1 + sum(dnbinom(as.numeric(tb_deaths[i,]),mu=as.numeric(V2[i,])*1e6,size=sgsq,log=T))*wts[50:65][i]
-#   l1 - adj_19  }
-
-#' TOTAL TB DEATHS 1999-2014
-#' Motivation: norm, mean centered with CI = +/- 5% of mean
-#'@param V vector of TB deaths in fraction of millions
-#'@return likelihood
-tb_dth_tot_lLik <- function(V) {
-  tb_deaths_tot   <- rowSums(CalibDat[["tb_deaths"]][,-1])
-  adj_19a         <- sum(dnorm(tb_deaths_tot,tb_deaths_tot,tb_deaths_tot*0.2/1.96,log=T)*wts[50:65])
-  V2<-rowSums(V)
-  sum(dnorm(tb_deaths_tot,V2*1e6,tb_deaths_tot*0.2/1.96,log=T)*wts[50:65]) - adj_19a  }
-
-#' TB DEATHS AGE DISTRIBUTION 1999-2014
-#' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
-#'@param V table of deaths by age 1999-2014 (row=16 years, col=11 ages)
-#'@param rho correlation parameter
-#'@return likelihood
-tb_dth_age_lLik <- function(V,rho=0.01) {
-  tb_deaths_age  <- CalibDat[["tb_deaths"]][,-1]
-  adj_19b        <- sum(dDirMult(M=tb_deaths_age+0.1,n=tb_deaths_age+0.1,Rho=0.01)*wts[50:65])
-  V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
-  sum(dDirMult(M=V2,n=tb_deaths_age+.1,Rho=rho)*wts[50:65]) - adj_19b  }
-
 #' TOTAL US DEATHS
 #' 1970,1975,1980,1985,1990-2007
 #' Motivation: norm, mean centered with CI = +/- 5% of mean
@@ -268,13 +269,13 @@ US_dth_tot_lLik <- function(V) {
 #'@param V vector of total deaths in US from 1971-2016, fraction of millions
 #'@return likelihood
 
-US_dth_10_tot_lLik <- function(V) {
-  # CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
-  # US_deaths_tot   <- CalibDat[["US_tot_mort"]][67,-1]
-  death_age <-sum(readRDS(system.file("US/US_MortalityCountsByAge.rds", package="MITUS"))[,69])/1e6
-  adj_20a         <- sum(dnorm(death_sum,death_sum,death_sum*0.1/1.96,log=T)*wts[68])
-  sum(dnorm(death_sum,V,death_sum*0.1/1.96,log=T)*wts[67]) - adj_20a
-}
+# US_dth_10_tot_lLik <- function(V) {
+#   # CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
+#   # US_deaths_tot   <- CalibDat[["US_tot_mort"]][67,-1]
+#   death_age <-sum(readRDS(system.file("US/US_MortalityCountsByAge.rds", package="MITUS"))[,69])/1e6
+#   adj_20a         <- sum(dnorm(death_sum,death_sum,death_sum*0.1/1.96,log=T)*wts[68])
+#   sum(dnorm(death_sum,V,death_sum*0.1/1.96,log=T)*wts[67]) - adj_20a
+# }
 #' TOTAL DEATHS AGE DISTRIBUTION 1999-2014
 #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
 #'@param V table of deaths by age 1999-2014 (row=16 years, col=11 ages)
