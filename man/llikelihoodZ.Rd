@@ -21,10 +21,12 @@ TOTAL DIAGNOSED CASES 1953-2016 - index is same
 US CASES AGE DISTRIBUTION 1993-2016 - index updated
 FB CASES AGE DISTRIBUTION 1993-2016 - index updated
 CASES FB DISTRIBUTION 1993-2016 - index updated
-CASES FB, US 2010-2014  SLOPE - index updated
+CASES FB, US 2012-2016  SLOPE - index updated
 CASES HR DISTRIBUTION 1993-2016 - index updated
+high risk first column, low risk second column
 CASES FB RECENT ENTRY DISTRIBUTION 1993-2014 index updated
-TREATMENT OUTCOMES 1993-2012 - index updated
+recent immigrants column one; long term in column two
+TREATMENT OUTCOMES 1993-2014 - index updated
 TOTAL LTBI TREATMENT INITS 2002 - index updated
 DIST LTBI TREATMENT INITS 2002 - index updated
 LTBI PREVALENCE BY AGE 2011, US - index updated
