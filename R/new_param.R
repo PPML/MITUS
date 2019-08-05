@@ -19,18 +19,26 @@ fin_param <- function (PV,loc,prg_chng){
   ################################################################################
   ###########################          INPUTS            #########################
   ################################################################################
-  BgMort           <- as.matrix(Inputs[["BgMort"]])
+  BgMort              <- as.matrix(Inputs[["BgMort"]])
   if(loc=="US"){
-    BgMort[1:68,2:12]<-weight_mort(loc)
+    BgMort[1:68,2:12] <-weight_mort(loc)
   } else{
     BgMort[10:67,2:12]<-weight_mort(loc)
   }
-  x<-rep(NA,11)
-  for (i in 1:11){
-    x[i]<-BgMort[101,i]/BgMort[100,i];
   for(j in 68:151){
-    BgMort[j,i]<-BgMort[j-1,i]*x[i]
-  } }
+    for (i in 1:2){
+    BgMort[j,i]<-BgMort[j-1,i]*(1-.0159)
+    }
+    for (i in 3:7){
+    BgMort[j,i]<-BgMort[j-1,i]*(1-.0095)
+    }
+    for (i in 8:9){
+     BgMort[j,i]<-BgMort[j-1,i]*(1-.0083)
+    }
+    for (i in 10:11){
+    BgMort[j,i]<-BgMort[j-1,i]*(1-.0052)
+    }
+    }
   InitPop          <- Inputs[["InitPop"]]
   Births           <- Inputs[["Births"]]
   ImmigInputs      <- Inputs[["ImmigInputs"]]
@@ -90,15 +98,6 @@ fin_param <- function (PV,loc,prg_chng){
   RRmuRF<-RRmuRF/sum(RRmuRF*mort_dist)
   #check
   #RRmuRF%*%mort_dist
-
-  # vRFMort    <- matrix(0,11,4);
-  # rownames(vRFMort) <- c("0_4",paste(0:8*10+5,1:9*10+4,sep="_"),"95p")
-  # colnames(vRFMort) <- c("RF1","RF2","RF3","RF4")
-  # vRFMort[,1] <- 0;
-  # vRFMort[,2] <- muRF1*exp(c(0,0,1:6,6,6,6)*TunmuHvAg)
-  # vRFMort[,3] <- muRF2*exp(c(0,0,1:6,6,6,6)*TunmuHvAg)
-  # vRFMort[,4] <- muRF3*exp(c(0,0,1:6,6,6,6)*TunmuHvAg)
-
   ##### combine the two RRs to a single factor
   RRs_mu <-matrix(NA,2,4)
   RRs_mu[1,] <-RRmuRF
@@ -116,7 +115,6 @@ fin_param <- function (PV,loc,prg_chng){
 
   ######################         IMMIGRATION             ########################
   ######################         OVERALL IMM.            ########################
-
   TotImmig0       <- (c(ImmigInputs[[1]][1:151])+c(rep(0,65),cumsum(rep(PV["ImmigVolFut"],86))))/12*PV["ImmigVol"]
   TotImmig1       <- TotImmig0
   TotImmig        <- SmoCurve(TotImmig1)
@@ -124,12 +122,8 @@ fin_param <- function (PV,loc,prg_chng){
   TotImmAge<-matrix(NA,1801,11)
   for (i in 1:11){
     AgeDist[i,]         <- SmoCurve(ImmigInputs[["AgeDist"]][i,])}
-  if (loc !="US"){
-  AgeDist[11,]<-.005690661*AgeDist[10,]
-  AgeDist[10,]<-(1-.005690661)*AgeDist[10,]}
   for (i in 1:1801){
     for (j in 1:11){
-      # TotImmAge[i,j]   <- outer(TotImmig[i],AgeDist[j,i])
       TotImmAge[i,j]   <- TotImmig[i]*AgeDist[j,i]
     }}
 
@@ -144,7 +138,8 @@ fin_param <- function (PV,loc,prg_chng){
   for(i in 1:11) ImmLat[,i] <- (1-exp((-(c(2.5,1:9*10,100)/100)[i]*PV["LtbiPar1"]-(c(2.5,1:9*10,100)/100)[i]^2*PV["LtbiPar2"])*PrevTrend25_34_ls))*TotImmAge[,i]
 
   ######################         ACTIVE TB IMM.           ########################
-  PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:69],ImmigInputs[["PrevTrend25_34"]][70:151]*(PV["ImmigPrevFutAct"]/0.99)^(1:82))
+  PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:69]^PV["TunActTrend"]*ImmigInputs[["PrevTrend25_34"]][69]^(1-PV["TunActTrend"]),
+                        ImmigInputs[["PrevTrend25_34"]][70:151]*(PV["ImmigPrevFutAct"]/0.99)^(1:82))
   PrevTrend25_34a  <- SmoCurve(PrevTrend25_340a)
 
   ImmAct         <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*PV["pImAct"]
