@@ -183,9 +183,9 @@ tb_dth_tot_lLik <- function(V) {
 #'@return likelihood
 tb_dth_age_lLik <- function(V,rho=0.01) {
   tb_deaths_age  <- CalibDat[["tb_deaths"]][,-1]
-  adj_19b        <- sum(dDirMult(M=tb_deaths_age+0.1,n=tb_deaths_age,Rho=0.01)*wts[50:65])
+  adj_19b        <- sum(dDirMult(M=tb_deaths_age+.1,n=tb_deaths_age,Rho=0.01)*wts[50:65])
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
-  sum(dDirMult(M=V+.1,n=tb_deaths_age,Rho=rho)*wts[50:65]) - adj_19b  }
+  sum(dDirMult(M=(V*1e6)+.1,n=tb_deaths_age,Rho=rho)*wts[50:65]) - adj_19b  }
 
 ###start demographic log likelihood
 #' TOTAL POP EACH DECADE, FOR FB
