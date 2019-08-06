@@ -2031,7 +2031,7 @@ Rcpp::List fin_cSim(
                         } if (6<ag & ag<11){
                           Outputs[y][666+nm+(im*4)] += V1[ag][tb][lt][im][nm][rg][na];
                         } } }
-                  } } } } } } }
+                  } } } } } }
 
       } ////end of mid-year results bracket
       ///////////////////////////////////////////////////////////////////////////////////

@@ -1,7 +1,7 @@
 #include <Rcpp.h>
 #include <math.h>
 using namespace Rcpp;
-//'@name fin_cSim
+//'@name x_fin_cSim
 //'@description runs a simulation of the tb model
 //'@param nYrs number of years to run the model.
 //'@param nRes number of results of the model
@@ -51,7 +51,7 @@ using namespace Rcpp;
 //'@return Outputs a list of outputs
 //[[Rcpp::export]]
 
-Rcpp::List fin_cSim(
+Rcpp::List x_2fin_cSim(
     int                 nYrs,
     int                 nRes,
     Rcpp::NumericMatrix rDxt,
@@ -1977,7 +1977,7 @@ Rcpp::List fin_cSim(
                           Outputs[y][381+nm+(im*4)] += V1[ag][tb][lt][im][nm][rg][na];
                         } if (6<ag & ag<11){
                           Outputs[y][397+nm+(im*4)] += V1[ag][tb][lt][im][nm][rg][na];
-                        } } }
+                        } }
                   } } } } } } }
       //mortality rates by age
       for(int ag=0; ag<11; ag++) {
