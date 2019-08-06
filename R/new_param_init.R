@@ -752,7 +752,43 @@ fin_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sce
               paste("N_ag_11",StatList[[5]],sep="_" ),
               ### new infections
               paste("N_newinf_USB",StatList[[1]],sep="_" ),
-              paste("N_newinf_NUSB",StatList[[1]],sep="_" )
+              paste("N_newinf_NUSB",StatList[[1]],sep="_" ),
+
+              paste("0-24","US", "NM1",StatList[[4]],sep="_"),
+              paste("0-24","US", "NM2",StatList[[4]],sep="_"),
+              paste("0-24","US", "NM3",StatList[[4]],sep="_"),
+              paste("0-24","US", "NM4",StatList[[4]],sep="_"),
+
+
+              paste("25-64","US","NM1",StatList[[4]],sep="_"),
+              paste("25-64","US","NM2",StatList[[4]],sep="_"),
+              paste("25-64","US","NM3",StatList[[4]],sep="_"),
+              paste("25-64","US","NM4",StatList[[4]],sep="_"),
+
+
+              paste("65+","US","NM1",StatList[[4]],sep="_"),
+              paste("65+","US","NM2",StatList[[4]],sep="_"),
+              paste("65+","US","NM3",StatList[[4]],sep="_"),
+              paste("65+","US","NM4",StatList[[4]],sep="_"),
+
+
+              paste("0-24","NUS", "NM1",StatList[[4]],sep="_"),
+              paste("0-24","NUS", "NM2",StatList[[4]],sep="_"),
+              paste("0-24","NUS", "NM3",StatList[[4]],sep="_"),
+              paste("0-24","NUS", "NM4",StatList[[4]],sep="_"),
+
+
+              paste("25-64","NUS","NM1",StatList[[4]],sep="_"),
+              paste("25-64","NUS","NM2",StatList[[4]],sep="_"),
+              paste("25-64","NUS","NM3",StatList[[4]],sep="_"),
+              paste("25-64","NUS","NM4",StatList[[4]],sep="_"),
+
+
+              paste("65+","NUS","NM1",StatList[[4]],sep="_"),
+              paste("65+","NUS","NM2",StatList[[4]],sep="_"),
+              paste("65+","NUS","NM3",StatList[[4]],sep="_"),
+              paste("65+","NUS","NM4",StatList[[4]],sep="_")
+
 
   )
 
