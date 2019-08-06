@@ -7,10 +7,6 @@ RR<-Inputs$ImmigInputs[["RR_Active_TB_Age"]]
 
 
 AgeDist<-as.matrix(Inputs$ImmigInputs$AgeDist)
-if (loc=="US"){
-AgeDist[11,]<-.005690661*AgeDist[10,]
-AgeDist[10,]<-(1-.005690661)*AgeDist[10,]
-}
 
 TotImmigAge<-matrix(NA,11,69)
 for (i in 1:69){
