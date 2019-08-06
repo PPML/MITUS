@@ -321,7 +321,7 @@ fin_param <- function (PV,loc,prg_chng){
   }
 
   ### PROBABILITY OF LATENT TREATMENT INTIATION
-  pTlInt        <- rep(.80,month)
+  pTlInt        <- rep(.775,month)
   ###################### LTBI TX INITIATION PROGRAM CHANGE ########################
   if (prg_chng["ltbi_init_frc"] !=pTlInt[prg_m]){
     pTlInt[prg_m:length(pTlInt)] <- prg_chng["ltbi_init_frc"];
