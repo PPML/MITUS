@@ -8,14 +8,13 @@
 calib_graphs <- function(df, Par_list){
   library(MCMCpack)
 df<-as.data.frame(df)
-pdfname<-paste("MITUS_results/calib_graphs",Sys.time(),".pdf")
+pdfname<-paste("~/MITUS/MITUS_results/calib_graphs",Sys.time(),".pdf")
 pdf(file=pdfname, width = 11, height = 8.5)
 par(mfrow=c(2,2),mar=c(4,4.5,3,1))
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 ### ### ### ### ### ###   TOTAL POP EACH DECADE, BY US/FB   ### ### ### ### ### ###
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-
 V  <- cbind(df[1:66,30], df[1:66,31]+df[1:66,32])
 plot(1,1,ylim=c(2,500),xlim=c(1950,2015),xlab="",ylab="",axes=F,log="y")
 axis(1);axis(2,las=2);box()
@@ -70,42 +69,40 @@ legend("topright",c("US born","Non-US Born","Reported data"),cex=1,
 ### ### ### ### ### ### TOTAL POP AGE DISTRIBUTION 2014 all ages ### ### ### ### ### ###
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
-V  <- cbind(t(df[65,33:43]),t(df[65,44:54]))
-
-plot(1,1,ylim=c(0.05,max(range(V))),xlim=c(0.6,11.4),xlab="",ylab="",axes=F,col=NA, log="y")
-axis(1,1:11,paste(c("0-4","5-14","15-24","25-34","35-44","45-54","55-64","65-74","75-84","85-94", "95p"),"\nyears",sep=""),tick=F,cex.axis=0.75)
-axis(1,1:12-0.5,rep("",12))
-axis(2,c(0,.1,1,10,20,30,50),las=2);box()
-abline(h=axTicks(2),col="grey85")
-
-for(i in 1:11) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V[i,1],V[i,1]),border=NA,col="lightblue")
-for(i in 1:11) polygon(i+c(-.4,0,0,-.4),c(0.0001,0.0001,V[i,2],V[i,2]),border=NA,col="pink")
-
-mtext("Age Group",1,2.5,cex=1.2)
-mtext("Millions",2,2.5,cex=1.2)
-
-box()
-mtext("Total Population by Age Group 2014 (mil,log-scale)",3,.8,font=2,cex=1.2)
-legend("topright",c("US born","Non-US Born","Reported data"),cex=1.0,
-       pch=c(15,15,19),lwd=c(NA,NA,1),lty=c(NA,NA,3),col=c("lightblue","pink",1),bg="white",pt.cex=c(1.8,1.8,0.3))
+# V  <- cbind(t(df[65,33:43]),t(df[65,44:54]))
+#
+# plot(1,1,ylim=c(0.05,max(range(V))),xlim=c(0.6,11.4),xlab="",ylab="",axes=F,col=NA, log="y")
+# axis(1,1:11,paste(c("0-4","5-14","15-24","25-34","35-44","45-54","55-64","65-74","75-84","85-94", "95p"),"\nyears",sep=""),tick=F,cex.axis=0.75)
+# axis(1,1:12-0.5,rep("",12))
+# axis(2,c(0,.1,1,10,20,30,50),las=2);box()
+# abline(h=axTicks(2),col="grey85")
+#
+# for(i in 1:11) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V[i,1],V[i,1]),border=NA,col="lightblue")
+# for(i in 1:11) polygon(i+c(-.4,0,0,-.4),c(0.0001,0.0001,V[i,2],V[i,2]),border=NA,col="pink")
+#
+# mtext("Age Group",1,2.5,cex=1.2)
+# mtext("Millions",2,2.5,cex=1.2)
+#
+# box()
+# mtext("Total Population by Age Group 2014 (mil,log-scale)",3,.8,font=2,cex=1.2)
+# legend("topright",c("US born","Non-US Born","Reported data"),cex=1.0,
+#        pch=c(15,15,19),lwd=c(NA,NA,1),lty=c(NA,NA,3),col=c("lightblue","pink",1),bg="white",pt.cex=c(1.8,1.8,0.3))
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 ### ### ### ### ### ###   TOTAL MORT EACH DECADE, BY US/FB  ### ### ### ### ### ###
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-V  <- cbind(rowSums(df[1:66,255:265]), rowSums(df[1:66,266:276]))
-V1c <- rowSums(df[1:66,121:131])
-death_age <-(readRDS(system.file("US/US_MortalityCountsByAge.rds", package="MITUS"))[,2:69])/1e6
-rownames(death_age)<-readRDS(system.file("US/US_MortalityCountsByAge.rds", package="MITUS"))[,1]
-mort_tt<-colSums(death_age)
-plot(1,1,ylim=c(0,3.5),xlim=c(1950,2015),xlab="",ylab="",axes=F)
+V  <- cbind(rowSums(df[1:67,255:265]), rowSums(df[1:67,266:276]))
+V1c <- rowSums(df[1:67,121:131])
+mort_tt<-CalibDat[["US_tot_mort"]][,2]/1e6
+plot(1,1,ylim=c(0,3.5),xlim=c(1950,2016),xlab="",ylab="",axes=F)
 axis(1);axis(2,las=2);box()
 abline(h=axTicks(2),col="grey85")
 
-lines(1950:2015,V[,2],lwd=2,col="red3")
-lines(1950:2015,V[,1],lwd=2,col="blue")
-lines(1950:2015,V1c,lwd=2,col="grey50")
-points(1950:2015,mort_tt[1:66],pch=19,cex=0.6,col="grey50")
-lines(1950:2015,mort_tt[1:66],lty=3,col="grey50")
+lines(1950:2016,V[,2],lwd=2,col="red3")
+lines(1950:2016,V[,1],lwd=2,col="blue")
+lines(1950:2016,V1c,lwd=2,col="grey50")
+points(1950:2016,mort_tt,pch=19,cex=0.6,col="grey50")
+lines(1950:2016,mort_tt,lty=3,col="grey50")
 
 mtext("Year",1,2.5,cex=1.2)
 mtext("Mortality: Total, US, and Non-US Born (mil)",3,.8,font=2,cex=1.2)
@@ -151,30 +148,30 @@ legend("topleft",c("Total","US born","Non-US Born","Reported data","model"),cex=
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 ### ### ### ### ### ### TOTAL MORT RATE 1950-2013 ### ### ### ### ### ###
 # ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-V   <- cbind(df[1:65,510:520])
-x<-seq(6,781,12)
-BgMort           <- Inputs[["BgMort"]]
-mubt   <- matrix(NA,1801,11)
-for(i in 1:11) {
-  mubt[,i] <- SmoCurve(BgMort[,i+1])
-}
-V2  <-mubt[x,]
-
-col<-rainbow(11)
-
-plot(1,1,ylim=c(min(V,V2)*.5,max(V,V2)*2),xlim=c(1950,2014),xlab="",ylab="",axes=F, log="y")
-axis(1);axis(2,las=2);box()
-abline(h=axTicks(2),col="grey85")
-# points(1993:2014,CalibDat$notif_us_hr[,1]/rowSums(CalibDat$notif_us_hr)*100,pch=19,cex=0.6)
-for (i in 1:11){
-  lines(1950:2014,V[,i],lwd=3,col=col[i])
-  lines(1950:2014,V2[,i],lty=3,lwd=2, col=col[i])
-
-  mtext("Year",1,2.5,cex=1.2)
-  mtext("Age Specific Mortality Rates from 1950 to 2014",3,.8,font=2,cex=1.2)
-  # legend("bottomleft",colnames(V),cex=1.0,
-  #   pch=rep(15,i),lwd=rep(NA,i),lty=rep(NA,i),col=col,bg="white",pt.cex=rep(1.8,i))
-}
+# V   <- cbind(df[1:65,510:520])
+# x<-seq(6,781,12)
+# BgMort           <- Inputs[["BgMort"]]
+# mubt   <- matrix(NA,1801,11)
+# for(i in 1:11) {
+#   mubt[,i] <- SmoCurve(BgMort[,i+1])
+# }
+# V2  <-mubt[x,]
+#
+# col<-rainbow(11)
+#
+# plot(1,1,ylim=c(min(V,V2)*.5,max(V,V2)*2),xlim=c(1950,2014),xlab="",ylab="",axes=F, log="y")
+# axis(1);axis(2,las=2);box()
+# abline(h=axTicks(2),col="grey85")
+# # points(1993:2014,CalibDat$notif_us_hr[,1]/rowSums(CalibDat$notif_us_hr)*100,pch=19,cex=0.6)
+# for (i in 1:11){
+#   lines(1950:2014,V[,i],lwd=3,col=col[i])
+#   lines(1950:2014,V2[,i],lty=3,lwd=2, col=col[i])
+#
+#   mtext("Year",1,2.5,cex=1.2)
+#   mtext("Age Specific Mortality Rates from 1950 to 2014",3,.8,font=2,cex=1.2)
+#   # legend("bottomleft",colnames(V),cex=1.0,
+#   #   pch=rep(15,i),lwd=rep(NA,i),lty=rep(NA,i),col=col,bg="white",pt.cex=rep(1.8,i))
+# }
 
 # graph of total diagnosed cases
 # by total population, US born population, and non-US born population
@@ -197,14 +194,12 @@ lines(1993:2016,V2*1e3,lwd=3,col="white"); lines(1993:2016,V2*1e3,lwd=2,col=3) #
 points(CalibDat[["tot_cases"]][,1],(CalibDat[["tot_cases"]][,2])*1e3,pch=19,cex=0.3) #total population
 lines(CalibDat[["tot_cases"]][,1],(CalibDat[["tot_cases"]][,2])*1e3,lty=3,col=1)
 
-notif_fb      <- cbind(CalibDat[["fb_cases"]][,2],1-CalibDat[["fb_cases"]][,2])*CalibDat[["fb_cases"]][,3]
-notif_fb <-notif_fb/1000
+points(1993:2016,CalibDat[["age_cases_us"]][,12]/1e3,pch=19,cex=0.3,col=4) #US born population
+lines(1993:2016,CalibDat[["age_cases_us"]][,12]/1e3,pch=19,lty=3,col=4)
 
-points(1993:2016,notif_fb[,2],pch=19,cex=0.3,col=4) #US born population
-lines(1993:2016,notif_fb[,2],pch=19,lty=3,col=4)
+points(1993:2016,CalibDat[["age_cases_fb"]][,12]/1e3,pch=19,cex=0.3,col=3) #non-US born population
+lines(1993:2016,CalibDat[["age_cases_fb"]][,12]/1e3,lty=3,col=3)
 
-points(1993:2016,notif_fb[,1],pch=19,cex=0.3,col=3) #non-US born population
-lines(1993:2016,notif_fb[,1],lty=3,col=3)
 
 #plot text
 mtext("Year",1,2.5,cex=1.2)
@@ -220,7 +215,7 @@ V1 <- df[57:67,"NOTIF_US"]+df[57:67,"NOTIF_MORT_US"]   #US born population
 V2 <- df[57:67,"NOTIF_F1"]+df[57:67,"NOTIF_F2"]+df[57:67,"NOTIF_MORT_F1"]+df[57:67,"NOTIF_MORT_F2"]   #non-US born population
 
 #format the plot
-plot(0,0,ylim=c(0,max(CalibDat[["tot_cases"]][48:64,2])*1e3),xlim=c(2006,2016),xlab="",ylab="",axes=F)
+plot(0,0,ylim=c(0,max(CalibDat[["tot_cases"]][54:64,2])*1e3),xlim=c(2006,2016),xlab="",ylab="",axes=F)
 axis(1);axis(2,las=2);box()
 abline(h=axTicks(2),col="grey85")
 
@@ -234,14 +229,11 @@ lines(2006:2016,V2*1e3,lwd=3,col="white"); lines(2006:2016,V2*1e3,lwd=2,col=3) #
 points(CalibDat[["tot_cases"]][54:64,1],(CalibDat[["tot_cases"]][54:64,2])*1e3,pch=19,cex=0.3) #total population
 lines(CalibDat[["tot_cases"]][54:64,1],(CalibDat[["tot_cases"]][54:64,2])*1e3,lty=3,col=1)
 
-notif_fb      <- cbind(CalibDat[["fb_cases"]][14:24,2],1-CalibDat[["fb_cases"]][14:24,2])*CalibDat[["fb_cases"]][14:24,3]
-notif_fb <-notif_fb/1000
+points(2006:2016,CalibDat[["age_cases_us"]][14:24,12]/1e3,pch=19,cex=0.3,col=4) #US born population
+lines(2006:2016,CalibDat[["age_cases_us"]][14:24,12]/1e3,pch=19,lty=3,col=4)
 
-points(2006:2016,notif_fb[,2],pch=19,cex=0.3,col=4) #US born population
-lines(2006:2016,notif_fb[,2],pch=19,lty=3,col=4)
-
-points(2006:2016,notif_fb[,1],pch=19,cex=0.3,col=3) #non-US born population
-lines(2006:2016,notif_fb[,1],lty=3,col=3)
+points(2006:2016,CalibDat[["age_cases_fb"]][14:24,12]/1e3,pch=19,cex=0.3,col=3) #non-US born population
+lines(2006:2016,CalibDat[["age_cases_fb"]][14:24,12]/1e3,lty=3,col=3)
 
 #plot text
 mtext("Year",1,2.5,cex=1.2)
@@ -267,6 +259,7 @@ abline(h=axTicks(2),col="grey85")
 lines(2006:2016,V*100,lwd=2,col=4)
 
 #reported data for comparison
+notif_fb      <- cbind(CalibDat[["age_cases_fb"]][14:24,12],CalibDat[["age_cases_us"]][14:24,12])
 points(2006:2016,notif_fb[,1]/rowSums(notif_fb)*100,pch=19,cex=0.6)
 lines(2006:2016,notif_fb[,1]/rowSums(notif_fb)*100,lty=3)
 
@@ -373,14 +366,6 @@ for (i in 1:length(V3)){
   mtext("Age Distribution of TB Cases (%), 2006-16",3,.8,font=2,cex=1.2)
   legend("topright",c("Reported data","Model"),pch=c(19,15),lwd=NA,
          pt.cex=c(1,2),col=c("black","lightblue"),bg="white")
-################################################################################
-# Distribution of Cases across the TB Progression Categories
-
-
-#format the plot
-#plot the model data
-#reported data for comparison
-#plot text
 
 ################################################################################
 # Treatment Outcomes 1993-2014
@@ -399,12 +384,10 @@ lines(2004:2014,Vdisc*100,lwd=2,col="red3")
 lines(2004:2014,Vdead*100,lwd=2,col="blue")
 
 #reported data for comparison
-tx_outcomes      <- cbind((1-rowSums(CalibDat[["tx_outcomes"]][12:22,2:3])),CalibDat[["tx_outcomes"]][12:22,2],CalibDat[["tx_outcomes"]][12:22,3])*CalibDat[["tx_outcomes"]][12:22,4]
-
-points(2004:2014,tx_outcomes[,2]/rowSums(tx_outcomes)*100,pch=19,cex=0.6,col="red3")
-points(2004:2014,tx_outcomes[,3]/rowSums(tx_outcomes)*100,pch=19,cex=0.6,col="blue")
-lines (2004:2014,tx_outcomes[,2]/rowSums(tx_outcomes)*100,lty=3,col="red3")
-lines (2004:2014,tx_outcomes[,3]/rowSums(tx_outcomes)*100,lty=3,col="blue")
+points(2004:2014,CalibDat[["tx_outcomes"]][12:22,2]*100,pch=19,cex=0.6,col="red3")
+points(2004:2014,CalibDat[["tx_outcomes"]][12:22,3]*100,pch=19,cex=0.6,col="blue")
+lines (2004:2014,CalibDat[["tx_outcomes"]][12:22,2]*100,lty=3,col="red3")
+lines (2004:2014,CalibDat[["tx_outcomes"]][12:22,3]*100,lty=3,col="blue")
 
 #plot text
 
