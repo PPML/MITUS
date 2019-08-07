@@ -1,17 +1,16 @@
 #this function returns default values for ttt which would be total population
 #'@name def_ttt
-#'@param results matrix of results (can be 1 entry from basecase)
 #'@export
-def_ttt<-function(results){
+def_ttt<-function(){
   ttt_list<-vector("list", 9)
   names(ttt_list)<-c("NativityGrp", "AgeGrp", "NRiskGrp", "FrcScrn",
                     "StartYr", "EndYr", "RRprg", "RRmu", "RRPrev")
   ttt_list[[1]]<-"All" #or "USB" or "NUSB"
   ttt_list[[2]]<-"All" #or "0 to 24" or "25 to 64" or "65+"
-  ttt_list[[3]]<-results[68,"N_ALL"]
-  ttt_list[[4]]<-1 #this is a placeholder bc I need to think about it more
+  ttt_list[[3]]<-0
+  ttt_list[[4]]<-0
   ttt_list[[5]]<-2018
-  ttt_list[[6]]<-results[nrow(results),"Year"]
+  ttt_list[[6]]<-2050
   ttt_list[[7]]<-1
   ttt_list[[8]]<-1
   ttt_list[[9]]<-1
@@ -29,18 +28,20 @@ create_ttt_dist<-function(ttt_list,results,PV){
   na<-switch(ttt_list[[1]], "All" =c("US","NUS"), "USB"="US","NUSB"="NUS")
 
   ag<-switch(ttt_list[[2]], "All" =c("0-24","25-64","65p"), "0 to 24"="0-24","25 to 64"="25-64", "65+"="65p")
-x<-list()
+
+  x<-list()
   for (i in 1:length(ag)){
     for(j in 1:length(na)){
-  x[[i+(3*(j-1))]]<-grep(paste(ag[i], na[j], sep = "_"), colnames(M))
+  x[[i+(3*(j-1))]]<-grep(paste(ag[i], na[j], sep = "_"), colnames(results))
 }}
 
 y<-x[unlist(lapply(x, length) != 0)]
+
 dist<-rep(0,16)
 #need to format the start year
 start_yr<-as.numeric(ttt_list[[5]])-1950
 for (i in 1:length(y)){
-  dist<-dist+M[start_yr,y[[i]]]
+  dist<-dist+results[start_yr,y[[i]]]
 }
 dist<-matrix(dist,4,4)
 colnames(dist) <- paste0("p",0:3) # progresison
