@@ -2010,29 +2010,36 @@ Rcpp::List fin_cSim(
 
         for(int ag=0; ag<11; ag++) {
           for(int tb=0; tb<6; tb++) {
-            for(int lt=0; lt<2; lt++) {
               for(int im=0; im<4; im++) {
                 for(int nm=0; nm<4; nm++) {
                   for(int rg=0; rg<2; rg++) {
                     for(int na=0; na<3; na++) {
                       if (na<1){
                         if (ag <3){
-                          Outputs[y][586+nm+(im*4)] += V1[ag][tb][lt][im][nm][rg][na];
+                          Outputs[y][586+nm+(im*4)] += V1[ag][tb][0][im][nm][rg][na];
                         } if(2<ag & ag<7){
-                          Outputs[y][602+nm+(im*4)] += V1[ag][tb][lt][im][nm][rg][na];
+                          Outputs[y][602+nm+(im*4)] += V1[ag][tb][0][im][nm][rg][na];
                         } if (6<ag & ag<11){
-                          Outputs[y][618+nm+(im*4)] += V1[ag][tb][lt][im][nm][rg][na];
+                          Outputs[y][618+nm+(im*4)] += V1[ag][tb][0][im][nm][rg][na];
                         }
                       } else {
                         if (ag<3) {
-                          Outputs[y][634+nm+(im*4)] += V1[ag][tb][lt][im][nm][rg][na];
+                          Outputs[y][634+nm+(im*4)] += V1[ag][tb][0][im][nm][rg][na];
                         } if(2<ag & ag<7){
-                          Outputs[y][650+nm+(im*4)] += V1[ag][tb][lt][im][nm][rg][na];
+                          Outputs[y][650+nm+(im*4)] += V1[ag][tb][0][im][nm][rg][na];
                         } if (6<ag & ag<11){
-                          Outputs[y][666+nm+(im*4)] += V1[ag][tb][lt][im][nm][rg][na];
+                          Outputs[y][666+nm+(im*4)] += V1[ag][tb][0][im][nm][rg][na];
                         } } }
-                  } } } } } }
-
+                  } } } } }
+        ////////////////    COUNTS BY LATENT TREATMENT STATUS     //////////////////
+        for(int ag=0; ag<11; ag++) {
+          for(int tb=0; tb<6; tb++) {
+              for(int im=0; im<4; im++) {
+                for(int nm=0; nm<4; nm++) {
+                  for(int rg=0; rg<2; rg++) {
+                    for(int na=0; na<3; na++) {
+                      Outputs[y][682] += V1[ag][tb][0][im][nm][rg][na];   //TREATMENT NAIVE
+                    } } } } } }
       } ////end of mid-year results bracket
       ///////////////////////////////////////////////////////////////////////////////////
       //////////////////////////////END MIDYEAR RESULTS//////////////////////////////////
