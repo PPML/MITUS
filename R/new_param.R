@@ -652,10 +652,10 @@ fin_param <- function (PV,loc,prg_chng){
               paste("25-64","US","NM4",StatList[[4]],sep="_"),
 
 
-              paste("65+","US","NM1",StatList[[4]],sep="_"),
-              paste("65+","US","NM2",StatList[[4]],sep="_"),
-              paste("65+","US","NM3",StatList[[4]],sep="_"),
-              paste("65+","US","NM4",StatList[[4]],sep="_"),
+              paste("65p","US","NM1",StatList[[4]],sep="_"),
+              paste("65p","US","NM2",StatList[[4]],sep="_"),
+              paste("65p","US","NM3",StatList[[4]],sep="_"),
+              paste("65p","US","NM4",StatList[[4]],sep="_"),
 
 
               paste("0-24","NUS", "NM1",StatList[[4]],sep="_"),
@@ -670,10 +670,10 @@ fin_param <- function (PV,loc,prg_chng){
               paste("25-64","NUS","NM4",StatList[[4]],sep="_"),
 
 
-              paste("65+","NUS","NM1",StatList[[4]],sep="_"),
-              paste("65+","NUS","NM2",StatList[[4]],sep="_"),
-              paste("65+","NUS","NM3",StatList[[4]],sep="_"),
-              paste("65+","NUS","NM4",StatList[[4]],sep="_")
+              paste("65p","NUS","NM1",StatList[[4]],sep="_"),
+              paste("65p","NUS","NM2",StatList[[4]],sep="_"),
+              paste("65p","NUS","NM3",StatList[[4]],sep="_"),
+              paste("65p","NUS","NM4",StatList[[4]],sep="_")
 
   )
 
