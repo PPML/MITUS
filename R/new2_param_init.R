@@ -400,7 +400,7 @@ fin2_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sc
                    "NUSB"=1:2
     )
   } else{
-    ttt_sampling_dist<-matrix(1,4,4)
+    ttt_sampling_dist<-matrix(0,4,4)
     ttt_na<-99
     ttt_ag<-99
   }
@@ -590,7 +590,7 @@ fin2_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sc
   ### REMOVED ART PARAMETERS
 
 
-  InputParams[["ResNam"]]<-func_ResNam()
+  InputParams[["ResNam"]]<-func2_ResNam()
   return(InputParams)
 
   ###################################################

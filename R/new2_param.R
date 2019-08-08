@@ -317,7 +317,7 @@ fin2_param <- function (PV,loc,prg_chng, ttt_list){
                                              "NUSB"=1:2
   )
   } else{
-    ttt_sampling_dist<-matrix(1,4,4)
+    ttt_sampling_dist<-matrix(0,4,4)
     ttt_na<-99
     ttt_ag<-99
   }
@@ -523,7 +523,7 @@ fin2_param <- function (PV,loc,prg_chng, ttt_list){
   Params[["adj_fact"]] <- adj_fact
   Params[["NixTrans"]] <- NixTrans
 
-  Params[["ResNam"]]    <-func_ResNam()
+  Params[["ResNam"]]    <-func2_ResNam()
   return(Params)
 }
 

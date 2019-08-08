@@ -1,4 +1,4 @@
-func_ResNam<-function(){
+func2_ResNam<-function(){
   ################################################################################
   ##### CREATE A LIST TO HOLD THE VECTORS FOR AGE CATEGORIES, TB STATES,     #####
   ##### DRUG RESISTANCE, TREATMENT HISTORY, HIV STATUS, AND RISK CATEGORY.   #####
@@ -35,10 +35,10 @@ func_ResNam<-function(){
               paste("N",StatList[[4]],sep="_"),               # pop by im cat
               paste("N",StatList[[5]],sep="_"),               # pop by nm cat
               paste("N",StatList[[6]],sep="_"),               # pop by rg cat
-              paste("N",StatList[[7]],sep="_"),               # pop by na cat
+              paste("N",StatList[[7]],sep="_"),               # pop by na cat (30-32)
               ###################    POPULATION W/ NATIVITY  ################################
-              paste("N_US",StatList[[1]],sep="_"),            # US pop by ag cat
-              paste("N_FB",StatList[[1]],sep="_"),            # FB pop by ag cat
+              paste("N_US",StatList[[1]],sep="_"),            # US pop by ag cat (33-43)
+              paste("N_FB",StatList[[1]],sep="_"),            # FB pop by ag cat (44-54)
               paste("N_US_LTBI",StatList[[1]],sep="_"),       # US LTBI pop by ag cat
               paste("N_FB_LTBI",StatList[[1]],sep="_"),       # FB LTBI pop by ag cat
               paste("N_RF",StatList[[1]],sep="_"),            # RF pop by ag cat
@@ -117,84 +117,8 @@ func_ResNam<-function(){
 
               paste("N_US",StatList[[5]],sep="_"),               # pop by nat and nm cat
               paste("N_NUS",StatList[[5]],sep="_"),              # pop by nat and nm cat
+
               paste("TOTMORT"),
-
-              paste("N_NM1",StatList[[4]],sep="_"),
-              paste("N_NM2",StatList[[4]],sep="_"),
-              paste("N_NM3",StatList[[4]],sep="_"),
-              paste("N_NM4",StatList[[4]],sep="_"),
-
-              paste("%_0-4","NM1",StatList[[4]],sep="_"),
-              paste("%_0-4","NM2",StatList[[4]],sep="_"),
-              paste("0-4","NM3",StatList[[4]],sep="_"),
-              paste("0-4","NM4",StatList[[4]],sep="_"),
-
-              paste("5-14","NM1",StatList[[4]],sep="_"),
-              paste("5-14","NM2",StatList[[4]],sep="_"),
-              paste("5-14","NM3",StatList[[4]],sep="_"),
-              paste("5-14","NM4",StatList[[4]],sep="_"),
-
-              paste("15-24","NM1",StatList[[4]],sep="_"),
-              paste("15-24","NM2",StatList[[4]],sep="_"),
-              paste("15-24","NM3",StatList[[4]],sep="_"),
-              paste("15-24","NM4",StatList[[4]],sep="_"),
-
-              paste("25-34","NM1",StatList[[4]],sep="_"),
-              paste("25-34","NM2",StatList[[4]],sep="_"),
-              paste("25-34","NM3",StatList[[4]],sep="_"),
-              paste("25-34","NM4",StatList[[4]],sep="_"),
-
-              paste("35-44","NM1",StatList[[4]],sep="_"),
-              paste("35-44","NM2",StatList[[4]],sep="_"),
-              paste("35-44","NM3",StatList[[4]],sep="_"),
-              paste("35-44","NM4",StatList[[4]],sep="_"),
-
-              paste("45-54","NM1",StatList[[4]],sep="_"),
-              paste("45-54","NM2",StatList[[4]],sep="_"),
-              paste("45-54","NM3",StatList[[4]],sep="_"),
-              paste("45-54","NM4",StatList[[4]],sep="_"),
-
-              paste("55-64","NM1",StatList[[4]],sep="_"),
-              paste("55-64","NM2",StatList[[4]],sep="_"),
-              paste("55-64","NM3",StatList[[4]],sep="_"),
-              paste("55-64","NM4",StatList[[4]],sep="_"),
-
-              paste("65-74","NM1",StatList[[4]],sep="_"),
-              paste("65-74","NM2",StatList[[4]],sep="_"),
-              paste("65-74","NM3",StatList[[4]],sep="_"),
-              paste("65-74","NM4",StatList[[4]],sep="_"),
-
-              paste("75-84","NM1",StatList[[4]],sep="_"),
-              paste("75-84","NM2",StatList[[4]],sep="_"),
-              paste("75-84","NM3",StatList[[4]],sep="_"),
-              paste("75-84","NM4",StatList[[4]],sep="_"),
-
-              paste("85-94","NM1",StatList[[4]],sep="_"),
-              paste("85-94","NM2",StatList[[4]],sep="_"),
-              paste("85-94","NM3",StatList[[4]],sep="_"),
-              paste("85-94","NM4",StatList[[4]],sep="_"),
-
-              paste("95p","NM1",StatList[[4]],sep="_"),
-              paste("95p","NM2",StatList[[4]],sep="_"),
-              paste("95p","NM3",StatList[[4]],sep="_"),
-              paste("95p","NM4",StatList[[4]],sep="_"),
-
-              paste("mort_rate",StatList[[1]],sep="_" ),
-
-              paste("N_ag_1",StatList[[5]],sep="_" ),
-              paste("N_ag_2",StatList[[5]],sep="_" ),
-              paste("N_ag_3",StatList[[5]],sep="_" ),
-              paste("N_ag_4",StatList[[5]],sep="_" ),
-              paste("N_ag_5",StatList[[5]],sep="_" ),
-              paste("N_ag_6",StatList[[5]],sep="_" ),
-              paste("N_ag_7",StatList[[5]],sep="_" ),
-              paste("N_ag_8",StatList[[5]],sep="_" ),
-              paste("N_ag_9",StatList[[5]],sep="_" ),
-              paste("N_ag_10",StatList[[5]],sep="_" ),
-              paste("N_ag_11",StatList[[5]],sep="_" ),
-              ### new infections
-              paste("N_newinf_USB",StatList[[1]],sep="_" ),
-              paste("N_newinf_NUSB",StatList[[1]],sep="_" ),
 
               paste("0-24","US", "NM1",StatList[[4]],sep="_"),
               paste("0-24","US", "NM2",StatList[[4]],sep="_"),
@@ -229,7 +153,21 @@ func_ResNam<-function(){
               paste("65+","NUS","NM1",StatList[[4]],sep="_"),
               paste("65+","NUS","NM2",StatList[[4]],sep="_"),
               paste("65+","NUS","NM3",StatList[[4]],sep="_"),
-              paste("65+","NUS","NM4",StatList[[4]],sep="_")
+              paste("65+","NUS","NM4",StatList[[4]],sep="_"),
+
+              paste("mort_rate",StatList[[1]],sep="_" ),
+
+              paste("N_NM1",StatList[[4]],sep="_"),
+              paste("N_NM2",StatList[[4]],sep="_"),
+              paste("N_NM3",StatList[[4]],sep="_"),
+              paste("N_NM4",StatList[[4]],sep="_"),
+
+              ### new infections
+              paste("N_newinf_USB",StatList[[1]],sep="_" ),
+              paste("N_newinf_NUSB",StatList[[1]],sep="_" ),
+
+              paste("N_LtTxNaive")
+
 
 
   )
