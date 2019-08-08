@@ -30,7 +30,7 @@ fin2_param <- function (PV,loc,prg_chng, ttt_list){
     BgMort[10:67,2:12]<-weight_mort(loc)
   }
   for(j in 68:151){
-    for (i in 1:2){
+    for (i in 1:2){ #ssa adjustment
       BgMort[j,i]<-BgMort[j-1,i]*(1-.0159)
     }
     for (i in 3:7){
@@ -340,6 +340,11 @@ fin2_param <- function (PV,loc,prg_chng, ttt_list){
   #adjust for no latent
   LtDxPar_nolt[1,]<-LtDxPar_nolt[1,]*rrTestLrNoTb
 
+  #add in screening rate
+#   for (i in 1:5){
+#   LtDxPar_lt[i,]<-LtDxPar_lt[i,]*rLtScrt[]
+#   LtDxPar_nolt[i,]<-LtDxPar_nolt[i,]*rLtScrt[]
+# }
   ######################          LTBI DIAGNOSIS           ########################
   ###################### LTBI TX EFFECTIVENESS PROGRAM CHANGE ########################
   if (prg_chng["ltbi_eff_frc"] != round(PV["EffLt"], 2)){

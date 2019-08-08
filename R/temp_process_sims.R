@@ -2,6 +2,7 @@
 #' AND GENERATES AN ARRAY OF OUTPUTS
 
 
+
 #load("~/MITUS/data/parAll200_9-14-16.rData")
 # load("data/ParamInit_2018.rData")
 #'function to run the model
@@ -62,7 +63,7 @@ new_OutputsZint <-  function(samp_i=1,ParMatrix,loc, startyr=1950, endyr=2050,In
                   LtDxPar_lt    = IP[["LtDxPar_lt"]]   , LtDxPar_nolt    = IP[["LtDxPar_nolt"]]   , rLtScrt   = IP[["rLtScrt"]]       , ttt_samp_dist   = IP[["ttt_sampling_dist"]] ,
                   ttt_ag = IP[["ttt_ag"]], ttt_na = IP[["ttt_na"]], ttt_month = IP[["ttt_month"]], RRdxAge  = IP[["RRdxAge"]] , rRecov     = IP[["rRecov"]]    , pImmScen = IP[["pImmScen"]]   ,
                   EarlyTrend = IP[["EarlyTrend"]], ag_den=IP[["aging_denom"]],  NixTrans = IP[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)$Outputs
-  colnames(m) <- func_ResNam();
+  colnames(m) <- func2_ResNam();
   results<<-as.matrix(m)
 
   return(results)

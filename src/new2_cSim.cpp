@@ -1374,68 +1374,69 @@ Rcpp::List fin2_cSim(
         //             } } } } } } }
         /// LTBI SCREENING AND TLTBI INITIATION /// only for no previous TB or LTBI tx
         int agi = ttt_ag.size(); int nai = ttt_na.size(); int si = ttt_month.size();
-
         for(int rg=0; rg<2; rg++) {
           for(int na=0; na<3; na++) {
-            for(int nm=0; nm<4; nm++) {
-              for(int im=0; im<4; im++) {
-                for(int ag=0; ag<11; ag++) {
-                  for (int i=0; i<agi; i++){
-                    for (int j=0; j<nai; j++){
-                      for (int k=0; k<si; k++){
-                    if (ag==ttt_ag[i] & na==ttt_na[j] & s==ttt_month[si]){
-                    ////////////// US BORN, LOW RISK  //////////////////
-                    if(rg==0 & na==0) {
-                      rTbP = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_ltN[0][s];
-                      rTbN = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_noltN[0][s];
-                    }
-                    ////////////// US BORN, HIGH RISK  /////////////////
-                    if(rg==1 & na==0) {
-                      rTbP = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_ltN[1][s];
-                      rTbN = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_noltN[1][s];
-                    }
-                    ////////////// Young NUS (under 5)  /////////////////
-                    if(rg==0 & na > 0 & ag==0) {
-                      rTbP = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_ltN[2][s];
-                      rTbN = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_noltN[2][s];
-                    }
-                    //////////// NON US BORN  ////////////////
-                    if(rg==0 & na > 0 & ag > 0) {
-                      rTbP = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_ltN[3][s];
-                      rTbN = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_noltN[3][s];
-                    }
-                    ////////////// NON US BORN, HIGH RISK  /////////////////
-                    if(rg==1 & na >0) {
-                      rTbP = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_ltN[4][s];
-                      rTbN = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_noltN[4][s];
-                    }
-                    } else{
-                    ////////////// US BORN, LOW RISK  //////////////////
-                    if(rg==0 & na==0) {
-                      rTbP = rLtScrt[s]*LtDxPar_ltN[0][s];
-                      rTbN = rLtScrt[s]*LtDxPar_noltN[0][s];
-                    }
-                    ////////////// US BORN, HIGH RISK  /////////////////
-                    if(rg==1 & na==0) {
-                      rTbP = rLtScrt[s]*LtDxPar_ltN[1][s];
-                      rTbN = rLtScrt[s]*LtDxPar_noltN[1][s];
-                    }
-                      ////////////// Young NUS (under 5)  /////////////////
-                      if(rg==0 & na > 0 & ag==0) {
-                        rTbP = rLtScrt[s]*LtDxPar_ltN[2][s];
-                        rTbN = rLtScrt[s]*LtDxPar_noltN[2][s];
-                      }
-                      //////////// NON US BORN  ////////////////
-                      if(rg==0 & na > 0 & ag > 0) {
-                        rTbP = rLtScrt[s]*LtDxPar_ltN[3][s];
-                        rTbN = rLtScrt[s]*LtDxPar_noltN[3][s];
-                      }
-                      ////////////// NON US BORN, HIGH RISK  /////////////////
-                      if(rg==1 & na >0) {
-                        rTbP = rLtScrt[s]*LtDxPar_ltN[4][s];
-                        rTbN = rLtScrt[s]*LtDxPar_noltN[4][s];
-                      }
-                    } } } }
+            for(int ag=0; ag<11; ag++) {
+
+              ////////////// US BORN, LOW RISK  //////////////////
+              if( rg==0 & na==0) {
+                rTbP = rLtScrt[s]*LtDxPar_ltN[0][s];
+                rTbN = rLtScrt[s]*LtDxPar_noltN[0][s];
+              }
+              ////////////// US BORN, HIGH RISK  /////////////////
+              if(rg==1 & na==0) {
+                rTbP = rLtScrt[s]*LtDxPar_ltN[1][s];
+                rTbN = rLtScrt[s]*LtDxPar_noltN[1][s];
+              }
+              ////////////// Young NUS (under 5)  /////////////////
+              if(rg==0 & na > 0 & ag==0) {
+                rTbP = rLtScrt[s]*LtDxPar_ltN[2][s];
+                rTbN = rLtScrt[s]*LtDxPar_noltN[2][s];
+              }
+              //////////// NON US BORN  ////////////////
+              if(rg==0 & na > 0 & ag > 0) {
+                rTbP = rLtScrt[s]*LtDxPar_ltN[3][s];
+                rTbN = rLtScrt[s]*LtDxPar_noltN[3][s];
+              }
+              ////////////// NON US BORN, HIGH RISK  /////////////////
+              if(rg==1 & na >0) {
+                rTbP = rLtScrt[s]*LtDxPar_ltN[4][s];
+                rTbN = rLtScrt[s]*LtDxPar_noltN[4][s];
+                for(int nm=0; nm<4; nm++) {
+                  for(int im=0; im<4; im++) {
+                for (int i=0; i<agi; i++){
+                  for (int j=0; j<nai; j++){
+                    for (int k=0; k<si; k++){
+                      if (ag==ttt_ag[i] & na==ttt_na[j] & s==ttt_month[si]){
+
+                            ////////////// US BORN, LOW RISK  //////////////////
+                            if(rg==0 & na==0) {
+                              rTbP = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_ltN[0][s];
+                              rTbN = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_noltN[0][s];
+                            }
+                            ////////////// US BORN, HIGH RISK  /////////////////
+                            if(rg==1 & na==0) {
+                              rTbP = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_ltN[1][s];
+                              rTbN = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_noltN[1][s];
+                            }
+                            ////////////// Young NUS (under 5)  /////////////////
+                            if(rg==0 & na > 0 & ag==0) {
+                              rTbP = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_ltN[2][s];
+                              rTbN = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_noltN[2][s];
+                            }
+                            //////////// NON US BORN  ////////////////
+                            if(rg==0 & na > 0 & ag > 0) {
+                              rTbP = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_ltN[3][s];
+                              rTbN = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_noltN[3][s];
+                            }
+                            ////////////// NON US BORN, HIGH RISK  /////////////////
+                            if(rg==1 & na >0) {
+                              rTbP = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_ltN[4][s];
+                              rTbN = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_noltN[4][s];
+                            }
+                          }
+                        } } }
+
               ////////////// Dont have LTBI
                     temp  = V0[ag][0][0][im][nm][rg][na]*rTbN;
                     temp2 = V0[ag][1][0][im][nm][rg][na]*rTbN;
@@ -1474,7 +1475,7 @@ Rcpp::List fin2_cSim(
 
           ///defaults are placed in tx naive because it is considered the same tb infection
           V1[ag][2][0][im][nm][rg][na]  += (temp3+temp4); //latent tx default to latent slow
-        } } } } }
+  } } } } } }
         // for(int ag=0; ag<11; ag++) {
         //   for(int tb=0; tb<6; tb++) {
         //     for(int lt=0; lt<2; lt++){
@@ -1720,39 +1721,10 @@ Rcpp::List fin2_cSim(
  int agi = ttt_ag.size(); int nai = ttt_na.size(); int si = ttt_month.size();
  for(int rg=0; rg<2; rg++) {
    for(int na=0; na<3; na++) {
-     for(int nm=0; nm<4; nm++) {
-       for(int im=0; im<4; im++) {
          for(int ag=0; ag<11; ag++) {
-           for (int i=0; i<agi; i++){
-             for (int j=0; j<nai; j++){
-               for (int k=0; k<si; k++){
-                 if (ag==ttt_ag[i] & na==ttt_na[j] & s==ttt_month[si]){
-                   ////////////// US BORN, LOW RISK  //////////////////
-                   if(rg==0 & na==0) {
-                     rTbP = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_ltN[0][s];
-                     rTbN = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_noltN[0][s];
-                   }
-                   ////////////// US BORN, HIGH RISK  /////////////////
-                   if(rg==1 & na==0) {
-                     rTbP = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_ltN[1][s];
-                     rTbN = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_noltN[1][s];
-                   }
-                   ////////////// Young NUS (under 5)  /////////////////
-                   if(rg==0 & na > 0 & ag==0) {
-                     rTbP = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_ltN[2][s];
-                     rTbN = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_noltN[2][s];
-                   }
-                   //////////// NON US BORN  ////////////////
-                   if(rg==0 & na > 0 & ag > 0) {
-                     rTbP = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_ltN[3][s];
-                     rTbN = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_noltN[3][s];
-                   }
-                   ////////////// NON US BORN, HIGH RISK  /////////////////
-                   if(rg==1 & na >0) {
-                     rTbP = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_ltN[4][s];
-                     rTbN = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_noltN[4][s];
-                   }
-                 }  else {
+           for(int nm=0; nm<4; nm++) {
+             for(int im=0; im<4; im++) {
+
                    ////////////// US BORN, LOW RISK  //////////////////
                    if( rg==0 & na==0) {
                      rTbP = rLtScrt[s]*LtDxPar_ltN[0][s];
@@ -1777,9 +1749,37 @@ Rcpp::List fin2_cSim(
                      if(rg==1 & na >0) {
                        rTbP = rLtScrt[s]*LtDxPar_ltN[4][s];
                        rTbN = rLtScrt[s]*LtDxPar_noltN[4][s];
-                     } } } }
+                       for (int i=0; i<agi; i++){
+                         for (int j=0; j<nai; j++){
+                           for (int k=0; k<si; k++){
+                             if (ag==ttt_ag[i] & na==ttt_na[j] & s==ttt_month[si]){
 
-
+                               ////////////// US BORN, LOW RISK  //////////////////
+                               if(rg==0 & na==0) {
+                                 rTbP = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_ltN[0][s];
+                                 rTbN = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_noltN[0][s];
+                               }
+                               ////////////// US BORN, HIGH RISK  /////////////////
+                               if(rg==1 & na==0) {
+                                 rTbP = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_ltN[1][s];
+                                 rTbN = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_noltN[1][s];
+                               }
+                               ////////////// Young NUS (under 5)  /////////////////
+                               if(rg==0 & na > 0 & ag==0) {
+                                 rTbP = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_ltN[2][s];
+                                 rTbN = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_noltN[2][s];
+                               }
+                               //////////// NON US BORN  ////////////////
+                               if(rg==0 & na > 0 & ag > 0) {
+                                 rTbP = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_ltN[3][s];
+                                 rTbN = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_noltN[3][s];
+                               }
+                               ////////////// NON US BORN, HIGH RISK  /////////////////
+                               if(rg==1 & na >0) {
+                                 rTbP = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_ltN[4][s];
+                                 rTbN = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_noltN[4][s];
+                               }
+                             } } } }
                   Outputs[y][151] += (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP*LtTxParN[s][0] +
                     (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxParN[s][0]; //all init
                   if(na>0) {

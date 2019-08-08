@@ -425,6 +425,11 @@ fin2_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sc
   LtDxPar_nolt[c(1,4),]   <-rrTestHr*LtDxPar_nolt[c(1,4),]
   #adjust for no latent
   LtDxPar_nolt[1,]<-LtDxPar_nolt[1,]*rrTestLrNoTb
+  #add in screening rate
+  # for (i in 1:5){
+  #   LtDxPar_lt[i,]<-LtDxPar_lt[i,]*rLtScrt[]
+  #   LtDxPar_nolt[i,]<-LtDxPar_nolt[i,]*rLtScrt[]
+  # }
 
   InputParams[["LtDxPar_lt"]]<-LtDxPar_lt;   InputParams[["LtDxPar_nolt"]]<-LtDxPar_nolt;
 
