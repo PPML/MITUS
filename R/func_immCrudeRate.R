@@ -22,8 +22,16 @@ for (i in 1:length(RR)){
 }
 
 cruderatepast<-newprev/1e5
+
+
+
+for (i in 1:5){
+  if((cruderatepast[i+64]/cruderatepast[(i+64)-1]) < .95){
+    cruderatepast[i+64]<-.95*cruderatepast[(i+64)-1]
+  }
+}
 cruderatefuture<-rep(NA,151-69)
-cruderatefuture[1]<-cruderatepast[69]*0.985
+cruderatefuture[1]<-cruderatepast[69]*0.985 #decline at 1.5 percent each year
 for (i in 2:length(cruderatefuture)){
   cruderatefuture[i]<-cruderatefuture[i-1]*0.985
 }
