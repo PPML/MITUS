@@ -23,76 +23,23 @@ FB CASES AGE DISTRIBUTION 1993-2016 - index updated
 CASES FB DISTRIBUTION 1993-2016 - index updated
 CASES FB, US 2012-2016  SLOPE - index updated
 #' CASES HR DISTRIBUTION 1993-2016 - index updated
-#' high risk first column, low risk second column
-v5b   <- cbind(M[44:67,151],M[44:67,150]) + cbind(M[44:67,204],M[44:67,203])
-addlik <- notif_us_hr_lLik(V=v5b); addlik
-lLik <- lLik + addlik
-#' CASES FB RECENT ENTRY DISTRIBUTION 1993-2014 index updated
-#' recent immigrants column one; long term in column two
-v6   <- M[44:65,148:149]+M[44:65,201:202]
-addlik <- notif_fb_rec_lLik(V=v6); addlik
-lLik <- lLik + addlik
-#' TREATMENT OUTCOMES 1993-2014 - index updated
-v11  <- M[44:65,132:134]
-addlik <- tx_outcomes_lLik(V=v11); addlik
-lLik <- lLik + addlik
-#' TOTAL LTBI TREATMENT INITS 2002 - index updated
-v12  <- M[53,152]
-addlik <- tltbi_tot_lLik(V=v12); addlik
-lLik <- lLik + addlik
-#' DIST LTBI TREATMENT INITS 2002 - index updated
-v13  <- M[53,153:154]/M[53,152]
-addlik <- (tltbi_dist_lLik(V=v13))*2; addlik
-lLik <- lLik + addlik
+high risk first column, low risk second column
+CASES FB RECENT ENTRY DISTRIBUTION 1993-2014 index updated
+recent immigrants column one; long term in column two
+TREATMENT OUTCOMES 1993-2014 - index updated
+TOTAL LTBI TREATMENT INITS 2002 - index updated
+DIST LTBI TREATMENT INITS 2002 - index updated
 #' LTBI PREVALENCE BY AGE 2011, US - index updated
 LTBI PREVALENCE BY AGE 2011, FB - index updated
-#' TOTAL POP EACH DECADE, BY US/FB - index updated (maybe)
-v17  <- M[,31]+M[,32]
-addlik <- tot_pop_yr_fb_lLik(V=v17); addlik
-lLik <- lLik + addlik
-#' TOTAL POP AGE DISTRIBUTION 2016 index updated
-v18  <- cbind(M[67,33:43],M[67,44:54])
-addlik <- tot_pop16_ag_fb_lLik(V=v18); addlik
-lLik <- lLik + addlik
-#' TOTAL DEATHS WITH TB 1999-2014 - index updated
-v19  <- M[50:65,227:237]
-addlik <- tb_dth_tot_lLik(V=v19); addlik
-lLik <- lLik + addlik
-#' TB DEATHS 1999-2014 BY AGE - index updated above
-addlik <- tb_dth_age_lLik(V=v19); addlik
-lLik <- lLik + addlik
-#' Total DEATHS 2017
-v20a<-rowSums(M[1:68,121:131])
-addlik <-US_dth_tot_lLik(V=v20a); addlik
-lLik <- lLik + addlik
-
-#' #' Total DEATHS 1999-2016 BY AGE
-v20b  <- M[66:67,121:131]
-addlik <- tot_dth_age_lLik(V=v20b); addlik
-lLik <- lLik + addlik
-
-#' #' Mort_dist 2016
-v21a<- v21  <- M[66:67,521:564]
-for (i in 1:11){
-  denom<-M[66:67,2+i]
-  for (j in 1:ncol(v21)){
-    v21a[,(1:4)+4*(i-1)]<-v21[,(1:4)+4*(i-1)]/denom
-  } }
-addlik <- mort_dist_lLik(V=v21a); addlik
-lLik <- lLik + addlik
-#' #' Mort_dist 2016
-# v21a<- v21  <- M[51:67,521:564]
-# for (i in 1:11){
-#   denom<-M[51:67,2+i]
-#   for (j in 1:ncol(v21)){
-#     v21a[,(1:4)+4*(i-1)]<-v21[,(1:4)+4*(i-1)]/denom
-#   } }
-# addlik <- mort_dist_lLik(V=v21a); addlik
-# lLik <- lLik + addlik
-#' HOMELESS POP 2010 - index updated
-v23b  <- M[61,29]
-addlik <- homeless_10_lLik(V=v23b); addlik
-lLik <- lLik + addlik
+TOTAL POP EACH DECADE, BY US/FB - index updated (maybe)
+TOTAL POP AGE DISTRIBUTION 2016 index updated
+TOTAL DEATHS WITH TB 1999-2014 - index updated
+TB DEATHS 1999-2014 BY AGE - index updated above
+Total DEATHS 2017
+#' Total DEATHS 1999-2016 BY AGE
+#' Mort_dist 2016
+#' Mort_dist 2016
+HOMELESS POP 2010 - index updated
 LIKELIHOOD FOR BORGDORFF, FEREBEE & SUTHERLAND ESTIMATES
 }
 \description{

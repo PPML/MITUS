@@ -100,24 +100,24 @@ llikelihoodZ <-  function(samp_i, start_mat) {
       addlik <- (tltbi_dist_lLik(V=v13))*2; addlik
       lLik <- lLik + addlik
       #' #' LTBI PREVALENCE BY AGE 2011, US - index updated
-      #' v15  <- cbind(M[62,55:65],M[62,33:43]-M[62,55:65])
-      #' v15a<-v15
-      #' Sens_IGRA <-c(.780,.675,.712,.789,.591)
-      #' Spec_IGRA <-c(.979,.958,.989,.985,.931)
-      #' names(Sens_IGRA)<- names(Spec_IGRA)<-c("lrUS","hrUS","youngNUS","NUS","hrNUS")
-      #' v15b <- outer(v15a[,1],c(Sens_IGRA[1],(1-Sens_IGRA[1])))+outer(v15a[,2],c((1-Spec_IGRA[1]),Spec_IGRA[1]))
-      #' addlik <- ltbi_us_11_lLik(V=v15b)*2; addlik
-      #' lLik <- lLik + addlik
-      #' #' LTBI PREVALENCE BY AGE 2011, FB - index updated
-      #' v16  <- cbind(M[62,66:76],M[62,44:54]-M[62,66:76])
-      #' v16a <- v16
-      #' #under age 5
-      #' v16b <- (v16a[1,1]*c(Sens_IGRA[3],(1-Sens_IGRA[3])))+(v16a[1,2]*c((1-Spec_IGRA[3]),Spec_IGRA[3]))
-      #' #over age 5
-      #' v16c <- outer(v16a[2:11,1],c(Sens_IGRA[4],(1-Sens_IGRA[4])))+outer(v16a[2:11,2],c((1-Spec_IGRA[4]),Spec_IGRA[4]))
-      #' v16d<-rbind(v16b,v16c)
-      #' addlik <- ltbi_fb_11_lLik(V=v16d)*2; addlik
-      #' lLik <- lLik + addlik
+      v15  <- cbind(M[62,55:65],M[62,33:43]-M[62,55:65])
+      v15a<-v15
+      Sens_IGRA <-c(.780,.675,.712,.789,.591)
+      Spec_IGRA <-c(.979,.958,.989,.985,.931)
+      names(Sens_IGRA)<- names(Spec_IGRA)<-c("lrUS","hrUS","youngNUS","NUS","hrNUS")
+      v15b <- outer(v15a[,1],c(Sens_IGRA[1],(1-Sens_IGRA[1])))+outer(v15a[,2],c((1-Spec_IGRA[1]),Spec_IGRA[1]))
+      addlik <- ltbi_us_11_lLik(V=v15b)*2; addlik
+      lLik <- lLik + addlik
+      #' LTBI PREVALENCE BY AGE 2011, FB - index updated
+      v16  <- cbind(M[62,66:76],M[62,44:54]-M[62,66:76])
+      v16a <- v16
+      #under age 5
+      v16b <- (v16a[1,1]*c(Sens_IGRA[3],(1-Sens_IGRA[3])))+(v16a[1,2]*c((1-Spec_IGRA[3]),Spec_IGRA[3]))
+      #over age 5
+      v16c <- outer(v16a[2:11,1],c(Sens_IGRA[4],(1-Sens_IGRA[4])))+outer(v16a[2:11,2],c((1-Spec_IGRA[4]),Spec_IGRA[4]))
+      v16d<-rbind(v16b,v16c)
+      addlik <- ltbi_fb_11_lLik(V=v16d)*2; addlik
+      lLik <- lLik + addlik
       #' TOTAL POP EACH DECADE, BY US/FB - index updated (maybe)
       v17  <- M[,31]+M[,32]
       addlik <- tot_pop_yr_fb_lLik(V=v17); addlik
