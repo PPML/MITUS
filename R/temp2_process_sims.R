@@ -10,6 +10,7 @@
 #'@param samp_i how many samples
 #'@param ParMatrix parameters to use in the simulation
 #'@param loc
+#'@param startyr
 #'@param endyr year to end the simulation
 #'@param Int1 boolean for intervention 1
 #'@param Int2 boolean for intervention 2
@@ -25,12 +26,12 @@
 #'@export
 new2_OutputsZint <-  function(samp_i=1,ParMatrix,loc, startyr=1950, endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,prg_chng, ttt_list) {
   if(min(dim(as.data.frame(ParMatrix)))==1) {
-    Par <- as.numeric(ParMatrix);
-    names(Par) <- names(ParMatrix)
-  } else {  Par <- as.numeric(ParMatrix[samp_i,]);
-  names(Par) <- colnames(ParMatrix) }
+    Par1 <- as.numeric(ParMatrix);
+    names(Par1) <- names(ParMatrix)
+  } else {  Par1 <- as.numeric(ParMatrix[samp_i,]);
+  names(Par1) <- colnames(ParMatrix) }
 
-  P <- Par
+  P <- Par1
   Int1 <<- Int1;
   Int2 <<- Int2;
   Int3 <<- Int3;
