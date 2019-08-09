@@ -88,11 +88,11 @@ new2_OutputsZint <-  function(samp_i=1,ParMatrix,loc, startyr=1950, endyr=2050,I
 #'@export
 new2_OutputsInt <- function(loc,ParMatrix,n_cores=1,endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0, prg_chng, ttt_list) {
   if(min(dim(as.data.frame(ParMatrix)))==1) {
-    out <- new_OutputsZint(samp_i=1,ParMatrix=ParMatrix,endyr=endyr,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3, prg_chng=prg_chng, ttt_list)
+    out <- new2_OutputsZint(samp_i=1,ParMatrix=ParMatrix,loc=loc,endyr=endyr,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3, prg_chng=prg_chng, ttt_list=ttt_list)
   } else {
-    out0 <- mclapply(X=1:nrow(ParMatrix),FUN=new_OutputsZint,mc.cores=n_cores,
-                     ParMatrix=ParMatrix,endyr=2050,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3,prg_chng=prg_chng, ttt_list)
-    out <- array(NA,dim=c(length(out0),100,586))
+    out0 <- mclapply(X=1:nrow(ParMatrix),FUN=new2_OutputsZint,mc.cores=n_cores,
+                     ParMatrix=ParMatrix, loc=loc,endyr=2050,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3,prg_chng=prg_chng,ttt_list= ttt_list)
+    out <- array(NA,dim=c(length(out0),endyr-1950,length(func2_ResNam())))
     for(i in 1:length(out0)) out[i,,] <- as.matrix(out0[[i]])
   }
   if (sum(Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3)==0) intv<-1;
