@@ -94,6 +94,7 @@ new_OutputsInt <- function(loc,ParMatrix,n_cores=1,endyr=2050,Int1=0,Int2=0,Int3
     out <- array(NA,dim=c(length(out0),100,586))
     for(i in 1:length(out0)) out[i,,] <- as.matrix(out0[[i]])
   }
+  dimnames(out)[[3]]<-ResNam
   if (sum(Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3)==0) intv<-1;
   if(Int1==1) intv<-2;if(Int2==1) intv<-3; if(Int3==1) intv<-4;
   if(Int4==1) intv<-5; if(Int5==1) intv<-6; if(Scen1==1) intv<-7;
