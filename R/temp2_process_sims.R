@@ -72,6 +72,7 @@ new2_OutputsZint <-  function(samp_i=1,ParMatrix,loc, startyr=1950, endyr=2050,I
 
 #'wrapper function for the above function
 #'@name new2_OutputsInt
+#'@param loc
 #'@param ParMatrix parameters to use in the simulation
 #'@param n_cores how many cores to use
 #'@param endyr year to end the simulation
@@ -84,6 +85,7 @@ new2_OutputsZint <-  function(samp_i=1,ParMatrix,loc, startyr=1950, endyr=2050,I
 #'@param Scen2 boolean for scenario 2
 #'@param Scen3 boolean for scenario 3
 #'@param prg_chng vector of program change values
+#'@param ttt_list
 #'@return out outputs
 #'@export
 new2_OutputsInt <- function(loc,ParMatrix,n_cores=1,endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0, prg_chng, ttt_list) {
