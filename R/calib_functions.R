@@ -250,15 +250,15 @@ tot_pop_age_lLik <- function(V,ESS=500) {
 }
 
 
-#' TOTAL US DEATHS
-#' 1970,1975,1980,1985,1990-2007
-#' Motivation: norm, mean centered with CI = +/- 5% of mean
-#'@param V vector of total deaths in US from 1971-2016, fraction of millions
-#'@return likelihood
+#' #' TOTAL US DEATHS
+#' #' 1970,1975,1980,1985,1990-2007
+#' #' Motivation: norm, mean centered with CI = +/- 5% of mean
+#' #'@param V vector of total deaths in US from 1971-2016, fraction of millions
+#' #'@return likelihood
 US_dth_tot_lLik <- function(V) {
   US_deaths_tot   <- CalibDat[["US_tot_mort"]][c(11,21,31,41,51,61),-1]
   adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.1/1.96,log=T)*wts[1+1:6*10])
-  sum(dnorm(US_deaths_tot,V[c(11,21,31,41,51,61)],US_deaths_tot*0.1/1.96,log=T)*wts[1+1:6*10]) - adj_20a
+  sum(dnorm(US_deaths_tot,V[c(11,21,31,41,51,61)]*1e6,US_deaths_tot*0.1/1.96,log=T)*wts[1+1:6*10]) - adj_20a
 }
 
 
@@ -269,10 +269,10 @@ US_dth_tot_lLik <- function(V) {
 #'@param V vector of total deaths in US from 1971-2016, fraction of millions
 #'@return likelihood
 
-# US_dth_10_tot_lLik <- function(V) {
+# US_dth_1yr_tot_lLik <- function(V) {
 #   # CalibDat$US_tot_mort <- read.csv(file="inst/extdata/US_total_mort.csv", header = FALSE)
 #   # US_deaths_tot   <- CalibDat[["US_tot_mort"]][67,-1]
-#   death_age <-sum(readRDS(system.file("US/US_MortalityCountsByAge.rds", package="MITUS"))[,69])/1e6
+#   death_age <-sum(readRDS(system.file("US/US_MortalityCountsByAge.rds", package="MITUS"))[,67])/1e6
 #   adj_20a         <- sum(dnorm(death_sum,death_sum,death_sum*0.1/1.96,log=T)*wts[68])
 #   sum(dnorm(death_sum,V,death_sum*0.1/1.96,log=T)*wts[67]) - adj_20a
 # }
