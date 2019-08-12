@@ -27,16 +27,13 @@ fin_param <- function (PV,loc,prg_chng){
   }
   for(j in 68:151){
     for (i in 1:2){
-    BgMort[j,i]<-BgMort[j-1,i]*(1-.0159)
+    BgMort[j,i]<-BgMort[j-1,i]*(1-.0155)
     }
     for (i in 3:7){
-    BgMort[j,i]<-BgMort[j-1,i]*(1-.0095)
+    BgMort[j,i]<-BgMort[j-1,i]*(1-.0101)
     }
-    for (i in 8:9){
-     BgMort[j,i]<-BgMort[j-1,i]*(1-.0083)
-    }
-    for (i in 10:11){
-    BgMort[j,i]<-BgMort[j-1,i]*(1-.0052)
+    for (i in 8:11){
+    BgMort[j,i]<-BgMort[j-1,i]*(1-.0064)
     }
     }
   InitPop          <- Inputs[["InitPop"]]
