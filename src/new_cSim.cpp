@@ -58,7 +58,7 @@ Rcpp::List fin_cSim(
     std::vector<double> TxQualt,
     Rcpp::NumericMatrix       InitPop,
     Rcpp::NumericMatrix       Mpfast,
-    std::vector<double> ExogInf,
+    std::vector<double>       ExogInf,
     Rcpp::NumericMatrix       MpfastPI,
     Rcpp::NumericMatrix       Mrslow,
     std::vector<double> rrSlowFB,
@@ -1639,6 +1639,8 @@ Rcpp::List fin_cSim(
         for(int i=87; i<109; i++) { Outputs[y][i] = Outputs[y][i]*12; }
 
         ///////////////////////  RISK FACTOR MORTALITY BY AGE /////////////////////////
+
+        ///this is horribly wrong, using it as a place holder
         for(int ag=0; ag<11; ag++) {
           for(int tb=0; tb<6; tb++) {
             for(int lt=0; lt<2; lt++) {
@@ -1646,8 +1648,9 @@ Rcpp::List fin_cSim(
                 for(int nm=0; nm<4; nm++) {
                   for(int rg=0; rg<2; rg++) {
                     for(int na=0; na<3; na++) {
-                      Outputs[y][109+ag]  += V0[ag][tb][lt][im][nm][rg][na]*RRmuRFN[nm];
+                      Outputs[y][109+ag]  += VMort[ag][tb][lt][im][nm][rg][na]/RRmuRFN[nm];
                     } } } } } } }
+
         ////////////     CREATE YEARLY VALUES FROM THE MONTH ESTIMATE     ////////////
         for(int i=109; i<120; i++) { Outputs[y][i] = Outputs[y][i]*12;  }
         ///////////////////////    TOTAL MORTALITY BY AGE    /////////////////////////
@@ -1725,8 +1728,8 @@ Rcpp::List fin_cSim(
                 rTbP = rLtScrt[s]*LtDxPar_ltN[4][s];
                 rTbN = rLtScrt[s]*LtDxPar_noltN[4][s];
               }
-            for(int im=0; im<4; im++) {
-              for(int nm=0; nm<4; nm++) {
+              for(int im=0; im<4; im++) {
+                for(int nm=0; nm<4; nm++) {
                   Outputs[y][151] += (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP*LtTxParN[s][0] +
                     (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxParN[s][0]; //all init
                   if(na>0) {
@@ -1926,7 +1929,7 @@ Rcpp::List fin_cSim(
                 for(int nm=0; nm<4; nm++) {
                   for(int rg=0; rg<2; rg++) {
                     for(int na=0; na<3; na++) {
-                      if (na==0){
+                      if (na<1){
                         Outputs[y][296+im]  += V1[ag][tb][lt][im][nm][rg][na];
                         Outputs[y][304+rg]  += V1[ag][tb][lt][im][nm][rg][na];
                         Outputs[y][308+nm]  += V1[ag][tb][lt][im][nm][rg][na];
@@ -1938,8 +1941,6 @@ Rcpp::List fin_cSim(
                       }
 
                     } } } } } } }
-
-        for(int i=296; i<316; i++) { Outputs[y][i] = Outputs[y][i]*12; }
 
         ////total mortality
         for(int ag=0; ag<11; ag++) {
@@ -2007,6 +2008,38 @@ Rcpp::List fin_cSim(
         ////////////     CREATE YEARLY VALUES FROM THE MONTH ESTIMATE     ////////////
         for(int i=564; i<586; i++) { Outputs[y][i] = Outputs[y][i]*12; }
 
+        for(int ag=0; ag<11; ag++) {
+          for(int tb=0; tb<6; tb++) {
+            for(int im=0; im<4; im++) {
+              for(int nm=0; nm<4; nm++) {
+                for(int rg=0; rg<2; rg++) {
+                  for(int na=0; na<3; na++) {
+                    if (na<1){
+                      if (ag <3){
+                        Outputs[y][586+nm+(im*4)] += V1[ag][tb][0][im][nm][rg][na];
+                      } if(2<ag & ag<7){
+                        Outputs[y][602+nm+(im*4)] += V1[ag][tb][0][im][nm][rg][na];
+                      } if (6<ag & ag<11){
+                        Outputs[y][618+nm+(im*4)] += V1[ag][tb][0][im][nm][rg][na];
+                      }
+                    } else {
+                      if (ag<3) {
+                        Outputs[y][634+nm+(im*4)] += V1[ag][tb][0][im][nm][rg][na];
+                      } if(2<ag & ag<7){
+                        Outputs[y][650+nm+(im*4)] += V1[ag][tb][0][im][nm][rg][na];
+                      } if (6<ag & ag<11){
+                        Outputs[y][666+nm+(im*4)] += V1[ag][tb][0][im][nm][rg][na];
+                      } } }
+                } } } } }
+        ////////////////    COUNTS BY LATENT TREATMENT STATUS     //////////////////
+        for(int ag=0; ag<11; ag++) {
+          for(int tb=0; tb<6; tb++) {
+            for(int im=0; im<4; im++) {
+              for(int nm=0; nm<4; nm++) {
+                for(int rg=0; rg<2; rg++) {
+                  for(int na=0; na<3; na++) {
+                    Outputs[y][682] += V1[ag][tb][0][im][nm][rg][na];   //TREATMENT NAIVE
+                  } } } } } }
       } ////end of mid-year results bracket
       ///////////////////////////////////////////////////////////////////////////////////
       //////////////////////////////END MIDYEAR RESULTS//////////////////////////////////
