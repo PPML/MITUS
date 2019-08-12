@@ -256,9 +256,9 @@ tot_pop_age_lLik <- function(V,ESS=500) {
 #' #'@param V vector of total deaths in US from 1971-2016, fraction of millions
 #' #'@return likelihood
 US_dth_tot_lLik <- function(V) {
-  US_deaths_tot   <- CalibDat[["US_tot_mort"]][c(11,21,31,41,51,61),-1]
-  adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.1/1.96,log=T)*wts[1+1:6*10])
-  sum(dnorm(US_deaths_tot,V[c(11,21,31,41,51,61)]*1e6,US_deaths_tot*0.1/1.96,log=T)*wts[1+1:6*10]) - adj_20a
+  US_deaths_tot   <- CalibDat[["US_tot_mort"]][66:67,-1]/1e6#[c(11,21,31,41,51,61),-1]
+  adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.1/1.96,log=T)*wts[66:67])#wts[1+1:6*10])
+  sum(dnorm(US_deaths_tot,V,US_deaths_tot*0.1/1.96,log=T)*wts[66:67]) - adj_20a
 }
 
 
