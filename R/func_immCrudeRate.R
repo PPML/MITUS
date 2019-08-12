@@ -23,9 +23,9 @@ for (i in 1:length(RR)){
 
 cruderatepast<-newprev/1e5
 
-for (i in 1:15){
-  if((cruderatepast[i+54]/cruderatepast[(i+54)-1]) < .95){
-    cruderatepast[i+54]<-.95*cruderatepast[(i+54)-1]
+for (i in 1:5){
+  if((cruderatepast[i+64]/cruderatepast[(i+64)-1]) < .95){
+    cruderatepast[i+64]<-.95*cruderatepast[(i+64)-1]
   }
 }
 cruderatefuture<-rep(NA,151-69)
