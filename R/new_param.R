@@ -112,7 +112,7 @@ fin_param <- function (PV,loc,prg_chng){
 
   ######################         IMMIGRATION             ########################
   ######################         OVERALL IMM.            ########################
-  TotImmig0       <- (c(ImmigInputs[[1]][1:151])+c(rep(0,69),cumsum(rep(PV["ImmigVolFut"],82))))/12*PV["ImmigVol"]
+  TotImmig0       <- (c(ImmigInputs[[1]][1:151])+c(rep(0,67),cumsum(rep(PV["ImmigVolFut"],84))))/12*PV["ImmigVol"]
   TotImmig1       <- TotImmig0
   TotImmig        <- SmoCurve(TotImmig1)
   AgeDist<-matrix(NA,11,1801)
@@ -125,8 +125,8 @@ fin_param <- function (PV,loc,prg_chng){
     }}
 
   ######################           LTBI IMM.             ########################
-  PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:69]^(exp(PV["TunLtbiTrend"]))*ImmigInputs[["PrevTrend25_34"]][69]^(1-exp(PV["TunLtbiTrend"])),
-                        ImmigInputs[["PrevTrend25_34"]][70:151]*(PV["ImmigPrevFutLat"]/0.99)^(1:82))
+  PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:67]^(exp(PV["TunLtbiTrend"]))*ImmigInputs[["PrevTrend25_34"]][67]^(1-exp(PV["TunLtbiTrend"])),
+                        ImmigInputs[["PrevTrend25_34"]][68:151]*(PV["ImmigPrevFutLat"]/0.99)^(1:84))
   PrevTrend25_341l <-   PrevTrend25_340l
   PrevTrend25_34l  <- SmoCurve(PrevTrend25_341l)
   PrevTrend25_34_ls <- (PrevTrend25_34l);
@@ -137,8 +137,8 @@ fin_param <- function (PV,loc,prg_chng){
   ######################         ACTIVE TB IMM.           ########################
   # PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:69]^exp(PV["TunActTrend"])*ImmigInputs[["PrevTrend25_34"]][69]^exp((1-PV["TunActTrend"])),
 
-  PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:69]^(exp(PV["TunActTrend"]))*ImmigInputs[["PrevTrend25_34"]][69]^(1-exp(PV["TunActTrend"])),
-                        ImmigInputs[["PrevTrend25_34"]][70:151]*(PV["ImmigPrevFutAct"]/0.99)^(1:82))
+  PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:67]^(exp(PV["TunActTrend"]))*ImmigInputs[["PrevTrend25_34"]][67]^(1-exp(PV["TunActTrend"])),
+                        ImmigInputs[["PrevTrend25_34"]][68:151]*(PV["ImmigPrevFutAct"]/0.99)^(1:84))
 
   PrevTrend25_34a  <- SmoCurve(PrevTrend25_340a)
 
