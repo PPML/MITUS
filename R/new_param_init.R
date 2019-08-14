@@ -51,17 +51,21 @@ fin_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sce
   ################################################################################
   BgMort           <- as.matrix(Inputs[["BgMort"]])
   if(loc=="US"){
-    BgMort[1:68,2:12]<-weight_mort(loc)
+    BgMort[1:68,2:12] <-weight_mort(loc)
   } else{
     BgMort[10:67,2:12]<-weight_mort(loc)
   }
-  x<-rep(NA,11)
-  for (i in 1:11){ ##this helps smooth the projections going forward
-    ##NEEDS TO BE UPDATED WITH SSA DATA
-    x[i]<-BgMort[101,i]/BgMort[100,i];
-    for(j in 68:151){
-      BgMort[j,i]<-BgMort[j-1,i]*x[i]
-    } }
+  for(j in 68:151){
+    for (i in 1:2){
+      BgMort[j,i]<-BgMort[j-1,i]*(1-.0155)
+    }
+    for (i in 3:7){
+      BgMort[j,i]<-BgMort[j-1,i]*(1-.0101)
+    }
+    for (i in 8:11){
+      BgMort[j,i]<-BgMort[j-1,i]*(1-.0064)
+    }
+  }
   InputParams[["InitPop"]] <- Inputs[["InitPop"]]
   Births           <- Inputs[["Births"]]
   ImmigInputs      <- Inputs[["ImmigInputs"]]
@@ -143,30 +147,25 @@ fin_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sce
   TotImmAge<-matrix(NA,1801,11)
   for (i in 1:11){
     AgeDist[i,]         <- SmoCurve(ImmigInputs[["AgeDist"]][i,])}
-  if (loc !="US"){
-    AgeDist[11,]<-.005690661*AgeDist[10,]
-    AgeDist[10,]<-(1-.005690661)*AgeDist[10,]}
   for (i in 1:1801){
     for (j in 1:11){
-      # TotImmAge[i,j]   <- outer(TotImmig[i],AgeDist[j,i])
       TotImmAge[i,j]   <- TotImmig[i]*AgeDist[j,i]
     }}
-  ###################   IMMIGRATION WITH LATENT TB   #######################
-
-  PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:69]^PV["TunLtbiTrend"]*ImmigInputs[["PrevTrend25_34"]][69]^(1-PV["TunLtbiTrend"]),
+###########   IMMIGRATION WITH LATENT TB   #######################
+  PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:69]^(exp(PV["TunLtbiTrend"]))*ImmigInputs[["PrevTrend25_34"]][69]^(1-exp(PV["TunLtbiTrend"])),
                         ImmigInputs[["PrevTrend25_34"]][70:151]*(PV["ImmigPrevFutLat"]/0.99)^(1:82))
-
   PrevTrend25_341l <-   PrevTrend25_340l
   PrevTrend25_34l  <- SmoCurve(PrevTrend25_341l)
-  PrevTrend25_34_ls <- (PrevTrend25_34l); PrevTrend25_34_ls <- PrevTrend25_34_ls/PrevTrend25_34_ls[(2011-1950)*12+6]
-
+  PrevTrend25_34_ls <- (PrevTrend25_34l);
+  PrevTrend25_34_ls <- PrevTrend25_34_ls/PrevTrend25_34_ls[(2011-1950)*12+6]
   InputParams[["ImmLat"]]        <- matrix(NA,length(PrevTrend25_34_ls),11)
   for(i in 1:11) InputParams[["ImmLat"]][,i] <- (1-exp((-(c(2.5,1:9*10,100)/100)[i]*PV["LtbiPar1"]-(c(2.5,1:9*10,100)/100)[i]^2*PV["LtbiPar2"])*PrevTrend25_34_ls))*TotImmAge[,i]
   InputParams[["ImmLat"]]    <-InputParams[["ImmLat"]][1:1201,1:11]
+  ######################         ACTIVE TB IMM.           ########################
+  # PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:69]^exp(PV["TunActTrend"])*ImmigInputs[["PrevTrend25_34"]][69]^exp((1-PV["TunActTrend"])),
 
-  #######################   IMMIGRATION WITH ACTIVE TB   #######################
-  PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:69],ImmigInputs[["PrevTrend25_34"]][70:151]*(PV["ImmigPrevFutAct"]/0.99)^(1:82))
-
+  PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:69]^(exp(PV["TunActTrend"]))*ImmigInputs[["PrevTrend25_34"]][69]^(1-exp(PV["TunActTrend"])),
+                        ImmigInputs[["PrevTrend25_34"]][70:151]*(PV["ImmigPrevFutAct"]/0.99)^(1:82))
   PrevTrend25_341a <-   PrevTrend25_340a
   PrevTrend25_34a  <- SmoCurve(PrevTrend25_341a)
 
@@ -205,7 +204,7 @@ fin_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sce
   # NEED TO REMOVE DRUG RESISTANCE
   InputParams[["ExogInf"]] <- rep(NA,length(PrevTrend25_34a))
   InputParams[["ExogInf"]] <- PV["ExogInf"]*PrevTrend25_34a/PrevTrend25_341a["2013"]/12
-  InputParams[["ExogInf"]]        <- InputParams[["ExogInf"]][1:month]
+  InputParams[["ExogInf"]] <- InputParams[["ExogInf"]][1:month]
 
   #removed *(ImmigInputs[[7]][4]*DrN[,i]+(1-ImmigInputs[[7]][4])*DrE[,i])
   ###############################    EMMIGRATION   ##############################
@@ -391,7 +390,7 @@ fin_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sce
   }
 
   ### PROBABILITY OF LATENT TREATMENT INTIATION
-  pTlInt        <- rep(.80,month)
+  pTlInt        <- rep(.775,month)
   ###################### LTBI TX INITIATION PROGRAM CHANGE ########################
   if (prg_chng["ltbi_init_frc"] !=pTlInt[prg_m]){
     pTlInt[prg_m:length(pTlInt)] <- prg_chng["ltbi_init_frc"];
@@ -410,7 +409,7 @@ fin_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sce
   pImmScen    <- PV["pImmScen"] # lack of reactivitiy to IGRA for Sp
 
   #### #### #### INT 2 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
-    ### HOW TO ADD PROGRAM CHANGE HERE?
+  ### HOW TO ADD PROGRAM CHANGE HERE?
   if(Int2==1) { rLtScrt     <- rLtScrt  + LgtCurve(2018,2023,1)*rLtScrt*1}
   InputParams[["rLtScrt"]]       <- rLtScrt
 
