@@ -21,8 +21,8 @@ results <- lapply(1:9, load_data)
 
 #make some lists of reformatted data
 ResTabC <- list()
-ResTabC[['small_results']] <- format_as_restab_small_ages(results)
-ResTabC[['big_results']] <- format_as_restab_big_ages(results)
+ResTabC[['small_results']] <- format_as_restab_small_ages_indices(results)
+ResTabC[['big_results']] <- format_as_restab_big_ages_indices(results)
 
 #Average the results
 ResTabC[['small_results']] <- mean_small_restabs(ResTabC, nr = 10, nints = 9)
