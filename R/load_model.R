@@ -18,7 +18,7 @@ if (loc=="US"){
   ParamInit<<-as.data.frame(readRDS(system.file("US/US_ParamInit_2019-08-09.rds", package="MITUS")))
   StartVal<<-readRDS(system.file("US/US_StartVal_2019-08-09.rds", package="MITUS"))
   Inputs<<-readRDS(system.file("US/US_Inputs_06-26-19.rds", package="MITUS"))
-  Opt <- readRDS(system.file("US/US_Optim_all_10_812.rds",package="MITUS"))#[,-59]
+  Opt <<- readRDS(system.file("US/US_Optim_all_10_812.rds",package="MITUS"))#[,-59]
   Par<<-readRDS(system.file("US/US_Param_all_10_812.rds", package="MITUS"))
 
 } else {
