@@ -51,17 +51,21 @@ fin_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sce
   ################################################################################
   BgMort           <- as.matrix(Inputs[["BgMort"]])
   if(loc=="US"){
-    BgMort[1:68,2:12]<-weight_mort(loc)
+    BgMort[1:68,2:12] <-weight_mort(loc)
   } else{
     BgMort[10:67,2:12]<-weight_mort(loc)
   }
-  x<-rep(NA,11)
-  for (i in 1:11){ ##this helps smooth the projections going forward
-    ##NEEDS TO BE UPDATED WITH SSA DATA
-    x[i]<-BgMort[101,i]/BgMort[100,i];
-    for(j in 68:151){
-      BgMort[j,i]<-BgMort[j-1,i]*x[i]
-    } }
+  for(j in 68:151){
+    for (i in 1:2){
+      BgMort[j,i]<-BgMort[j-1,i]*(1-.0155)
+    }
+    for (i in 3:7){
+      BgMort[j,i]<-BgMort[j-1,i]*(1-.0101)
+    }
+    for (i in 8:11){
+      BgMort[j,i]<-BgMort[j-1,i]*(1-.0064)
+    }
+  }
   InputParams[["InitPop"]] <- Inputs[["InitPop"]]
   Births           <- Inputs[["Births"]]
   ImmigInputs      <- Inputs[["ImmigInputs"]]
@@ -90,7 +94,7 @@ fin_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sce
   }
   mubt<-mubt[1:month,]
   for(i in 1:11){
-    mubt[,i] <- mubt[,i]*exp((PV[["TunmuAg"]]-1))
+    mubt[,i] <- mubt[,i]*exp(PV[["TunmuAg"]])
   }
   InputParams[["mubt"]] <-mubt
 
@@ -116,22 +120,6 @@ fin_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sce
   InputParams[["RRmuRF"]]<-exp((0:3)/3*log(RF_fact))
   InputParams[["RRmuRF"]]<-InputParams[["RRmuRF"]]/sum(InputParams[["RRmuRF"]]*mort_dist)
 
-  #check =1
-  # RRmuRF%*%mort_dist
-
-  # vRFMort    <- matrix(0,11,4);
-  # rownames(vRFMort) <- c("0_4",paste(0:8*10+5,1:9*10+4,sep="_"),"95p")
-  # colnames(vRFMort) <- c("RF1","RF2","RF3","RF4")
-  # vRFMort[,1] <- 0;
-  # vRFMort[,2] <- muRF1*exp(c(0,0,1:6,6,6,6)*TunmuHvAg)
-  # vRFMort[,3] <- muRF2*exp(c(0,0,1:6,6,6,6)*TunmuHvAg)
-  # vRFMort[,4] <- muRF3*exp(c(0,0,1:6,6,6,6)*TunmuHvAg)
-
-  ##### combine the two RRs to a single factor
-  # InputParams["RRs_mu"]<-matrix(NA,2,4)
-  # InputParams["RRs_mu"][1,] <-RRmuRF
-  # InputParams["RRs_mu"][2,] <-RRmuRF*RRmuHR[2]
-
   ############### CREATE A MATRIX OF TB MORTALITIES BY AGE GROUP ###############
 
 
@@ -150,39 +138,34 @@ fin_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sce
   TunmuTbAg <- PV["TunmuTbAg"]
 
   #################                IMMIGRATION              #####################
-  TotImmig0       <- (c(ImmigInputs[[1]][1:151])+c(rep(0,65),cumsum(rep(PV["ImmigVolFut"],86))))/12*PV["ImmigVol"]
+  ######################         OVERALL IMM.            ########################
+
+  TotImmig0       <- (c(ImmigInputs[[1]][1:151])+c(rep(0,69),cumsum(rep(PV["ImmigVolFut"],82))))/12*PV["ImmigVol"]
   TotImmig1       <- TotImmig0
   TotImmig        <- SmoCurve(TotImmig1)
   AgeDist<-matrix(NA,11,1801)
   TotImmAge<-matrix(NA,1801,11)
   for (i in 1:11){
     AgeDist[i,]         <- SmoCurve(ImmigInputs[["AgeDist"]][i,])}
-  if (loc !="US"){
-    AgeDist[11,]<-.005690661*AgeDist[10,]
-    AgeDist[10,]<-(1-.005690661)*AgeDist[10,]}
   for (i in 1:1801){
     for (j in 1:11){
-      # TotImmAge[i,j]   <- outer(TotImmig[i],AgeDist[j,i])
       TotImmAge[i,j]   <- TotImmig[i]*AgeDist[j,i]
     }}
-  ###################   IMMIGRATION WITH LATENT TB   #######################
-
-  PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:69]^PV["TunLtbiTrend"]*ImmigInputs[["PrevTrend25_34"]][69]^(1-PV["TunLtbiTrend"]),
+###########   IMMIGRATION WITH LATENT TB   #######################
+  PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:69]^(exp(PV["TunLtbiTrend"]))*ImmigInputs[["PrevTrend25_34"]][69]^(1-exp(PV["TunLtbiTrend"])),
                         ImmigInputs[["PrevTrend25_34"]][70:151]*(PV["ImmigPrevFutLat"]/0.99)^(1:82))
-
-  #set.seed(rand_seed+1)
-  # PrevTrend25_341l <-   c(PrevTrend25_340l[1:66],exp(mvrnorm(1, log(PrevTrend25_340l[-(1:66)]), vcv_gp_l10_sd0.1))) # Add gaussian process noise
   PrevTrend25_341l <-   PrevTrend25_340l
   PrevTrend25_34l  <- SmoCurve(PrevTrend25_341l)
-  PrevTrend25_34_ls <- (PrevTrend25_34l); PrevTrend25_34_ls <- PrevTrend25_34_ls/PrevTrend25_34_ls[(2011-1950)*12+6]
-
+  PrevTrend25_34_ls <- (PrevTrend25_34l);
+  PrevTrend25_34_ls <- PrevTrend25_34_ls/PrevTrend25_34_ls[(2011-1950)*12+6]
   InputParams[["ImmLat"]]        <- matrix(NA,length(PrevTrend25_34_ls),11)
   for(i in 1:11) InputParams[["ImmLat"]][,i] <- (1-exp((-(c(2.5,1:9*10,100)/100)[i]*PV["LtbiPar1"]-(c(2.5,1:9*10,100)/100)[i]^2*PV["LtbiPar2"])*PrevTrend25_34_ls))*TotImmAge[,i]
   InputParams[["ImmLat"]]    <-InputParams[["ImmLat"]][1:1201,1:11]
+  ######################         ACTIVE TB IMM.           ########################
+  # PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:69]^exp(PV["TunActTrend"])*ImmigInputs[["PrevTrend25_34"]][69]^exp((1-PV["TunActTrend"])),
 
-  #######################   IMMIGRATION WITH ACTIVE TB   #######################
-  PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:69],ImmigInputs[["PrevTrend25_34"]][70:151]*(PV["ImmigPrevFutAct"]/0.99)^(1:82))
-
+  PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:69]^(exp(PV["TunActTrend"]))*ImmigInputs[["PrevTrend25_34"]][69]^(1-exp(PV["TunActTrend"])),
+                        ImmigInputs[["PrevTrend25_34"]][70:151]*(PV["ImmigPrevFutAct"]/0.99)^(1:82))
   PrevTrend25_341a <-   PrevTrend25_340a
   PrevTrend25_34a  <- SmoCurve(PrevTrend25_341a)
 
@@ -191,17 +174,8 @@ fin_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sce
 
   InputParams[["ImmAct"]]    <-InputParams[["ImmAct"]][1:1201,1:11]
   InputParams[["ImmFst"]]    <-InputParams[["ImmFst"]][1:1201,1:11]
-  TotImmAge<-TotImmAge[1:1201]
+  TotImmAge<-TotImmAge[1:1201,]
   InputParams[["ImmNon"]]        <- TotImmAge-InputParams[["ImmAct"]]-InputParams[["ImmFst"]]-InputParams[["ImmLat"]]
-
-  #### #### #### INT 1 #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
-  pctDoc <- (1-0.28)
-  if(Int1==1) {
-    for(i in 1:11) InputParams[["ImmLat"]][,i] <- InputParams[["ImmLat"]][,i]*(1-LgtCurve(2018,2023,1)*PV["SensLt"]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
-    for(i in 1:11) InputParams[["ImmAct"]][,i] <- InputParams[["ImmAct"]][,i]*(1-LgtCurve(2018,2023,1)*PV["SensLt"]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
-    for(i in 1:11) InputParams[["ImmFst"]][,i] <- InputParams[["ImmFst"]][,i]*(1-LgtCurve(2018,2023,1)*PV["SensLt"]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
-    InputParams[["ImmNon"]]        <- TotImmAge-InputParams[["ImmAct"]]-InputParams[["ImmFst"]]-InputParams[["ImmLat"]]
-  }
 
 
   #### #### #### SCEN 2 #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
@@ -230,6 +204,8 @@ fin_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sce
   # NEED TO REMOVE DRUG RESISTANCE
   InputParams[["ExogInf"]] <- rep(NA,length(PrevTrend25_34a))
   InputParams[["ExogInf"]] <- PV["ExogInf"]*PrevTrend25_34a/PrevTrend25_341a["2013"]/12
+  InputParams[["ExogInf"]] <- InputParams[["ExogInf"]][1:month]
+
   #removed *(ImmigInputs[[7]][4]*DrN[,i]+(1-ImmigInputs[[7]][4])*DrE[,i])
   ###############################    EMMIGRATION   ##############################
 
@@ -295,18 +271,18 @@ fin_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sce
   vORpfastRF  <-(exp((0:3)/3*log(ORpfastRF)))
   vORpfastPIRF  <- vORpfastRF*ORpfastPI
 
-  ############ UPDATE PROBS FOR LEVEL 1 OF REACTIVATION ###########
+  ############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
   Mpfast[,1]   <- vORpfastRF[1]*Mpfast[,1]
-  MpfastPI[,1]   <- vORpfastPIRF[1]*Mpfast[,1]
+  MpfastPI[,1]   <- vORpfastPIRF[1]*MpfastPI[,1]
   ############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
   Mpfast[,2]   <- vORpfastRF[2]*Mpfast[,2]
-  MpfastPI[,2]   <- vORpfastPIRF[2]*Mpfast[,2]
+  MpfastPI[,2]   <- vORpfastPIRF[2]*MpfastPI[,2]
   ############ UPDATE PROBS FOR LEVEL 3 OF REACTIVATION ###########
   Mpfast[,3]   <- vORpfastRF[3]*Mpfast[,3]
-  MpfastPI[,3]   <- vORpfastPIRF[3]*Mpfast[,3]
+  MpfastPI[,3]   <- vORpfastPIRF[3]*MpfastPI[,3]
   ############ UPDATE PROBS FOR LEVEL 4 OF REACTIVATION ###########
   Mpfast[,4]   <- vORpfastRF[4]*Mpfast[,4]
-  MpfastPI[,4]   <- vORpfastPIRF[4]*Mpfast[,4]
+  MpfastPI[,4]   <- vORpfastPIRF[4]*MpfastPI[,4]
 
   ##### UPDATE BOTH MATRICES WITH PROBABILITIES, NOT RATES
   Mpfast[,]    <- Mpfast[,]  /(1+Mpfast[,]);
@@ -397,7 +373,14 @@ fin_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sce
   LtDxPar_nolt[1,]<-LtDxPar_nolt[1,]*rrTestLrNoTb
 
   InputParams[["LtDxPar_lt"]]<-LtDxPar_lt;   InputParams[["LtDxPar_nolt"]]<-LtDxPar_nolt;
-
+  #### #### #### INT 1 #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
+  pctDoc <- (1-0.28)
+  if(Int1==1) {
+    for(i in 1:11) InputParams[["ImmLat"]][,i] <- InputParams[["ImmLat"]][,i]*(1-LgtCurve(2018,2023,1)*SensLt[4,1]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
+    for(i in 1:11) InputParams[["ImmAct"]][,i] <- InputParams[["ImmAct"]][,i]*(1-LgtCurve(2018,2023,1)*SensLt[4,1]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
+    for(i in 1:11) InputParams[["ImmFst"]][,i] <- InputParams[["ImmFst"]][,i]*(1-LgtCurve(2018,2023,1)*SensLt[4,1]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
+    InputParams[["ImmNon"]]        <- TotImmAge-InputParams[["ImmAct"]]-InputParams[["ImmFst"]]-InputParams[["ImmLat"]]
+  }
   ######################          LTBI DIAGNOSIS           ########################
   ###################### LTBI TX EFFECTIVENESS PROGRAM CHANGE ########################
   if (prg_chng["ltbi_eff_frc"] != round(PV["EffLt"], 2)){
@@ -407,7 +390,7 @@ fin_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sce
   }
 
   ### PROBABILITY OF LATENT TREATMENT INTIATION
-  pTlInt        <- rep(.80,month)
+  pTlInt        <- rep(.775,month)
   ###################### LTBI TX INITIATION PROGRAM CHANGE ########################
   if (prg_chng["ltbi_init_frc"] !=pTlInt[prg_m]){
     pTlInt[prg_m:length(pTlInt)] <- prg_chng["ltbi_init_frc"];
@@ -426,7 +409,7 @@ fin_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sce
   pImmScen    <- PV["pImmScen"] # lack of reactivitiy to IGRA for Sp
 
   #### #### #### INT 2 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
-    ### HOW TO ADD PROGRAM CHANGE HERE?
+  ### HOW TO ADD PROGRAM CHANGE HERE?
   if(Int2==1) { rLtScrt     <- rLtScrt  + LgtCurve(2018,2023,1)*rLtScrt*1}
   InputParams[["rLtScrt"]]       <- rLtScrt
 
@@ -557,242 +540,9 @@ fin_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sce
   names(InputParams[["TxVec"]]) <- c("TxCompRate","TxEff")
   InputParams[["TxVec"]][1]       <-  d1st
   InputParams[["TxVec"]][2]       <-  pCurPs
-  ### REMOVED ART PARAMETERS
-  ################################################################################
-  ##### CREATE A LIST TO HOLD THE VECTORS FOR AGE CATEGORIES, TB STATES,     #####
-  ##### DRUG RESISTANCE, TREATMENT HISTORY, HIV STATUS, AND RISK CATEGORY.   #####
-  ################################################################################
-  ################################################################################
-
-  ################################################################################
-  StatList <- noquote(list(
-    #####					                  AGE CATEGORIES                             #####
-    #####           AGE GROUPS 0-4, 5-14, 15-24, ... , 95-94, 95+              #####
-    c("0_4",paste(0:8*10+5,1:9*10+4,sep="_"),"95p"),
-    #####					     				    TUBERCULOSIS STATES		              			   #####
-    ##### SUSCEPTIBLE; UNINFECTED & PARTIALLY IMMUNE; LATENT SLOW; LATENT FAST;#####
-    #####       ACTIVE TB SMEAR NEG.; ACTIVE TB SMEAR POS.; TB TREATMENT       #####
-    c("Su","Sp","Ls","Lf", "Ac", "Tx"),
-    #####                          TREATMENT HISTORY                           #####
-    #####              NO TB TREATMENT HISTORY, PRIOR LTBI TREATMENT           #####
-    c("NT","LT"),
-    #####                        TB REACTIVATION RISK                          #####
-    c("I1","I2","I3","I4"),
-    #####                          NON-TB MORTALITY                            #####
-    c("M1","M2","M3","M4"),
-    #####                  LIVING CONDITIONS/RISK OF INFECTION                 #####
-    c("LR","HR"),
-    #####                              NATIVITY                                #####
-    c("US","F1","F2")))
-  ################################################################################
-  ################################################################################
-  ResNam <- c("Year",                                         # year
-              ##############################    POPULATION    ################################
-              "N_ALL",                                        # total pop
-              paste("N",StatList[[1]],sep="_"),               # pop by ag cat
-              paste("N",StatList[[2]],sep="_"),               # pop by tb cat
-              paste("N",StatList[[4]],sep="_"),               # pop by im cat
-              paste("N",StatList[[5]],sep="_"),               # pop by nm cat
-              paste("N",StatList[[6]],sep="_"),               # pop by rg cat
-              paste("N",StatList[[7]],sep="_"),               # pop by na cat
-              ###################    POPULATION W/ NATIVITY  ################################
-              paste("N_US",StatList[[1]],sep="_"),            # US pop by ag cat
-              paste("N_FB",StatList[[1]],sep="_"),            # FB pop by ag cat
-              paste("N_US_LTBI",StatList[[1]],sep="_"),       # US LTBI pop by ag cat
-              paste("N_FB_LTBI",StatList[[1]],sep="_"),       # FB LTBI pop by ag cat
-              paste("N_RF",StatList[[1]],sep="_"),            # RF pop by ag cat
-              #############################    MORTALITY    ################################
-              paste("TBMORT_US",StatList[[1]],sep="_"),   # TB mort, HIV neg, by ag cat
-              paste("TBMORT_NUS",StatList[[1]],sep="_"),   # TB mort, HIV pos, by ag cat
-              paste("RFMORT",StatList[[1]],sep="_"),         # RF mort, by ag cat
-              paste("TOTMORT",StatList[[1]],sep="_"),         # total mort, by ag cat
-              #### @object 131
-              #############################   TX OUTCOMES   ################################
-
-              "TBTX_COMPLT","TBTX_DISCONT","TBTX_DIED",       # TB treatment outcomes complete, discontinue, death
-              "NOTIF_ALL",                                    # total notif
-              paste("NOTIF",StatList[[1]],sep="_"),           # notif by ag cat
-              paste("NOTIF",StatList[[7]],sep="_"),         # notif by nat cat
-              #            paste("NOTIF_HIV",c("POS","NEG"),sep="_"),      # notif by HIV pos/neg
-              paste("NOTIF",StatList[[6]],sep="_"),           # notif by rg cat
-              #           paste("NOTIF_US_N",StatList[[3]],sep="_"),      # notif, US, N, by dr cat
-              #            paste("NOTIF_US_E",StatList[[3]],sep="_"),      # notif, US, E, by dr cat
-              #           paste("NOTIF_FB_N",StatList[[3]],sep="_"),      # notif, FB, N, by dr cat
-              #           paste("NOTIF_FB_E",StatList[[3]],sep="_"),      # notif, FB, E, by dr cat
-              ###########################   TLTBI INITIATION   ##############################
-              "TLTBI_INITS",                                  # Initiations on LTBI tx
-              "TLTBI_INITS_FB",                               # Initiations on LTBI tx FB
-              "TLTBI_INITS_HR",                               # Initiations on LTBI tx HR
-              #            "TLTBI_INITS_HV",                               # Initiations on LTBI tx HV
-              "TLTBI_INITS_TP",                               # Initiations on LTBI tx, with LTBI
-              ###########################     TB INCIDENCE     ##############################
-              "INCID_ALL",                                    # Total incidence
-              paste("INCID_ALL",StatList[[1]],sep="_"),       # Total incidence by ag cat
-              "INCID_ALL_US",                                 # Total incidence, US born
-              "INCID_ALL_FB",                                 # Total incidence, foreign born
-              "INCID_ALL_FB2",                                # Total incidence, foreign born
-              "INCID_ALL_HR",                                 # Total incidence, high risk
-              #            "INCID_ALL_HV",                                 # Total incidence, HIV pos
-              "INCID_REC",                                    # Total incidence, recent infection
-              paste("INCID_REC",StatList[[1]],sep="_"),       # Total incidence by ag cat, recent infection
-              "INCID_REC_US",                                 # Total incidence, US born, recent infection
-              "INCID_REC_FB",                                 # Total incidence, foreign born, recent infection
-              "INCID_REC_FB2",                                # Total incidence, foreign born, recent infection
-              "INCID_REC_HR",                                 # Total incidence, high risk, recent infection
-              #            "INCID_REC_HV",                                 # Total incidence, HIV pos, recent infection
-              ###########################    NOTIFICATION DEAD      ##############################
-              "NOTIF_MORT_ALL",                               # total notif, dead at diagnosis
-              paste("NOTIF_MORT",StatList[[1]],sep="_"),      # notif by ag cat, dead at diagnosis
-              paste("NOTIF_MORT",StatList[[7]],sep="_"),      # notif by nat cat, dead at diagnosis
-              #            paste("NOTIF_MORT_HIV",c("POS","NEG"),sep="_"), # notif by HIV pos/neg, dead at diagnosis
-              paste("NOTIF_MORT",StatList[[6]],sep="_"),      # notif by rg cat, dead at diagnosis
-              paste("NOTIF_US",StatList[[1]],sep="_"),        # notif by ag cat, US only
-              paste("NOTIF_US_MORT",StatList[[1]],sep="_"),   # notif by ag cat, dead at diagnosis US only
-              #            paste("NOTIF_MORT_HIV_Neg",StatList[[1]],sep="_"),    # notif by ag cat, dead at diagnosis HIV neg
-              #            paste("TOTMORT_W_HIV",StatList[[1]],sep="_"),   # total mort, by ag cat, have HIV
-              paste("TOTMORT_W_TB",StatList[[1]],sep="_"),     # total mort, by ag cat, have active TB
-              c("N_Ls_US","N_Lf_US","N_Act_US"),
-              c("N_Ls_FB","N_Lf_FB","N_Act_FB"),
-              c("FOI_LR_US","FOI_HR_US","FOI_LR_FB","FOI_HR_FB" ), #force of infection
-              c("TB_INF_LR","TB_INF_HR","TB_INF_US","TB_INF_F1","TB_INF_F2"), # NEW TB INFECTIONS
-              c("TBMORT_US","TBMORT_NUS") ,          # tbmortality by nativity
-              paste("TOTMORT_US",StatList[[1]],sep="_"),       # mortality by nat cat
-              paste("TOTMORT_NUS",StatList[[1]],sep="_"),       # mortality by nat cat
-
-              paste("TOTMORT_US",StatList[[4]],sep="_"),       # mortality by nat & im cat
-              paste("TOTMORT_NUS",StatList[[4]],sep="_"),       # mortality by nat & im cat
-
-              paste("TOTMORT_US",StatList[[5]],sep="_"),       # mortality by nat & nm cat
-              paste("TOTMORT_NUS",StatList[[5]],sep="_"),       # mortality by nat & nm cat
-
-              paste("TOTMORT_US",StatList[[6]],sep="_"),
-              paste("TOTMORT_NUS",StatList[[6]],sep="_"),
-
-              paste("N_US",StatList[[4]],sep="_"),               # pop by nat and im cat
-              paste("N_NUS",StatList[[4]],sep="_"),               # pop by nat and im cat
-
-              paste("N_US",StatList[[6]],sep="_"),               # pop by nat and hr cat
-              paste("N_NUS",StatList[[6]],sep="_"),               # pop by nat and hr cat
-
-              paste("N_US",StatList[[5]],sep="_"),               # pop by nat and nm cat
-              paste("N_NUS",StatList[[5]],sep="_"),              # pop by nat and nm cat
-              paste("TOTMORT"),
-
-              paste("N_NM1",StatList[[4]],sep="_"),
-              paste("N_NM2",StatList[[4]],sep="_"),
-              paste("N_NM3",StatList[[4]],sep="_"),
-              paste("N_NM4",StatList[[4]],sep="_"),
-
-              paste("%_0-4","NM1",StatList[[4]],sep="_"),
-              paste("%_0-4","NM2",StatList[[4]],sep="_"),
-              paste("0-4","NM3",StatList[[4]],sep="_"),
-              paste("0-4","NM4",StatList[[4]],sep="_"),
-
-              paste("5-14","NM1",StatList[[4]],sep="_"),
-              paste("5-14","NM2",StatList[[4]],sep="_"),
-              paste("5-14","NM3",StatList[[4]],sep="_"),
-              paste("5-14","NM4",StatList[[4]],sep="_"),
-
-              paste("15-24","NM1",StatList[[4]],sep="_"),
-              paste("15-24","NM2",StatList[[4]],sep="_"),
-              paste("15-24","NM3",StatList[[4]],sep="_"),
-              paste("15-24","NM4",StatList[[4]],sep="_"),
-
-              paste("25-34","NM1",StatList[[4]],sep="_"),
-              paste("25-34","NM2",StatList[[4]],sep="_"),
-              paste("25-34","NM3",StatList[[4]],sep="_"),
-              paste("25-34","NM4",StatList[[4]],sep="_"),
-
-              paste("35-44","NM1",StatList[[4]],sep="_"),
-              paste("35-44","NM2",StatList[[4]],sep="_"),
-              paste("35-44","NM3",StatList[[4]],sep="_"),
-              paste("35-44","NM4",StatList[[4]],sep="_"),
-
-              paste("45-54","NM1",StatList[[4]],sep="_"),
-              paste("45-54","NM2",StatList[[4]],sep="_"),
-              paste("45-54","NM3",StatList[[4]],sep="_"),
-              paste("45-54","NM4",StatList[[4]],sep="_"),
-
-              paste("55-64","NM1",StatList[[4]],sep="_"),
-              paste("55-64","NM2",StatList[[4]],sep="_"),
-              paste("55-64","NM3",StatList[[4]],sep="_"),
-              paste("55-64","NM4",StatList[[4]],sep="_"),
-
-              paste("65-74","NM1",StatList[[4]],sep="_"),
-              paste("65-74","NM2",StatList[[4]],sep="_"),
-              paste("65-74","NM3",StatList[[4]],sep="_"),
-              paste("65-74","NM4",StatList[[4]],sep="_"),
-
-              paste("75-84","NM1",StatList[[4]],sep="_"),
-              paste("75-84","NM2",StatList[[4]],sep="_"),
-              paste("75-84","NM3",StatList[[4]],sep="_"),
-              paste("75-84","NM4",StatList[[4]],sep="_"),
-
-              paste("85-94","NM1",StatList[[4]],sep="_"),
-              paste("85-94","NM2",StatList[[4]],sep="_"),
-              paste("85-94","NM3",StatList[[4]],sep="_"),
-              paste("85-94","NM4",StatList[[4]],sep="_"),
-
-              paste("95p","NM1",StatList[[4]],sep="_"),
-              paste("95p","NM2",StatList[[4]],sep="_"),
-              paste("95p","NM3",StatList[[4]],sep="_"),
-              paste("95p","NM4",StatList[[4]],sep="_"),
-              paste("mort_rate",StatList[[1]],sep="_" ),
-
-              paste("N_ag_1",StatList[[5]],sep="_" ),
-              paste("N_ag_2",StatList[[5]],sep="_" ),
-              paste("N_ag_3",StatList[[5]],sep="_" ),
-              paste("N_ag_4",StatList[[5]],sep="_" ),
-              paste("N_ag_5",StatList[[5]],sep="_" ),
-              paste("N_ag_6",StatList[[5]],sep="_" ),
-              paste("N_ag_7",StatList[[5]],sep="_" ),
-              paste("N_ag_8",StatList[[5]],sep="_" ),
-              paste("N_ag_9",StatList[[5]],sep="_" ),
-              paste("N_ag_10",StatList[[5]],sep="_" ),
-              paste("N_ag_11",StatList[[5]],sep="_" ),
-              ### new infections
-              paste("N_newinf_USB",StatList[[1]],sep="_" ),
-              paste("N_newinf_NUSB",StatList[[1]],sep="_" ),
-
-              paste("0-24","US", "NM1",StatList[[4]],sep="_"),
-              paste("0-24","US", "NM2",StatList[[4]],sep="_"),
-              paste("0-24","US", "NM3",StatList[[4]],sep="_"),
-              paste("0-24","US", "NM4",StatList[[4]],sep="_"),
 
 
-              paste("25-64","US","NM1",StatList[[4]],sep="_"),
-              paste("25-64","US","NM2",StatList[[4]],sep="_"),
-              paste("25-64","US","NM3",StatList[[4]],sep="_"),
-              paste("25-64","US","NM4",StatList[[4]],sep="_"),
-
-
-              paste("65+","US","NM1",StatList[[4]],sep="_"),
-              paste("65+","US","NM2",StatList[[4]],sep="_"),
-              paste("65+","US","NM3",StatList[[4]],sep="_"),
-              paste("65+","US","NM4",StatList[[4]],sep="_"),
-
-
-              paste("0-24","NUS", "NM1",StatList[[4]],sep="_"),
-              paste("0-24","NUS", "NM2",StatList[[4]],sep="_"),
-              paste("0-24","NUS", "NM3",StatList[[4]],sep="_"),
-              paste("0-24","NUS", "NM4",StatList[[4]],sep="_"),
-
-
-              paste("25-64","NUS","NM1",StatList[[4]],sep="_"),
-              paste("25-64","NUS","NM2",StatList[[4]],sep="_"),
-              paste("25-64","NUS","NM3",StatList[[4]],sep="_"),
-              paste("25-64","NUS","NM4",StatList[[4]],sep="_"),
-
-
-              paste("65+","NUS","NM1",StatList[[4]],sep="_"),
-              paste("65+","NUS","NM2",StatList[[4]],sep="_"),
-              paste("65+","NUS","NM3",StatList[[4]],sep="_"),
-              paste("65+","NUS","NM4",StatList[[4]],sep="_")
-
-
-  )
-
-  InputParams[["ResNam"]]<-ResNam
+  InputParams[["ResNam"]]<-func_ResNam()
   return(InputParams)
 
   ###################################################
