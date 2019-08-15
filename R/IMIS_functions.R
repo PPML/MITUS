@@ -105,16 +105,16 @@ llikelihoodZ <-  function(samp_i, start_mat) {
       Sens_IGRA <-c(.780,.675,.712,.789,.591)
       Spec_IGRA <-c(.979,.958,.989,.985,.931)
       names(Sens_IGRA)<- names(Spec_IGRA)<-c("lrUS","hrUS","youngNUS","NUS","hrNUS")
-      v15b <- outer(v15a[,1],c(Sens_IGRA[1],(1-Sens_IGRA[1])))+outer(v15a[,2],c((1-Spec_IGRA[1]),Spec_IGRA[1]))
+      v15b <- (outer(v15a[,1],c(Sens_IGRA[1],(1-Sens_IGRA[1])))+outer(v15a[,2],c((1-Spec_IGRA[1]),Spec_IGRA[1])))*prms$rLtScrt[750]
       addlik <- ltbi_us_11_lLik(V=v15b)*2; addlik
       lLik <- lLik + addlik
       #' LTBI PREVALENCE BY AGE 2011, FB - index updated
       v16  <- cbind(M[62,66:76],M[62,44:54]-M[62,66:76])
       v16a <- v16
       #under age 5
-      v16b <- (v16a[1,1]*c(Sens_IGRA[3],(1-Sens_IGRA[3])))+(v16a[1,2]*c((1-Spec_IGRA[3]),Spec_IGRA[3]))
+      v16b <- (v16a[1,1]*c(Sens_IGRA[3],(1-Sens_IGRA[3])))+(v16a[1,2]*c((1-Spec_IGRA[3]),Spec_IGRA[3]))*prms$rLtScrt[750]
       #over age 5
-      v16c <- outer(v16a[2:11,1],c(Sens_IGRA[4],(1-Sens_IGRA[4])))+outer(v16a[2:11,2],c((1-Spec_IGRA[4]),Spec_IGRA[4]))
+      v16c <- outer(v16a[2:11,1],c(Sens_IGRA[4],(1-Sens_IGRA[4])))+outer(v16a[2:11,2],c((1-Spec_IGRA[4]),Spec_IGRA[4]))*prms$rLtScrt[750]
       v16d<-rbind(v16b,v16c)
       addlik <- ltbi_fb_11_lLik(V=v16d)*2; addlik
       lLik <- lLik + addlik
