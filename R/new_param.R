@@ -266,7 +266,7 @@ fin_param <- function (PV,loc,prg_chng){
   IGRA_frc<-.33
   Sens_TST <-c(.726,.540,.691,.807,.570)
   Spec_TST <-c(.921,.965,.739,.70,.885)
-  names(Sens_TST)<- names(Spec_TST)<-names(Sens_IGRA)<- names(Spec_IGRA)<-c("lrUS","hrUS","youngNUS","NUS","hrNUS")
+  names(Sens_TST)<- names(Spec_TST)<-names(Sens_IGRA)<- names(Spec_IGRA)<-c("US","hivUS","youngNUS","NUS","hivNUS")
 
   ###calculate the weighted mean of sensitivity and specificity
   SensLt<-matrix(NA,length(Sens_IGRA),month)
@@ -306,8 +306,8 @@ fin_param <- function (PV,loc,prg_chng){
   LtDxPar_lt   <-SensLt
   LtDxPar_nolt <- 1-SpecLt
   #adjust for High Risk Populations
-  LtDxPar_lt[c(1,4),]     <-rrTestHr*LtDxPar_lt[c(1,4),]
-  LtDxPar_nolt[c(1,4),]   <-rrTestHr*LtDxPar_nolt[c(1,4),]
+  LtDxPar_lt[c(2,5),]     <-rrTestHr*LtDxPar_lt[c(1,4),]
+  LtDxPar_nolt[c(2,5),]   <-rrTestHr*LtDxPar_nolt[c(1,4),]
   #adjust for no latent
   LtDxPar_nolt[1,]<-LtDxPar_nolt[1,]*rrTestLrNoTb
 
