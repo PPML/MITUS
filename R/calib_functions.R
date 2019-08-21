@@ -54,14 +54,14 @@ notif_fb_lLik <- function(V,rho=0.005) {
 #'@param V table of notifications by fb 1993-2014 (row=22 years, col=fb then us)
 #'@return likelihood
 notif_fbus_slp_lLik <- function(V) {
-  notif_age_fb0     <- CalibDat[["age_cases_fb"]][20:24,12]
-  notif_age_us0     <- CalibDat[["age_cases_us"]][20:24,12]
+  notif_age_fb0     <- CalibDat[["age_cases_fb"]][21:24,12]
+  notif_age_us0     <- CalibDat[["age_cases_us"]][21:24,12]
   tot_case_nat<-cbind(notif_age_fb0,notif_age_us0)
   # calculate the slopes
-  notif_fbus_slp5<-apply(log(tot_case_nat[,]),2,function(x) lm(x~I(1:5))$coef[2])
+notif_fbus_slp5<-apply(log(tot_case_nat[,]),2,function(x) lm(x~I(1:4))$coef[2])
   # notif_fbus_slp5<-CalibDat$fbus_cases_slope5
   adj_3a         <- sum(dnorm(notif_fbus_slp5,notif_fbus_slp5,0.01/2,log=T))
-  V2 <- apply(log(V),2,function(x) lm(x~I(1:5))$coef[2])
+  V2 <- apply(log(V),2,function(x) lm(x~I(1:4))$coef[2])
   sum(dnorm(V2,notif_fbus_slp5,0.01/2,log=T)) - adj_3a  }
 
 #' CASES HR DISTRIBUTION 1993-2014
