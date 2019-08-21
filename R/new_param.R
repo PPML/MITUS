@@ -112,18 +112,18 @@ fin_param <- function (PV,loc,prg_chng){
 
   ######################         IMMIGRATION             ########################
   ######################         OVERALL IMM.            ########################
-  TotImmig0       <- (c(ImmigInputs[[1]][1:151])+c(rep(0,67),cumsum(rep(PV["ImmigVolFut"],84))))/12*PV["ImmigVol"]
-  TotImmig1       <- TotImmig0
-  TotImmig        <- SmoCurve(TotImmig1)
-  AgeDist<-matrix(NA,11,1801)
-  TotImmAge<-matrix(NA,1801,11)
-  for (i in 1:11){
-    AgeDist[i,]         <- SmoCurve(ImmigInputs[["AgeDist"]][i,])}
-  for (i in 1:1801){
+  TotImmig0       <- (c(Inputs$ImmigInputs[[1]][1:151])+c(rep(0,67),cumsum(rep(PV["ImmigVolFut"],84))))/12*PV["ImmigVol"]
+  TotImmAge0      <-matrix(0,151,11)
+  for (i in 1:151){
     for (j in 1:11){
-      TotImmAge[i,j]   <- TotImmig[i]*AgeDist[j,i]
-    }}
-
+      TotImmAge0[i,j]   <- TotImmig0[i]*ImmigInputs$AgeDist[j,i]
+    } }
+  TotImmAge <-matrix(0,1801,11)
+  # for (i in 1:1801){
+    for (j in 1:11){
+    TotImmAge[,j]        <- SmoCurve(TotImmAge0[,j])
+    }
+  # }
   ######################           LTBI IMM.             ########################
   PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:67]^(exp(PV["TunLtbiTrend"]))*ImmigInputs[["PrevTrend25_34"]][67]^(1-exp(PV["TunLtbiTrend"])),
                         ImmigInputs[["PrevTrend25_34"]][68:151]*(PV["ImmigPrevFutLat"]/0.99)^(1:84))
@@ -261,6 +261,7 @@ fin_param <- function (PV,loc,prg_chng){
   ######################          LTBI DIAGNOSIS           ########################
 
   ######################        TEST SPECIFICATIONS          ######################
+  ####numbers from Stout paper
   Sens_IGRA <-c(.780,.675,.712,.789,.591)
   Spec_IGRA <-c(.979,.958,.989,.985,.931)
   IGRA_frc<-.33
@@ -306,10 +307,13 @@ fin_param <- function (PV,loc,prg_chng){
   LtDxPar_lt   <-SensLt
   LtDxPar_nolt <- 1-SpecLt
   #adjust for High Risk Populations
-  LtDxPar_lt[c(2,5),]     <-rrTestHr*LtDxPar_lt[c(1,4),]
-  LtDxPar_nolt[c(2,5),]   <-rrTestHr*LtDxPar_nolt[c(1,4),]
+  LtDxPar_lt[2,]     <-rrTestHr*LtDxPar_lt[1,]
+  LtDxPar_nolt[2,]   <-rrTestHr*LtDxPar_nolt[1,]
+  #High risk foriegn born
+  LtDxPar_lt[5,]     <-rrTestHr*LtDxPar_lt[4,]
+  LtDxPar_nolt[5,]   <-rrTestHr*LtDxPar_nolt[4,]
   #adjust for no latent
-  LtDxPar_nolt[1,]<-LtDxPar_nolt[1,]*rrTestLrNoTb
+  LtDxPar_nolt[1,]   <-LtDxPar_nolt[1,]*rrTestLrNoTb
 
 
   ######################          LTBI DIAGNOSIS           ########################
