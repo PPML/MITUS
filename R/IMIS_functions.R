@@ -105,7 +105,7 @@ llikelihoodZ <-  function(samp_i, start_mat) {
       Sens_IGRA <-c(.780,.675,.712,.789,.591)
       Spec_IGRA <-c(.979,.958,.989,.985,.931)
       names(Sens_IGRA)<- names(Spec_IGRA)<-c("lrUS","hrUS","youngNUS","NUS","hrNUS")
-      v15b <- (outer(v15a[,1],c(Sens_IGRA[1],(1-Sens_IGRA[1])))+outer(v15a[,2],c((1-Spec_IGRA[1]),Spec_IGRA[1])))*(prms$rLtScrt[750]*12)
+      v15b <- (outer(v15a[,1],c(Sens_IGRA[1],(1-Sens_IGRA[1])))+outer(v15a[,2],c((1-(Spec_IGRA[1]*P[["rrTestLrNoTb"]])),(Spec_IGRA[1]*P[["rrTestLrNoTb"]]))))*(prms$rLtScrt[750]*12)
       addlik <- ltbi_us_11_lLik(V=v15b)*2; addlik
       lLik <- lLik + addlik
       #' LTBI PREVALENCE BY AGE 2011, FB - index updated
