@@ -18,6 +18,16 @@ notif_tot_lik <- function(V) {
   sum(dnorm(notif_tot,V,notif_tot*0.1/1.96,log=T)*wts[4:67]) - adj_1
 }
 
+#'FB Diagnosed Cases 1953-2016
+#'Motivation: Normal, mean centered with CI = +/- 5% of the mean
+#'@param V vector of total notifications 1953-2014
+#'@return likelihood
+
+notif_fb_lik <- function(V) {
+  notif_fb     <- CalibDat[["age_cases_fb"]][14:24,12]
+  adj_1         <- sum(dnorm(notif_fb,notif_fb,notif_fb*0.01/1.96,log=T)*wts[57:67])
+  sum(dnorm(notif_fb,V,notif_fb*0.01/1.96,log=T)*wts[57:67]) - adj_1
+}
 #'US Cases Age Distribution 1993-2013
 #'Motivation: dirichlet-multinomial data with additional non-sampling biases
 #'@param V table of us notifications by age 1993-2013 (row=21 years, col=11 ages)
@@ -55,14 +65,14 @@ notif_fb_lLik <- function(V,rho=0.005) {
 #'@param V table of notifications by fb 1993-2014 (row=22 years, col=fb then us)
 #'@return likelihood
 notif_fbus_slp_lLik <- function(V) {
-  notif_age_fb0     <- CalibDat[["age_cases_fb"]][21:24,12]
-  notif_age_us0     <- CalibDat[["age_cases_us"]][21:24,12]
+  notif_age_fb0     <- CalibDat[["age_cases_fb"]][20:24,12]
+  notif_age_us0     <- CalibDat[["age_cases_us"]][20:24,12]
   tot_case_nat<-cbind(notif_age_fb0,notif_age_us0)
   # calculate the slopes
-notif_fbus_slp5<-apply(log(tot_case_nat[,]),2,function(x) lm(x~I(1:4))$coef[2])
+notif_fbus_slp5<-apply(log(tot_case_nat[,]),2,function(x) lm(x~I(1:5))$coef[2])
   # notif_fbus_slp5<-CalibDat$fbus_cases_slope5
   adj_3a         <- sum(dnorm(notif_fbus_slp5,notif_fbus_slp5,0.01/2,log=T))
-  V2 <- apply(log(V),2,function(x) lm(x~I(1:4))$coef[2])
+  V2 <- apply(log(V),2,function(x) lm(x~I(1:5))$coef[2])
   sum(dnorm(V2,notif_fbus_slp5,0.01/2,log=T)) - adj_3a  }
 
 #' CASES HR DISTRIBUTION 1993-2014

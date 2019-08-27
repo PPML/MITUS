@@ -57,6 +57,10 @@ llikelihoodZ <-  function(samp_i, start_mat) {
       v1   <- M[4:67,"NOTIF_ALL"]+M[4:67,"NOTIF_MORT_ALL"]
       addlik <- notif_tot_lik(V=v1); addlik
       lLik <- lLik + addlik
+      #' TOTAL FB DIAGNOSED CASES 1953-2016 - index is same
+      v1a   <- M[57:67,148]+M[57:67,149]+(M[57:67,201]+M[57:67,202])
+      addlik <- notif_fb_lik(V=v1a*1e6); addlik
+      lLik <- lLik + addlik
       #' US CASES AGE DISTRIBUTION 1993-2016 - index updated
       v2   <- M[44:67,205:215]+M[44:67,216:226]
       v2a <- v2[,-11]; v2a[,10] <- v2a[,10]+v2[,11]
@@ -73,8 +77,8 @@ llikelihoodZ <-  function(samp_i, start_mat) {
       addlik <- notif_fb_lLik(V=v3); addlik
       lLik <- lLik + addlik
       #' CASES FB, US 2012-2016  SLOPE - index updated
-      v3a   <- cbind(M[64:67,148]+M[64:67,149]+(M[64:67,201]+M[64:67,202]),
-                     M[64:67,147]+M[64:67,200])
+      v3a   <- cbind(M[63:67,148]+M[63:67,149]+(M[63:67,201]+M[63:67,202]),
+                     M[63:67,147]+M[63:67,200])
       addlik <- notif_fbus_slp_lLik(V=v3a); addlik
       lLik <- lLik + addlik
       #' #' CASES HR DISTRIBUTION 1993-2016 - index updated
@@ -105,16 +109,17 @@ llikelihoodZ <-  function(samp_i, start_mat) {
       Sens_IGRA <-c(.780,.675,.712,.789,.591)
       Spec_IGRA <-c(.979,.958,.989,.985,.931)
       names(Sens_IGRA)<- names(Spec_IGRA)<-c("lrUS","hrUS","youngNUS","NUS","hrNUS")
-      v15b <- (outer(v15a[,1],c(Sens_IGRA[1],(1-Sens_IGRA[1])))+outer(v15a[,2],c((1-(Spec_IGRA[1]*P[["rrTestLrNoTb"]])),(Spec_IGRA[1]*P[["rrTestLrNoTb"]]))))*(prms$rLtScrt[750]*12)
+      v15b <- (outer(v15a[,1],c(Sens_IGRA[1],(1-Sens_IGRA[1])))+outer(v15a[,2],c((1-Spec_IGRA[1]),Spec_IGRA[1])))#*(prms$rLtScrt[750]*12)
+      # v15b <- (outer(v15a[,1],c(Sens_IGRA[1],(1-Sens_IGRA[1])))+outer(v15a[,2],c((1-(Spec_IGRA[1]*P[["rrTestLrNoTb"]])),(Spec_IGRA[1]*P[["rrTestLrNoTb"]]))))*(prms$rLtScrt[750]*12)
       addlik <- ltbi_us_11_lLik(V=v15b)*2; addlik
       lLik <- lLik + addlik
       #' LTBI PREVALENCE BY AGE 2011, FB - index updated
       v16  <- cbind(M[62,66:76],M[62,44:54]-M[62,66:76])
       v16a <- v16
       #under age 5
-      v16b <- (v16a[1,1]*c(Sens_IGRA[3],(1-Sens_IGRA[3])))+(v16a[1,2]*c((1-Spec_IGRA[3]),Spec_IGRA[3]))*(prms$rLtScrt[750]*12)
+      v16b <- (v16a[1,1]*c(Sens_IGRA[3],(1-Sens_IGRA[3])))+(v16a[1,2]*c((1-Spec_IGRA[3]),Spec_IGRA[3]))#*(prms$rLtScrt[750]*12)
       #over age 5
-      v16c <- outer(v16a[2:11,1],c(Sens_IGRA[4],(1-Sens_IGRA[4])))+outer(v16a[2:11,2],c((1-Spec_IGRA[4]),Spec_IGRA[4]))*(prms$rLtScrt[750]*12)
+      v16c <- outer(v16a[2:11,1],c(Sens_IGRA[4],(1-Sens_IGRA[4])))+outer(v16a[2:11,2],c((1-Spec_IGRA[4]),Spec_IGRA[4]))#*(prms$rLtScrt[750]*12)
       v16d<-rbind(v16b,v16c)
       addlik <- ltbi_fb_11_lLik(V=v16d)*2; addlik
       lLik <- lLik + addlik
