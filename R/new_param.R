@@ -25,15 +25,23 @@ fin_param <- function (PV,loc,prg_chng){
   } else{
     BgMort[10:67,2:12]<-weight_mort(loc)
   }
+  ###SSA projections for reductions in mortality going forward
+  ### these should be calculated and stored as new input data
   for(j in 68:151){
     for (i in 1:2){
-    BgMort[j,i]<-BgMort[j-1,i]*(1-.0155)
+    BgMort[j,i]<-BgMort[j-1,i]*(1-.0159)
     }
-    for (i in 3:7){
-    BgMort[j,i]<-BgMort[j-1,i]*(1-.0101)
+    for (i in 3:5){
+    BgMort[j,i]<-BgMort[j-1,i]*(1-.0090)
     }
-    for (i in 8:11){
-    BgMort[j,i]<-BgMort[j-1,i]*(1-.0064)
+    for (i in 6:7){
+      BgMort[j,i]<-BgMort[j-1,i]*(1-.0107)
+    }
+    for (i in 8:9){
+    BgMort[j,i]<-BgMort[j-1,i]*(1-.0083)
+    }
+    for (i in 10:11){
+      BgMort[j,i]<-BgMort[j-1,i]*(1-.0069)
     }
     }
   InitPop          <- Inputs[["InitPop"]]
@@ -66,7 +74,7 @@ fin_param <- function (PV,loc,prg_chng){
   }
   mubt<-mubt[1:month,]
   for(i in 1:11){
-    mubt[,i] <- mubt[,i]*exp(PV[["TunmuAg"]])
+    mubt[,i] <- mubt[,i]*exp(PV[["TunmuAg"]]*i)
   }
 
   #########################     DISEASE SPECIFIC       ###########################
@@ -116,7 +124,7 @@ fin_param <- function (PV,loc,prg_chng){
   TotImmAge0      <-matrix(0,151,11)
   for (i in 1:151){
     for (j in 1:11){
-      TotImmAge0[i,j]   <- TotImmig0[i]*ImmigInputs$AgeDist[j,i]
+      TotImmAge0[i,j]   <- TotImmig0[i]*as.matrix(ImmigInputs$AgeDist[j,i])
     } }
   TotImmAge <-matrix(0,1801,11)
   # for (i in 1:1801){
