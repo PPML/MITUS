@@ -2,24 +2,18 @@
 % Please edit documentation in R/calib_functions.R
 \name{tb_dth_tot_lLik}
 \alias{tb_dth_tot_lLik}
-\title{Total TB DEATHS 1999-2014
-Motivation: overdispersed poisson, modelled with negbin with overdispersion param = 100 *wts[50:65]}
+\title{TOTAL TB DEATHS 1999-2014
+Motivation: norm, mean centered with CI = +/- 5% of mean}
 \usage{
 tb_dth_tot_lLik(V)
 }
 \arguments{
-\item{V}{TB deaths by age 1999-2013  (row=15 years, col= 11 ages)}
-
 \item{V}{vector of TB deaths in fraction of millions}
 }
 \value{
 likelihood
-TOTAL TB DEATHS 1999-2014
-Motivation: norm, mean centered with CI = +/- 5% of mean
-
-likelihood
 }
 \description{
-Total TB DEATHS 1999-2014
-Motivation: overdispersed poisson, modelled with negbin with overdispersion param = 100 *wts[50:65]
+TOTAL TB DEATHS 1999-2014
+Motivation: norm, mean centered with CI = +/- 5% of mean
 }

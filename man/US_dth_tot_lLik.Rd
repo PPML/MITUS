@@ -2,20 +2,18 @@
 % Please edit documentation in R/calib_functions.R
 \name{US_dth_tot_lLik}
 \alias{US_dth_tot_lLik}
-\title{TOTAL US DEATHS
-1970,1975,1980,1985,1990-2007
-Motivation: norm, mean centered with CI = +/- 5% of mean}
+\title{#' TOTAL US DEATHS
+#' 1970,1975,1980,1985,1990-2007
+#' Motivation: norm, mean centered with CI = +/- 5% of mean
+#'@param V vector of total deaths in US from 1971-2016, fraction of millions
+#'@return likelihood}
 \usage{
 US_dth_tot_lLik(V)
 }
-\arguments{
-\item{V}{vector of total deaths in US from 1971-2016, fraction of millions}
-}
-\value{
-likelihood
-}
 \description{
-TOTAL US DEATHS
-1970,1975,1980,1985,1990-2007
-Motivation: norm, mean centered with CI = +/- 5% of mean
+#' TOTAL US DEATHS
+#' 1970,1975,1980,1985,1990-2007
+#' Motivation: norm, mean centered with CI = +/- 5% of mean
+#'@param V vector of total deaths in US from 1971-2016, fraction of millions
+#'@return likelihood
 }

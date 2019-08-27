@@ -2,30 +2,20 @@
 % Please edit documentation in R/calib_functions.R
 \name{tot_dth_age_lLik}
 \alias{tot_dth_age_lLik}
-\title{TOTAL US DEATHS BY DECADE
-1970,1975,1980,1985,1990-2007
-Motivation: norm, mean centered with CI = +/- 5% of mean
-weaken this likelihood to a variance of .5, 1}
+\title{TOTAL DEATHS AGE DISTRIBUTION 1999-2014
+Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases}
 \usage{
 tot_dth_age_lLik(V, rho = 0.01)
 }
 \arguments{
-\item{V}{vector of total deaths in US from 1971-2016, fraction of millions}
+\item{V}{table of deaths by age 1999-2014 (row=16 years, col=11 ages)}
 
 \item{rho}{correlation parameter}
-
-\item{V}{table of deaths by age 1999-2014 (row=16 years, col=11 ages)}
 }
 \value{
 likelihood
-TOTAL DEATHS AGE DISTRIBUTION 1999-2014
-Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
-
-likelihood
 }
 \description{
-TOTAL US DEATHS BY DECADE
-1970,1975,1980,1985,1990-2007
-Motivation: norm, mean centered with CI = +/- 5% of mean
-weaken this likelihood to a variance of .5, 1
+TOTAL DEATHS AGE DISTRIBUTION 1999-2014
+Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
 }
