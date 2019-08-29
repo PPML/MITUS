@@ -61,6 +61,10 @@ llikelihoodZ <-  function(samp_i, start_mat) {
       v1a   <- M[57:67,148]+M[57:67,149]+(M[57:67,201]+M[57:67,202])
       addlik <- notif_fb_lik(V=v1a*1e6); addlik
       lLik <- lLik + addlik
+      #' TOTAL US DIAGNOSED CASES 1953-2016 - index is same
+      v1b   <-  M[57:67,147]+M[57:67,200]
+      addlik <- notif_us_lik(V=v1b*1e6); addlik
+      lLik <- lLik + addlik
       #' US CASES AGE DISTRIBUTION 1993-2016 - index updated
       v2   <- M[44:67,205:215]+M[44:67,216:226]
       v2a <- v2[,-11]; v2a[,10] <- v2a[,10]+v2[,11]
@@ -140,7 +144,7 @@ llikelihoodZ <-  function(samp_i, start_mat) {
       lLik <- lLik + addlik
       #' Total DEATHS 2017
       # v20a<-rowSums(M[1:68,121:131])
-      v20a<-rowSums(M[66:67,121:131])
+      v20a<-rowSums(M[1+1:6*10,121:131])*1e6
       addlik <-US_dth_tot_lLik(V=v20a); addlik
       lLik <- lLik + addlik
 

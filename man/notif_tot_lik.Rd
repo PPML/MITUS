@@ -11,17 +11,11 @@ Total Diagnosed Cases 1953-2016
 Motivation: Normal, mean centered with CI = +/- 5% of the mean}
 \usage{
 notif_tot_lik(V)
-
-notif_tot_lik(V)
 }
 \arguments{
 \item{V}{vector of total notifications 1953-2014}
-
-\item{V}{vector of total notifications 1953-2014}
 }
 \value{
-likelihood
-
 likelihood
 }
 \description{
@@ -31,8 +25,5 @@ for the calibration of the State Level TB model in tb_model.cpp
 These llikelihood functions are called in IMIS_functions.R
 takes in the outputs and calibration data and creates likelihood functions
 Total Diagnosed Cases 1953-2016
-Motivation: Normal, mean centered with CI = +/- 5% of the mean
-
-FB Diagnosed Cases 1953-2016
 Motivation: Normal, mean centered with CI = +/- 5% of the mean
 }

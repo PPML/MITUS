@@ -28,6 +28,17 @@ notif_fb_lik <- function(V) {
   adj_1         <- sum(dnorm(notif_fb,notif_fb,notif_fb*0.01/1.96,log=T)*wts[57:67])
   sum(dnorm(notif_fb,V,notif_fb*0.01/1.96,log=T)*wts[57:67]) - adj_1
 }
+
+#'US Diagnosed Cases 1953-2016
+#'Motivation: Normal, mean centered with CI = +/- 5% of the mean
+#'@param V vector of total notifications 1953-2014
+#'@return likelihood
+
+notif_us_lik <- function(V) {
+  notif_us     <- CalibDat[["age_cases_us"]][14:24,12]
+  adj_1         <- sum(dnorm(notif_us,notif_us,notif_us*0.01/1.96,log=T)*wts[57:67])
+  sum(dnorm(notif_us,V,notif_us*0.01/1.96,log=T)*wts[57:67]) - adj_1
+}
 #'US Cases Age Distribution 1993-2013
 #'Motivation: dirichlet-multinomial data with additional non-sampling biases
 #'@param V table of us notifications by age 1993-2013 (row=21 years, col=11 ages)
@@ -91,7 +102,7 @@ notif_us_hr_lLik <- function(V,rho=0.005) {
 #'@param rho correlation parameter
 #'@return likelihood
 notif_fb_rec_lLik <- function(V,rho=0.005) {
-  notif_fb_rec   <- cbind(CalibDat[["fb_recent_cases"]][,2],1-CalibDat[["fb_recent_cases"]][,2])*CalibDat[["fb_recent_cases"]][,3]
+  notif_fb_rec   <- cbind(CalibDat[["fb_recent_cases"]][,2],1-CalibDat[["fb_recent_cases"]][,2])*CalibDat[["age_cases_fb"]][1:22,12]
   adj_6          <- sum(dDirMult(M=notif_fb_rec,n=notif_fb_rec,Rho=0.005)*wts[44:65])
   sum(dDirMult(M=V,n=notif_fb_rec,Rho=rho)*wts[44:65]) - adj_6
   }
@@ -227,9 +238,9 @@ tot_pop_age_lLik <- function(V,ESS=500) {
 #' #'@param V vector of total deaths in US from 1971-2016, fraction of millions
 #' #'@return likelihood
 US_dth_tot_lLik <- function(V) {
-  US_deaths_tot   <- CalibDat[["US_tot_mort"]][66:67,-1]/1e6#[c(11,21,31,41,51,61),-1]
-  adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.1/1.96,log=T)*wts[66:67])#wts[1+1:6*10])
-  sum(dnorm(US_deaths_tot,V,US_deaths_tot*0.1/1.96,log=T)*wts[66:67]) - adj_20a
+  US_deaths_tot   <- CalibDat[["US_tot_mort"]][c(11,21,31,41,51,61),-1]
+  adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.1/1.96,log=T)*wts[1+1:6*10])
+  sum(dnorm(US_deaths_tot,V,US_deaths_tot*0.1/1.96,log=T)*wts[1+1:6*10]) - adj_20a
 }
 
 #' TOTAL DEATHS AGE DISTRIBUTION 1999-2014

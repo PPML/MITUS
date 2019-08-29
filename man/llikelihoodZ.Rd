@@ -19,6 +19,7 @@ if any output is missing or negative or if any model state population is negativ
 set the likelihood to a hugely negative number (penalized)
 TOTAL DIAGNOSED CASES 1953-2016 - index is same
 TOTAL FB DIAGNOSED CASES 1953-2016 - index is same
+TOTAL US DIAGNOSED CASES 1953-2016 - index is same
 US CASES AGE DISTRIBUTION 1993-2016 - index updated
 FB CASES AGE DISTRIBUTION 1993-2016 - index updated
 CASES FB DISTRIBUTION 1993-2016 - index updated
