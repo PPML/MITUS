@@ -15,7 +15,28 @@ notif_tot_lLik_st <- function(V,st) {
   #notif tot is in real scale must scale outputs up
   sum(dnorm(notif_tot,V*1e6,notif_tot*0.1/1.96,log=T)*wts[44:68]) - adj_1
   }
-
+#'Total Diagnosed US Cases 1993-2017
+#'Motivation: Normal, mean centered with CI = +/- 5% of the mean
+#'@name US_notif_tot_lLik_st
+#'@param V vector of total notifications 1953-2014
+#'@return likelihood
+US_notif_tot_lLik_st <- function(V,st) {
+  notif_tot     <- CalibDatState[["cases_yr_ag_nat_st"]][[st]][,12,"usb"]
+  adj_1         <- sum(dnorm(notif_tot,notif_tot,notif_tot*0.1/1.96,log=T)*wts[44:68])
+  #notif tot is in real scale must scale outputs up
+  sum(dnorm(notif_tot,V*1e6,notif_tot*0.1/1.96,log=T)*wts[44:68]) - adj_1
+}
+#'Total Diagnosed NUS Cases 1993-2017
+#'Motivation: Normal, mean centered with CI = +/- 5% of the mean
+#'@name NUS_notif_tot_lLik_st
+#'@param V vector of total notifications 1953-2014
+#'@return likelihood
+NUS_notif_tot_lLik_st <- function(V,st) {
+  notif_tot     <- CalibDatState[["cases_yr_ag_nat_st"]][[st]][,12,"nusb"]
+  adj_1         <- sum(dnorm(notif_tot,notif_tot,notif_tot*0.1/1.96,log=T)*wts[44:68])
+  #notif tot is in real scale must scale outputs up
+  sum(dnorm(notif_tot,V*1e6,notif_tot*0.1/1.96,log=T)*wts[44:68]) - adj_1
+}
 ### ### ### ANN DECLINE IN CASES 1953-1994  ### ### ### ### ### ### D
 # notif_decline      <- CalibDatState[["cases_prop_change_53_94"]]
 # adj_1a             <- sum(dnorm(rep(notif_decline,40),notif_decline,0.1,log=T))
