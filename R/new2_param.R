@@ -304,9 +304,11 @@ fin2_param <- function (PV,loc,prg_chng, ttt_list){
   ###this is dependent on a basecase run so load in that data
   if (ttt_list[[3]]!=0){
   load(system.file("US/US_results_1.rda", package="MITUS"))
-  ttt_sampling_dist<-create_ttt_dist(ttt_list = ttt_list,
+  x<-create_ttt_dist(ttt_list = ttt_list,
                                      results = out[1,,],
                                      PV = PV)
+  ttt_sampling_dist<-x[[1]]
+  ttt_pop_frc<-x[[2]]
   ttt_ag<-switch(ttt_list[["AgeGrp"]], "All"=0:10,
                                        "0 to 24"=0:2,
                                        "25 to 64"=3:6,
@@ -316,10 +318,12 @@ fin2_param <- function (PV,loc,prg_chng, ttt_list){
                                              "USB"=0,
                                              "NUSB"=1:2
   )
+  ttt_ltbi<-ttt_list[["RRPrev"]]
   } else{
     ttt_sampling_dist<-matrix(0,4,4)
     ttt_na<-99
     ttt_ag<-99
+    ttt_pop_frc<-0
   }
   ################################################################################
   ###adjustments to the screening rates dependent on risk and TB status
@@ -517,6 +521,8 @@ fin2_param <- function (PV,loc,prg_chng, ttt_list){
   Params[["ttt_samp_dist"]] = ttt_sampling_dist
   Params[["ttt_ag"]] =ttt_ag
   Params[["ttt_na"]] =ttt_na
+  Params[["ttt_ltbi"]] = ttt_ltbi
+  Params[["ttt_pop_frc"]]=ttt_pop_frc
   Params[["ttt_month"]] =ttt_month
   Params[["RRdxAge"]]   = RRdxAge
   Params[["rRecov"]]    = rRecov

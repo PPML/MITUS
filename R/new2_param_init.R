@@ -93,7 +93,7 @@ fin2_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sc
   }
   mubt<-mubt[1:month,]
   for(i in 1:11){
-    mubt[,i] <- mubt[,i]*exp(PV[["TunmuAg"]])
+    mubt[,i] <- mubt[,i]*exp((PV[["TunmuAg"]]-1))
   }
   InputParams[["mubt"]] <-mubt
 
@@ -153,7 +153,7 @@ fin2_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sc
   TunmuTbAg <- PV["TunmuTbAg"]
 
   #################                IMMIGRATION              #####################
-  TotImmig0       <- (c(ImmigInputs[[1]][1:151])+c(rep(0,69),cumsum(rep(PV["ImmigVolFut"],82))))/12*PV["ImmigVol"]
+  TotImmig0       <- (c(ImmigInputs[[1]][1:151])+c(rep(0,65),cumsum(rep(PV["ImmigVolFut"],86))))/12*PV["ImmigVol"]
   TotImmig1       <- TotImmig0
   TotImmig        <- SmoCurve(TotImmig1)
   AgeDist<-matrix(NA,11,1801)
@@ -173,6 +173,8 @@ fin2_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sc
   PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:69]^PV["TunLtbiTrend"]*ImmigInputs[["PrevTrend25_34"]][69]^(1-PV["TunLtbiTrend"]),
                         ImmigInputs[["PrevTrend25_34"]][70:151]*(PV["ImmigPrevFutLat"]/0.99)^(1:82))
 
+  #set.seed(rand_seed+1)
+  # PrevTrend25_341l <-   c(PrevTrend25_340l[1:66],exp(mvrnorm(1, log(PrevTrend25_340l[-(1:66)]), vcv_gp_l10_sd0.1))) # Add gaussian process noise
   PrevTrend25_341l <-   PrevTrend25_340l
   PrevTrend25_34l  <- SmoCurve(PrevTrend25_341l)
   PrevTrend25_34_ls <- (PrevTrend25_34l); PrevTrend25_34_ls <- PrevTrend25_34_ls/PrevTrend25_34_ls[(2011-1950)*12+6]
@@ -194,6 +196,16 @@ fin2_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sc
   InputParams[["ImmFst"]]    <-InputParams[["ImmFst"]][1:1201,1:11]
   TotImmAge<-TotImmAge[1:1201]
   InputParams[["ImmNon"]]        <- TotImmAge-InputParams[["ImmAct"]]-InputParams[["ImmFst"]]-InputParams[["ImmLat"]]
+
+  #### #### #### INT 1 #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
+  pctDoc <- (1-0.28)
+  if(Int1==1) {
+    for(i in 1:11) InputParams[["ImmLat"]][,i] <- InputParams[["ImmLat"]][,i]*(1-LgtCurve(2018,2023,1)*PV["SensLt"]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
+    for(i in 1:11) InputParams[["ImmAct"]][,i] <- InputParams[["ImmAct"]][,i]*(1-LgtCurve(2018,2023,1)*PV["SensLt"]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
+    for(i in 1:11) InputParams[["ImmFst"]][,i] <- InputParams[["ImmFst"]][,i]*(1-LgtCurve(2018,2023,1)*PV["SensLt"]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
+    InputParams[["ImmNon"]]        <- TotImmAge-InputParams[["ImmAct"]]-InputParams[["ImmFst"]]-InputParams[["ImmLat"]]
+  }
+
 
   #### #### #### SCEN 2 #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
@@ -221,7 +233,7 @@ fin2_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sc
   # NEED TO REMOVE DRUG RESISTANCE
   InputParams[["ExogInf"]] <- rep(NA,length(PrevTrend25_34a))
   InputParams[["ExogInf"]] <- PV["ExogInf"]*PrevTrend25_34a/PrevTrend25_341a["2013"]/12
-  InputParams[["ExogInf"]]        <- InputParams[["ExogInf"]][1:month]
+  #removed *(ImmigInputs[[7]][4]*DrN[,i]+(1-ImmigInputs[[7]][4])*DrE[,i])
   ###############################    EMMIGRATION   ##############################
 
   InputParams[["rEmmigFB"]] <- c(PV["rEmmigF1"],PV["rEmmigF2"])/12
@@ -286,18 +298,18 @@ fin2_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sc
   vORpfastRF  <-(exp((0:3)/3*log(ORpfastRF)))
   vORpfastPIRF  <- vORpfastRF*ORpfastPI
 
-  ############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
+  ############ UPDATE PROBS FOR LEVEL 1 OF REACTIVATION ###########
   Mpfast[,1]   <- vORpfastRF[1]*Mpfast[,1]
-  MpfastPI[,1]   <- vORpfastPIRF[1]*MpfastPI[,1]
+  MpfastPI[,1]   <- vORpfastPIRF[1]*Mpfast[,1]
   ############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
   Mpfast[,2]   <- vORpfastRF[2]*Mpfast[,2]
-  MpfastPI[,2]   <- vORpfastPIRF[2]*MpfastPI[,2]
+  MpfastPI[,2]   <- vORpfastPIRF[2]*Mpfast[,2]
   ############ UPDATE PROBS FOR LEVEL 3 OF REACTIVATION ###########
   Mpfast[,3]   <- vORpfastRF[3]*Mpfast[,3]
-  MpfastPI[,3]   <- vORpfastPIRF[3]*MpfastPI[,3]
+  MpfastPI[,3]   <- vORpfastPIRF[3]*Mpfast[,3]
   ############ UPDATE PROBS FOR LEVEL 4 OF REACTIVATION ###########
   Mpfast[,4]   <- vORpfastRF[4]*Mpfast[,4]
-  MpfastPI[,4]   <- vORpfastPIRF[4]*MpfastPI[,4]
+  MpfastPI[,4]   <- vORpfastPIRF[4]*Mpfast[,4]
 
   ##### UPDATE BOTH MATRICES WITH PROBABILITIES, NOT RATES
   Mpfast[,]    <- Mpfast[,]  /(1+Mpfast[,]);
@@ -375,9 +387,11 @@ fin2_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sc
   ###this is dependent on a basecase run so load in that data
   if (ttt_list[[3]]!=0){
     load(system.file("US/US_results_1.rda", package="MITUS"))
-    ttt_sampling_dist<-create_ttt_dist(ttt_list = ttt_list,
-                                       results = out[1,,],
-                                       PV = PV)
+    x<-create_ttt_dist(ttt_list = ttt_list,
+                       results = out[1,,],
+                       PV = PV)
+    ttt_sampling_dist<-x[[1]]
+    ttt_pop_frc<-x[[2]]
     ttt_ag<-switch(ttt_list[["AgeGrp"]], "All"=0:10,
                    "0 to 24"=0:2,
                    "25 to 64"=3:6,
@@ -391,10 +405,13 @@ fin2_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sc
     ttt_sampling_dist<-matrix(0,4,4)
     ttt_na<-99
     ttt_ag<-99
+    ttt_pop_frc<-0
   }
   InputParams[["ttt_sampling_dist"]]<-ttt_sampling_dist
   InputParams[["ttt_na"]]<-ttt_na
   InputParams[["ttt_ag"]]<-ttt_ag
+  InputParams[["ttt_pop_frc"]]<-ttt_pop_frc
+  InputParams[["ttt_ltbi"]]<-ttt_list[["RRPrev"]]
 
   ###adjustments to the screening rates dependent on risk and TB status
   rrTestHr      <- PV["rrTestHr"] # RR of LTBI screening for HIV and HR as cmpared to general
@@ -420,14 +437,6 @@ fin2_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sc
   # }
 
   InputParams[["LtDxPar_lt"]]<-LtDxPar_lt;   InputParams[["LtDxPar_nolt"]]<-LtDxPar_nolt;
-  #### #### #### INT 1 #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
-  pctDoc <- (1-0.28)
-  if(Int1==1) {
-    for(i in 1:11) InputParams[["ImmLat"]][,i] <- InputParams[["ImmLat"]][,i]*(1-LgtCurve(2018,2023,1)*PV["SensLt"]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
-    for(i in 1:11) InputParams[["ImmAct"]][,i] <- InputParams[["ImmAct"]][,i]*(1-LgtCurve(2018,2023,1)*PV["SensLt"]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
-    for(i in 1:11) InputParams[["ImmFst"]][,i] <- InputParams[["ImmFst"]][,i]*(1-LgtCurve(2018,2023,1)*PV["SensLt"]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
-    InputParams[["ImmNon"]]        <- TotImmAge-InputParams[["ImmAct"]]-InputParams[["ImmFst"]]-InputParams[["ImmLat"]]
-  }
 
   ######################          LTBI DIAGNOSIS           ########################
   ###################### LTBI TX EFFECTIVENESS PROGRAM CHANGE ########################
