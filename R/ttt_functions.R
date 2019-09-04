@@ -7,8 +7,8 @@ def_ttt<-function(){
                     "StartYr", "EndYr", "RRprg", "RRmu", "RRPrev")
   ttt_list[[1]]<-"All" #or "USB" or "NUSB"
   ttt_list[[2]]<-"All" #or "0 to 24" or "25 to 64" or "65+"
-  ttt_list[[3]]<-0
-  ttt_list[[4]]<-0
+  ttt_list[[3]]<-0 #size of population
+  ttt_list[[4]]<-0 #fraction screened
   ttt_list[[5]]<-2018
   ttt_list[[6]]<-2050
   ttt_list[[7]]<-1
@@ -18,7 +18,7 @@ def_ttt<-function(){
 }
 
 #this function returns default values for ttt which would be total population
-#'@name def_ttt
+#'@name create_ttt_dist
 #'@param ttt_list vector of values from interface that define the intervention
 #'@param results matrix of results (can be 1 entry from basecase)
 #'@param PV formatted parameter vector
@@ -76,8 +76,10 @@ rownames(dist) <- paste0("m",0:3) # mortality
   ttt_pop_yr =ttt_list[[3]]*ttt_list[[4]] # divide by 1e6 since model in millions
   rr_samp <- (exp(par[1])^(0:3)) %*% t(exp(par[2])^(0:3))
   an_samp_rate <- rr_samp * ttt_pop_yr / sum(rr_samp*dist)
-  an_samp_rate
+  ttt_params<-list()
+  ttt_params[['an_samp_rate']]<-an_samp_rate
+  ttt_params[['frc_of_totpop']]<-(ttt_list[["NRiskGrp"]]*ttt_list[["FrcScrn"]])/results[start_yr,2]
 
-  return(an_samp_rate)
+  return(ttt_params)
 }
 
