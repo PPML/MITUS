@@ -194,7 +194,7 @@ tb_dth_age_lLik <- function(V,rho=0.01) {
   tb_deaths_age  <- CalibDat[["tb_deaths"]][,-1]
   adj_19b        <- sum(dDirMult(M=tb_deaths_age+.1,n=tb_deaths_age,Rho=0.01)*wts[50:65])
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
-  sum(dDirMult(M=(V*1e6)+.1,n=tb_deaths_age,Rho=rho)*wts[50:65]) - adj_19b  }
+  sum(dDirMult(M=(V*1e6),n=tb_deaths_age,Rho=rho)*wts[50:65]) - adj_19b  }
 
 ###start demographic log likelihood
 #' TOTAL POP EACH DECADE, FOR FB
@@ -264,7 +264,7 @@ tot_dth_age_lLik <- function(V,rho=0.01) {
   death_agegrp[11,]<-colSums(death_age[96:111,])
   death_agegrp<-t(death_agegrp)
   adj_20b        <- sum(dDirMult(M=death_agegrp+0.1,n=death_agegrp,Rho=rho)*wts[66:67])
-  sum(dDirMult(M=V+0.1,n=death_agegrp,Rho=rho)*wts[66:67]) - adj_20b
+  sum(dDirMult(M=V,n=death_agegrp,Rho=rho)*wts[66:67]) - adj_20b
 }
 
 #' Mortality Risk Group Distribution 1999-2014
@@ -279,7 +279,7 @@ mort_dist_lLik <- function(V,rho=0.1) {
   tot_lik<-0
   for(ag in 1:11){
     V1<-V[,(1:4)+4*(ag-1)]
-    x<-sum(dDirMult(M=V1+0.1,n=mort_dist,Rho=rho)*wts[66:67]) - adj_21
+    x<-sum(dDirMult(M=V1,n=mort_dist,Rho=rho)*wts[66:67]) - adj_21
     tot_lik<-tot_lik+x
   }
   return(tot_lik)

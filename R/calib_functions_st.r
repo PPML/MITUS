@@ -63,7 +63,7 @@ notif_age_us_lLik_st <- function(V,st,rho=0.015) { # V = table of us notificatio
   adj_2a            <- sum(dDirMult(M=notif_age_us+0.01,n=notif_age_us,Rho=0.015)*wts[44:68])
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
   #scale does not matter for dirichlet llikelihood
-  sum(dDirMult(M=V2+0.01,n=notif_age_us,Rho=rho)*wts[44:68]) - adj_2a
+  sum(dDirMult(M=V2,n=notif_age_us,Rho=rho)*wts[44:68]) - adj_2a
   }
 
 ### ### ### FB CASES AGE DISTRIBUTION 1993-2016  ### ### ### ### ### ### D
@@ -75,7 +75,7 @@ notif_age_fb_lLik_st <- function(V,st,rho=0.015) { # V = table of fb notificatio
   adj_2b            <- sum(dDirMult(M=notif_age_fb+0.01,n=notif_age_fb,Rho=0.015)*wts[44:68])
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
   #scale does not matter for dirichlet llikelihood
-  sum(dDirMult(M=V2+0.01,n=notif_age_fb,Rho=rho)*wts[44:68]) - adj_2b
+  sum(dDirMult(M=V2,n=notif_age_fb,Rho=rho)*wts[44:68]) - adj_2b
   }
 
 ### ### ### CASES FB DISTRIBUTION 1993-2016  ### ### ### ### ### ###  D
@@ -87,7 +87,7 @@ notif_fb_lLik_st <- function(V,st,rho=0.005) { # V = table of notifications by f
   notif_fb      <- cbind(notif_age_fb0[,12],notif_age_us0[,12])
   adj_3         <- sum(dDirMult(M=notif_fb+0.01,n=notif_fb,Rho=0.005)*wts[44:68])
   #scale does not matter for dirichlet llikelihood
-  sum(dDirMult(M=V+0.01,n=notif_fb,Rho=rho)*wts[44:68]) - adj_3
+  sum(dDirMult(M=V,n=notif_fb,Rho=rho)*wts[44:68]) - adj_3
   }
 
 ### ### ### CASES FB DISTRIBUTION SLOPES OVER PAST 5 year  ### ### ### ### ### ### D
@@ -109,11 +109,11 @@ notif_fbus_slp_lLik_st <- function(V,st) {
 
 notif_us_hr_lLik_st <- function(V,st,rho=0.005) { # V = table of notifications by tx history (row=97:16, col=n then e)
   notif_us_hr0     <- CalibDatState[["hr_cases"]][[st]]
-  notif_us_hr      <- cbind(notif_us_hr0[1,],1-notif_us_hr0[,1])*notif_us_hr0[,2]
+  notif_us_hr      <- cbind(notif_us_hr0[,1],1-notif_us_hr0[,1])#*notif_us_hr0[,2]
   adj_5b           <- sum(dDirMult(M=notif_us_hr+0.01,n=notif_us_hr,Rho=rho)*wts[c(50,55,60,65)])
   V2 <- rbind(colSums(V[1:5,]),colSums(V[6:10,]),colSums(V[11:15,]),colSums(V[16:20,]))
   #scale does not matter for dirichlet llikelihood
-  sum(dDirMult(M=V2+0.01,n=notif_us_hr,Rho=rho)*wts[c(50,55,60,65)]) - adj_5b
+  sum(dDirMult(M=V2,n=notif_us_hr,Rho=rho)*wts[c(50,55,60,65)]) - adj_5b
   }
 
 ### ### ### CASES FB RECENT ENTRY DISTRIBUTION 1993-2013  ### ### ### ### ### ### D
@@ -124,7 +124,7 @@ notif_fb_rec_lLik_st <- function(V,rho=0.02) { # V = table of notifications by r
   notif_fb_rec      <- cbind(as.numeric(notif_fb[,4]),as.numeric(notif_fb[,3]))
   adj_6             <- sum(dDirMult(M=notif_fb_rec+0.01,n=notif_fb_rec,Rho=rho)*wts[51:68])
   #scale does not matter for dirichlet llikelihood
-  sum(dDirMult(M=V+0.01,n=notif_fb_rec,Rho=rho)*wts[51:68]) - adj_6
+  sum(dDirMult(M=V,n=notif_fb_rec,Rho=rho)*wts[51:68]) - adj_6
   }
 
 ### ### ### TREATMENT OUTCOMES 1993-2012  ### ### ### ### ### ### D
@@ -134,7 +134,7 @@ tx_outcomes_lLik_st <- function(V,rho=0.01) {
   tx_outcomes      <- (cbind(1-rowSums(CalibDatState[["tx_outcomes"]][,2:3]),CalibDatState[["tx_outcomes"]][,2],CalibDatState[["tx_outcomes"]][,3])*CalibDatState[["tx_outcomes"]][,4])
   adj_11           <- sum(dDirMult(M=tx_outcomes+0.01,n=tx_outcomes,Rho=0.01)*wts[44:66])# V = table of treatment outcomes 1993-2012 (row=20 years, col= complete, discontinue, dead)
   #scale does not matter for dirichlet llikelihood
-  sum(dDirMult(M=V+0.01,n=tx_outcomes,Rho=rho)*wts[44:66]) - adj_11
+  sum(dDirMult(M=V,n=tx_outcomes,Rho=rho)*wts[44:66]) - adj_11
   }
 
 ### ### ### TOTAL LTBI TREATMENT INITS 2002  ### ### ### ### ### ### D
@@ -209,7 +209,7 @@ tb_dth_age_lLik_st <- function(V,rho=0.01) { # V = table of deaths by age 1999-2
   adj_19b        <- sum(dDirMult(M=tb_deaths_age+0.01,n=tb_deaths_age,Rho=rho)*wts[50:67])
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
   #scale doesn't matter for dirchlet
-  sum(dDirMult(M=V2+0.01,n=tb_deaths_age,Rho=rho)*wts[50:67]) - adj_19b
+  sum(dDirMult(M=V2,n=tb_deaths_age,Rho=rho)*wts[50:67]) - adj_19b
 }
 ### ### ### TOTAL POP EACH DECADE, FOR FB  ### ### ### ### ### ###  D
 # Motivation: norm, mean centered with CI = +/- 2 million wts[1+0:6*10]
@@ -275,7 +275,7 @@ tot_dth_age_lLik_st <- function(V,st,rho=0.01) {
   adj_20b        <- sum(dDirMult(M=tda+0.1,n=tda,Rho=rho)*wts[66:67])
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
   # V2<-V2*1e6
-  sum(dDirMult(M=V2+0.1,n=tda,Rho=rho)*wts[66:67]) - adj_20b
+  sum(dDirMult(M=V2,n=tda,Rho=rho)*wts[66:67]) - adj_20b
   }
 
 #' Mortality Risk Group Distribution 1999-2014
@@ -291,7 +291,7 @@ mort_dist_lLik_st <- function(V,rho=0.1) {
   tot_lik<-0
   for(ag in 1:11){
     V1<-V[,(1:4)+4*(ag-1)]
-    x<-sum(dDirMult(M=(V1*1e6)+0.01,n=mort_dist,Rho=rho)*wts[66:67]) - adj_21
+    x<-sum(dDirMult(M=(V1*1e6),n=mort_dist,Rho=rho)*wts[66:67]) - adj_21
     tot_lik<-tot_lik+x
     # print(x)
   }
