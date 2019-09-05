@@ -26,6 +26,7 @@ US_notif_tot_lLik_st <- function(V,st) {
   #notif tot is in real scale must scale outputs up
   sum(dnorm(notif_tot,V*1e6,notif_tot*0.1/1.96,log=T)*wts[44:68]) - adj_1
 }
+
 #'Total Diagnosed NUS Cases 1993-2017
 #'Motivation: Normal, mean centered with CI = +/- 5% of the mean
 #'@name NUS_notif_tot_lLik_st
@@ -101,7 +102,7 @@ notif_fbus_slp_lLik_st <- function(V,st) {
   notif_fbus_slp5<-apply(log(tot_case_nat[20:25,]),2,function(x) lm(x~I(1:6))$coef[2])
   adj_3a              <- sum(dnorm(notif_fbus_slp5,notif_fbus_slp5,0.005,log=T))# V = table of notifications by fb 2011-2016 (row=6 years, col=fb then us)
   V2 <- apply(log(V[,]),2,function(x) lm(x~I(1:6))$coef[2])
-  sum(dnorm(V2,notif_fbus_slp5,0.005,log=T)) - adj_3a
+  sum(dnorm(notif_fbus_slp5,V2,0.005,log=T)) - adj_3a
   }
 
 ### ### ### CASES HR DISTRIBUTION 1993-2014  ### ### ### ### ### ### D
@@ -191,7 +192,7 @@ tbdeaths_lLik_st <- function(V,st) { # V = vector of total notifications 1999-20
   tb_deaths <- CalibDatState[["tbdeaths"]][[st]][,2]
   V2<-rowSums(V)*1e6
   adj_19    <- sum((dnorm(tb_deaths,tb_deaths,tb_deaths*0.2/1.96,log=T)*wts[50:67])[is.na(tb_deaths)==F])
-  sum((dnorm(V2,tb_deaths,tb_deaths*0.2/1.96,log=T)*wts[50:67])[is.na(tb_deaths)==F]) - adj_19
+  sum((dnorm(tb_deaths,V2,tb_deaths*0.2/1.96,log=T)*wts[50:67])[is.na(tb_deaths)==F]) - adj_19
 }
 ### ### ### ANN DECLINE IN TB DEATHS 1968-2015  ### ### ### ### ### ### D
 
@@ -199,7 +200,7 @@ tbdeaths_decline_lLik_st <- function(V) { # V = vector of tb deaths 1968-2015
   tbdeaths_decline      <- CalibDatState[["deaths_ann_decline_68_15"]]
   adj_19a            <- sum(dnorm(tbdeaths_decline,tbdeaths_decline,0.015/1.96,log=T))
   V2 <- (1-(V[48]/V[1])^(1/47))
-  sum(dnorm(V2,tbdeaths_decline,0.015/1.96,log=T)) - adj_19a
+  sum(dnorm(tbdeaths_decline,V2,0.015/1.96,log=T)) - adj_19a
 }
 ### ### ### TB DEATHS AGE DISTRIBUTION 1999-2016  ### ### ### ### ### ### D
 # Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
@@ -262,7 +263,7 @@ tot_pop17_ag_fb_lLik_st <- function(V,st,ESS=500) { # V =  US pop in 2014 (row=1
 dth_tot_lLik_st <- function(V,st) {
   ST_deaths_tot <- readRDS(system.file("ST/STdeathbyAge.rds",package="MITUS"))[[st]][48,12]
   adj_20a         <- sum(dnorm(ST_deaths_tot,ST_deaths_tot,ST_deaths_tot*0.1/1.96,log=T)*wts[67])
-  sum(dnorm(V*1e6,ST_deaths_tot,ST_deaths_tot*0.1/1.96,log=T)*wts[67]) - adj_20a
+  sum(dnorm(ST_deaths_tot,V*1e6,ST_deaths_tot*0.1/1.96,log=T)*wts[67]) - adj_20a
 }
 
 #'  #' TOTAL DEATHS AGE DISTRIBUTION 1999-2014
