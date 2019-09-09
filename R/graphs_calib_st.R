@@ -300,11 +300,11 @@ calib_graphs_st <- function(df,loc, Par_list){
   points(1993:2016,tot_cases,pch=19,cex=0.3) #total population
   lines(1993:2016,tot_cases,lty=3,col=1)
 
-  points(1993:2016,CalibDatState$cases_yr_ag_nat_st[[st]][1:24,12,1],pch=19,cex=0.3,col=4) #US born population
-  lines(1993:2016,CalibDatState$cases_yr_ag_nat_st[[st]][1:24,12,1],pch=19,lty=3,col=4)
+  points(1993:2016,CalibDatState$cases_yr_ag_nat_st[[st]][1:24,12,"usb"],pch=19,cex=0.3,col=4) #US born population
+  lines(1993:2016,CalibDatState$cases_yr_ag_nat_st[[st]][1:24,12,"usb"],pch=19,lty=3,col=4)
 
-  points(1993:2016,CalibDatState$cases_yr_ag_nat_st[[st]][1:24,12,2],pch=19,cex=0.3,col=3) #non-US born population
-  lines(1993:2016,CalibDatState$cases_yr_ag_nat_st[[st]][1:24,12,2],lty=3,col=3)
+  points(1993:2016,CalibDatState$cases_yr_ag_nat_st[[st]][1:24,12,"nusb"],pch=19,cex=0.3,col=3) #non-US born population
+  lines(1993:2016,CalibDatState$cases_yr_ag_nat_st[[st]][1:24,12,"nusb"],lty=3,col=3)
 
   #plot text
   mtext("Year",1,2.5,cex=1.2)
@@ -320,7 +320,7 @@ calib_graphs_st <- function(df,loc, Par_list){
   V1 <- df[57:67,"NOTIF_US"]+df[57:67,"NOTIF_MORT_US"]   #US born population
   V2 <- df[57:67,"NOTIF_F1"]+df[57:67,"NOTIF_F2"]+df[57:67,"NOTIF_MORT_F1"]+df[57:67,"NOTIF_MORT_F2"]   #non-US born population
 
-  tot_cases<-(CalibDatState$cases_yr_ag_nat_st[[st]][14:24,12,1]+CalibDatState$cases_yr_ag_nat_st[[st]][14:24,12,2])
+  tot_cases<-(CalibDatState$cases_yr_ag_nat_st[[st]][14:24,12,"usb"]+CalibDatState$cases_yr_ag_nat_st[[st]][14:24,12,"nusb"])
   # tot_cases<-tot_cases/100;
   #format the plot
   plot(0,0,ylim=c(min(V2,V1)*.5*1e6,max(V0)*2*1e6),xlim=c(2006,2016),xlab="",ylab="",axes=F)
@@ -337,11 +337,11 @@ calib_graphs_st <- function(df,loc, Par_list){
   points(2006:2016,tot_cases,pch=19,cex=0.3) #total population
   lines(2006:2016,tot_cases,lty=3,col=1)
 
-  points(2006:2016,CalibDatState$cases_yr_ag_nat_st[[st]][14:24,12,1],pch=19,cex=0.3,col=4) #US born population
-  lines(2006:2016,CalibDatState$cases_yr_ag_nat_st[[st]][14:24,12,1],pch=19,lty=3,col=4)
+  points(2006:2016,CalibDatState$cases_yr_ag_nat_st[[st]][14:24,12,"usb"],pch=19,cex=0.3,col=4) #US born population
+  lines(2006:2016,CalibDatState$cases_yr_ag_nat_st[[st]][14:24,12,"usb"],pch=19,lty=3,col=4)
 
-  points(2006:2016,CalibDatState$cases_yr_ag_nat_st[[st]][14:24,12,2],pch=19,cex=0.3,col=3) #non-US born population
-  lines(2006:2016,CalibDatState$cases_yr_ag_nat_st[[st]][14:24,12,2],lty=3,col=3)
+  points(2006:2016,CalibDatState$cases_yr_ag_nat_st[[st]][14:24,12,"nusb"],pch=19,cex=0.3,col=3) #non-US born population
+  lines(2006:2016,CalibDatState$cases_yr_ag_nat_st[[st]][14:24,12,"nusb"],lty=3,col=3)
 
   #plot text
   mtext("Year",1,2.5,cex=1.2)
