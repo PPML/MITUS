@@ -108,43 +108,41 @@ mtext("Year",1,2.5,cex=1.2)
 mtext("Mortality: Total, US, and Non-US Born (mil)",3,.8,font=2,cex=1.2)
 legend("topleft",c("Total","US born","Non-US Born","Reported data","model"),cex=1.0,
        pch=c(15,15,15,19,NA),lwd=c(NA,NA,NA,1,2),lty=c(NA,NA,NA,3,1),col=c("grey50",4,"red3",1,1),bg="white",pt.cex=c(1.8,1.8,1.8,0.3,NA))
-# ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-# ### ### ### ### ### ###   TOTAL MORT AGE DISTRIBUTION 2014  ### ### ### ### ### ###
-# ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+### ### ### ### ### ###   TOTAL MORT AGE DISTRIBUTION 2014  ### ### ### ### ### ###
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 # pdfname<-paste("MITUS_results/mort_age",Sys.time(),".pdf")
 # pdf(file=pdfname, width = 11, height = 8.5)
 # par(mfrow=c(2,2),mar=c(4,4.5,3,1))
-# V  <- cbind((df[1:65,255:265])+(df[1:65,266:276]))
-# V1  <- V[,-3]
-# V1[,2] <- V1[,2]+V[,3]
-# V2 <- V1[,-4]
-# V2[,3] <- V2[,3]+V1[,4]
-# V3 <- V2[,-9]
-# V3[,8] <- V3[,8]+V2[,9]
-# V3<-V3/rowSums(V3)*100
-#
-# for (x in 1:65){
-# plot(0,0,ylim=c(0.05,max(range(V3))+.2),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA)
-# axis(1,1:8,paste(c("0-4","5-24","25-44","45-54","55-64","65-74","75-84","85+"),"\nyears",sep=""),tick=F,cex.axis=0.75)
-# axis(1,1:9-0.5,rep("",9))
-# axis(2,c(0,.2,.4,.6,.8,1.0)*100,las=2);box()
-# abline(h=axTicks(2),col="grey85")
-#
-# # for(i in 1:8) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V3[65,i],V3[65,i]),border=NA,col="gray")
-# # for(i in 1:8) points(i+.2,(CalibDat$US_mort_age[16,i+1])/1e6,pch=19,cex=1.2,col="black")
-#
-#
-# for(i in 1:8) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V3[x,i],V3[x,i]),border=NA,col="gray")
-# for(i in 1:8) points(i+.2,(CalibDat$US_mort_age[x,i+1])/rowSums(CalibDat$US_mort_age[x,2:9])*100,pch=19,cex=1.2,col="black")
-#
-#
-# mtext("Age Group",1,2.5,cex=1.2)
-# box()
-# mtext(paste("Mortality by Age,",x+1949, " (%)"),3,.8,font=2,cex=1.2)
-# legend("topleft",c("Reported data","model"),pch=c(19,15),pt.cex=c(1,2),
-#        lwd=NA,col=c("black","gray"),bg="white")
-# }
-# dev.off()
+V  <- cbind((df[67,255:265])+(df[67,266:276]))
+V1  <- V[,-3]
+V1[,2] <- V1[,2]+V[,3]
+V2 <- V1[,-4]
+V2[,3] <- V2[,3]+V1[,4]
+V3 <- V2[,-9]
+V3[,8] <- V3[,8]+V2[,9]
+V3<-V3/rowSums(V3)*100
+
+# for (x in 1:67){
+plot(0,0,ylim=c(0.05,max(range(V3))+.2),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA)
+axis(1,1:8,paste(c("0-4","5-24","25-44","45-54","55-64","65-74","75-84","85+"),"\nyears",sep=""),tick=F,cex.axis=0.75)
+axis(1,1:9-0.5,rep("",9))
+axis(2,c(0,.2,.3,.4,.6,.8,1.0)*100,las=2);box()
+abline(h=axTicks(2),col="grey85")
+
+# for(i in 1:8) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V3[65,i],V3[65,i]),border=NA,col="gray")
+# for(i in 1:8) points(i+.2,(CalibDat$US_mort_age[16,i+1])/1e6,pch=19,cex=1.2,col="black")
+
+
+for(i in 1:8) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V3[,i],V3[,i]),border=NA,col="gray")
+for(i in 1:8) points(i+.2,(CalibDat$US_mort_age[67,i+1])/rowSums(CalibDat$US_mort_age[67,2:9])*100,pch=19,cex=1.2,col="black")
+
+
+mtext("Age Group",1,2.5,cex=1.2)
+box()
+mtext(paste("Mortality by Age 2016 (%)"),3,.8,font=2,cex=1.2)
+legend("topleft",c("Reported data","model"),pch=c(19,15),pt.cex=c(1,2),
+       lwd=NA,col=c("black","gray"),bg="white")
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 ### ### ### ### ### ### TOTAL MORT RATE 1950-2013 ### ### ### ### ### ###
 # ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -538,81 +536,47 @@ legend("topright",c("Reported data","Model"),pch=c(19,NA),lwd=c(1,2),
 graphs_pub(Par_list=Par_list)
 
 
-dev.off()
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-### ### ### ### ### ###   TOTAL MORT AGE DISTRIBUTION 2014  ### ### ### ### ### ###
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-pdfname<-paste("MITUS_results/mort_age",Sys.time(),".pdf")
-pdf(file=pdfname, width = 11, height = 8.5)
-par(mfrow=c(2,2),mar=c(4,4.5,3,1))
-V  <- cbind((df[1:67,255:265])+(df[1:67,266:276]))
-V1  <- V[,-3]
-V1[,2] <- V1[,2]+V[,3]
-V2 <- V1[,-4]
-V2[,3] <- V2[,3]+V1[,4]
-V3 <- V2[,-9]
-V3[,8] <- V3[,8]+V2[,9]
-V3<-V3/rowSums(V3)*100
+# dev.off()
 
-for (x in 1:67){
-  plot(0,0,ylim=c(0.05,max(range(V3))+.2),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA)
-  axis(1,1:8,paste(c("0-4","5-24","25-44","45-54","55-64","65-74","75-84","85+"),"\nyears",sep=""),tick=F,cex.axis=0.75)
-  axis(1,1:9-0.5,rep("",9))
-  axis(2,c(0,.2,.3,.4,.6,.8,1.0)*100,las=2);box()
-  abline(h=axTicks(2),col="grey85")
-
-  # for(i in 1:8) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V3[65,i],V3[65,i]),border=NA,col="gray")
-  # for(i in 1:8) points(i+.2,(CalibDat$US_mort_age[16,i+1])/1e6,pch=19,cex=1.2,col="black")
-
-
-  for(i in 1:8) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V3[x,i],V3[x,i]),border=NA,col="gray")
-  for(i in 1:8) points(i+.2,(CalibDat$US_mort_age[x,i+1])/rowSums(CalibDat$US_mort_age[x,2:9])*100,pch=19,cex=1.2,col="black")
-
-
-  mtext("Age Group",1,2.5,cex=1.2)
-  box()
-  mtext(paste("Mortality by Age,",x+1949, " (%)"),3,.8,font=2,cex=1.2)
-  legend("topleft",c("Reported data","model"),pch=c(19,15),pt.cex=c(1,2),
-         lwd=NA,col=c("black","gray"),bg="white")
-}
+# }
 dev.off()
 # system(paste("open", pdfname))# code for ma
-pdfname<-paste("MITUS_results/pop_age",Sys.time(),".pdf")
-pdf(file=pdfname, width = 11, height = 8.5)
-par(mfrow=c(2,2),mar=c(4,4.5,3,1))
-I<-as.matrix(readRDS(system.file("US/immig_pop_ag.rds", package="MITUS")))[,2:11]
-I<-I/1e6
-I1<-I[,-3]
-I1[,2]<-I1[,2]+I[,3]
-I2<-I1[,-4]
-I2[,3]<-I2[,3]+I1[,4]
-for (x in c(1,11,21,31,41)){
-V  <- cbind(t(df[x,33:43]), t(df[x,44:54]))
-V1  <- V[-3,]
-V1[2,] <- V1[2,]+V[3,]
-V2 <- V1[-4,]
-V2[3,] <- V2[3,]+V1[4,]
-V3 <- V2[-9,]
-V3[8,] <- V3[8,]+V2[9,]
-
-plot(1,1,ylim=c(0.05,125),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA,log="y" )
-axis(1,1:8,paste(c("0-4","5-24","25-44","45-54","55-64","65-74","75-84","85+"),"\nyears",sep=""),tick=F,cex.axis=0.75)
-axis(1,1:9-0.5,rep("",9))
-axis(2,c(0,.5,1,3,5,10,25,50,75,125),las=2);box()
-abline(h=axTicks(2),col="grey85")
-
-for(i in 1:8) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V3[i,1],V3[i,1]),border=NA,col="lightblue")
-for(i in 1:8) polygon(i+c(-.4,0,0,-.4),c(0.0001,0.0001,V3[i,2],V3[i,2]),border=NA,col="pink")
-
-# points(1:8+0.2,CalibDat[["tot_pop16_ag_fb"]][-9,3],pch=19,cex=1.2,col="blue")
-points(1:8-0.2,I2[x%%9,],pch=19,cex=1.2,col="red3")
-
-mtext("Age Group",1,2.5,cex=1.2)
-box()
-mtext(paste("Total Population by Age Group,",x+1949, " (mil,log-scale)"),3,.8,font=2,cex=1)
-legend("topright",c("US born","Non-US Born","Reported data"),cex=1,
-       pch=c(15,15,19),lwd=c(NA,NA,1),lty=c(NA,NA,3),col=c("lightblue","pink",1),bg="white",pt.cex=c(1.8,1.8,0.3))
-}
-dev.off()
+# pdfname<-paste("MITUS_results/pop_age",Sys.time(),".pdf")
+# pdf(file=pdfname, width = 11, height = 8.5)
+# par(mfrow=c(2,2),mar=c(4,4.5,3,1))
+# I<-as.matrix(readRDS(system.file("US/immig_pop_ag.rds", package="MITUS")))[,2:11]
+# I<-I/1e6
+# I1<-I[,-3]
+# I1[,2]<-I1[,2]+I[,3]
+# I2<-I1[,-4]
+# I2[,3]<-I2[,3]+I1[,4]
+# for (x in c(1,11,21,31,41)){
+# V  <- cbind(t(df[x,33:43]), t(df[x,44:54]))
+# V1  <- V[-3,]
+# V1[2,] <- V1[2,]+V[3,]
+# V2 <- V1[-4,]
+# V2[3,] <- V2[3,]+V1[4,]
+# V3 <- V2[-9,]
+# V3[8,] <- V3[8,]+V2[9,]
+#
+# plot(1,1,ylim=c(0.05,125),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA,log="y" )
+# axis(1,1:8,paste(c("0-4","5-24","25-44","45-54","55-64","65-74","75-84","85+"),"\nyears",sep=""),tick=F,cex.axis=0.75)
+# axis(1,1:9-0.5,rep("",9))
+# axis(2,c(0,.5,1,3,5,10,25,50,75,125),las=2);box()
+# abline(h=axTicks(2),col="grey85")
+#
+# for(i in 1:8) polygon(i+c(.4,0,0,.4),c(0.0001,0.0001,V3[i,1],V3[i,1]),border=NA,col="lightblue")
+# for(i in 1:8) polygon(i+c(-.4,0,0,-.4),c(0.0001,0.0001,V3[i,2],V3[i,2]),border=NA,col="pink")
+#
+# # points(1:8+0.2,CalibDat[["tot_pop16_ag_fb"]][-9,3],pch=19,cex=1.2,col="blue")
+# points(1:8-0.2,I2[x%%9,],pch=19,cex=1.2,col="red3")
+#
+# mtext("Age Group",1,2.5,cex=1.2)
+# box()
+# mtext(paste("Total Population by Age Group,",x+1949, " (mil,log-scale)"),3,.8,font=2,cex=1)
+# legend("topright",c("US born","Non-US Born","Reported data"),cex=1,
+#        pch=c(15,15,19),lwd=c(NA,NA,1),lty=c(NA,NA,3),col=c("lightblue","pink",1),bg="white",pt.cex=c(1.8,1.8,0.3))
+# }
+# dev.off()
 }
 
