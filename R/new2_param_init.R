@@ -385,7 +385,7 @@ fin2_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sc
   #################### TTT ADDITIONAL SCREENING PROBABILITIES ####################
   ################################################################################
   ###this is dependent on a basecase run so load in that data
-  if (ttt_list[[3]]!=0){
+  if (ttt_list[[3]]!=0 & ttt_list[[4]]!=0){
     load(system.file("US/US_results_1.rda", package="MITUS"))
     x<-create_ttt_dist(ttt_list = ttt_list,
                        results = out[1,,],
