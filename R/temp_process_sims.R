@@ -41,7 +41,7 @@ new_OutputsZint <-  function(samp_i=1,ParMatrix,startyr=1950, endyr=2050, loc = 
 
   # P <- Par
   IP <- list()
-  IP <- fin_param_init(P,loc,Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3,prg_chng)
+  IP <- fin_param_init(P,loc,Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3,prg_chng=prg_chng)
 
 
 

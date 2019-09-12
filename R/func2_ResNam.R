@@ -157,10 +157,10 @@ func2_ResNam<-function(){
 
               paste("mort_rate",StatList[[1]],sep="_" ),
 
-              paste("N_NM1",StatList[[4]],sep="_"),
-              paste("N_NM2",StatList[[4]],sep="_"),
-              paste("N_NM3",StatList[[4]],sep="_"),
-              paste("N_NM4",StatList[[4]],sep="_"),
+              paste("N_NM1",StatList[[1]],sep="_"),
+              paste("N_NM2",StatList[[1]],sep="_"),
+              paste("N_NM3",StatList[[1]],sep="_"),
+              paste("N_NM4",StatList[[1]],sep="_"),
 
               ### new infections
               paste("N_newinf_USB",StatList[[1]],sep="_" ),

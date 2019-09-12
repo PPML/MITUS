@@ -56,14 +56,17 @@ fin_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sce
     BgMort[10:67,2:12]<-weight_mort(loc)
   }
   for(j in 68:151){
-    for (i in 1:2){
-      BgMort[j,i]<-BgMort[j-1,i]*(1-.0155)
+    for (i in 1:2){ #ssa adjustment
+      BgMort[j,i]<-BgMort[j-1,i]*(1-.0159)
     }
     for (i in 3:7){
-      BgMort[j,i]<-BgMort[j-1,i]*(1-.0101)
+      BgMort[j,i]<-BgMort[j-1,i]*(1-.0095)
     }
-    for (i in 8:11){
-      BgMort[j,i]<-BgMort[j-1,i]*(1-.0064)
+    for (i in 8:9){
+      BgMort[j,i]<-BgMort[j-1,i]*(1-.0083)
+    }
+    for (i in 10:11){
+      BgMort[j,i]<-BgMort[j-1,i]*(1-.0052)
     }
   }
   InputParams[["InitPop"]] <- Inputs[["InitPop"]]

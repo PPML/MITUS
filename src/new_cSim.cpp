@@ -1779,7 +1779,7 @@ Rcpp::List fin_cSim(
                     //   Outputs[y][171      ] += temp ;   //  incidence, HIV pos
                     //   Outputs[y][171+16   ] += temp2; } //  incidence, HIV pos, recent infection
                   } } } } } }
-        for(int i=154; i<187; i++) { Outputs[y][i] = Outputs[y][i]*12; } // annualize
+        for(int i=155; i<187; i++) { Outputs[y][i] = Outputs[y][i]*12; } // annualize
 
         // NOTIFICATIONS, dead at diagnosis
         for(int nm=0; nm<4 ; nm++) {
@@ -1804,7 +1804,7 @@ Rcpp::List fin_cSim(
                     //   Outputs[y][229   ] += temp2; }  // dx HIV neg (1)
                     Outputs[y][202+rg] += temp2;   // N_ by rg (2)
                   } } } } } }
-        for(int i=187; i<54; i++) { Outputs[y][i] = Outputs[y][i]*12; }
+        for(int i=187; i<204; i++) { Outputs[y][i] = Outputs[y][i]*12; }
 
         // NOTIFICATIONS US
         for(int ag=0; ag<11; ag++) {
