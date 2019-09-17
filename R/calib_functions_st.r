@@ -88,7 +88,7 @@ notif_fb_lLik_st <- function(V,st,rho=0.005) { # V = table of notifications by f
   notif_fb      <- cbind(notif_age_fb0[,12],notif_age_us0[,12])
   adj_3         <- sum(dDirMult(M=notif_fb+0.01,n=notif_fb,Rho=0.005)*wts[44:68])
   #scale does not matter for dirichlet llikelihood
-  sum(dDirMult(M=V,n=notif_fb,Rho=rho)*wts[44:68]) - adj_3
+  (sum(dDirMult(M=V,n=notif_fb,Rho=rho)*wts[44:68]) - adj_3)*2
   }
 
 ### ### ### CASES FB DISTRIBUTION SLOPES OVER PAST 5 year  ### ### ### ### ### ### D

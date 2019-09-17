@@ -53,13 +53,13 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
         # addlik <- notif_decline_lLik_st(V=v1b,st=st); addlik
         # lLik <- lLik + addlik
         ### ### ### US CASES 1993-2016  ### ### ### ### ### ### D
-        v1a   <- rowSums(M[44:68,205:215]+M[44:68,216:226])
-        addlik <- US_notif_tot_lLik_st(V=v1a,st=st); addlik
-        lLik <- lLik + addlik
-        ### ### ### NUS CASES 1993-2016  ### ### ### ### ### ### D
-        v1b   <- rowSums(M[44:68,136:146]+M[44:68,189:199]) - (M[44:68,205:215]+M[44:68,216:226])
-        addlik <- NUS_notif_tot_lLik_st(V=v1b,st=st); addlik
-        lLik <- lLik + addlik
+        # v1a   <- rowSums(M[44:68,205:215]+M[44:68,216:226])
+        # addlik <- US_notif_tot_lLik_st(V=v1a,st=st); addlik
+        # lLik <- lLik + addlik
+        # ### ### ### NUS CASES 1993-2016  ### ### ### ### ### ### D
+        # v1b   <- rowSums(M[44:68,136:146]+M[44:68,189:199]) - (M[44:68,205:215]+M[44:68,216:226])
+        # addlik <- NUS_notif_tot_lLik_st(V=v1b,st=st); addlik
+        # lLik <- lLik + addlik
         ### ### ### US CASES AGE DISTRIBUTION 1993-2016  ### ### ### ### ### ### D
         v2a   <- M[44:68,205:215]+M[44:68,216:226]
         addlik <- notif_age_us_lLik_st(V=v2a,st=st); addlik
