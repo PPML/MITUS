@@ -27,7 +27,7 @@ create_ttt_dist<-function(ttt_list,results,PV){
 #get the appropriate distribution outputs from the MITUS simulation in the start year
   na<-switch(ttt_list[[1]], "All" =c("US","NUS"), "USB"="US","NUSB"="NUS")
 
-  ag<-switch(ttt_list[[2]], "All" =c("0-24","25-64","65p"), "0 to 24"="0-24","25 to 64"="25-64", "65+"="65p")
+  ag<-switch(ttt_list[[2]], "All" =c("0-24","25-64","65\\+"), "0 to 24"="0-24","25 to 64"="25-64", "65+"="65\\+")
 
   x<-list()
   for (i in 1:length(ag)){
@@ -39,7 +39,8 @@ y<-x[unlist(lapply(x, length) != 0)]
 
 dist<-rep(0,16)
 #need to format the start year
-start_yr<-as.numeric(ttt_list[[5]])-1950
+start_yr<-as.numeric(ttt_list[[5]])-1949
+#distribution in millions
 for (i in 1:length(y)){
   dist<-dist+results[start_yr,y[[i]]]
 }
@@ -73,12 +74,12 @@ rownames(dist) <- paste0("m",0:3) # mortality
   par = fit$par
 
   #5 calc transition rates for TTT
-  ttt_pop_yr =ttt_list[[3]]*ttt_list[[4]] # divide by 1e6 since model in millions
+  ttt_pop_yr =ttt_list[[3]]*ttt_list[[4]]/12 # divide by 1e6 since model in millions
   rr_samp <- (exp(par[1])^(0:3)) %*% t(exp(par[2])^(0:3))
   an_samp_rate <- rr_samp * ttt_pop_yr / sum(rr_samp*dist)
   ttt_params<-list()
   ttt_params[['an_samp_rate']]<-an_samp_rate
-  ttt_params[['frc_of_totpop']]<-(ttt_list[["NRiskGrp"]]*ttt_list[["FrcScrn"]])/results[start_yr,2]
+  ttt_params[['frc_of_totpop']]<-(ttt_list[["NRiskGrp"]]*ttt_list[["FrcScrn"]])/sum(dist)
 
   return(ttt_params)
 }
