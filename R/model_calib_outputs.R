@@ -11,8 +11,7 @@
 
 model_calib_outputs<-function(loc="US",bc.array, samp_i=1,simp.date){
   res<-as.data.frame(bc.array[samp_i,,])
-  data("MITUSnames")
-  colnames(res)<-ResNam
+  colnames(res)<-func_ResNam()
   ############                   demographic targets                     ############
   ### ### ### ### ### ###   TOTAL POP EACH DECADE, BY US/FB   ### ### ### ### ### ###
   V  <- cbind(res[1:68,30], res[1:68,31]+res[1:68,32])
