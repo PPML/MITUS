@@ -142,8 +142,7 @@ fin_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sce
 
   #################                IMMIGRATION              #####################
   ######################         OVERALL IMM.            ########################
-
-  TotImmig0       <- (c(ImmigInputs[[1]][1:151])+c(rep(0,69),cumsum(rep(PV["ImmigVolFut"],82))))/12*PV["ImmigVol"]
+  TotImmig0       <- (c(ImmigInputs[[1]][1:151])+c(rep(0,65),cumsum(rep(PV["ImmigVolFut"],86))))/12*PV["ImmigVol"]
   TotImmig1       <- TotImmig0
   TotImmig        <- SmoCurve(TotImmig1)
   AgeDist<-matrix(NA,11,1801)
@@ -154,26 +153,29 @@ fin_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sce
     for (j in 1:11){
       TotImmAge[i,j]   <- TotImmig[i]*AgeDist[j,i]
     }}
-###########   IMMIGRATION WITH LATENT TB   #######################
-  PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:69]^(exp(PV["TunLtbiTrend"]))*ImmigInputs[["PrevTrend25_34"]][69]^(1-exp(PV["TunLtbiTrend"])),
+  ###########   IMMIGRATION WITH LATENT TB   #######################
+  PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:69]^PV["TunLtbiTrend"]*ImmigInputs[["PrevTrend25_34"]][69]^(1-PV["TunLtbiTrend"]),
                         ImmigInputs[["PrevTrend25_34"]][70:151]*(PV["ImmigPrevFutLat"]/0.99)^(1:82))
   PrevTrend25_341l <-   PrevTrend25_340l
   PrevTrend25_34l  <- SmoCurve(PrevTrend25_341l)
   PrevTrend25_34_ls <- (PrevTrend25_34l);
   PrevTrend25_34_ls <- PrevTrend25_34_ls/PrevTrend25_34_ls[(2011-1950)*12+6]
-  InputParams[["ImmLat"]]        <- matrix(NA,length(PrevTrend25_34_ls),11)
-  for(i in 1:11) InputParams[["ImmLat"]][,i] <- (1-exp((-(c(2.5,1:9*10,100)/100)[i]*PV["LtbiPar1"]-(c(2.5,1:9*10,100)/100)[i]^2*PV["LtbiPar2"])*PrevTrend25_34_ls))*TotImmAge[,i]
-  InputParams[["ImmLat"]]    <-InputParams[["ImmLat"]][1:1201,1:11]
+  ImmLat          <- matrix(NA,length(PrevTrend25_34_ls),11)
+  for(i in 1:11) ImmLat[,i] <- (1-exp((-(c(2.5,1:9*10,100)/100)[i]*PV["LtbiPar1"]-(c(2.5,1:9*10,100)/100)[i]^2*PV["LtbiPar2"])*PrevTrend25_34_ls))*TotImmAge[,i]
+  InputParams[["ImmLat"]]    <-ImmLat[1:1201,1:11]
   ######################         ACTIVE TB IMM.           ########################
-  # PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:69]^exp(PV["TunActTrend"])*ImmigInputs[["PrevTrend25_34"]][69]^exp((1-PV["TunActTrend"])),
-
-  PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:69]^(exp(PV["TunActTrend"]))*ImmigInputs[["PrevTrend25_34"]][69]^(1-exp(PV["TunActTrend"])),
+  PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:69]^PV["TunActTrend"]*ImmigInputs[["PrevTrend25_34"]][69]^(1-PV["TunActTrend"]),
                         ImmigInputs[["PrevTrend25_34"]][70:151]*(PV["ImmigPrevFutAct"]/0.99)^(1:82))
   PrevTrend25_341a <-   PrevTrend25_340a
   PrevTrend25_34a  <- SmoCurve(PrevTrend25_341a)
 
-  InputParams[["ImmAct"]]          <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*PV["pImAct"]
-  InputParams[["ImmFst"]]        <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*(1-PV["pImAct"])
+  act_prob<-rep(0,1801)
+  for (t in 1:1801){
+    act_prob[t]<-((PV[["pImActSlp"]]*t)/1801)+PV[["pImActIntc"]]
+  }
+
+  InputParams[["ImmAct"]]          <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*act_prob
+  InputParams[["ImmFst"]]          <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*(1-act_prob)
 
   InputParams[["ImmAct"]]    <-InputParams[["ImmAct"]][1:1201,1:11]
   InputParams[["ImmFst"]]    <-InputParams[["ImmFst"]][1:1201,1:11]
