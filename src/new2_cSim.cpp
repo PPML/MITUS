@@ -1387,8 +1387,8 @@ Rcpp::List fin2_cSim(
         //   Rcpp::Rcout<<agi<<" "<<nai<<" "<<si<<"\n";
         // }
         rr_ltbi=1; pop_frc=0;
-              for(int rg=0; rg<2; rg++) {
-                for(int na=0; na<3; na++) {
+        for(int rg=0; rg<2; rg++) {
+          for(int na=0; na<3; na++) {
             ////////////// US BORN, LOW RISK  //////////////////
             if( rg==0 & na==0) {
               rTbP = rLtScrt[s]*LtDxPar_ltN[0][s];
@@ -1422,7 +1422,6 @@ Rcpp::List fin2_cSim(
               for (int i=0; i<agi; i++){
               for (int j=0; j<nai; j++){
                   if (ag==ttt_ag[i] & na==ttt_na[j]){
-
                     ////////////// US BORN, LOW RISK  //////////////////
                     if(rg==0 & na==0) {
                       rTbP = (rLtScrt[s]+ttt_samp_distN[nm][im])*LtDxPar_ltN[0][s];
@@ -1454,28 +1453,25 @@ Rcpp::List fin2_cSim(
               } } }
               ////have TB
               temp  = V0[ag][2][0][im][nm][rg][na]*(((1-pop_frc)*rTbP)+
-                (pop_frc*(rTbP*rr_ltbi)))*LtTxParN[s][0]*(1-LtTxParN[s][1]); // tx completion
+                      (pop_frc*(rTbP*rr_ltbi)))*LtTxParN[s][0]*(1-LtTxParN[s][1]); // tx completion
               temp2  = V0[ag][3][0][im][nm][rg][na]*(((1-pop_frc)*rTbP)+
-                    (pop_frc*(rTbP*rr_ltbi)))*LtTxParN[s][0]*(1-LtTxParN[s][1]); // tx completion
+                      (pop_frc*(rTbP*rr_ltbi)))*LtTxParN[s][0]*(1-LtTxParN[s][1]); // tx completion
               temp3 =V0[ag][2][0][im][nm][rg][na]*(((1-pop_frc)*rTbP)+
-              (pop_frc*(rTbP*rr_ltbi)))*LtTxParN[s][0]*LtTxParN[s][1]; // default
+                      (pop_frc*(rTbP*rr_ltbi)))*LtTxParN[s][0]*LtTxParN[s][1]; // default
               temp4 = V0[ag][3][0][im][nm][rg][na]*(((1-pop_frc)*rTbP)+
-                (pop_frc*(rTbP*rr_ltbi)))*LtTxParN[s][0]*LtTxParN[s][1]; // default
+                      (pop_frc*(rTbP*rr_ltbi)))*LtTxParN[s][0]*LtTxParN[s][1]; // default
 
               //N(latent)*r(posLTBIscreen)*p(TLTBI Initiation)*p(TLTBI completion)
               V1[ag][2][0][im][nm][rg][na]  -=  (temp+temp3); //remove from latent slow
               V1[ag][3][0][im][nm][rg][na]  -=  (temp2+temp4);  //remove from latent fast
-
+              //completion split between success and failure
               V1[ag][1][1][im][nm][rg][na]   += (temp+temp2)*LtTxParN[s][2]; //*EffLt0[s]; //exit to cure
               V1[ag][2][1][im][nm][rg][na]   += (temp+temp2)*(1-LtTxParN[s][2]); //*(1-EffLt0[s]) //tx comp fail to latent slow
-
               ///defaults are placed in tx naive because it is considered the same tb infection
               V1[ag][2][0][im][nm][rg][na]  += (temp3+temp4); //latent tx default to latent slow
-                  ////////////// Dont have LTBI
-                temp5= V0[ag][0][0][im][nm][rg][na]*(((1- pop_frc)*rTbN) +
-                  (pop_frc*(1-(rTbP*rr_ltbi))));
-                temp6= (V0[ag][1][0][im][nm][rg][na]*((1- pop_frc)*rTbN )+
-                 ( pop_frc*(1-(rTbP*rr_ltbi))));
+              ////////////// Dont have LTBI
+                temp5= V0[ag][0][0][im][nm][rg][na]*(((1- pop_frc)*rTbN)+(pop_frc*(1-(rTbP*rr_ltbi))));
+                temp6= V0[ag][1][0][im][nm][rg][na]*(((1- pop_frc)*rTbN)+(pop_frc*(1-(rTbP*rr_ltbi))));
                 ///apply these rates
                   V1[ag][0][0][im][nm][rg][na]  -= temp5;
                   V1[ag][1][0][im][nm][rg][na]  -= temp6;
