@@ -74,11 +74,11 @@ rownames(dist) <- paste0("m",0:3) # mortality
   par = fit$par
 
   #5 calc transition rates for TTT
-  ttt_pop_yr =ttt_list[[3]]*ttt_list[[4]]/12 # divide by 1e6 since model in millions
+  ttt_pop_yr =ttt_list[[3]]*ttt_list[[4]] # divide by 1e6 since model in millions
   rr_samp <- (exp(par[1])^(0:3)) %*% t(exp(par[2])^(0:3))
   an_samp_rate <- rr_samp * ttt_pop_yr / sum(rr_samp*dist)
   ttt_params<-list()
-  ttt_params[['an_samp_rate']]<-an_samp_rate
+  ttt_params[['an_samp_rate']]<-pmin(an_samp_rate,1)
   ttt_params[['frc_of_totpop']]<-(ttt_list[["NRiskGrp"]]*ttt_list[["FrcScrn"]])/sum(dist)
 
   return(ttt_params)
