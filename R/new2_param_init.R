@@ -370,7 +370,7 @@ fin2_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sc
     x<-create_ttt_dist(ttt_list = ttt_list,
                        results = out[1,,],
                        PV = PV)
-    ttt_sampling_dist<-x[[1]]#/12
+    ttt_sampling_dist<-x[[1]]/12
     ttt_pop_frc<-x[[2]]
     ttt_ag<-switch(ttt_list[["AgeGrp"]], "All"=0:10,
                    "0 to 24"=0:2,
