@@ -5,6 +5,9 @@ num_pRF = 4
 pars = c(-2.5,2,0.6)
 cuts <- lgt(0:4/4)
 dist_gen<-matrix(NA,4,4)
+colnames(dist_gen) <- paste0("p",0:3) # progression
+rownames(dist_gen) <- paste0("m",0:3) # mortality
+
 dist_gen_v<-rep(NA,16)
 for(i in 1:num_mRF) {
   for(j in 1:num_pRF) {
