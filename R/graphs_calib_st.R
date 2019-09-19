@@ -12,7 +12,7 @@ calib_graphs_st <- function(df,loc, Par_list){
   StateID<-as.data.frame(stateID)
   st<-which(StateID$USPS==loc)
   df<-as.data.frame(df)
-  pdfname<-paste("MITUS_results/",loc,"_calib_graphs",Sys.time(),".pdf",sep="")
+  pdfname<-paste("MITUS_results/",loc,"_calib_graphs_",Sys.time(),".pdf",sep="")
   pdf(file=pdfname, width = 11, height = 8.5)
   par(mfrow=c(2,2),mar=c(4,4.5,3,1))
 
