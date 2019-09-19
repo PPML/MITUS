@@ -32,14 +32,15 @@ optim_to_tabby2<-function(loc, simp.date="724"){
   #remove old calibration plot data
   #get the files in the directory
   file.list<-list.files(system.file(paste0(loc,"/calibration_outputs/"),package="MITUS"))
+  if (length(file.list)>0){
   for (i in 1:length(file.list)){
     file.remove(paste0("~/MITUS/inst/",loc,"/calibration_outputs/", file.list[i]))
-  }
+  }}
   #create new outputs for calibration plots
     #get the data array for the base case
     base.case<-results.list[[1]]
     #if you are reshaping old saved results use this workflow
     # load(system.file(paste0(loc,"/",loc,"_results_1.rda"),package="MITUS"))
     # model_calib_outputs(loc,out,samp_i=1,simp.date = "724")
-    model_calib_outputs(loc,base.case,samp_i=1,simp.date = "724")
+    model_calib_outputs(loc,base.case,samp_i=1,simp.date =simp.date)
 }
