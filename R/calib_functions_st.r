@@ -218,6 +218,11 @@ tb_dth_age_lLik_st <- function(V,rho=0.01) { # V = table of deaths by age 1999-2
 tot_pop_yr_fb_lLik_st <- function(V,st) { # V = total pop (rows=year, cols=us, fb)
   tot_pop_yr      <- CalibDatState[["pop_50_10"]][[st]]
   tot_pop_yr_fb   <- tot_pop_yr[tot_pop_yr[,2]==0,]
+  #get 2017 population
+  pop_ag_11_170  <- CalibDatState[["pop_00_17"]][[st]][,c(1,2,20)]
+  #get 2017 fb population
+  pop_ag_11_17nus <-sum(pop_ag_11_170[pop_ag_11_170[,2]==0,3][-11])
+  #append the foreign born population
   tot_pop_yr_fb   <- c(colSums(tot_pop_yr_fb[,-c(1:2)]), pop_ag_11_17nus)
 
   adj_17          <- sum(dnorm(tot_pop_yr_fb[-1],tot_pop_yr_fb[-1],tot_pop_yr_fb[7]*0.1/1.96,log=T)*wts[c(1+1:6*10,68)])
