@@ -218,10 +218,11 @@ tb_dth_age_lLik_st <- function(V,rho=0.01) { # V = table of deaths by age 1999-2
 tot_pop_yr_fb_lLik_st <- function(V,st) { # V = total pop (rows=year, cols=us, fb)
   tot_pop_yr      <- CalibDatState[["pop_50_10"]][[st]]
   tot_pop_yr_fb   <- tot_pop_yr[tot_pop_yr[,2]==0,]
-  tot_pop_yr_fb   <-colSums(tot_pop_yr_fb[,-c(1:2)])
-  adj_17          <- sum(dnorm(tot_pop_yr_fb[-1],tot_pop_yr_fb[-1],tot_pop_yr_fb[7]*0.1/1.96,log=T)*wts[1+1:6*10])
+  tot_pop_yr_fb   <- c(colSums(tot_pop_yr_fb[,-c(1:2)]), pop_ag_11_17nus)
+
+  adj_17          <- sum(dnorm(tot_pop_yr_fb[-1],tot_pop_yr_fb[-1],tot_pop_yr_fb[7]*0.1/1.96,log=T)*wts[c(1+1:6*10,68)])
   #total population is in real numbers so we need to scale up output
-  sum(dnorm(tot_pop_yr_fb[-1],V[c(11,21,31,41,51,61)]*1e6,tot_pop_yr_fb[7]*0.1/1.96,log=T)*wts[1+1:6*10]) - adj_17  } # CI = +/- 2mil
+  sum(dnorm(tot_pop_yr_fb[-1],V[c(11,21,31,41,51,61,68)]*1e6,tot_pop_yr_fb[7]*0.1/1.96,log=T)*wts[c(1+1:6*10,68)]) - adj_17  } # CI = +/- 2mil
 
 ### D
 tot_pop_yr_us_lLik_st_00_10 <- function(V,st) {
