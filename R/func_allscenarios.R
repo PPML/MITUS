@@ -16,7 +16,7 @@ make_all_scenarios<-function(loc, ParMatrix){
     # Otherwise, activate one of the 8 interventions.
     if (intv != 0) intvs[intv] <- 1
     #use the basecase program change
-    defprg<-def_prgchng(ParMatrix[10,])
+    defprg<-def_prgchng(ParMatrix[1,])
     # Simulate using the elements of intvs to control
     # whether or not each intervention is on.
     out<-new_OutputsInt(loc,ParMatrix,n_cores=1,endyr=2050,
