@@ -25,8 +25,13 @@ if (loc=="US"){
   ParamInit_st<<-ParamInit<<-readRDS(system.file("ST/ST_ParamInit_2019-09-09.rds", package="MITUS"))
   StartVal_st<<-StartVal<<-readRDS(system.file("ST/ST_StartVal_2019-09-09.rds", package="MITUS"))
   Inputs<<-readRDS(system.file(paste0(loc,"/",loc,"_ModelInputs_08-05-19.rds"), package="MITUS"))
-  Opt<<-readRDS(system.file(paste0(loc,"/",loc,"_Optim_all_10_917.rds"), package = "MITUS"))
-  Par<<-readRDS(system.file(paste0(loc,"/",loc,"_Param_all_10_917.rds"), package = "MITUS"))
+  if (loc %in% c("NJ", "IL", "FL")){
+  Opt<<-readRDS(system.file(paste0(loc,"/",loc,"_Optim_all_10_923.rds"), package = "MITUS"))
+  Par<<-readRDS(system.file(paste0(loc,"/",loc,"_Param_all_10_923.rds"), package = "MITUS"))
+  } else{
+    Opt<<-readRDS(system.file(paste0(loc,"/",loc,"_Optim_all_10_917.rds"), package = "MITUS"))
+    Par<<-readRDS(system.file(paste0(loc,"/",loc,"_Param_all_10_917.rds"), package = "MITUS"))
+  }
 }
 
 if (loc=="US"){
