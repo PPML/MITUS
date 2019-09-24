@@ -10,11 +10,10 @@
 
 optim_to_tabby2<-function(loc, simp.date="724"){
   #load the optim matrix from the file
-  optim<-readRDS(system.file(paste0(loc,"/", loc, "_Optim_all_10_",simp.date,".rds"), package="MITUS"))
+  params<-readRDS(system.file(paste0(loc,"/", loc, "_Param_all_10_",simp.date,".rds"), package="MITUS"))
   #remove the posterior value
-  optims<-optim[,-ncol(optim)]
+  # optims<-optim[,-ncol(optim)]
   #create a transformed parameter vector from this matrix
-  params<-gen_par_matrix(optims,savefile=FALSE)
   #generate the results vectors that we need
   results.list<-make_all_scenarios(loc,params)
   #reshape those results
