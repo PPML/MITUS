@@ -22,7 +22,7 @@
 #'@param prg_chng vector of program change values
 #'@return results data frame of output
 #'@export
-new_OutputsZint <-  function(samp_i=1,ParMatrix,startyr=1950, endyr=2050, loc = "US", Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,prg_chng) {
+new_OutputsZint <-  function(samp_i=1,ParMatrix,startyr=1950, endyr=2050, loc = "US", Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,prg_chng=def_prgchng(ParMatrix[1,])) {
   if(min(dim(as.data.frame(ParMatrix)))==1) {
     Par <- as.numeric(ParMatrix);
     names(Par) <- names(ParMatrix)
@@ -52,7 +52,7 @@ new_OutputsZint <-  function(samp_i=1,ParMatrix,startyr=1950, endyr=2050, loc = 
   # trans_mat_tot_ages<<-matrix(tm,16,176)
   trans_mat_tot_ages<<-reblncd(mubt = IP$mubt,can_go = can_go,RRmuHR = IP$RRmuHR[2], RRmuRF = IP$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=IP[["adj_fact"]])
   if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
-  m <- fin_cSim( nYrs       = 2050-1950         , nRes      = length(IP[["ResNam"]])  , rDxt     = IP[["rDxt"]]  , TxQualt    = IP[["TxQualt"]]   , InitPop  = IP[["InitPop"]]    ,
+  m <- fin_cSim( nYrs       = 2050-1950         , nRes      = length(func_ResNam())  , rDxt     = IP[["rDxt"]]  , TxQualt    = IP[["TxQualt"]]   , InitPop  = IP[["InitPop"]]    ,
                   Mpfast     = IP[["Mpfast"]]    , ExogInf   = IP[["ExogInf"]]       , MpfastPI = IP[["MpfastPI"]], Mrslow     = IP[["Mrslow"]]    , rrSlowFB = IP[["rrSlowFB"]]  ,
                   rfast      = IP[["rfast"]]     , RRcurDef  = IP[["RRcurDef"]]      , rSlfCur  = IP[["rSlfCur"]] , p_HR       = IP[["p_HR"]]      , dist_gen = IP[["dist_gen"]]    ,
                   vTMort     = IP[["vTMort"]]    , RRmuRF    = IP[["RRmuRF"]]        , RRmuHR   = IP[["RRmuHR"]]  , Birthst  = IP[["Birthst"]]    ,
@@ -62,7 +62,7 @@ new_OutputsZint <-  function(samp_i=1,ParMatrix,startyr=1950, endyr=2050, loc = 
                   TxVec      = IP[["TxVec"]]     , TunTxMort = IP[["TunTxMort"]]     , rDeft    = IP[["rDeft"]]   , pReTx      = IP[["pReTx"]]     , LtTxPar  = IP[["LtTxPar"]]    ,
                   LtDxPar_lt    = IP[["LtDxPar_lt"]]   , LtDxPar_nolt    = IP[["LtDxPar_nolt"]]   , rLtScrt   = IP[["rLtScrt"]]       , RRdxAge  = IP[["RRdxAge"]] , rRecov     = IP[["rRecov"]]    , pImmScen = IP[["pImmScen"]]   ,
                   EarlyTrend = IP[["EarlyTrend"]], ag_den=IP[["aging_denom"]],  NixTrans = IP[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)$Outputs
-  colnames(m) <- IP[["ResNam"]];
+  colnames(m) <- func_ResNam();
   results<<-as.matrix(m)
 
   return(results)

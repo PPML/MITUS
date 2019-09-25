@@ -9,13 +9,14 @@
 #'@export
 
 optim_to_tabby2<-function(loc, simp.date="724"){
+  model_load(loc)
   #load the optim matrix from the file
-  params<-readRDS(system.file(paste0(loc,"/", loc, "_Param_all_10_",simp.date,".rds"), package="MITUS"))
+  # params<-readRDS(system.file(paste0(loc,"/", loc, "_Param_all_10_",simp.date,".rds"), package="MITUS"))
   #remove the posterior value
   # optims<-optim[,-ncol(optim)]
   #create a transformed parameter vector from this matrix
   #generate the results vectors that we need
-  results.list<-make_all_scenarios(loc,params)
+  results.list<-make_all_scenarios(loc,Par)
   #reshape those results
   reshape_results(loc,results.list)
 
