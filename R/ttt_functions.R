@@ -7,9 +7,9 @@ def_ttt<-function(){
                     "StartYr", "EndYr", "RRprg", "RRmu", "RRPrev")
   ttt_list[[1]]<-"All" #or "USB" or "NUSB"
   ttt_list[[2]]<-"All" #or "0 to 24" or "25 to 64" or "65+"
-  ttt_list[[3]]<-0 #size of population IN FRACTION OF MILLIONS
+  ttt_list[[3]]<-0 #size of population IN MILLIONS
   ttt_list[[4]]<-0 #fraction screened
-  ttt_list[[5]]<-2018
+  ttt_list[[5]]<-2020
   ttt_list[[6]]<-2050
   ttt_list[[7]]<-1
   ttt_list[[8]]<-1
@@ -25,6 +25,7 @@ def_ttt<-function(){
 #'@export
 create_ttt_dist<-function(ttt_list,results,PV){
 #get the appropriate distribution outputs from the MITUS simulation in the start year
+#this returns not the total population size in each of the 16 strata; not the frc in each
   na<-switch(ttt_list[[1]], "All" =c("US","NUS"), "USB"="US","NUSB"="NUS")
 
   ag<-switch(ttt_list[[2]], "All" =c("0-24","25-64","65\\+"), "0 to 24"="0-24","25 to 64"="25-64", "65+"="65\\+")
@@ -78,7 +79,7 @@ rownames(dist) <- paste0("m",0:3) # mortality
   rr_samp <- (exp(par[1])^(0:3)) %*% t(exp(par[2])^(0:3))
   an_samp_rate <- rr_samp * ttt_pop_yr / sum(rr_samp*dist)
   ttt_params<-list()
-  ttt_params[['an_samp_rate']]<-pmin(an_samp_rate,1)
+  ttt_params[['an_samp_rate']]<-pmin(an_samp_rate,12)
   ttt_params[['frc_of_totpop']]<-(ttt_list[["NRiskGrp"]]*ttt_list[["FrcScrn"]])/sum(dist)
 
   return(ttt_params)

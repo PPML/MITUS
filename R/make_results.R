@@ -25,8 +25,8 @@ ResTabC[['small_results']] <- format_as_restab_small_ages_indices(results)
 ResTabC[['big_results']] <- format_as_restab_big_ages_indices(results)
 
 #Average the results
-ResTabC[['small_results']] <- mean_small_restabs(ResTabC, nr = 10, nints = 9)
-ResTabC[['big_results']] <- mean_big_restabs(ResTabC, nr = 10, nints = 9)
+ResTabC[['small_results']] <- mean_small_restabs(ResTabC, nr = 2, nints = 9)
+ResTabC[['big_results']] <- mean_big_restabs(ResTabC, nr = 2, nints = 9)
 #make empty restabs
 intvs <- c('base_case', paste0('intervention_', 1:5), paste0('scenario_', 1:3))
 restab_sm <- restab_ints_sm <- make_empty_res_tab2sm(intvs)

@@ -1452,20 +1452,14 @@ Rcpp::List fin2_cSim(
                   }
               } } }
               ////have TB
-              // temp  = V0[ag][2][0][im][nm][rg][na]*(((1-pop_frc)*rTbP)+
-              //         (pop_frc*(rTbP*rr_ltbi)))*LtTxParN[s][0]*(1-LtTxParN[s][1]); // tx completion
-              // temp2  = V0[ag][3][0][im][nm][rg][na]*(((1-pop_frc)*rTbP)+
-              //         (pop_frc*(rTbP*rr_ltbi)))*LtTxParN[s][0]*(1-LtTxParN[s][1]); // tx completion
-              // temp3 =V0[ag][2][0][im][nm][rg][na]*(((1-pop_frc)*rTbP)+
-              //         (pop_frc*(rTbP*rr_ltbi)))*LtTxParN[s][0]*LtTxParN[s][1]; // default
-              // temp4 = V0[ag][3][0][im][nm][rg][na]*(((1-pop_frc)*rTbP)+
-              //         (pop_frc*(rTbP*rr_ltbi)))*LtTxParN[s][0]*LtTxParN[s][1]; // default
+
             base_inc=V0[ag][2][0][im][nm][rg][na]*rTbP;
-            temp=(base_inc + V0[ag][2][0][im][nm][rg][na]*((pop_frc*(rTbP*rr_ltbi)/((rTbP*rr_ltbi)+(1-rTbP)))))*LtTxParN[s][0]*(1-LtTxParN[s][1]);// tx completion
+            temp=(base_inc + V0[ag][2][0][im][nm][rg][na]*(pop_frc*(rTbP*rr_ltbi)/
+                                                        ((rTbP*rr_ltbi)+(1-rTbP))))*LtTxParN[s][0]*(1-LtTxParN[s][1]);// tx completion
             temp3 =(base_inc + V0[ag][2][0][im][nm][rg][na]*((pop_frc*(rTbP*rr_ltbi)/((rTbP*rr_ltbi)+(1-rTbP)))))*LtTxParN[s][0]*LtTxParN[s][1]; // default
             base_inc=V0[ag][3][0][im][nm][rg][na]*rTbP;
-            temp2=(base_inc + V0[ag][3][0][im][nm][rg][na]*((pop_frc*(rTbP*rr_ltbi)/((rTbP*rr_ltbi)+(1-rTbP)))))*LtTxParN[s][0]*(1-LtTxParN[s][1]);// tx completion
-            temp4 =(base_inc + V0[ag][3][0][im][nm][rg][na]*((pop_frc*(rTbP*rr_ltbi)/((rTbP*rr_ltbi)+(1-rTbP)))))*LtTxParN[s][0]*LtTxParN[s][1]; // default
+            temp2=(base_inc + V0[ag][3][0][im][nm][rg][na]*(pop_frc*(rTbP*rr_ltbi)/((rTbP*rr_ltbi)+(1-rTbP))))*LtTxParN[s][0]*(1-LtTxParN[s][1]);// tx completion
+            temp4 =(base_inc + V0[ag][3][0][im][nm][rg][na]*(pop_frc*(rTbP*rr_ltbi)/((rTbP*rr_ltbi)+(1-rTbP))))*LtTxParN[s][0]*LtTxParN[s][1]; // default
 
               //N(latent)*r(posLTBIscreen)*p(TLTBI Initiation)*p(TLTBI completion)
               V1[ag][2][0][im][nm][rg][na]  -=  (temp+temp3); //remove from latent slow
@@ -1786,13 +1780,13 @@ Rcpp::List fin2_cSim(
                   base_inc=(V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*rTbP;
 
                   Outputs[y][151] +=(base_inc + ((V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*pop_frc*((rTbP*rr_ltbi)/((rTbP*rr_ltbi)+(1-rTbP)))))*LtTxParN[s][0] +
-                    (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxParN[s][0];//all inits (((1- pop_frc)*rTbN) + (pop_frc*(1-(rTbP*rr_ltbi))))*LtTxParN[s][0]; //all init
+                    ((V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxParN[s][0]);//all inits (((1- pop_frc)*rTbN) + (pop_frc*(1-(rTbP*rr_ltbi))))*LtTxParN[s][0]; //all init
                   if(na>0) {
                     Outputs[y][152] += (base_inc + ((V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*pop_frc*((rTbP*rr_ltbi)/((rTbP*rr_ltbi)+(1-rTbP)))))*LtTxParN[s][0] +
-                      (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxParN[s][0];} // FB inits
+                      ((V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxParN[s][0]);} // FB inits
                   if(rg==1) {
                     Outputs[y][153] +=  (base_inc + ((V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*pop_frc*((rTbP*rr_ltbi)/((rTbP*rr_ltbi)+(1-rTbP)))))*LtTxParN[s][0] +
-                      (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxParN[s][0]; } // high risk inits
+                      ((V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxParN[s][0]); } // high risk inits
 
                   Outputs[y][154] += (base_inc + ((V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*pop_frc*((rTbP*rr_ltbi)/((rTbP*rr_ltbi)+(1-rTbP)))))*LtTxParN[s][0]; // inits with LTBI
                 } } } } }

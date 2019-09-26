@@ -16,7 +16,7 @@ optim_to_tabby2<-function(loc, simp.date="724"){
   # optims<-optim[,-ncol(optim)]
   #create a transformed parameter vector from this matrix
   #generate the results vectors that we need
-  results.list<-make_all_scenarios(loc,Par)
+  results.list<-make_all_scenarios(loc,Par[1:2,])
   #reshape those results
   reshape_results(loc,results.list)
 
