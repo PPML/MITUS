@@ -29,7 +29,7 @@ make_all_scenarios<-function(loc, ParMatrix){
                         Scen2 = intvs[[7]],
                         Scen3 = intvs[[8]],
                         prg_chng =def_prgchng(Par[1,]))
-    print(intvs)
+    # print(intvs)
     # Do something to save the simulation outcomes
     # save(out,file=paste0("/Users/nis100/MITUS/inst/",loc,"/",loc,"_results_",intv+1,".rda"))
     #create a list of the simulations
