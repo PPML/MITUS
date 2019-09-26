@@ -87,14 +87,17 @@ new_OutputsZint <-  function(samp_i=1,ParMatrix,startyr=1950, endyr=2050, loc = 
 #'@export
 new_OutputsInt <- function(loc,ParMatrix,n_cores=1,endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0, prg_chng) {
   if(min(dim(as.data.frame(ParMatrix)))==1) {
-    out <- new_OutputsZint(samp_i=1,ParMatrix=ParMatrix,endyr=endyr,loc=loc,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3, prg_chng=prg_chng)
+    out <- new_OutputsZint(samp_i=1,ParMatrix=ParMatrix,loc=loc,endyr=endyr,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3, prg_chng=prg_chng)
   } else {
-    out0 <- mclapply(X=1:nrow(ParMatrix),FUN=new_OutputsZint,mc.cores=n_cores, loc=loc,
-                     ParMatrix=ParMatrix,endyr=2050,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3,prg_chng=prg_chng)
-    out <- array(NA,dim=c(length(out0),100,length(func_ResNam())))
-    for(i in 1:length(out0)) out[i,,] <- as.matrix(out0[[i]])
+    out0 <- mclapply(X=1:nrow(ParMatrix),FUN=new_OutputsZint,mc.cores=n_cores,
+                     ParMatrix=ParMatrix, loc=loc,endyr=2050,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3,prg_chng=prg_chng)
+    out <- array(NA,dim=c(length(out0),endyr-1950,length(func_ResNam())))
+
+    for(i in 1:length(out0)){
+      out[i,,] <- as.matrix(out0[[i]])
+    }
+    dimnames(out)[[3]]<-func_ResNam()
   }
-  dimnames(out)[[3]]<-func_ResNam()
   if (sum(Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3)==0) intv<-1;
   if(Int1==1) intv<-2;if(Int2==1) intv<-3; if(Int3==1) intv<-4;
   if(Int4==1) intv<-5; if(Int5==1) intv<-6; if(Scen1==1) intv<-7;

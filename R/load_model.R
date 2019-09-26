@@ -62,7 +62,6 @@ if (loc=="US"){
   idZ2 <<- ParamInitZ[,4]==2
   ParamInit<<-ParamInit_st
 }
-  prgchng<<-def_prgchng(P)
 
 return(invisible(NULL))
 }

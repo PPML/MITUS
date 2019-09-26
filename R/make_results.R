@@ -49,7 +49,8 @@ restab_ints_bg <- cpp_reshaper(ResTabC[['big_results']][[1]],ResTabC[['big_resul
 #use factored dataframe
 restab_sm[,ncol(restab_sm)] <- restab_ints_sm[,ncol(restab_ints_sm)]
 restab_bg[,ncol(restab_bg)] <- restab_ints_bg[,ncol(restab_ints_bg)]
-
-saveRDS(restab_sm,file=paste0("~/MITUS/inst/",loc, "/sm_restab2.rds"))
-saveRDS(restab_bg,file=paste0("~/MITUS/inst/",loc, "/bg_restab2.rds"))
+reshaped<-list(restab_sm, restab_bg)
+return(reshaped)
+# saveRDS(restab_sm,file=paste0("~/MITUS/inst/",loc, "/sm_restab2.rds"))
+# saveRDS(restab_bg,file=paste0("~/MITUS/inst/",loc, "/bg_restab2.rds"))
 }
