@@ -176,7 +176,7 @@ Rcpp::List fin2_cSim(
   // long double        rowsum[16];
   double        mat_sum;
   double temp_vec2[4];
-  int reblnc; int tb_dyn;
+  int reblnc; int tb_dyn; double base_inc;
   Rcpp::NumericMatrix Outputs2(nYrs,nRes);
   Rcpp::NumericMatrix dist_mat(4,4);
   double RRmuRFN[4];
@@ -1452,14 +1452,20 @@ Rcpp::List fin2_cSim(
                   }
               } } }
               ////have TB
-              temp  = V0[ag][2][0][im][nm][rg][na]*(((1-pop_frc)*rTbP)+
-                      (pop_frc*(rTbP*rr_ltbi)))*LtTxParN[s][0]*(1-LtTxParN[s][1]); // tx completion
-              temp2  = V0[ag][3][0][im][nm][rg][na]*(((1-pop_frc)*rTbP)+
-                      (pop_frc*(rTbP*rr_ltbi)))*LtTxParN[s][0]*(1-LtTxParN[s][1]); // tx completion
-              temp3 =V0[ag][2][0][im][nm][rg][na]*(((1-pop_frc)*rTbP)+
-                      (pop_frc*(rTbP*rr_ltbi)))*LtTxParN[s][0]*LtTxParN[s][1]; // default
-              temp4 = V0[ag][3][0][im][nm][rg][na]*(((1-pop_frc)*rTbP)+
-                      (pop_frc*(rTbP*rr_ltbi)))*LtTxParN[s][0]*LtTxParN[s][1]; // default
+              // temp  = V0[ag][2][0][im][nm][rg][na]*(((1-pop_frc)*rTbP)+
+              //         (pop_frc*(rTbP*rr_ltbi)))*LtTxParN[s][0]*(1-LtTxParN[s][1]); // tx completion
+              // temp2  = V0[ag][3][0][im][nm][rg][na]*(((1-pop_frc)*rTbP)+
+              //         (pop_frc*(rTbP*rr_ltbi)))*LtTxParN[s][0]*(1-LtTxParN[s][1]); // tx completion
+              // temp3 =V0[ag][2][0][im][nm][rg][na]*(((1-pop_frc)*rTbP)+
+              //         (pop_frc*(rTbP*rr_ltbi)))*LtTxParN[s][0]*LtTxParN[s][1]; // default
+              // temp4 = V0[ag][3][0][im][nm][rg][na]*(((1-pop_frc)*rTbP)+
+              //         (pop_frc*(rTbP*rr_ltbi)))*LtTxParN[s][0]*LtTxParN[s][1]; // default
+            base_inc=V0[ag][2][0][im][nm][rg][na]*rTbP;
+            temp=(base_inc + V0[ag][2][0][im][nm][rg][na]*((pop_frc*(rTbP*rr_ltbi)/((rTbP*rr_ltbi)+(1-rTbP)))))*LtTxParN[s][0]*(1-LtTxParN[s][1]);// tx completion
+            temp3 =(base_inc + V0[ag][2][0][im][nm][rg][na]*((pop_frc*(rTbP*rr_ltbi)/((rTbP*rr_ltbi)+(1-rTbP)))))*LtTxParN[s][0]*LtTxParN[s][1]; // default
+            base_inc=V0[ag][3][0][im][nm][rg][na]*rTbP;
+            temp2=(base_inc + V0[ag][3][0][im][nm][rg][na]*((pop_frc*(rTbP*rr_ltbi)/((rTbP*rr_ltbi)+(1-rTbP)))))*LtTxParN[s][0]*(1-LtTxParN[s][1]);// tx completion
+            temp4 =(base_inc + V0[ag][3][0][im][nm][rg][na]*((pop_frc*(rTbP*rr_ltbi)/((rTbP*rr_ltbi)+(1-rTbP)))))*LtTxParN[s][0]*LtTxParN[s][1]; // default
 
               //N(latent)*r(posLTBIscreen)*p(TLTBI Initiation)*p(TLTBI completion)
               V1[ag][2][0][im][nm][rg][na]  -=  (temp+temp3); //remove from latent slow
@@ -1470,8 +1476,8 @@ Rcpp::List fin2_cSim(
               ///defaults are placed in tx naive because it is considered the same tb infection
               V1[ag][2][0][im][nm][rg][na]  += (temp3+temp4); //latent tx default to latent slow
               ////////////// Dont have LTBI
-                temp5= V0[ag][0][0][im][nm][rg][na]*(((1- pop_frc)*rTbN)+(pop_frc*(1-(rTbP*rr_ltbi))));
-                temp6= V0[ag][1][0][im][nm][rg][na]*(((1- pop_frc)*rTbN)+(pop_frc*(1-(rTbP*rr_ltbi))));
+                temp5= V0[ag][0][0][im][nm][rg][na]*rTbN; //(((1- pop_frc)*rTbN)+(pop_frc*(1-(rTbP*rr_ltbi))));
+                temp6= V0[ag][1][0][im][nm][rg][na]*rTbN; //(((1- pop_frc)*rTbN)+(pop_frc*(1-(rTbP*rr_ltbi))));
                 ///apply these rates
                   V1[ag][0][0][im][nm][rg][na]  -= temp5;
                   V1[ag][1][0][im][nm][rg][na]  -= temp6;
@@ -1777,16 +1783,18 @@ Rcpp::List fin2_cSim(
                     }
                   } } } }
 
-                  Outputs[y][151] +=(V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*(((1-pop_frc)*rTbP)+(pop_frc*(rTbP*rr_ltbi)))*LtTxParN[s][0] +
-                    (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*(((1- pop_frc)*rTbN) + (pop_frc*(1-(rTbP*rr_ltbi))))*LtTxParN[s][0]; //all init
-                  if(na>0) {
-                    Outputs[y][152] += (V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*(((1-pop_frc)*rTbP)+(pop_frc*(rTbP*rr_ltbi)))*LtTxParN[s][0] +
-                      (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*(((1- pop_frc)*rTbN) + (pop_frc*(1-(rTbP*rr_ltbi)))) *LtTxParN[s][0]; } // FB inits
-                  if(rg==1) {
-                    Outputs[y][153] +=  (V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*(((1-pop_frc)*rTbP)+(pop_frc*(rTbP*rr_ltbi)))*LtTxParN[s][0] +
-                      (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*(((1- pop_frc)*rTbN) + (pop_frc*(1-(rTbP*rr_ltbi)))) *LtTxParN[s][0]; } // high risk inits
+                  base_inc=(V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*rTbP;
 
-                  Outputs[y][154] += (V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*(((1-pop_frc)*rTbP)+(pop_frc*(rTbP*rr_ltbi)))*LtTxParN[s][0]; // inits with LTBI
+                  Outputs[y][151] +=(base_inc + ((V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*pop_frc*((rTbP*rr_ltbi)/((rTbP*rr_ltbi)+(1-rTbP)))))*LtTxParN[s][0] +
+                    (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxParN[s][0];//all inits (((1- pop_frc)*rTbN) + (pop_frc*(1-(rTbP*rr_ltbi))))*LtTxParN[s][0]; //all init
+                  if(na>0) {
+                    Outputs[y][152] += (base_inc + ((V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*pop_frc*((rTbP*rr_ltbi)/((rTbP*rr_ltbi)+(1-rTbP)))))*LtTxParN[s][0] +
+                      (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxParN[s][0];} // FB inits
+                  if(rg==1) {
+                    Outputs[y][153] +=  (base_inc + ((V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*pop_frc*((rTbP*rr_ltbi)/((rTbP*rr_ltbi)+(1-rTbP)))))*LtTxParN[s][0] +
+                      (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxParN[s][0]; } // high risk inits
+
+                  Outputs[y][154] += (base_inc + ((V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*pop_frc*((rTbP*rr_ltbi)/((rTbP*rr_ltbi)+(1-rTbP)))))*LtTxParN[s][0]; // inits with LTBI
                 } } } } }
         for(int i=151; i<155; i++) { Outputs[y][i] = Outputs[y][i]*12; } // annualize
 
