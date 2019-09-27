@@ -8,7 +8,8 @@ function to run the model}
 \usage{
 new_OutputsZint(samp_i = 1, ParMatrix, startyr = 1950, endyr = 2050,
   loc = "US", Int1 = 0, Int2 = 0, Int3 = 0, Int4 = 0, Int5 = 0,
-  Scen1 = 0, Scen2 = 0, Scen3 = 0, prg_chng)
+  Scen1 = 0, Scen2 = 0, Scen3 = 0, prg_chng = def_prgchng(ParMatrix[1,
+  ]))
 }
 \arguments{
 \item{samp_i}{how many samples}

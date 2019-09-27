@@ -1451,15 +1451,25 @@ Rcpp::List fin2_cSim(
                     pop_frc=ttt_pop_frc;
                   }
               } } }
+
+            ////////////// Dont have LTBI
+            temp5= V0[ag][0][0][im][nm][rg][na]*rTbN; //(((1- pop_frc)*rTbN)+(pop_frc*(1-(rTbP*rr_ltbi))));
+            temp6= V0[ag][1][0][im][nm][rg][na]*rTbN; //(((1- pop_frc)*rTbN)+(pop_frc*(1-(rTbP*rr_ltbi))));
+            ///apply these rates
+            V1[ag][0][0][im][nm][rg][na]  -= temp5;
+            V1[ag][1][0][im][nm][rg][na]  -= temp6;
+            ///////moving to latent tx experienced as in last model -- is this correct?
+            V1[ag][0][1][im][nm][rg][na]  += temp5;
+            V1[ag][1][1][im][nm][rg][na]  += temp6;
               ////have TB
 
             base_inc=V0[ag][2][0][im][nm][rg][na]*rTbP;
-            temp=(base_inc + V0[ag][2][0][im][nm][rg][na]*(pop_frc*(rTbP*rr_ltbi)/
-                                                        ((rTbP*rr_ltbi)+(1-rTbP))))*LtTxParN[s][0]*(1-LtTxParN[s][1]);// tx completion
-            temp3 =(base_inc + V0[ag][2][0][im][nm][rg][na]*((pop_frc*(rTbP*rr_ltbi)/((rTbP*rr_ltbi)+(1-rTbP)))))*LtTxParN[s][0]*LtTxParN[s][1]; // default
+            temp=(base_inc + (V0[ag][2][0][im][nm][rg][na]*(pop_frc*(rTbP*rr_ltbi)/
+                                                        ((rTbP*rr_ltbi)+(1-rTbP)))))*LtTxParN[s][0]*(1-LtTxParN[s][1]);// tx completion
+            temp3 =(base_inc + (V0[ag][2][0][im][nm][rg][na]*((pop_frc*(rTbP*rr_ltbi)/((rTbP*rr_ltbi)+(1-rTbP))))))*LtTxParN[s][0]*LtTxParN[s][1]; // default
             base_inc=V0[ag][3][0][im][nm][rg][na]*rTbP;
-            temp2=(base_inc + V0[ag][3][0][im][nm][rg][na]*(pop_frc*(rTbP*rr_ltbi)/((rTbP*rr_ltbi)+(1-rTbP))))*LtTxParN[s][0]*(1-LtTxParN[s][1]);// tx completion
-            temp4 =(base_inc + V0[ag][3][0][im][nm][rg][na]*(pop_frc*(rTbP*rr_ltbi)/((rTbP*rr_ltbi)+(1-rTbP))))*LtTxParN[s][0]*LtTxParN[s][1]; // default
+            temp2=(base_inc + (V0[ag][3][0][im][nm][rg][na]*(pop_frc*(rTbP*rr_ltbi)/((rTbP*rr_ltbi)+(1-rTbP)))))*LtTxParN[s][0]*(1-LtTxParN[s][1]);// tx completion
+            temp4 =(base_inc + (V0[ag][3][0][im][nm][rg][na]*(pop_frc*(rTbP*rr_ltbi)/((rTbP*rr_ltbi)+(1-rTbP)))))*LtTxParN[s][0]*LtTxParN[s][1]; // default
 
               //N(latent)*r(posLTBIscreen)*p(TLTBI Initiation)*p(TLTBI completion)
               V1[ag][2][0][im][nm][rg][na]  -=  (temp+temp3); //remove from latent slow
@@ -1469,16 +1479,120 @@ Rcpp::List fin2_cSim(
               V1[ag][2][1][im][nm][rg][na]   += (temp+temp2)*(1-LtTxParN[s][2]); //*(1-EffLt0[s]) //tx comp fail to latent slow
               ///defaults are placed in tx naive because it is considered the same tb infection
               V1[ag][2][0][im][nm][rg][na]  += (temp3+temp4); //latent tx default to latent slow
-              ////////////// Dont have LTBI
-                temp5= V0[ag][0][0][im][nm][rg][na]*rTbN; //(((1- pop_frc)*rTbN)+(pop_frc*(1-(rTbP*rr_ltbi))));
-                temp6= V0[ag][1][0][im][nm][rg][na]*rTbN; //(((1- pop_frc)*rTbN)+(pop_frc*(1-(rTbP*rr_ltbi))));
-                ///apply these rates
-                  V1[ag][0][0][im][nm][rg][na]  -= temp5;
-                  V1[ag][1][0][im][nm][rg][na]  -= temp6;
-                  ///////moving to latent tx experienced as in last model -- is this correct?
-                  V1[ag][0][1][im][nm][rg][na]  += temp5;
-                  V1[ag][1][1][im][nm][rg][na]  += temp6;
+
                 } } } } }
+        // for(int rg=0; rg<2; rg++) {
+        //   for(int na=0; na<3; na++) {
+        //     ////////////// US BORN, LOW RISK  //////////////////
+        //     if( rg==0 & na==0) {
+        //       rTbP = rLtScrt[s]*LtDxPar_ltN[0][s];
+        //       rTbN = rLtScrt[s]*LtDxPar_noltN[0][s];
+        //     }
+        //     ////////////// US BORN, HIGH RISK  /////////////////
+        //     if(rg==1 & na==0) {
+        //       rTbP = rLtScrt[s]*LtDxPar_ltN[1][s];
+        //       rTbN = rLtScrt[s]*LtDxPar_noltN[1][s];
+        //     }
+        //     for(int ag=0; ag<11; ag++) {
+        //       ////////////// Young NUS (under 5)  /////////////////
+        //       if(rg==0 & na > 0 & ag==0) {
+        //         rTbP = rLtScrt[s]*LtDxPar_ltN[2][s];
+        //         rTbN = rLtScrt[s]*LtDxPar_noltN[2][s];
+        //       }
+        //       //////////// NON US BORN  ////////////////
+        //       if(rg==0 & na > 0 & ag > 0) {
+        //         rTbP = rLtScrt[s]*LtDxPar_ltN[3][s];
+        //         rTbN = rLtScrt[s]*LtDxPar_noltN[3][s];
+        //       }
+        //       ////////////// NON US BORN, HIGH RISK  /////////////////
+        //       if(rg==1 & na >0) {
+        //         rTbP = rLtScrt[s]*LtDxPar_ltN[4][s];
+        //         rTbN = rLtScrt[s]*LtDxPar_noltN[4][s];
+        //       }
+        //       for(int nm=0; nm<4; nm++) {
+        //         for(int im=0; im<4; im++) {
+        //           ////////////// Dont have LTBI
+        //           temp  = V0[ag][0][0][im][nm][rg][na]*rTbN;
+        //           temp2 = V0[ag][1][0][im][nm][rg][na]*rTbN;
+        //           V1[ag][0][0][im][nm][rg][na]  -= temp;
+        //           V1[ag][1][0][im][nm][rg][na]  -= temp2;
+        //           ///////moving to latent tx experienced as in last model -- is this correct?
+        //           V1[ag][0][1][im][nm][rg][na]  += temp;
+        //           V1[ag][1][1][im][nm][rg][na]  += temp2;
+        //         } } } } }
+        // // for(int ag=0; ag<11; ag++) {
+        // //   for(int tb=0; tb<6; tb++) {
+        // //     for(int lt=0; lt<2; lt++){
+        // //       for(int im=0; im<4; im++){
+        // //         for(int nm=0; nm<4; nm++){
+        // //           for(int rg=0; rg<2; rg++) {
+        // //             for(int na=0; na<3; na++) {
+        // //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
+        // //                 Rcpp::Rcout << "after screen pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+        // //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+        // //
+        // //               }
+        // //             } } } } } } }
+        // /// TLTBI: TX COMPLETION + DEFAULT /// only need to consider tx naive compartment
+        // for(int ag=0; ag<11; ag++) {
+        //   for(int im=0; im<4 ; im++) {
+        //     for(int nm=0; nm<4; nm++) {
+        //       for(int rg=0; rg<2; rg++) {
+        //         for(int na=0; na<3; na++) {
+        //           ////////////// US BORN, LOW RISK  //////////////////
+        //           if( rg==0 & na==0) {
+        //             rTbP = rLtScrt[s]*LtDxPar_ltN[0][s];
+        //             rTbN = rLtScrt[s]*LtDxPar_noltN[0][s];
+        //           }
+        //           ////////////// US BORN, HIGH RISK  /////////////////
+        //           if(rg==1 & na==0) {
+        //             rTbP = rLtScrt[s]*LtDxPar_ltN[1][s];
+        //             rTbN = rLtScrt[s]*LtDxPar_noltN[1][s];
+        //           }
+        //           ////////////// Young NUS (under 5)  /////////////////
+        //           if(rg==0 & na > 0 & ag==0) {
+        //             rTbP = rLtScrt[s]*LtDxPar_ltN[2][s];
+        //             rTbN = rLtScrt[s]*LtDxPar_noltN[2][s];
+        //           }
+        //           //////////// NON US BORN  ////////////////
+        //           if(rg==0 & na > 0 & ag > 0) {
+        //             rTbP = rLtScrt[s]*LtDxPar_ltN[3][s];
+        //             rTbN = rLtScrt[s]*LtDxPar_noltN[3][s];
+        //           }
+        //           ////////////// NON US BORN, HIGH RISK  /////////////////
+        //           if(rg==1 & na >0) {
+        //             rTbP = rLtScrt[s]*LtDxPar_ltN[4][s];
+        //             rTbN = rLtScrt[s]*LtDxPar_noltN[4][s];
+        //           }
+        //           //N(latent)*r(posLTBIscreen)*p(TLTBI Initiation)*p(TLTBI completion)
+        //           temp  = V0[ag][2][0][im][nm][rg][na]*rTbP*LtTxParN[s][0]*(1-LtTxParN[s][1]); // tx completion
+        //           temp2 = V0[ag][3][0][im][nm][rg][na]*rTbP*LtTxParN[s][0]*(1-LtTxParN[s][1]); // tx completion
+        //
+        //           temp3 = V0[ag][2][0][im][nm][rg][na]*rTbP*LtTxParN[s][0]*LtTxParN[s][1]; // default
+        //           temp4 = V0[ag][3][0][im][nm][rg][na]*rTbP*LtTxParN[s][0]*LtTxParN[s][1]; // default
+        //
+        //           V1[ag][2][0][im][nm][rg][na]  -=  (temp+temp3); //remove from latent slow
+        //           V1[ag][3][0][im][nm][rg][na]  -=  (temp2+temp4);  //remove from latent fast
+        //
+        //           V1[ag][1][1][im][nm][rg][na]   += (temp+temp2)*LtTxParN[s][2]; //*EffLt0[s]; //exit to cure
+        //           V1[ag][2][1][im][nm][rg][na]   += (temp+temp2)*(1-LtTxParN[s][2]); //*(1-EffLt0[s]) //tx comp fail to latent slow
+        //
+        //           ///defaults are placed in tx naive because it is considered the same tb infection
+        //           V1[ag][2][0][im][nm][rg][na]  += (temp3+temp4); //latent tx default to latent slow
+        //         } } } } }
+        // for(int ag=0; ag<11; ag++) {
+        //   for(int tb=0; tb<6; tb++) {
+        //     for(int lt=0; lt<2; lt++){
+        //       for(int im=0; im<4; im++){
+        //         for(int nm=0; nm<4; nm++){
+        //           for(int rg=0; rg<2; rg++) {
+        //             for(int na=0; na<3; na++) {
+        //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
+        //                 Rcpp::Rcout << "after tltbi pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+        //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+        //
+        //               }
+        //             } } } } } } }
         ///////////////////// TB DIAGNOSIS AND TX INITIATION  /////////////////////////
         for(int ag=0; ag<11; ag++) {
           for(int lt=0; lt<2; lt++) {
@@ -1707,6 +1821,48 @@ Rcpp::List fin2_cSim(
                   } } } } } }
         for(int i=134; i<151; i++) { Outputs[y][i] = Outputs[y][i]*12; } //yes these are updated
         /// TLTBI INITS ///
+        // /// TLTBI INITS ///
+        // for(int rg=0; rg<2; rg++) {
+        //   for(int na=0; na<3; na++) {
+        //     ////////////// US BORN, LOW RISK  //////////////////
+        //     if( rg==0 & na==0) {
+        //       rTbP = rLtScrt[s]*LtDxPar_ltN[0][s];
+        //       rTbN = rLtScrt[s]*LtDxPar_noltN[0][s];
+        //     }
+        //     ////////////// US BORN, HIGH RISK  /////////////////
+        //     if(rg==1 & na==0) {
+        //       rTbP = rLtScrt[s]*LtDxPar_ltN[1][s];
+        //       rTbN = rLtScrt[s]*LtDxPar_noltN[1][s];
+        //     }
+        //     for(int ag=0; ag<11; ag++) {
+        //       ////////////// Young NUS (under 5)  /////////////////
+        //       if(rg==0 & na > 0 & ag==0) {
+        //         rTbP = rLtScrt[s]*LtDxPar_ltN[2][s];
+        //         rTbN = rLtScrt[s]*LtDxPar_noltN[2][s];
+        //       }
+        //       //////////// NON US BORN  ////////////////
+        //       if(rg==0 & na > 0 & ag > 0) {
+        //         rTbP = rLtScrt[s]*LtDxPar_ltN[3][s];
+        //         rTbN = rLtScrt[s]*LtDxPar_noltN[3][s];
+        //       }
+        //       ////////////// NON US BORN, HIGH RISK  /////////////////
+        //       if(rg==1 & na >0) {
+        //         rTbP = rLtScrt[s]*LtDxPar_ltN[4][s];
+        //         rTbN = rLtScrt[s]*LtDxPar_noltN[4][s];
+        //       }
+        //       for(int im=0; im<4; im++) {
+        //         for(int nm=0; nm<4; nm++) {
+        //           Outputs[y][151] += (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP*LtTxParN[s][0] +
+        //             (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxParN[s][0]; //all init
+        //           if(na>0) {
+        //             Outputs[y][152] += (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP*LtTxParN[s][0] +
+        //               (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxParN[s][0]; } // FB inits
+        //           if(rg==1) {
+        //             Outputs[y][153] +=  (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP*LtTxParN[s][0] +
+        //               (V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxParN[s][0]; } // high risk inits
+        //
+        //           Outputs[y][154] += (V0[ag][3 ][0 ][im][nm][rg][na]+V0[ag][2 ][0 ][im][nm][rg][na])*rTbP*LtTxParN[s][0]; // inits with LTBI
+        //         } } } } }
         int agi = ttt_ag.size(); int nai = ttt_na.size(); int si = ttt_month.size();
         rr_ltbi=1; pop_frc=0;
 

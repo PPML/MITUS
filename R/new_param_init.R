@@ -49,24 +49,29 @@ fin_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sce
   ###########################          INPUTS            #########################
   ################################################################################
   ################################################################################
-  BgMort           <- as.matrix(Inputs[["BgMort"]])
+  BgMort              <- as.matrix(Inputs[["BgMort"]])
   if(loc=="US"){
     BgMort[1:68,2:12] <-weight_mort(loc)
   } else{
     BgMort[10:67,2:12]<-weight_mort(loc)
   }
+  ###SSA projections for reductions in mortality going forward
+  ### these should be calculated and stored as new input data
   for(j in 68:151){
-    for (i in 1:2){ #ssa adjustment
+    for (i in 1:2){
       BgMort[j,i]<-BgMort[j-1,i]*(1-.0159)
     }
-    for (i in 3:7){
-      BgMort[j,i]<-BgMort[j-1,i]*(1-.0095)
+    for (i in 3:5){
+      BgMort[j,i]<-BgMort[j-1,i]*(1-.0090)
+    }
+    for (i in 6:7){
+      BgMort[j,i]<-BgMort[j-1,i]*(1-.0107)
     }
     for (i in 8:9){
       BgMort[j,i]<-BgMort[j-1,i]*(1-.0083)
     }
     for (i in 10:11){
-      BgMort[j,i]<-BgMort[j-1,i]*(1-.0052)
+      BgMort[j,i]<-BgMort[j-1,i]*(1-.0069)
     }
   }
   InputParams[["InitPop"]] <- Inputs[["InitPop"]]
@@ -97,7 +102,7 @@ fin_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sce
   }
   mubt<-mubt[1:month,]
   for(i in 1:11){
-    mubt[,i] <- mubt[,i]*exp(PV[["TunmuAg"]])
+    mubt[,i] <- mubt[,i]*exp(PV[["TunmuAg"]]*i)
   }
   InputParams[["mubt"]] <-mubt
 
@@ -124,7 +129,7 @@ fin_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sce
   InputParams[["RRmuRF"]]<-InputParams[["RRmuRF"]]/sum(InputParams[["RRmuRF"]]*mort_dist)
 
   ############### CREATE A MATRIX OF TB MORTALITIES BY AGE GROUP ###############
-
+  TunmuTbAg <- PV["TunmuTbAg"]
 
   vTMort   <- matrix(0,11,6);
   rownames(vTMort) <- c("0_4",paste(0:8*10+5,1:9*10+4,sep="_"),"95p")
@@ -138,50 +143,49 @@ fin_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sce
 
   ######################## MULTIPLER OF MORT RATE ABOVE ########################
 
-  TunmuTbAg <- PV["TunmuTbAg"]
-
-  #################                IMMIGRATION              #####################
+  ######################         IMMIGRATION             ########################
   ######################         OVERALL IMM.            ########################
-  TotImmig0       <- (c(ImmigInputs[[1]][1:151])+c(rep(0,65),cumsum(rep(PV["ImmigVolFut"],86))))/12*PV["ImmigVol"]
-  TotImmig1       <- TotImmig0
-  TotImmig        <- SmoCurve(TotImmig1)
-  AgeDist<-matrix(NA,11,1801)
-  TotImmAge<-matrix(NA,1801,11)
-  for (i in 1:11){
-    AgeDist[i,]         <- SmoCurve(ImmigInputs[["AgeDist"]][i,])}
-  for (i in 1:1801){
+  TotImmig0       <- (c(Inputs$ImmigInputs[[1]][1:151])+c(rep(0,67),cumsum(rep(PV["ImmigVolFut"],84))))/12*PV["ImmigVol"]
+  TotImmAge0      <-matrix(0,151,11)
+  for (i in 1:151){
     for (j in 1:11){
-      TotImmAge[i,j]   <- TotImmig[i]*AgeDist[j,i]
-    }}
-  ###########   IMMIGRATION WITH LATENT TB   #######################
-  PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:69]^PV["TunLtbiTrend"]*ImmigInputs[["PrevTrend25_34"]][69]^(1-PV["TunLtbiTrend"]),
-                        ImmigInputs[["PrevTrend25_34"]][70:151]*(PV["ImmigPrevFutLat"]/0.99)^(1:82))
+      TotImmAge0[i,j]   <- TotImmig0[i]*as.matrix(ImmigInputs$AgeDist[j,i])
+    } }
+  TotImmAge <-matrix(0,1801,11)
+  # for (i in 1:1801){
+  for (j in 1:11){
+    TotImmAge[,j]        <- SmoCurve(TotImmAge0[,j])
+  }
+  # }
+  ######################           LTBI IMM.             ########################
+  PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:67]^(exp(PV["TunLtbiTrend"]))*ImmigInputs[["PrevTrend25_34"]][67]^(1-exp(PV["TunLtbiTrend"])),
+                        ImmigInputs[["PrevTrend25_34"]][68:151]*(PV["ImmigPrevFutLat"]/0.99)^(1:84))
   PrevTrend25_341l <-   PrevTrend25_340l
   PrevTrend25_34l  <- SmoCurve(PrevTrend25_341l)
   PrevTrend25_34_ls <- (PrevTrend25_34l);
   PrevTrend25_34_ls <- PrevTrend25_34_ls/PrevTrend25_34_ls[(2011-1950)*12+6]
   ImmLat          <- matrix(NA,length(PrevTrend25_34_ls),11)
   for(i in 1:11) ImmLat[,i] <- (1-exp((-(c(2.5,1:9*10,100)/100)[i]*PV["LtbiPar1"]-(c(2.5,1:9*10,100)/100)[i]^2*PV["LtbiPar2"])*PrevTrend25_34_ls))*TotImmAge[,i]
-  InputParams[["ImmLat"]]    <-ImmLat[1:1201,1:11]
-  ######################         ACTIVE TB IMM.           ########################
-  PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:69]^PV["TunActTrend"]*ImmigInputs[["PrevTrend25_34"]][69]^(1-PV["TunActTrend"]),
-                        ImmigInputs[["PrevTrend25_34"]][70:151]*(PV["ImmigPrevFutAct"]/0.99)^(1:82))
-  PrevTrend25_341a <-   PrevTrend25_340a
-  PrevTrend25_34a  <- SmoCurve(PrevTrend25_341a)
 
+  ######################         ACTIVE TB IMM.           ########################
+  # PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:69]^exp(PV["TunActTrend"])*ImmigInputs[["PrevTrend25_34"]][69]^exp((1-PV["TunActTrend"])),
+
+  PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:67]^(exp(PV["TunActTrend"]))*ImmigInputs[["PrevTrend25_34"]][67]^(1-exp(PV["TunActTrend"])),
+                        ImmigInputs[["PrevTrend25_34"]][68:151]*(PV["ImmigPrevFutAct"]/0.99)^(1:84))
+
+  PrevTrend25_34a  <- SmoCurve(PrevTrend25_340a)
   act_prob<-rep(0,1801)
   for (t in 1:1801){
     act_prob[t]<-((PV[["pImActSlp"]]*t)/1801)+PV[["pImActIntc"]]
   }
 
-  InputParams[["ImmAct"]]          <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*act_prob
-  InputParams[["ImmFst"]]          <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*(1-act_prob)
+  ImmAct         <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*act_prob
+  ImmFst         <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*(1-act_prob)
 
-  InputParams[["ImmAct"]]    <-InputParams[["ImmAct"]][1:1201,1:11]
-  InputParams[["ImmFst"]]    <-InputParams[["ImmFst"]][1:1201,1:11]
-  TotImmAge<-TotImmAge[1:1201,]
-  InputParams[["ImmNon"]]        <- TotImmAge-InputParams[["ImmAct"]]-InputParams[["ImmFst"]]-InputParams[["ImmLat"]]
-
+  ImmNon         <- TotImmAge-ImmAct-ImmFst-ImmLat
+  ###################### TRUNCATE THESE VALS
+  InputParams[["ImmAct"]]<-ImmAct[1:month,];InputParams[["ImmFst"]]<-ImmFst[1:month,]; InputParams[["ImmLat"]]<-ImmLat[1:month,]; InputParams[["ImmNon"]]<-ImmNon[1:month,]
+  # ImmNon[1:6,]<- ImmAct[1:6,]<-ImmFst[1:6,]<-ImmLat[1:6,]<-0
 
   #### #### #### SCEN 2 #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
@@ -189,7 +193,7 @@ fin_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sce
     for(i in 1:11) InputParams[["ImmLat"]][,i] <- InputParams[["ImmLat"]][,i]*(1-LgtCurve(2018,2019,1))
     for(i in 1:11) InputParams[["ImmAct"]][,i] <- InputParams[["ImmAct"]][,i]*(1-LgtCurve(2018,2019,1))
     for(i in 1:11) InputParams[["ImmFst"]][,i] <- InputParams[["ImmFst"]][,i]*(1-LgtCurve(2018,2019,1))
-    InputParams[["ImmNon"]]         <- TotImmAge-InputParams[["ImmAct"]]-InputParams[["ImmFst"]]-InputParams[["ImmLat"]]
+    InputParams[["ImmNon"]]         <- TotImmAge[1:1201,]-InputParams[["ImmAct"]]-InputParams[["ImmFst"]]-InputParams[["ImmLat"]]
 
   }
 
@@ -201,16 +205,13 @@ fin_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sce
     for(i in 1:11) InputParams[["ImmLat"]][817:1201,i] <- InputParams[["ImmLat"]][817:1201,i]*adjfV
     for(i in 1:11) InputParams[["ImmAct"]][817:1201,i] <- InputParams[["ImmAct"]][817:1201,i]*adjfV
     for(i in 1:11) InputParams[["ImmFst"]][817:1201,i] <- InputParams[["ImmFst"]][817:1201,i]*adjfV
-    InputParams[["ImmNon"]]         <- TotImmAge-InputParams[["ImmAct"]]-InputParams[["ImmFst"]]-InputParams[["ImmLat"]]
+    InputParams[["ImmNon"]]         <- TotImmAge[1:1201,]-InputParams[["ImmAct"]]-InputParams[["ImmFst"]]-InputParams[["ImmLat"]]
   }
 
   #######################__EXOGENEOUS INFECTION RISK    #######################
-
-  # NEED TO REMOVE DRUG RESISTANCE
-  InputParams[["ExogInf"]] <- rep(NA,length(PrevTrend25_34a))
-  InputParams[["ExogInf"]] <- PV["ExogInf"]*PrevTrend25_34a/PrevTrend25_341a["2013"]/12
-  InputParams[["ExogInf"]] <- InputParams[["ExogInf"]][1:month]
-
+  ExogInf        <- matrix(NA,length(PrevTrend25_34a),5)
+  ExogInf        <- PV["ExogInf"]*PrevTrend25_34a/PrevTrend25_340a["2013"]/12
+  InputParams[["ExogInf"]]        <- ExogInf[1:month]
   #removed *(ImmigInputs[[7]][4]*DrN[,i]+(1-ImmigInputs[[7]][4])*DrE[,i])
   ###############################    EMMIGRATION   ##############################
 
@@ -230,7 +231,6 @@ fin_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sce
   HR_exit  <- r0_5*((r45_55/r0_5)^(1/(50-2.5)))^(yr-2.5)
   HR_entry <- HR_exit*InputParams[["p_HR"]]*1.3
   InputParams[["HrEntEx"]]  <- cbind(HR_entry,HR_exit)/12
-
   ##########################   TB TRANSMISSION  #################################
 
   CR           <- PV["CR"]/12
@@ -332,7 +332,7 @@ fin_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sce
   IGRA_frc<-.33
   Sens_TST <-c(.726,.540,.691,.807,.570)
   Spec_TST <-c(.921,.965,.739,.70,.885)
-  names(Sens_TST)<- names(Spec_TST)<-names(Sens_IGRA)<- names(Spec_IGRA)<-c("lrUS","hrUS","youngNUS","NUS","hrNUS")
+  names(Sens_TST)<- names(Spec_TST)<-names(Sens_IGRA)<- names(Spec_IGRA)<-c("US","hivUS","youngNUS","NUS","hivNUS")
 
   ###calculate the weighted mean of sensitivity and specificity
   SensLt<-matrix(NA,length(Sens_IGRA),month)
@@ -372,19 +372,23 @@ fin_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sce
   LtDxPar_lt   <-SensLt
   LtDxPar_nolt <- 1-SpecLt
   #adjust for High Risk Populations
-  LtDxPar_lt[c(1,4),]     <-rrTestHr*LtDxPar_lt[c(1,4),]
-  LtDxPar_nolt[c(1,4),]   <-rrTestHr*LtDxPar_nolt[c(1,4),]
+  LtDxPar_lt[2,]     <-rrTestHr*LtDxPar_lt[1,]
+  LtDxPar_nolt[2,]   <-rrTestHr*LtDxPar_nolt[1,]
+  #High risk foriegn born
+  LtDxPar_lt[5,]     <-rrTestHr*LtDxPar_lt[4,]
+  LtDxPar_nolt[5,]   <-rrTestHr*LtDxPar_nolt[4,]
   #adjust for no latent
-  LtDxPar_nolt[1,]<-LtDxPar_nolt[1,]*rrTestLrNoTb
+  LtDxPar_nolt[1,]   <-LtDxPar_nolt[1,]*rrTestLrNoTb
 
   InputParams[["LtDxPar_lt"]]<-LtDxPar_lt;   InputParams[["LtDxPar_nolt"]]<-LtDxPar_nolt;
+
   #### #### #### INT 1 #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
   pctDoc <- (1-0.28)
   if(Int1==1) {
     for(i in 1:11) InputParams[["ImmLat"]][,i] <- InputParams[["ImmLat"]][,i]*(1-LgtCurve(2018,2023,1)*SensLt[4,1]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
     for(i in 1:11) InputParams[["ImmAct"]][,i] <- InputParams[["ImmAct"]][,i]*(1-LgtCurve(2018,2023,1)*SensLt[4,1]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
     for(i in 1:11) InputParams[["ImmFst"]][,i] <- InputParams[["ImmFst"]][,i]*(1-LgtCurve(2018,2023,1)*SensLt[4,1]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
-    InputParams[["ImmNon"]]        <- TotImmAge-InputParams[["ImmAct"]]-InputParams[["ImmFst"]]-InputParams[["ImmLat"]]
+    InputParams[["ImmNon"]]        <- TotImmAge[1:1201,]-InputParams[["ImmAct"]]-InputParams[["ImmFst"]]-InputParams[["ImmLat"]]
   }
   ######################          LTBI DIAGNOSIS           ########################
   ###################### LTBI TX EFFECTIVENESS PROGRAM CHANGE ########################

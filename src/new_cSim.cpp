@@ -58,7 +58,7 @@ Rcpp::List fin_cSim(
     std::vector<double> TxQualt,
     Rcpp::NumericMatrix       InitPop,
     Rcpp::NumericMatrix       Mpfast,
-    std::vector<double>       ExogInf,
+    std::vector<double> ExogInf,
     Rcpp::NumericMatrix       MpfastPI,
     Rcpp::NumericMatrix       Mrslow,
     std::vector<double> rrSlowFB,
@@ -134,7 +134,6 @@ Rcpp::List fin_cSim(
   double        temp2;
   double        temp3;
   double        temp4;
-  double temp5; double temp6;
   double        indextemp;
   double        temp4V[11][5];
   double        rTbP;
@@ -457,10 +456,10 @@ Rcpp::List fin_cSim(
           for(int rg=0; rg<2; rg++) {
             for(int na=0; na<3; na++){
               for(int tb=0; tb<5; tb++) {
-                if ((ag<9) | ((RRmuRFN[nm]*RRmuHR[rg]) < 5)){
+                if ((ag<9) | ((mubtN[0][ag]*RRmuRFN[nm]*RRmuHR[rg]) < .5)){
                   temp = ((RRmuRFN[nm]*RRmuHR[rg])*mubtN[0][ag]);
                 } else {
-                  temp =  (mubtN[0][ag]*5);
+                  temp =  (.5);
                 }
                 V1[ag][tb][0][im][nm][rg][na]  -= (V0[ag][tb][0][im][nm][rg][na]*(temp+vTMortN[ag][tb]));
 
@@ -1005,10 +1004,10 @@ Rcpp::List fin_cSim(
               for(int rg=0; rg<2; rg++) {
                 for(int na=0; na<3; na++) {
                   for(int tb=0; tb<4; tb++) {
-                    if ((ag<9) | ((RRmuRFN[nm]*RRmuHR[rg]) < 5)){
+                    if ((ag<9) | ((mubtN[s][ag]*RRmuRFN[nm]*RRmuHR[rg]) < .5)){
                       temp = ((RRmuRFN[nm]*RRmuHR[rg])*mubtN[s][ag]);}
                     else {
-                      temp =  (mubtN[s][ag]*5);
+                      temp =  .5;
                     }
 
                     VMort[ag][tb ][lt][im][nm][rg][na]  = V0[ag][tb][lt][im][nm][rg][na]*temp;
@@ -1374,23 +1373,76 @@ Rcpp::List fin_cSim(
               rTbN = rLtScrt[s]*LtDxPar_noltN[1][s];
             }
             for(int ag=0; ag<11; ag++) {
-            ////////////// Young NUS (under 5)  /////////////////
-            if(rg==0 & na > 0 & ag==0) {
-              rTbP = rLtScrt[s]*LtDxPar_ltN[2][s];
-              rTbN = rLtScrt[s]*LtDxPar_noltN[2][s];
-            }
-            //////////// NON US BORN  ////////////////
-            if(rg==0 & na > 0 & ag > 0) {
-              rTbP = rLtScrt[s]*LtDxPar_ltN[3][s];
-              rTbN = rLtScrt[s]*LtDxPar_noltN[3][s];
-            }
-            ////////////// NON US BORN, HIGH RISK  /////////////////
-            if(rg==1 & na >0) {
-              rTbP = rLtScrt[s]*LtDxPar_ltN[4][s];
-              rTbN = rLtScrt[s]*LtDxPar_noltN[4][s];
-            }
+              ////////////// Young NUS (under 5)  /////////////////
+              if(rg==0 & na > 0 & ag==0) {
+                rTbP = rLtScrt[s]*LtDxPar_ltN[2][s];
+                rTbN = rLtScrt[s]*LtDxPar_noltN[2][s];
+              }
+              //////////// NON US BORN  ////////////////
+              if(rg==0 & na > 0 & ag > 0) {
+                rTbP = rLtScrt[s]*LtDxPar_ltN[3][s];
+                rTbN = rLtScrt[s]*LtDxPar_noltN[3][s];
+              }
+              ////////////// NON US BORN, HIGH RISK  /////////////////
+              if(rg==1 & na >0) {
+                rTbP = rLtScrt[s]*LtDxPar_ltN[4][s];
+                rTbN = rLtScrt[s]*LtDxPar_noltN[4][s];
+              }
               for(int nm=0; nm<4; nm++) {
                 for(int im=0; im<4; im++) {
+                  ////////////// Dont have LTBI
+                  temp  = V0[ag][0][0][im][nm][rg][na]*rTbN;
+                  temp2 = V0[ag][1][0][im][nm][rg][na]*rTbN;
+                  V1[ag][0][0][im][nm][rg][na]  -= temp;
+                  V1[ag][1][0][im][nm][rg][na]  -= temp2;
+                  ///////moving to latent tx experienced as in last model -- is this correct?
+                  V1[ag][0][1][im][nm][rg][na]  += temp;
+                  V1[ag][1][1][im][nm][rg][na]  += temp2;
+                } } } } }
+        // for(int ag=0; ag<11; ag++) {
+        //   for(int tb=0; tb<6; tb++) {
+        //     for(int lt=0; lt<2; lt++){
+        //       for(int im=0; im<4; im++){
+        //         for(int nm=0; nm<4; nm++){
+        //           for(int rg=0; rg<2; rg++) {
+        //             for(int na=0; na<3; na++) {
+        //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
+        //                 Rcpp::Rcout << "after screen pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+        //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+        //
+        //               }
+        //             } } } } } } }
+        /// TLTBI: TX COMPLETION + DEFAULT /// only need to consider tx naive compartment
+        for(int ag=0; ag<11; ag++) {
+          for(int im=0; im<4 ; im++) {
+            for(int nm=0; nm<4; nm++) {
+              for(int rg=0; rg<2; rg++) {
+                for(int na=0; na<3; na++) {
+                  ////////////// US BORN, LOW RISK  //////////////////
+                  if( rg==0 & na==0) {
+                    rTbP = rLtScrt[s]*LtDxPar_ltN[0][s];
+                    rTbN = rLtScrt[s]*LtDxPar_noltN[0][s];
+                  }
+                  ////////////// US BORN, HIGH RISK  /////////////////
+                  if(rg==1 & na==0) {
+                    rTbP = rLtScrt[s]*LtDxPar_ltN[1][s];
+                    rTbN = rLtScrt[s]*LtDxPar_noltN[1][s];
+                  }
+                  ////////////// Young NUS (under 5)  /////////////////
+                  if(rg==0 & na > 0 & ag==0) {
+                    rTbP = rLtScrt[s]*LtDxPar_ltN[2][s];
+                    rTbN = rLtScrt[s]*LtDxPar_noltN[2][s];
+                  }
+                  //////////// NON US BORN  ////////////////
+                  if(rg==0 & na > 0 & ag > 0) {
+                    rTbP = rLtScrt[s]*LtDxPar_ltN[3][s];
+                    rTbN = rLtScrt[s]*LtDxPar_noltN[3][s];
+                  }
+                  ////////////// NON US BORN, HIGH RISK  /////////////////
+                  if(rg==1 & na >0) {
+                    rTbP = rLtScrt[s]*LtDxPar_ltN[4][s];
+                    rTbN = rLtScrt[s]*LtDxPar_noltN[4][s];
+                  }
                   //N(latent)*r(posLTBIscreen)*p(TLTBI Initiation)*p(TLTBI completion)
                   temp  = V0[ag][2][0][im][nm][rg][na]*rTbP*LtTxParN[s][0]*(1-LtTxParN[s][1]); // tx completion
                   temp2 = V0[ag][3][0][im][nm][rg][na]*rTbP*LtTxParN[s][0]*(1-LtTxParN[s][1]); // tx completion
@@ -1406,15 +1458,6 @@ Rcpp::List fin_cSim(
 
                   ///defaults are placed in tx naive because it is considered the same tb infection
                   V1[ag][2][0][im][nm][rg][na]  += (temp3+temp4); //latent tx default to latent slow
-
-                ////////////// Dont have LTBI
-                temp5  = V0[ag][0][0][im][nm][rg][na]*rTbN;
-                temp6 = V0[ag][1][0][im][nm][rg][na]*rTbN;
-                V1[ag][0][0][im][nm][rg][na]  -= temp5;
-                V1[ag][1][0][im][nm][rg][na]  -= temp6;
-                ///////moving to latent tx experienced as in last model -- is this correct?
-                V1[ag][0][1][im][nm][rg][na]  += temp5;
-                V1[ag][1][1][im][nm][rg][na]  += temp6;
                 } } } } }
         // for(int ag=0; ag<11; ag++) {
         //   for(int tb=0; tb<6; tb++) {
@@ -1736,7 +1779,7 @@ Rcpp::List fin_cSim(
                     //   Outputs[y][171      ] += temp ;   //  incidence, HIV pos
                     //   Outputs[y][171+16   ] += temp2; } //  incidence, HIV pos, recent infection
                   } } } } } }
-        for(int i=155; i<187; i++) { Outputs[y][i] = Outputs[y][i]*12; } // annualize
+        for(int i=154; i<187; i++) { Outputs[y][i] = Outputs[y][i]*12; } // annualize
 
         // NOTIFICATIONS, dead at diagnosis
         for(int nm=0; nm<4 ; nm++) {
@@ -1761,7 +1804,7 @@ Rcpp::List fin_cSim(
                     //   Outputs[y][229   ] += temp2; }  // dx HIV neg (1)
                     Outputs[y][202+rg] += temp2;   // N_ by rg (2)
                   } } } } } }
-        for(int i=187; i<204; i++) { Outputs[y][i] = Outputs[y][i]*12; }
+        for(int i=187; i<54; i++) { Outputs[y][i] = Outputs[y][i]*12; }
 
         // NOTIFICATIONS US
         for(int ag=0; ag<11; ag++) {
@@ -2035,101 +2078,8 @@ Rcpp::List fin_cSim(
                 } } } } }
       }
 
-      // for(int ag=0; ag<11; ag++) {
-      //   for(int tb=0; tb<6; tb++) {
-      //     for(int lt=0; lt<2; lt++){
-      //       for(int im=0; im<4; im++){
-      //         for(int nm=0; nm<4; nm++){
-      //           for(int rg=0; rg<2; rg++) {
-      //             for(int na=0; na<3; na++) {
-      //               if (std::any_of(V1[ag][tb][lt][im][nm][rg][na]<0)){
-      //                 //Rcpp::Rcout << "after rblnc pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
-      //              //   Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-      //              Rcpp::Rcout << "after rblnc pop is negative /n";
-      //               }
-      //             } } } } } } }
-
-
-      //     //
-      //     //    ///////////////////////////////////////////////////////////////////////////////////
-      //     //    ///////////                       UPDATE V0 as V1                       ///////////
-      // //     //    ///////////////////////////////////////////////////////////////////////////////////
-      // for(int ag=0; ag<11; ag++) {
-      //   for(int tb=0; tb<6; tb++) {
-      //     for(int lt=0; lt<2; lt++){
-      //       for (int im=0; im<4; im++){
-      //         for (int nm=0; nm<4; nm++){
-      //           for(int rg=0; rg<2; rg++) {
-      //             for(int na=0; na<3; na++){
-      //               // if ((reblnc == 1) & ((m==5)|(m==11))){
-      //               //   V0[ag][tb][lt][im][nm][rg][na] = V2[ag][tb][lt][im][nm][rg][na];
-      //               //   V1[ag][tb][lt][im][nm][rg][na] = V2[ag][tb][lt][im][nm][rg][na];
-      //               // } else {
-      //                 V0[ag][tb][lt][im][nm][rg][na] = V1[ag][tb][lt][im][nm][rg][na];
-      //               // }
-      //             } } } } } } }
-      // for(int ag=0; ag<11; ag++) {
-      //
-      // for (int i=0; i<4; i++){
-      //   for (int j=0; j<4; j++){
-      //     temp_mat[i][j]=0; } }
-      // mat_sum=0;
-      // for(int nm=0; nm<4; nm++){
-      //     for(int tb=0; tb<6; tb++) {
-      //       for(int lt=0; lt<2; lt++){
-      //
-      //         for(int im=0; im<4; im++) {
-      //           for(int rg=0; rg<2; rg++){
-      //             for(int na=0; na<3; na++){
-      //               temp_mat[nm][im]  += V1[ag][tb][lt][im][nm][rg][na];
-      //             } } } } }
-      // }
-      // for(int nm=0; nm<4; nm++){
-      //   for(int im=0; im<4; im++){
-      //     mat_sum+=temp_mat[nm][im];
-      //   } }
-      // for(int nm=0; nm<4; nm++){
-      //   for(int im=0; im<4; im++){
-      //
-      //     temp_mat2[nm][im] = temp_mat[nm][im]/mat_sum;
-      //   } }
-      // for(int nm=0; nm<4; nm++){
-      //   for(int im=0; im<4; im++){
-      // Rcpp::Rcout <<"at s "<<s <<"dist is = "<< temp_mat2[nm][im] << "at nm =" << nm <<" at im =" << im << "& ag = " <<ag<< "\n";
-      // } }
-      // }
-
-
     } //// end of month loop!//////////////////////////////////////////////////////////
   } //// end of year loop!///////////////////////////////////////////////////////////
-  // for(int ag=0; ag<11; ag++) {
-  //
-  //   for (int i=0; i<4; i++){
-  //     for (int j=0; j<4; j++){
-  //
-  //       temp_mat[i][j]=0; } }
-  //   mat_sum=0;
-  //   for(int nm=0; nm<4; nm++){
-  //     for(int tb=0; tb<6; tb++) {
-  //       for(int lt=0; lt<2; lt++){
-  //         for(int im=0; im<4; im++) {
-  //           for(int rg=0; rg<2; rg++){
-  //             for(int na=0; na<3; na++){
-  //               temp_mat[nm][im]  += V1[ag][tb][lt][im][nm][rg][na];
-  //             } } } } }
-  //   }
-  //   for(int nm=0; nm<4; nm++){
-  //     for(int im=0; im<4; im++){
-  //       mat_sum+=temp_mat[nm][im];
-  //     } }
-  //   for(int nm=0; nm<4; nm++){
-  //     for(int im=0; im<4; im++){
-  //
-  //       temp_mat[nm][im] = temp_mat[nm][im]/mat_sum;
-  //       Rcpp::Rcout << temp_mat[nm][im] << "at nm = " << nm << "& im "<< im << "at ag "<< ag<< "\n";
-  //
-  //     } } }
-  //
 
   for (int i=0; i<4; i++){
     for (int j=0; j<4; j++){
@@ -2167,21 +2117,6 @@ Rcpp::List fin_cSim(
                 CheckV(ag+tb*11+lt*66+im*132+nm*528+rg*2112+na*4224) = V1[ag][tb][lt][im][nm][rg][na];
               } } } } } } }
 
-  // for (int i=0; i <12672; i++){
-  // if (CheckV(i) <0){
-  //   for(int ag=0; ag<11; ag++) {
-  //     for(int tb=0; tb<6; tb++) {
-  //       for(int lt=0; lt<2; lt++){
-  //         for(int im=0; im<4; im++){
-  //           for(int nm=0; nm<4; nm++){
-  //             for(int rg=0; rg<2; rg++) {
-  //               for(int na=0; na<3; na++) {
-  //   Rcout <<"population is negative at ag = "<< ag << " tb = " << tb <<
-  //     " lt = " << lt << " im = " << im << " nm = " << nm << " rg = " << rg << " & na = " << na << "\n";
-  //               } } } } } } }
-  // // } else {Rcout << "no negatives \n" ;
-  // //        }
-  // } }
   ///////////////////////////////////////////////////////////////////////////////////
   //////                              RETURN STUFF                              /////
   ///////////////////////////////////////////////////////////////////////////////////

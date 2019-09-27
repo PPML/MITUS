@@ -7,7 +7,7 @@ INPUT AND CREATES ALL NECESSARY FILES FOR TABBY2 FOR THAT LOCATION.
 ALL PREDEFINED SCENARIOS (RESHAPED AND ORIGINAL FILES) AND MODEL
 CALIBRATION OUTPUTS. IT ALSO REMOVES ALL OLD CALIBRATION OUTPUTS.}
 \usage{
-optim_to_tabby2(loc, simp.date = "724")
+optim_to_tabby2(loc, simp.date = "917")
 }
 \arguments{
 \item{loc}{two character location code for the model location}
