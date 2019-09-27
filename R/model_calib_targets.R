@@ -2,20 +2,40 @@
 #' CREATES INDIVIDUAL RDS FILES FOR OUTPUTS NECESSARY FOR
 #' THE TABBY2 COMPARISON TO RECENT DATA PLOTS
 
-#'@name model_calib_outputs
+#'@name model_calib_targets
 #'@param loc two character location code for the model location
 #'@param bc.array base case results array
 #'@param samp.i which simulation to use (1:10)
 #'@param simp.date date to append to the files; should match the optim date
 #'@export
 
-model_calib_outputs<-function(loc="US",bc.array, samp_i=1,simp.date){
-  res<-as.data.frame(bc.array[samp_i,,])
-  colnames(res)<-func_ResNam()
+model_calib_targets<-function(loc="US"){
+  model_load("loc")
   ############                   demographic targets                     ############
   ### ### ### ### ### ###   TOTAL POP EACH DECADE, BY US/FB   ### ### ### ### ### ###
   V  <- cbind(res[1:68,30], res[1:68,31]+res[1:68,32])
-  saveRDS(V,file = paste0("~/MITUS/inst/",loc,"/calibration_outputs/",loc,"_pop_yr_nat_",simp.date,".rds"))
+  #read in decade based stuff
+  tot_pop<- CalibDatState[["pop_50_10"]][[st]]
+  #get the FB pop from the decade
+  tot_pop_yr_fb   <- tot_pop[tot_pop[,2]==0,]
+  #get 2017 population
+  pop_ag_11_170  <- CalibDatState[["pop_00_17"]][[st]][,c(1,2,20)]
+  #get 2017 fb population
+  pop_ag_11_17nus <-sum(pop_ag_11_170[pop_ag_11_170[,2]==0,3][-11])
+  #append the foreign born population
+  tot_pop_yr_nus  <- c(colSums(tot_pop_yr_fb[,-c(1:2)]), pop_ag_11_17nus)/1e6
+
+  #get the FB pop from the decade
+  tot_pop_yr_us   <- tot_pop[tot_pop[,2]==1,]
+  #get 2017 population
+  pop_ag_11_170  <- CalibDatState[["pop_00_17"]][[st]][,c(1,2,20)]
+  #get 2017 fb population
+  pop_ag_11_17us <-sum(pop_ag_11_170[pop_ag_11_170[,2]==1,3][-11])
+  #append the us born population
+  tot_pop_yr_us   <- c(colSums(tot_pop_yr_us[,-c(1:2)]), pop_ag_11_17us)/1e6
+  V<-cbind(tot_pop_yr_us, tot_pop_yr_nus)
+  rownames(V)[8]<-"2017"
+  saveRDS(V,file = paste0("~/MITUS/inst/",loc,"/calibration_target/",loc,"_pop_yr_nat_",simp.date,".rds"))
   ### ### ### ### ### ### TOTAL POP AGE DISTRIBUTION 2014  ### ### ### ### ### ###
   V  <- cbind(t(res[68,33:43]), t(res[68,44:54]))
   V1  <- V[-3,]
