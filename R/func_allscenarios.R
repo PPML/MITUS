@@ -19,7 +19,7 @@ make_all_scenarios<-function(loc, ParMatrix){
     # defprg<-def_prgchng(ParMatrix[1,])
     # Simulate using the elements of intvs to control
     # whether or not each intervention is on.
-    out<-new_OutputsInt(loc=loc,ParMatrix=ParMatrix, n_cores = 1, endyr=2050,
+    out<-new_OutputsInt(loc=loc,ParMatrix, n_cores = 1, endyr=2050,
                         Int1 = intvs[[1]],
                         Int2 = intvs[[2]],
                         Int3 = intvs[[3]],
@@ -31,7 +31,7 @@ make_all_scenarios<-function(loc, ParMatrix){
                         prg_chng =def_prgchng(ParMatrix[1,]))
     # print(intvs)
     # Do something to save the simulation outcomes
-    # save(out,file=paste0("/Users/nis100/MITUS/inst/",loc,"/",loc,"_results_",intv+1,".rda"))
+    save(out,file=paste0("/Users/nis100/MITUS/inst/",loc,"/",loc,"_results_",intv+1,".rda"))
     #create a list of the simulations
     sim_list[[intv+1]]<-out
   }

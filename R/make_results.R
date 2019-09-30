@@ -6,23 +6,22 @@
 #'@name reshape_results
 #'@param loc two character location code for the model location
 
-reshape_results<-function(loc){
+reshape_results<-function(loc, results.list){
 #load tabus
 library(tabus)
-
 #load mitus sims into data structure
-load_data <- function(i) {
-  data_name <-
-    load(system.file(paste0(loc, "/", loc, "_results_",i,".rda"), package='MITUS'))
-  return(get(data_name))
-}
+# load_data <- function(i) {
+#   data_name <-
+#     load(system.file(paste0(loc, "/", loc, "_results_",i,".rda"), package='MITUS'))
+#   return(get(data_name))
+# }
 
-results <- lapply(1:9, load_data)
+# results <- lapply(1:9, load_data)
 
 #make some lists of reformatted data
 ResTabC <- list()
-ResTabC[['small_results']] <- format_as_restab_small_ages_indices(results)
-ResTabC[['big_results']] <- format_as_restab_big_ages_indices(results)
+ResTabC[['small_results']] <- format_as_restab_small_ages_indices(results.list)
+ResTabC[['big_results']] <- format_as_restab_big_ages_indices(results.list)
 
 #Average the results
 ResTabC[['small_results']] <- mean_small_restabs(ResTabC, nr = 2, nints = 9)

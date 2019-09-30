@@ -50,7 +50,7 @@ new_OutputsZint <-  function(samp_i=1,ParMatrix,startyr=1950, endyr=2050, loc = 
   # tm<-matrix(0,16,16)
   # diag(tm)<-1
   # trans_mat_tot_ages<<-matrix(tm,16,176)
-  trans_mat_tot_ages<<-reblncd(mubt = IP$mubt,can_go = can_go,RRmuHR = IP$RRmuHR[2], RRmuRF = IP$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=IP[["adj_fact"]])
+  trans_mat_tot_ages<-reblncd(mubt = IP$mubt,can_go = can_go,RRmuHR = IP$RRmuHR[2], RRmuRF = IP$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=IP[["adj_fact"]])
   if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
   m <- fin_cSim( nYrs       = 2050-1950         , nRes      = length(IP[["ResNam"]])  , rDxt     = IP[["rDxt"]]  , TxQualt    = IP[["TxQualt"]]   , InitPop  = IP[["InitPop"]]    ,
                   Mpfast     = IP[["Mpfast"]]    , ExogInf   = IP[["ExogInf"]]       , MpfastPI = IP[["MpfastPI"]], Mrslow     = IP[["Mrslow"]]    , rrSlowFB = IP[["rrSlowFB"]]  ,
@@ -63,7 +63,7 @@ new_OutputsZint <-  function(samp_i=1,ParMatrix,startyr=1950, endyr=2050, loc = 
                   LtDxPar_lt    = IP[["LtDxPar_lt"]]   , LtDxPar_nolt    = IP[["LtDxPar_nolt"]]   , rLtScrt   = IP[["rLtScrt"]]       , RRdxAge  = IP[["RRdxAge"]] , rRecov     = IP[["rRecov"]]    , pImmScen = IP[["pImmScen"]]   ,
                   EarlyTrend = IP[["EarlyTrend"]], ag_den=IP[["aging_denom"]],  NixTrans = IP[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)$Outputs
   colnames(m) <- IP[["ResNam"]]
-  results<<-as.matrix(m)
+  results<-as.matrix(m)
 
   return(results)
 }

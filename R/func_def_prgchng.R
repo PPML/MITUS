@@ -26,7 +26,7 @@ def_prgchng<-function(ParVec){
   DefPrgChngVec[3]<-.33
   #Treatment Initiation Fraction is a constant that is not calibrated or calculated
   #once this is set it should not be changed
-  DefPrgChngVec[4]<-.8
+  DefPrgChngVec[4]<-.775
   #LTBI treatment completion fraction
   DefPrgChngVec[5]<- 1-ParVec["pDefLt"]
   #LTBI Efficacy
