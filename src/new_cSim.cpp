@@ -1804,7 +1804,7 @@ Rcpp::List fin_cSim(
                     //   Outputs[y][229   ] += temp2; }  // dx HIV neg (1)
                     Outputs[y][202+rg] += temp2;   // N_ by rg (2)
                   } } } } } }
-        for(int i=187; i<54; i++) { Outputs[y][i] = Outputs[y][i]*12; }
+        for(int i=187; i<204; i++) { Outputs[y][i] = Outputs[y][i]*12; }
 
         // NOTIFICATIONS US
         for(int ag=0; ag<11; ag++) {
@@ -1937,9 +1937,7 @@ Rcpp::List fin_cSim(
                         Outputs[y][300+im]  += V1[ag][tb][lt][im][nm][rg][na];
                         Outputs[y][306+rg]  += V1[ag][tb][lt][im][nm][rg][na];
                         Outputs[y][312+nm]  += V1[ag][tb][lt][im][nm][rg][na];
-
                       }
-
                     } } } } } } }
 
         ////total mortality
