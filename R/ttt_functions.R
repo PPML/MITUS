@@ -80,7 +80,8 @@ rownames(dist) <- paste0("m",0:3) # mortality
   an_samp_rate <- rr_samp * ttt_pop_yr / sum(rr_samp*dist)
   ttt_params<-list()
   ttt_params[['an_samp_rate']]<-pmin(an_samp_rate,12)
-  ttt_params[['frc_of_totpop']]<-(ttt_list[["NRiskGrp"]]*ttt_list[["FrcScrn"]])/sum(dist)
+  #what is the fraction of the total treatment native population?
+  ttt_params[['frc_of_totpop']]<-(ttt_list[["NRiskGrp"]]*ttt_list[["FrcScrn"]])/results[start_yr,683]
 
   return(ttt_params)
 }

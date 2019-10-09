@@ -368,12 +368,19 @@ fin2_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sc
   #################### TTT ADDITIONAL SCREENING PROBABILITIES ####################
   ################################################################################
   ###this is dependent on a basecase run so load in that data
+  ttt_sampling_dist<-matrix(0,4,4)
+  ttt_na<-99
+  ttt_ag<-99
+  ttt_pop_frc<-0
+
   if (ttt_list[[3]]!=0 & ttt_list[[4]]!=0){
     load(system.file("US/US_results_1.rda", package="MITUS"))
     x<-create_ttt_dist(ttt_list = ttt_list,
                        results = out[1,,],
                        PV = PV)
+    if (ttt_list[[7]]!=1 | ttt_list[[8]]!=1){
     ttt_sampling_dist<-x[[1]]/12
+    }
     ttt_pop_frc<-x[[2]]
     ttt_ag<-switch(ttt_list[["AgeGrp"]], "All"=0:10,
                    "0 to 24"=0:2,
@@ -384,16 +391,11 @@ fin2_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sc
                    "USB"=0,
                    "NUSB"=1:2
     )
-  } else{
-    ttt_sampling_dist<-matrix(0,4,4)
-    ttt_na<-99
-    ttt_ag<-99
-    ttt_pop_frc<-0
   }
   InputParams[["ttt_sampling_dist"]]<-ttt_sampling_dist
   InputParams[["ttt_na"]]<-ttt_na
   InputParams[["ttt_ag"]]<-ttt_ag
-  InputParams[["ttt_pop_frc"]]<-ttt_pop_frc
+  InputParams[["ttt_pop_frc"]]<-ttt_pop_frc/12
   InputParams[["ttt_ltbi"]]<-ttt_list[["RRPrev"]]
 
   ###adjustments to the screening rates dependent on risk and TB status

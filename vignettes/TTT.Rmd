@@ -1,0 +1,406 @@
+---
+title: "Target Testing and Treatment Effects in the MITUS Model"
+author: "Nicole A. B. Swartwood"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+  
+### Changes to LTBI Prevalence in Targeted Population 
+```{r, warning=FALSE, message=FALSE,echo=FALSE, fig.width=7.5, fig.height=6.5}
+library(MITUS)
+model_load()
+prgchng<-def_prgchng(Par[1,])
+ttt_list<-def_ttt()
+results<-new2_OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list)
+ltbi_count_bc<-cbind(2018:2049,rowSums(results[69:100,55:76]))
+tb_count_bc<-cbind(2018:2049,rowSums(results[69:100,136:146]+results[69:100,189:199]))
+tltbi_count_bc<-cbind(2018:2049,results[69:100,155])
+tx_comp_bc<-cbind(2018:2049,results[69:100,132])
+
+#screen 10 million in 2020-29 with 5 times progression rate 
+model_load()
+ttt_list_1<-def_ttt()
+ttt_list_1[[3]]<-5
+ttt_list_1[[4]]<-1
+ttt_list_1[[5]]<-2020
+ttt_list_1[[6]]<-2029
+ttt_list_1[[9]]<-1
+
+results_1<-new2_OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_1)
+tb_count_1<-cbind(2018:2049,rowSums(results_1[69:100,136:146]+results_1[69:100,189:199]))
+ltbi_count_1<-cbind(2018:2049,rowSums(results_1[69:100,55:76]))
+tltbi_count_1<-cbind(2018:2049,results_1[69:100,155])
+tx_comp_1<-cbind(2018:2049,results_1[69:100,132])
+
+#screen 10 million in 2020-29 with 5 times mortality rate 
+model_load()
+ttt_list_2<-def_ttt()
+ttt_list_2[[3]]<-5
+ttt_list_2[[4]]<-1
+ttt_list_2[[5]]<-2020
+ttt_list_2[[6]]<-2029
+ttt_list_2[[9]]<-2
+
+results_2<-new2_OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_2)
+tb_count_2<-cbind(2018:2049,rowSums(results_2[69:100,136:146]+results_2[69:100,189:199]))#*1E6
+ltbi_count_2<-cbind(2018:2049,rowSums(results_2[69:100,55:76]))#*1E6
+tltbi_count_2<-cbind(2018:2049,results_2[69:100,155])
+tx_comp_2<-cbind(2018:2049,results_2[69:100,132])
+
+#screen 10 million in 2020-29 with 5 times prevalence rate 
+model_load()
+ttt_list_3<-def_ttt()
+ttt_list_3[[3]]<-5
+ttt_list_3[[4]]<-1
+ttt_list_3[[5]]<-2020
+ttt_list_3[[6]]<-2029
+ttt_list_3[[9]]<-5
+
+results_3<-new2_OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_3)
+tb_count_3<-cbind(2018:2049,rowSums(results_3[69:100,136:146]+results_3[69:100,189:199]))#*1E6
+ltbi_count_3<-cbind(2018:2049,rowSums(results_3[69:100,55:76]))#*1E6
+tltbi_count_3<-cbind(2018:2049,results_3[69:100,155])
+tx_comp_3<-cbind(2018:2049,results_3[69:100,132])
+
+#screen 10 million in 2020-29 no change in anything
+model_load()
+ttt_list_4<-def_ttt()
+ttt_list_4[[3]]<-5
+ttt_list_4[[4]]<-1
+ttt_list_4[[5]]<-2020
+ttt_list_4[[6]]<-2029
+ttt_list_4[[9]]<-10
+
+results_4<-new2_OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_4)
+tb_count_4<-cbind(2018:2049,rowSums(results_4[69:100,136:146]+results_4[69:100,189:199]))#*1E6
+ltbi_count_4<-cbind(2018:2049,rowSums(results_4[69:100,55:76]))#*1E6
+tltbi_count_4<-cbind(2018:2049,results_4[69:100,155])
+tx_comp_4<-cbind(2018:2049,results_4[69:100,132])
+
+
+#plot one - Active TB
+tb_count_1a<-(tb_count_1-tb_count_bc)*1e6
+tb_count_2a<-(tb_count_2-tb_count_bc)*1e6
+tb_count_3a<-(tb_count_3-tb_count_bc)*1e6
+tb_count_4a<-(tb_count_4-tb_count_bc)*1e6
+plot(0,0,ylim=c(min(tb_count_4a),0),xlim=c(2018,2049),xlab="",ylab="",axes=F,col=NA)
+axis(1);axis(2,las=2);box()
+# lines(x=tb_count_bc[,1],y=tb_count_bc[,2], type = "p")
+lines(x=tb_count_bc[,1],y=tb_count_1a[,2], col="red")
+lines(x=tb_count_bc[,1],y=tb_count_2a[,2], col="blue")
+lines(x=tb_count_bc[,1],y=tb_count_3a[,2], col="darkgreen")
+lines(x=tb_count_bc[,1],y=tb_count_4a[,2], col="orange")
+
+mtext("Year",1,2.5,cex=1.2)
+mtext("Reduction in TB Notifications in the Basecase",3,.8,font=2,cex=1)
+legend("topright",c("Screen .5 RRLTBI=1","Screen .5 RRLTBI=2", "Screen .5 RRLTBI=5", "Screen .5 RRLTBI=10"),cex=1,
+       pch=c(15,15,15,15),lwd=c(NA,NA,NA,NA),lty=c(NA,NA,NA,NA),col=c("red", "blue", "darkgreen", "orange"),bg="white",pt.cex=c(1.8,1.8,1.8, 1.8)
+)
+
+#plot two - LTBI
+ltbi_count_1a<-(ltbi_count_1-ltbi_count_bc)*1e3
+ltbi_count_2a<-(ltbi_count_2-ltbi_count_bc)*1e3
+ltbi_count_3a<-(ltbi_count_3-ltbi_count_bc)*1e3
+ltbi_count_4a<-(ltbi_count_4-ltbi_count_bc)*1e3
+plot(0,0,ylim=c(min(ltbi_count_4a),0),xlim=c(2018,2049),xlab="",ylab="",axes=F,col=NA)
+axis(1);axis(2,las=2);box()
+# lines(x=ltbi_count_bc[,1],y=ltbi_count_bc[,2], type = "p")
+lines(x=ltbi_count_bc[,1],y=ltbi_count_1a[,2], col="red")
+lines(x=ltbi_count_bc[,1],y=ltbi_count_2a[,2], col="blue")
+lines(x=ltbi_count_bc[,1],y=ltbi_count_3a[,2], col="darkgreen")
+lines(x=ltbi_count_bc[,1],y=ltbi_count_4a[,2], col="orange")
+
+
+mtext("Year",1,2.5,cex=1.2)
+mtext("Reduction LTBI Population Compared to BaseCase (in thousands)",3,.8,font=2,cex=1)
+legend("topright",c("Screen .5 RRLTBI=1","Screen .5 RRLTBI=2", "Screen .5 RRLTBI=5", "Screen .5 RRLTBI=10"),cex=1,
+       pch=c(15,15,15,15),lwd=c(NA,NA,NA,NA),lty=c(NA,NA,NA,NA),col=c("red", "blue", "darkgreen", "orange"),bg="white",pt.cex=c(1.8,1.8,1.8, 1.8)
+)
+
+##plot three total TLTBI inits 
+tltbi_count_1a<-(tltbi_count_1-tltbi_count_bc)*1e3
+tltbi_count_2a<-(tltbi_count_2-tltbi_count_bc)*1e3
+tltbi_count_3a<-(tltbi_count_3-tltbi_count_bc)*1e3
+tltbi_count_4a<-(tltbi_count_4-tltbi_count_bc)*1e3
+plot(0,0,ylim=c(min(tltbi_count_4a),max(tltbi_count_4a)),xlim=c(2018,2049),xlab="",ylab="",axes=F,col=NA)
+axis(1);axis(2,las=2);box()
+# lines(x=tltbi_count_bc[,1],y=tltbi_count_1[,2], type = "p")
+lines(x=tltbi_count_bc[,1],y=tltbi_count_1a[,2], col="red")
+lines(x=tltbi_count_bc[,1],y=tltbi_count_2a[,2], col="blue")
+lines(x=tltbi_count_bc[,1],y=tltbi_count_3a[,2], col="darkgreen")
+lines(x=tltbi_count_bc[,1],y=tltbi_count_4a[,2], col="orange")
+
+mtext("Year",1,2.5,cex=1.2)
+mtext("Additional TLTBI Initations in True Positive Compared to Basecase (in thousands)",3,.8,font=2,cex=1)
+legend("topright",c("Screen .5 RRLTBI=1","Screen .5 RRLTBI=2", "Screen .5 RRLTBI=5", "Screen .5 RRLTBI=10"),cex=1,
+       pch=c(15,15,15,15),lwd=c(NA,NA,NA,NA),lty=c(NA,NA,NA,NA),col=c("red", "blue", "darkgreen", "orange"),bg="white",pt.cex=c(1.8,1.8,1.8, 1.8)
+)
+```
+### Changes to TB Progression RR in Targeted Population 
+```{r, warning=FALSE, message=FALSE,echo=FALSE, fig.width=7.5, fig.height=6.5}
+library(MITUS)
+model_load()
+prgchng<-def_prgchng(Par[1,])
+ttt_list<-def_ttt()
+results<-new2_OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list)
+ltbi_count_bc<-cbind(2018:2049,rowSums(results[69:100,55:76]))
+tb_count_bc<-cbind(2018:2049,rowSums(results[69:100,136:146]+results[69:100,189:199]))
+tltbi_count_bc<-cbind(2018:2049,results[69:100,155])
+tx_comp_bc<-cbind(2018:2049,results[69:100,132])
+
+#screen 10 million in 2020-29 with 5 times progression rate 
+model_load()
+ttt_list_1<-def_ttt()
+ttt_list_1[[3]]<-5
+ttt_list_1[[4]]<-1
+ttt_list_1[[5]]<-2020
+ttt_list_1[[6]]<-2029
+ttt_list_1[[7]]<-1
+
+results_1<-new2_OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_1)
+tb_count_1<-cbind(2018:2049,rowSums(results_1[69:100,136:146]+results_1[69:100,189:199]))
+ltbi_count_1<-cbind(2018:2049,rowSums(results_1[69:100,55:76]))
+tltbi_count_1<-cbind(2018:2049,results_1[69:100,155])
+tx_comp_1<-cbind(2018:2049,results_1[69:100,132])
+
+#screen 10 million in 2020-29 with 5 times mortality rate 
+model_load()
+ttt_list_2<-def_ttt()
+ttt_list_2[[3]]<-5
+ttt_list_2[[4]]<-1
+ttt_list_2[[5]]<-2020
+ttt_list_2[[6]]<-2029
+ttt_list_2[[7]]<-2
+
+results_2<-new2_OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_2)
+tb_count_2<-cbind(2018:2049,rowSums(results_2[69:100,136:146]+results_2[69:100,189:199]))#*1E6
+ltbi_count_2<-cbind(2018:2049,rowSums(results_2[69:100,55:76]))#*1E6
+tltbi_count_2<-cbind(2018:2049,results_2[69:100,155])
+tx_comp_2<-cbind(2018:2049,results_2[69:100,132])
+
+#screen 10 million in 2020-29 with 5 times prevalence rate 
+model_load()
+ttt_list_3<-def_ttt()
+ttt_list_3[[3]]<-5
+ttt_list_3[[4]]<-1
+ttt_list_3[[5]]<-2020
+ttt_list_3[[6]]<-2029
+ttt_list_3[[7]]<-5
+
+results_3<-new2_OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_3)
+tb_count_3<-cbind(2018:2049,rowSums(results_3[69:100,136:146]+results_3[69:100,189:199]))#*1E6
+ltbi_count_3<-cbind(2018:2049,rowSums(results_3[69:100,55:76]))#*1E6
+tltbi_count_3<-cbind(2018:2049,results_3[69:100,155])
+tx_comp_3<-cbind(2018:2049,results_3[69:100,132])
+
+#screen 10 million in 2020-29 no change in anything
+model_load()
+ttt_list_4<-def_ttt()
+ttt_list_4[[3]]<-5
+ttt_list_4[[4]]<-1
+ttt_list_4[[5]]<-2020
+ttt_list_4[[6]]<-2029
+ttt_list_4[[7]]<-10
+
+results_4<-new2_OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_4)
+tb_count_4<-cbind(2018:2049,rowSums(results_4[69:100,136:146]+results_4[69:100,189:199]))#*1E6
+ltbi_count_4<-cbind(2018:2049,rowSums(results_4[69:100,55:76]))#*1E6
+tltbi_count_4<-cbind(2018:2049,results_4[69:100,155])
+tx_comp_4<-cbind(2018:2049,results_4[69:100,132])
+
+
+#plot one - Active TB
+tb_count_1a<-(tb_count_1-tb_count_bc)*1e6
+tb_count_2a<-(tb_count_2-tb_count_bc)*1e6
+tb_count_3a<-(tb_count_3-tb_count_bc)*1e6
+tb_count_4a<-(tb_count_4-tb_count_bc)*1e6
+plot(0,0,ylim=c(min(tb_count_4a),0),xlim=c(2018,2049),xlab="",ylab="",axes=F,col=NA)
+axis(1);axis(2,las=2);box()
+# lines(x=tb_count_bc[,1],y=tb_count_bc[,2], type = "p")
+lines(x=tb_count_bc[,1],y=tb_count_1a[,2], col="red")
+lines(x=tb_count_bc[,1],y=tb_count_2a[,2], col="blue")
+lines(x=tb_count_bc[,1],y=tb_count_3a[,2], col="darkgreen")
+lines(x=tb_count_bc[,1],y=tb_count_4a[,2], col="orange")
+
+mtext("Year",1,2.5,cex=1.2)
+mtext("Reduction in TB Notifications in the Basecase",3,.8,font=2,cex=1)
+legend("topright",c("Screen .5 RRPRG=1","Screen .5 RRPRG=2", "Screen .5 RRPRG=5", "Screen .5 RRPRG=10"),cex=1,
+       pch=c(15,15,15,15),lwd=c(NA,NA,NA,NA),lty=c(NA,NA,NA,NA),col=c("red", "blue", "darkgreen", "orange"),bg="white",pt.cex=c(1.8,1.8,1.8, 1.8)
+)
+
+#plot two - LTBI
+ltbi_count_1a<-(ltbi_count_1-ltbi_count_bc)*1e3
+ltbi_count_2a<-(ltbi_count_2-ltbi_count_bc)*1e3
+ltbi_count_3a<-(ltbi_count_3-ltbi_count_bc)*1e3
+ltbi_count_4a<-(ltbi_count_4-ltbi_count_bc)*1e3
+plot(0,0,ylim=c(min(ltbi_count_4a),0),xlim=c(2018,2049),xlab="",ylab="",axes=F,col=NA)
+axis(1);axis(2,las=2);box()
+# lines(x=ltbi_count_bc[,1],y=ltbi_count_bc[,2], type = "p")
+lines(x=ltbi_count_bc[,1],y=ltbi_count_1a[,2], col="red")
+lines(x=ltbi_count_bc[,1],y=ltbi_count_2a[,2], col="blue")
+lines(x=ltbi_count_bc[,1],y=ltbi_count_3a[,2], col="darkgreen")
+lines(x=ltbi_count_bc[,1],y=ltbi_count_4a[,2], col="orange")
+
+
+mtext("Year",1,2.5,cex=1.2)
+mtext("Reduction LTBI Population Compared to BaseCase (in thousands)",3,.8,font=2,cex=1)
+legend("topright",c("Screen .5 RRPRG=1","Screen .5 RRPRG=2", "Screen .5 RRPRG=5", "Screen .5 RRPRG=10"),cex=1,
+       pch=c(15,15,15,15),lwd=c(NA,NA,NA,NA),lty=c(NA,NA,NA,NA),col=c("red", "blue", "darkgreen", "orange"),bg="white",pt.cex=c(1.8,1.8,1.8, 1.8)
+)
+
+##plot three total TLTBI inits 
+tltbi_count_1a<-(tltbi_count_1-tltbi_count_bc)*1e3
+tltbi_count_2a<-(tltbi_count_2-tltbi_count_bc)*1e3
+tltbi_count_3a<-(tltbi_count_3-tltbi_count_bc)*1e3
+tltbi_count_4a<-(tltbi_count_4-tltbi_count_bc)*1e3
+plot(0,0,ylim=c(min(tltbi_count_4a),max(tltbi_count_4a)),xlim=c(2018,2049),xlab="",ylab="",axes=F,col=NA)
+axis(1);axis(2,las=2);box()
+# lines(x=tltbi_count_bc[,1],y=tltbi_count_1[,2], type = "p")
+lines(x=tltbi_count_bc[,1],y=tltbi_count_1a[,2], col="red")
+lines(x=tltbi_count_bc[,1],y=tltbi_count_2a[,2], col="blue")
+lines(x=tltbi_count_bc[,1],y=tltbi_count_3a[,2], col="darkgreen")
+lines(x=tltbi_count_bc[,1],y=tltbi_count_4a[,2], col="orange")
+
+mtext("Year",1,2.5,cex=1.2)
+mtext("Additional TLTBI Initations in True Positive Compared to Basecase (in thousands)",3,.8,font=2,cex=1)
+legend("topright",c("Screen .5 RRPRG=1","Screen .5 RRPRG=2", "Screen .5 RRPRG=5", "Screen .5 RRPRG=10"),cex=1,
+       pch=c(15,15,15,15),lwd=c(NA,NA,NA,NA),lty=c(NA,NA,NA,NA),col=c("red", "blue", "darkgreen", "orange"),bg="white",pt.cex=c(1.8,1.8,1.8, 1.8)
+)
+```
+
+
+### Changes to All-Cause Mortality RR in Targeted Population 
+```{r, warning=FALSE, message=FALSE,echo=FALSE, fig.width=7.5, fig.height=6.5}
+library(MITUS)
+model_load()
+prgchng<-def_prgchng(Par[1,])
+ttt_list<-def_ttt()
+results<-new2_OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list)
+ltbi_count_bc<-cbind(2018:2049,rowSums(results[69:100,55:76]))
+tb_count_bc<-cbind(2018:2049,rowSums(results[69:100,136:146]+results[69:100,189:199]))
+tltbi_count_bc<-cbind(2018:2049,results[69:100,155])
+tx_comp_bc<-cbind(2018:2049,results[69:100,132])
+
+#screen 10 million in 2020-29 with 5 times progression rate 
+model_load()
+ttt_list_1<-def_ttt()
+ttt_list_1[[3]]<-5
+ttt_list_1[[4]]<-1
+ttt_list_1[[5]]<-2020
+ttt_list_1[[6]]<-2029
+ttt_list_1[[8]]<-1
+
+results_1<-new2_OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_1)
+tb_count_1<-cbind(2018:2049,rowSums(results_1[69:100,136:146]+results_1[69:100,189:199]))
+ltbi_count_1<-cbind(2018:2049,rowSums(results_1[69:100,55:76]))
+tltbi_count_1<-cbind(2018:2049,results_1[69:100,155])
+tx_comp_1<-cbind(2018:2049,results_1[69:100,132])
+
+#screen 10 million in 2020-29 with 5 times mortality rate 
+model_load()
+ttt_list_2<-def_ttt()
+ttt_list_2[[3]]<-5
+ttt_list_2[[4]]<-1
+ttt_list_2[[5]]<-2020
+ttt_list_2[[6]]<-2029
+ttt_list_2[[8]]<-2
+
+results_2<-new2_OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_2)
+tb_count_2<-cbind(2018:2049,rowSums(results_2[69:100,136:146]+results_2[69:100,189:199]))#*1E6
+ltbi_count_2<-cbind(2018:2049,rowSums(results_2[69:100,55:76]))#*1E6
+tltbi_count_2<-cbind(2018:2049,results_2[69:100,155])
+tx_comp_2<-cbind(2018:2049,results_2[69:100,132])
+
+#screen 10 million in 2020-29 with 5 times prevalence rate 
+model_load()
+ttt_list_3<-def_ttt()
+ttt_list_3[[3]]<-5
+ttt_list_3[[4]]<-1
+ttt_list_3[[5]]<-2020
+ttt_list_3[[6]]<-2029
+ttt_list_3[[8]]<-5
+
+results_3<-new2_OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_3)
+tb_count_3<-cbind(2018:2049,rowSums(results_3[69:100,136:146]+results_3[69:100,189:199]))#*1E6
+ltbi_count_3<-cbind(2018:2049,rowSums(results_3[69:100,55:76]))#*1E6
+tltbi_count_3<-cbind(2018:2049,results_3[69:100,155])
+tx_comp_3<-cbind(2018:2049,results_3[69:100,132])
+
+#screen 10 million in 2020-29 no change in anything
+model_load()
+ttt_list_4<-def_ttt()
+ttt_list_4[[3]]<-5
+ttt_list_4[[4]]<-1
+ttt_list_4[[5]]<-2020
+ttt_list_4[[6]]<-2029
+ttt_list_4[[8]]<-10
+
+results_4<-new2_OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_4)
+tb_count_4<-cbind(2018:2049,rowSums(results_4[69:100,136:146]+results_4[69:100,189:199]))#*1E6
+ltbi_count_4<-cbind(2018:2049,rowSums(results_4[69:100,55:76]))#*1E6
+tltbi_count_4<-cbind(2018:2049,results_4[69:100,155])
+tx_comp_4<-cbind(2018:2049,results_4[69:100,132])
+
+
+#plot one - Active TB
+tb_count_1a<-(tb_count_1-tb_count_bc)*1e6
+tb_count_2a<-(tb_count_2-tb_count_bc)*1e6
+tb_count_3a<-(tb_count_3-tb_count_bc)*1e6
+tb_count_4a<-(tb_count_4-tb_count_bc)*1e6
+plot(0,0,ylim=c(min(tb_count_4a),0),xlim=c(2018,2049),xlab="",ylab="",axes=F,col=NA)
+axis(1);axis(2,las=2);box()
+# lines(x=tb_count_bc[,1],y=tb_count_bc[,2], type = "p")
+lines(x=tb_count_bc[,1],y=tb_count_1a[,2], col="red")
+lines(x=tb_count_bc[,1],y=tb_count_2a[,2], col="blue")
+lines(x=tb_count_bc[,1],y=tb_count_3a[,2], col="darkgreen")
+lines(x=tb_count_bc[,1],y=tb_count_4a[,2], col="orange")
+
+mtext("Year",1,2.5,cex=1.2)
+mtext("Reduction in TB Notifications in the Basecase",3,.8,font=2,cex=1)
+legend("topright",c("Screen .5 RRMU=1","Screen .5 RRMU=2", "Screen .5 RRMU=5", "Screen .5 RRMU=10"),cex=1,
+       pch=c(15,15,15,15),lwd=c(NA,NA,NA,NA),lty=c(NA,NA,NA,NA),col=c("red", "blue", "darkgreen", "orange"),bg="white",pt.cex=c(1.8,1.8,1.8, 1.8)
+)
+
+#plot two - LTBI
+ltbi_count_1a<-(ltbi_count_1-ltbi_count_bc)*1e3
+ltbi_count_2a<-(ltbi_count_2-ltbi_count_bc)*1e3
+ltbi_count_3a<-(ltbi_count_3-ltbi_count_bc)*1e3
+ltbi_count_4a<-(ltbi_count_4-ltbi_count_bc)*1e3
+plot(0,0,ylim=c(min(ltbi_count_4a),0),xlim=c(2018,2049),xlab="",ylab="",axes=F,col=NA)
+axis(1);axis(2,las=2);box()
+# lines(x=ltbi_count_bc[,1],y=ltbi_count_bc[,2], type = "p")
+lines(x=ltbi_count_bc[,1],y=ltbi_count_1a[,2], col="red")
+lines(x=ltbi_count_bc[,1],y=ltbi_count_2a[,2], col="blue")
+lines(x=ltbi_count_bc[,1],y=ltbi_count_3a[,2], col="darkgreen")
+lines(x=ltbi_count_bc[,1],y=ltbi_count_4a[,2], col="orange")
+
+
+mtext("Year",1,2.5,cex=1.2)
+mtext("Reduction LTBI Population Compared to BaseCase (in thousands)",3,.8,font=2,cex=1)
+legend("topright",c("Screen .5 RRMU=1","Screen .5 RRMU=2", "Screen .5 RRMU=5", "Screen .5 RRMU=10"),cex=1,
+       pch=c(15,15,15,15),lwd=c(NA,NA,NA,NA),lty=c(NA,NA,NA,NA),col=c("red", "blue", "darkgreen", "orange"),bg="white",pt.cex=c(1.8,1.8,1.8, 1.8)
+)
+
+##plot three total TLTBI inits 
+tltbi_count_1a<-(tltbi_count_1-tltbi_count_bc)*1e3
+tltbi_count_2a<-(tltbi_count_2-tltbi_count_bc)*1e3
+tltbi_count_3a<-(tltbi_count_3-tltbi_count_bc)*1e3
+tltbi_count_4a<-(tltbi_count_4-tltbi_count_bc)*1e3
+plot(0,0,ylim=c(min(tltbi_count_4a),max(tltbi_count_4a)),xlim=c(2018,2049),xlab="",ylab="",axes=F,col=NA)
+axis(1);axis(2,las=2);box()
+# lines(x=tltbi_count_bc[,1],y=tltbi_count_1[,2], type = "p")
+lines(x=tltbi_count_bc[,1],y=tltbi_count_1a[,2], col="red")
+lines(x=tltbi_count_bc[,1],y=tltbi_count_2a[,2], col="blue")
+lines(x=tltbi_count_bc[,1],y=tltbi_count_3a[,2], col="darkgreen")
+lines(x=tltbi_count_bc[,1],y=tltbi_count_4a[,2], col="orange")
+
+mtext("Year",1,2.5,cex=1.2)
+mtext("Additional TLTBI Initations in True Positive Compared to Basecase (in thousands)",3,.8,font=2,cex=1)
+legend("topright",c("Screen .5 RRMU=1","Screen .5 RRMU=2", "Screen .5 RRMU=5", "Screen .5 RRMU=10"),cex=1,
+       pch=c(15,15,15,15),lwd=c(NA,NA,NA,NA),lty=c(NA,NA,NA,NA),col=c("red", "blue", "darkgreen", "orange"),bg="white",pt.cex=c(1.8,1.8,1.8, 1.8)
+)
+```
