@@ -256,7 +256,6 @@ fin2_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sc
   InputParams[["EarlyTrend"]] <- c(rep(1+Early0,200*12),seq(1+Early0,1.0,length.out=50*12+2))
 
   ######################     PROGRESSION TO DISEASE     ##########################
-
   pfast      <- PV["pfast"]
   ORpfast1   <- PV["ORpfast1"] ## age group 1
   ORpfast2   <- PV["ORpfast2"] ## age group 2
@@ -379,7 +378,7 @@ fin2_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sc
                        results = out[1,,],
                        PV = PV)
     # if (ttt_list[[7]]!=1 | ttt_list[[8]]!=1){
-    ttt_sampling_dist<-x[[1]]/12
+    ttt_sampling_dist<-x[[1]]#/12
     # }
     # ttt_pop_frc<-x[[2]]
     ttt_ag<-switch(ttt_list[["AgeGrp"]], "All"=0:10,
