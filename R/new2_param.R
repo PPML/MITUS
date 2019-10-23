@@ -207,7 +207,7 @@ fin2_param <- function (PV,loc,prg_chng, ttt_list){
   pfast      <- PV["pfast"]
   ORpfast1   <- PV["ORpfast1"] ## age group 1
   ORpfast2   <- PV["ORpfast2"] ## age group 2
-  ORpfastRF  <- 20 #PV["ORpfastH"] ##riskfactor
+  ORpfastRF  <- PV["ORpfastH"] ##riskfactor
   ORpfastPI  <- PV["ORpfastPI"]
 
   ##############            ORIGINAL Mpfast[ag][hv]             ################
