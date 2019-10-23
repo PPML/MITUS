@@ -1439,11 +1439,11 @@ if(rg==1 & na==0) {
     rTbN = rLtScrt[s]*LtDxPar_noltN[4][s];
   }
 
-  if (s==858){
-    Rcpp::Rcout << "rTbPnorm = " << rTbP << " @ ag = "<< ag << " & na = "<< na << " & rg = " << rg <<" \n";
-    if ((V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*ttt_dist[nm][im]*rTbP !=0){
-      Rcpp::Rcout << "mod additional = " << (V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*ttt_dist[nm][im]*rTbP << " @ ag = "<< ag << " & na = "<< na << " & rg = " << rg <<" \n";
-    }}
+  // if (s==858){
+  //   Rcpp::Rcout << "rTbPnorm = " << rTbP << " @ ag = "<< ag << " & na = "<< na << " & rg = " << rg <<" \n";
+  //   if ((V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*ttt_dist[nm][im]*rTbP !=0){
+  //     Rcpp::Rcout << "mod additional = " << (V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*ttt_dist[nm][im]*rTbP << " @ ag = "<< ag << " & na = "<< na << " & rg = " << rg <<" \n";
+  //   }}
       ////////////// True Status -- LTBI Negative
       temp5= V0[ag][0][0][im][nm][rg][na]*rTbN;
       temp6= V0[ag][1][0][im][nm][rg][na]*rTbN;
