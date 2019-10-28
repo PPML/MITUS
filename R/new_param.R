@@ -226,6 +226,8 @@ fin_param <- function (PV,loc,prg_chng){
   #vector of ORpfastRF
   vORpfastPIRF<-vORpfastRF  <-c(1,1,1,1)
   vORpfastRF  <-(exp((0:3)/3*log(ORpfastRF)))
+  vORpfastRF<-vORpfastRF/sum(vORpfastRF*mort_dist)
+
   vORpfastPIRF  <- vORpfastRF*ORpfastPI
 
   ############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
