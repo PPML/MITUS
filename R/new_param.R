@@ -207,7 +207,7 @@ fin_param <- function (PV,loc,prg_chng){
   pfast      <- PV["pfast"]
   ORpfast1   <- PV["ORpfast1"] ## age group 1
   ORpfast2   <- PV["ORpfast2"] ## age group 2
-  ORpfastRF  <- PV["ORpfastH"] ##riskfactor
+  ORpfastRF  <- 20#PV["ORpfastH"] ##riskfactor
   ORpfastPI  <- PV["ORpfastPI"]
 
   ##############            ORIGINAL Mpfast[ag][hv]             ################
@@ -246,7 +246,7 @@ fin_param <- function (PV,loc,prg_chng){
   MpfastPI[,]  <- MpfastPI[,]/(1+MpfastPI[,]);
 
   rslow      <- PV["rslow"]/12
-  rslowRF    <- PV["rslowH"]/12
+  rslowRF    <- 20 #PV["rslowH"]/12
   RRrslowRF  <- rslowRF/rslow
   rfast      <- PV["rfast"]/12
   #rrSlowFB0  <- PV["rrSlowFB"] #removed

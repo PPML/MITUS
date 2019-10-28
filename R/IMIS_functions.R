@@ -93,7 +93,7 @@ llikelihoodZ <-  function(samp_i, start_mat) {
       #' CASES FB RECENT ENTRY DISTRIBUTION 1993-2014 index updated
       #' recent immigrants column one; long term in column two
       v6   <- M[44:65,148:149]+M[44:65,201:202]
-      addlik <- notif_fb_rec_lLik(V=v6); addlik
+      addlik <- notif_fb_rec_lLik(V=v6)*1.5; addlik
       lLik <- lLik + addlik
       #' TREATMENT OUTCOMES 1993-2014 - index updated
       v11  <- M[44:65,132:134]
