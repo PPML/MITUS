@@ -247,6 +247,7 @@ fin_param <- function (PV,loc,prg_chng){
 
   rslow      <- PV["rslow"]/12
   rslowRF    <- PV["rslowH"]/12
+
   RRrslowRF  <- rslowRF/rslow
   rfast      <- PV["rfast"]/12
   #rrSlowFB0  <- PV["rrSlowFB"] #removed
