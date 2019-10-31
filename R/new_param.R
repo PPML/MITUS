@@ -250,7 +250,8 @@ fin_param <- function (PV,loc,prg_chng){
   rslow      <- PV["rslow"]/12
   rslowRF    <- PV["rslowH"]/12
 
-  RRrslowRF  <- 20
+  RRrslowRF  <- exp((0:3)/3*log(20))
+  RRrslowRF<-RRrslowRF/sum(RRrslowRF*mort_dist)
   rfast      <- PV["rfast"]/12
   #rrSlowFB0  <- PV["rrSlowFB"] #removed
   rrSlowFB   <- c(1,1,1)
@@ -260,7 +261,7 @@ fin_param <- function (PV,loc,prg_chng){
   Vrslow     <- rep(1,4)
   ############# UPDATE LEVEL FOUR OF THE RATE OF SLOW BASED ON CALCULATED RR FROM
   ############# USER INPUTTED RR FOR THE RISK FACTOR
-  Vrslow<-rslow*exp((0:3)/3*log(RRrslowRF))
+  Vrslow<-rslow*RRrslowRF
 
   TunrslowAge  <- PV["TunrslowAge"]
   rrReactAg       <- exp(c(0,0,0,0,0,0,0.5,1:4)*PV["TunrslowAge"])
