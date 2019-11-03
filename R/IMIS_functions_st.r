@@ -1,7 +1,7 @@
 ###################### Par = par_1
 # Function for calculating likelihood
 
-llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
+llikelihoodZ_st <-  function(samp_i,ParMatrix,loc) { # ParMatrix = ParInit
   data("stateID",package="MITUS")
   StateID<-as.data.frame(stateID)
   Par <- ParMatrix[samp_i,]
@@ -43,7 +43,7 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
       st<-which(StateID$USPS==loc)
 
       ### ### ### TB SPECIFIC LIKELIHOODS
-      if(TB==1){
+      # if(TB==1){
         ### ### ### TOTAL DIAGNOSED CASES 1993-2017  ### ### ### ### ### ### D
         v1   <- M[44:68,"NOTIF_ALL"]+M[44:68,"NOTIF_MORT_ALL"]
         addlik <- notif_tot_lLik_st(V=v1,st=st); addlik
@@ -84,9 +84,9 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
         addlik <- notif_us_hr_lLik_st(V=v5b,st=st); addlik
         lLik <- lLik + addlik
         ### ### ### CASES FB RECENT ENTRY DISTRIBUTION 1993-2014  ### ### ### ### ### ### D
-        #         v6   <- M[44:65,148:149]+M[44:65,201:202]
-        #    addlik <- notif_fb_rec_lLik_st(V=v6); addlik
-        #    lLik <- lLik + addlik
+                v6   <- M[51:68,148:149]+M[51:68,201:202]
+           addlik <- notif_fb_rec_lLik_st(V=v6, loc=loc); addlik
+           lLik <- lLik + addlik
         ### ### ### TREATMENT OUTCOMES 1993-2012  ### ### ### ### ### ### D
         v11  <- M[44:66,132:134]
         addlik <- tx_outcomes_lLik_st(V=v11); addlik
@@ -145,7 +145,7 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
         v35   <- c(P["rSlfCur"],P["muIp"])
         addlik <- tiemersma_lLik_st(Par=v35); addlik
         lLik <- lLik + addlik
-      } ### END OF TB LIKELIHOODS
+      # } ### END OF TB LIKELIHOODS
 
 
     ### ### ### DEMOGRAPHIC LIKELIHOOD FUNCTIONS  ### ### ### ### ### ###
@@ -186,10 +186,10 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
 
 
 ###################### local parallelization via multicore
-llikelihood_st <- function(ParMatrix,loc,n_cores=1, TB=1) {
+llikelihood_st <- function(ParMatrix,loc,n_cores=1) {
   if(dim(as.data.frame(ParMatrix))[2]==1) {
-    lLik <- llikelihoodZ_st(1,t(as.data.frame(ParMatrix)),loc=loc, TB=TB)
+    lLik <- llikelihoodZ_st(1,t(as.data.frame(ParMatrix)),loc=loc)
     } else {
-      lLik <- unlist(mclapply(1:nrow(ParMatrix),llikelihoodZ_st,ParMatrix=ParMatrix,loc=loc,mc.cores=n_cores, TB=TB))
+      lLik <- unlist(mclapply(1:nrow(ParMatrix),llikelihoodZ_st,ParMatrix=ParMatrix,loc=loc,mc.cores=n_cores))
     }
   return((lLik)) }

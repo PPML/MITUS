@@ -120,12 +120,12 @@ notif_us_hr_lLik_st <- function(V,st,rho=0.005) { # V = table of notifications b
 ### ### ### CASES FB RECENT ENTRY DISTRIBUTION 1993-2013  ### ### ### ### ### ### D
 # Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
 
-notif_fb_rec_lLik_st <- function(V,rho=0.02) { # V = table of notifications by rec 1993-2014 (row=22 years, col=pos then neg)
+notif_fb_rec_lLik_st <- function(V,loc,rho=0.02) { # V = table of notifications by rec 1993-2014 (row=22 years, col=pos then neg)
   notif_fb          <- as.matrix(CalibDatState[["rt_fb_cases"]])[as.character(CalibDatState[["rt_fb_cases"]][,1])==loc,]
   notif_fb_rec      <- cbind(as.numeric(notif_fb[,4]),as.numeric(notif_fb[,3]))
   adj_6             <- sum(dDirMult(M=notif_fb_rec+0.01,n=notif_fb_rec,Rho=rho)*wts[51:68])
   #scale does not matter for dirichlet llikelihood
-  sum(dDirMult(M=V,n=notif_fb_rec,Rho=rho)*wts[51:68]) - adj_6
+  sum(dDirMult(M=V+0.01,n=notif_fb_rec,Rho=rho)*wts[51:68]) - adj_6
   }
 
 ### ### ### TREATMENT OUTCOMES 1993-2012  ### ### ### ### ### ### D

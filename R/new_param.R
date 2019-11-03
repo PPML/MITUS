@@ -29,21 +29,21 @@ fin_param <- function (PV,loc,prg_chng){
   ### these should be calculated and stored as new input data
   for(j in 68:151){
     for (i in 1:2){
-    BgMort[j,i]<-BgMort[j-1,i]*(1-.0159)
+      BgMort[j,i]<-BgMort[j-1,i]*(1-.0159)
     }
     for (i in 3:5){
-    BgMort[j,i]<-BgMort[j-1,i]*(1-.0090)
+      BgMort[j,i]<-BgMort[j-1,i]*(1-.0090)
     }
     for (i in 6:7){
       BgMort[j,i]<-BgMort[j-1,i]*(1-.0107)
     }
     for (i in 8:9){
-    BgMort[j,i]<-BgMort[j-1,i]*(1-.0083)
+      BgMort[j,i]<-BgMort[j-1,i]*(1-.0083)
     }
     for (i in 10:11){
       BgMort[j,i]<-BgMort[j-1,i]*(1-.0069)
     }
-    }
+  }
   InitPop          <- Inputs[["InitPop"]]
   Births           <- Inputs[["Births"]]
   ImmigInputs      <- Inputs[["ImmigInputs"]]
@@ -128,9 +128,9 @@ fin_param <- function (PV,loc,prg_chng){
     } }
   TotImmAge <-matrix(0,1801,11)
   # for (i in 1:1801){
-    for (j in 1:11){
+  for (j in 1:11){
     TotImmAge[,j]        <- SmoCurve(TotImmAge0[,j])
-    }
+  }
   # }
   ######################           LTBI IMM.             ########################
   PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:67]^(exp(PV["TunLtbiTrend"]))*ImmigInputs[["PrevTrend25_34"]][67]^(1-exp(PV["TunLtbiTrend"])),
