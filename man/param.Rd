@@ -7,16 +7,12 @@ IN THE OUTPUTSINTZ FUNCTION THAT CALLS CSIM FROM THE TB_MODEL.CPP
 FUNCTION FILE. ALL VARIABLE NAMES THAT END IN t ARE INDEXED BY TIME
 VARIABLE NAMES BEGINNING WITH m ARE MATRICES & V ARE VECTORS.}
 \usage{
-param(PV, loc, prg_chng, ttt_list)
+param(PV, loc, prg_chng)
 }
 \arguments{
-\item{loc}{two character postal abbreviation for location}
-
 \item{prg_chng}{vector of program change values}
 
-\item{ttt_list}{list of targeted testing and treatment parameters}
-
-\item{P}{vector of parameters}
+\item{P}{vector of}
 }
 \value{
 Params list

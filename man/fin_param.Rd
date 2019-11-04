@@ -2,38 +2,24 @@
 % Please edit documentation in R/new_param.R
 \name{fin_param}
 \alias{fin_param}
-\title{This function takes the same inputs as the Outputs}
+\title{THE CODE BELOW SOURCES THE MODEL INPUTS AND THEN FORMATS THEM FOR USE
+IN THE OUTPUTSINTZ FUNCTION THAT CALLS CSIM FROM THE TB_MODEL.CPP
+FUNCTION FILE. ALL VARIABLE NAMES THAT END IN t ARE INDEXED BY TIME
+VARIABLE NAMES BEGINNING WITH m ARE MATRICES & V ARE VECTORS.}
 \usage{
 fin_param(PV, loc, prg_chng)
 }
 \arguments{
-\item{PV}{vector of Inputs to format}
-
-\item{loc}{two letter abbreviation}
-
 \item{prg_chng}{vector of program change values}
 
-\item{Int1}{boolean for intervention 1}
-
-\item{Int2}{boolean for intervention 2}
-
-\item{Int3}{boolean for intervention 3}
-
-\item{Int4}{boolean for intervention 4}
-
-\item{Int5}{boolean for intervention 5}
-
-\item{Scen1}{boolean for scenario 1}
-
-\item{Scen2}{boolean for scenario 2}
-
-\item{Scen3}{boolean for scenario 3}
-
-\item{ttt_list}{list of ttt changes}
+\item{P}{vector of}
 }
 \value{
-InputParams list
+Params list
 }
 \description{
-This function takes the same inputs as the Outputs
+THE CODE BELOW SOURCES THE MODEL INPUTS AND THEN FORMATS THEM FOR USE
+IN THE OUTPUTSINTZ FUNCTION THAT CALLS CSIM FROM THE TB_MODEL.CPP
+FUNCTION FILE. ALL VARIABLE NAMES THAT END IN t ARE INDEXED BY TIME
+VARIABLE NAMES BEGINNING WITH m ARE MATRICES & V ARE VECTORS.
 }
