@@ -1,25 +1,14 @@
-################################################################################
-##### THE CODE BELOW WILL GATHER AND FORMAT INPUTS FOR THE TB_MODEL        #####
-##### FUNCTION FILE. ALL VARIABLE NAMES THAT END IN t ARE INDEXED BY TIME; #####
-##### VARIABLE NAMES BEGINNING WITH m ARE MATRICES & V ARE VECTORS.        #####
-################################################################################
+#'THE CODE BELOW SOURCES THE MODEL INPUTS AND THEN FORMATS THEM FOR USE
+#'IN THE OUTPUTSINTZ FUNCTION THAT CALLS CSIM FROM THE TB_MODEL.CPP
+#'FUNCTION FILE. ALL VARIABLE NAMES THAT END IN t ARE INDEXED BY TIME
+#'VARIABLE NAMES BEGINNING WITH m ARE MATRICES & V ARE VECTORS.
 
-#' This function takes the same inputs as the Outputs
 #'@name fin_param
-#'@param PV vector of Inputs to format
-#'@param loc two letter abbreviation
-#'@param Int1 boolean for intervention 1
-#'@param Int2 boolean for intervention 2
-#'@param Int3 boolean for intervention 3
-#'@param Int4 boolean for intervention 4
-#'@param Int5 boolean for intervention 5
-#'@param Scen1 boolean for scenario 1
-#'@param Scen2 boolean for scenario 2
-#'@param Scen3 boolean for scenario 3
-#'@param prg_chng vector of program change values
-#'@param ttt_list list of ttt changes
-#'@return InputParams list
-#'@export
+#' @param P vector of
+#' @param prg_chng vector of program change values
+#' @param loc
+#' @return Params list
+#' @export
 fin_param <- function (PV,loc,prg_chng){
   # load("~/MITUS/data/US_ModelInputs_9-6-18.rda")
   ########## DEFINE A VARIABLE THAT WILL DETERMINE HOW LONG THE TIME DEPENDENT
@@ -218,7 +207,7 @@ fin_param <- function (PV,loc,prg_chng){
   pfast      <- PV["pfast"]
   ORpfast1   <- PV["ORpfast1"] ## age group 1
   ORpfast2   <- PV["ORpfast2"] ## age group 2
-  ORpfastRF  <- PV["ORpfastH"] ##riskfactor
+  ORpfastRF  <- 20#PV["ORpfastH"] ##riskfactor
   ORpfastPI  <- PV["ORpfastPI"]
 
   ##############            ORIGINAL Mpfast[ag][hv]             ################
@@ -237,6 +226,8 @@ fin_param <- function (PV,loc,prg_chng){
   #vector of ORpfastRF
   vORpfastPIRF<-vORpfastRF  <-c(1,1,1,1)
   vORpfastRF  <-(exp((0:3)/3*log(ORpfastRF)))
+  vORpfastRF<-vORpfastRF/sum(vORpfastRF*mort_dist)
+
   vORpfastPIRF  <- vORpfastRF*ORpfastPI
 
   ############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
@@ -258,7 +249,9 @@ fin_param <- function (PV,loc,prg_chng){
 
   rslow      <- PV["rslow"]/12
   rslowRF    <- PV["rslowH"]/12
-  RRrslowRF  <- rslowRF/rslow
+
+  RRrslowRF  <- exp((0:3)/3*log(20))
+  RRrslowRF<-RRrslowRF/sum(RRrslowRF*mort_dist)
   rfast      <- PV["rfast"]/12
   #rrSlowFB0  <- PV["rrSlowFB"] #removed
   rrSlowFB   <- c(1,1,1)
@@ -268,7 +261,7 @@ fin_param <- function (PV,loc,prg_chng){
   Vrslow     <- rep(1,4)
   ############# UPDATE LEVEL FOUR OF THE RATE OF SLOW BASED ON CALCULATED RR FROM
   ############# USER INPUTTED RR FOR THE RISK FACTOR
-  Vrslow<-rslow*exp((0:3)/3*log(RRrslowRF))
+  Vrslow<-rslow*RRrslowRF
 
   TunrslowAge  <- PV["TunrslowAge"]
   rrReactAg       <- exp(c(0,0,0,0,0,0,0.5,1:4)*PV["TunrslowAge"])
@@ -521,6 +514,5 @@ fin_param <- function (PV,loc,prg_chng){
 
   Params[["ResNam"]]    <- func_ResNam()
   return(Params)
-
-  ###################################################
 }
+
