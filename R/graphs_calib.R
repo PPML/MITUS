@@ -124,7 +124,7 @@ V3[,8] <- V3[,8]+V2[,9]
 V3<-V3/rowSums(V3)*100
 
 # for (x in 1:67){
-plot(0,0,ylim=c(0.05,max(range(V3))+.2),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA)
+plot(0,0,ylim=c(0.05,max(range(V3))*1.25),xlim=c(0.6,8.4),xlab="",ylab="",axes=F,col=NA)
 axis(1,1:8,paste(c("0-4","5-24","25-44","45-54","55-64","65-74","75-84","85+"),"\nyears",sep=""),tick=F,cex.axis=0.75)
 axis(1,1:9-0.5,rep("",9))
 axis(2,c(0,.2,.3,.4,.6,.8,1.0)*100,las=2);box()
