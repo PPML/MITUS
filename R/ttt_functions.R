@@ -1,4 +1,5 @@
-#this function returns default values for ttt which would be total population
+#'this function returns default values for ttt which would be total population
+
 #'@name def_ttt
 #'@export
 def_ttt<-function(){
@@ -17,11 +18,13 @@ def_ttt<-function(){
   return(ttt_list)
 }
 
-#this function returns default values for ttt which would be total population
+#'this function returns default values for ttt which would be total population
+
 #'@name create_ttt_dist
 #'@param ttt_list vector of values from interface that define the intervention
 #'@param results matrix of results (can be 1 entry from basecase)
 #'@param PV formatted parameter vector
+#'@return ttt_params list of params for ttt interventions
 #'@export
 create_ttt_dist<-function(ttt_list,results,PV){
 #get the appropriate distribution outputs from the MITUS simulation in the start year

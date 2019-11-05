@@ -1,8 +1,9 @@
-#'@name lPrior2 calculates the parameter prior with Jacobians
+#'calculates the parameter prior with Jacobians
+
+#'@name lPrior2
 #'@param Par parameters translated to the normal space
 #'@param Par3 parameters in their original distributions
 #'@return ldensity3
-
 lPrior2 <- function(Par,Par3) {
   if(dim(as.matrix(Par))[2]==1) Par <- t(as.matrix(Par))
   ldensity <- dmnorm(Par,rep(0,nrow(ParamInitZ)),diag(nrow(ParamInitZ)),log=T)
@@ -14,10 +15,11 @@ lPrior2 <- function(Par,Par3) {
   ldensity3 <- ldensity2+sum(lDensTrue)
   ldensity3  }
 
+#'calculates the prior value for a vector of parameters
+
 #'@name lprior
 #'@param ParMatrix matrix of Initial parameters
 #'@return lPri
-
 lprior <- function(ParMatrix = ParInit) { # Par = ParInit
   if(dim(as.data.frame(ParMatrix))[2]==1) {
     ParMatrix <- t(as.data.frame(ParMatrix)) }

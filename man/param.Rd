@@ -10,9 +10,11 @@ VARIABLE NAMES BEGINNING WITH m ARE MATRICES & V ARE VECTORS.}
 param(PV, loc, prg_chng)
 }
 \arguments{
+\item{loc}{two-digit abbreviation for location}
+
 \item{prg_chng}{vector of program change values}
 
-\item{P}{vector of}
+\item{P}{vector of unformatted parameter values}
 }
 \value{
 Params list

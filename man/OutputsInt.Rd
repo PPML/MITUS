@@ -9,6 +9,8 @@ OutputsInt(loc, ParMatrix, n_cores = 1, endyr = 2050, Int1 = 0,
   Scen3 = 0, prg_chng, ttt_list)
 }
 \arguments{
+\item{loc}{two-digit abbreviation for location}
+
 \item{ParMatrix}{parameters to use in the simulation}
 
 \item{n_cores}{how many cores to use}
@@ -32,6 +34,8 @@ OutputsInt(loc, ParMatrix, n_cores = 1, endyr = 2050, Int1 = 0,
 \item{Scen3}{boolean for scenario 3}
 
 \item{prg_chng}{vector of program change values}
+
+\item{ttt_list}{list of targeted testing and treatment values}
 }
 \value{
 out outputs

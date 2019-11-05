@@ -2,6 +2,8 @@
 #include <math.h>
 #include <vector>
 using namespace Rcpp;
+
+//'@title This is the simulation model code.
 //'@name cSim
 //'@description runs a simulation of the tb model
 //'@param nYrs number of years to run the model.

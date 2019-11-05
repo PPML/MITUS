@@ -4,17 +4,15 @@
 #'These llikelihood functions are called in IMIS_functions.R
 #'takes in the outputs and calibration data and creates likelihood functions
 
-  library(MCMCpack)
-
-  #'Total Diagnosed Cases 1953-2016
-  #'Motivation: Normal, mean centered with CI = +/- 5% of the mean
-  #'@name notif_tot_lLik_st
-  #'@param V vector of total notifications 1953-2014
-  #'@return likelihood
-  notif_tot_lLik_st <- function(V,st) { # V = vector of total notifications 1993-2016
-    notif_tot     <- CalibDatState[["cases_yr_st"]][[st]][,2];
-    adj_1         <- sum(dnorm(notif_tot,notif_tot,notif_tot*0.1/1.96,log=T)*wtZ)
-    sum(dnorm(notif_tot,V*1e6,notif_tot*0.1/1.96,log=T)*wtZ) - adj_1  }
+#'Motivation: Normal, mean centered with CI = +/- 5% of the mean
+#'@title Total Diagnosed Cases 1953-2016
+#'@name notif_tot_lLik_st
+#'@param V vector of total notifications 1953-2014
+#'@return likelihood
+notif_tot_lLik_st <- function(V,st) { # V = vector of total notifications 1993-2016
+  notif_tot     <- CalibDatState[["cases_yr_st"]][[st]][,2];
+  adj_1         <- sum(dnorm(notif_tot,notif_tot,notif_tot*0.1/1.96,log=T)*wtZ)
+  sum(dnorm(notif_tot,V*1e6,notif_tot*0.1/1.96,log=T)*wtZ) - adj_1  }
 
   ### ### ### ANN DECLINE IN CASES 1953-1994  ### ### ### ### ### ### D
   # notif_decline      <- CalibDatState[["cases_prop_change_53_94"]]
@@ -198,9 +196,8 @@
   #' 1970,1975,1980,1985,1990-2007
   #' Motivation: norm, mean centered with CI = +/- 5% of mean
   #'@name dth_tot_lLik_st
-  #'@param V
+  #'@param V table of deaths from 1970 to 2016
   #'@return likelihood
-
   dth_tot_lLik_st <- function(V,st) {
     data("ST_tot_mort",package="MITUS")
     ST_deaths_tot   <- ST_tot_mort[,-1]
@@ -223,26 +220,27 @@
   #'   V2 <- V2[,-3]; V2[,2]  <- V2[,2]+V[,3]
   #'
   #'   sum(dDirMult(M=(V2*1e6),n=tot_deaths_age+.1,Rho=rho)*wts[50:67]) - adj_20b  }
+  #'
+  #'
+#' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
 
-
-  #' Mortality Risk Group Distribution 1999-2014
-  #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
-  #'@name mort_dist_lLik_st
-  #'@param V table of mort_dist 1999-2014 (row=16 years, col=11 ages)
-  #'@param rho correlation parameter
-  #'@return likelihood
-  mort_dist_lLik_st <- function(V,rho=0.01) {
-    md     <- rowSums(dist_gen)
-    mort_dist     <-matrix(md,17,4, byrow = TRUE)
-    adj_21        <- sum(dDirMult(M=mort_dist,n=mort_dist,Rho=0.01)*wts[51:67])
-    tot_lik<-0
-    for(ag in 1:11){
-      V1<-V[,(1:4)+4*(ag-1)]
-      x<-sum(dDirMult(M=V1,n=mort_dist,Rho=rho)*wts[51:67]) - adj_21
-      tot_lik<-tot_lik+x
-    }
-    return(tot_lik)
+#'@title Mortality Risk Group Distribution 1999-2014
+#'@name mort_dist_lLik_st
+#'@param V table of mort_dist 1999-2014 (row=16 years, col=11 ages)
+#'@param rho correlation parameter
+#'@return tot_lik likelihood
+mort_dist_lLik_st <- function(V,rho=0.01) {
+  md     <- rowSums(dist_gen)
+  mort_dist     <-matrix(md,17,4, byrow = TRUE)
+  adj_21        <- sum(dDirMult(M=mort_dist,n=mort_dist,Rho=0.01)*wts[51:67])
+  tot_lik<-0
+  for(ag in 1:11){
+    V1<-V[,(1:4)+4*(ag-1)]
+    x<-sum(dDirMult(M=V1,n=mort_dist,Rho=rho)*wts[51:67]) - adj_21
+    tot_lik<-tot_lik+x
   }
+  return(tot_lik)
+}
   ### ### ### HOMELESS POP 2010  ### ### ### ### ### ### names(CalibDatState)
   # Motivation: norm, mean centered with CI = +/- 25% of mean
 

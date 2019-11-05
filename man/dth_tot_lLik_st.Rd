@@ -8,6 +8,9 @@ Motivation: norm, mean centered with CI = +/- 5% of mean}
 \usage{
 dth_tot_lLik_st(V, st)
 }
+\arguments{
+\item{V}{table of deaths from 1970 to 2016}
+}
 \value{
 likelihood
 }

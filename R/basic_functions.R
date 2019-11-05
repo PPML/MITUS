@@ -125,6 +125,9 @@ dDirMult <- function(M,n,Rho) {
   }
   rowSums(lgamma(n+M/Rho))-rowSums(lgamma(M/Rho))
 }
+
+#'simple function to calculate the mode of a vector
+
 #'@name getmode
 #'@param x some vector (character or numeric)
 #'@return mode

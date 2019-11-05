@@ -14,6 +14,9 @@ notif_tot_lLik_st(V, st)
 likelihood
 }
 \description{
-Total Diagnosed Cases 1953-2016
-Motivation: Normal, mean centered with CI = +/- 5% of the mean
+Calibration Functions for use with the tb_model.cpp model for state level
+This script creates several individual log likelihood functions
+for the calibration of the State Level TB model in tb_model.cpp
+These llikelihood functions are called in IMIS_functions.R
+takes in the outputs and calibration data and creates likelihood functions
 }

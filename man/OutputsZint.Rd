@@ -3,17 +3,20 @@
 \name{OutputsZint}
 \alias{OutputsZint}
 \title{THIS FUNCTION INPUTS A TABLE OF PARAMETERS AND RUNS THE TB MODEL
-AND GENERATES AN ARRAY OF OUTPUTS
-function to run the model}
+AND GENERATES AN ARRAY OF OUTPUTS}
 \usage{
 OutputsZint(samp_i = 1, ParMatrix, loc, startyr = 1950, endyr = 2050,
   Int1 = 0, Int2 = 0, Int3 = 0, Int4 = 0, Int5 = 0, Scen1 = 0,
   Scen2 = 0, Scen3 = 0, prg_chng, ttt_list)
 }
 \arguments{
-\item{samp_i}{how many samples}
+\item{samp_i}{which row of the parameter matrix to use}
 
-\item{ParMatrix}{parameters to use in the simulation}
+\item{ParMatrix}{parameter matrix to use in the simulation}
+
+\item{loc}{two-digit abbreviation for location}
+
+\item{startyr}{year to start the simulation}
 
 \item{endyr}{year to end the simulation}
 
@@ -34,6 +37,8 @@ OutputsZint(samp_i = 1, ParMatrix, loc, startyr = 1950, endyr = 2050,
 \item{Scen3}{boolean for scenario 3}
 
 \item{prg_chng}{vector of program change values}
+
+\item{ttt_list}{list of targeted testing and treatment values}
 }
 \value{
 results data frame of output
@@ -41,5 +46,4 @@ results data frame of output
 \description{
 THIS FUNCTION INPUTS A TABLE OF PARAMETERS AND RUNS THE TB MODEL
 AND GENERATES AN ARRAY OF OUTPUTS
-function to run the model
 }

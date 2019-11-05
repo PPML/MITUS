@@ -1,16 +1,10 @@
 #' THIS FUNCTION INPUTS A TABLE OF PARAMETERS AND RUNS THE TB MODEL
 #' AND GENERATES AN ARRAY OF OUTPUTS
-
-
-
-#load("~/MITUS/data/parAll200_9-14-16.rData")
-# load("data/ParamInit_2018.rData")
-#'function to run the model
 #'@name OutputsZint
-#'@param samp_i how many samples
-#'@param ParMatrix parameters to use in the simulation
-#'@param loc
-#'@param startyr
+#'@param samp_i which row of the parameter matrix to use
+#'@param ParMatrix parameter matrix to use in the simulation
+#'@param loc two-digit abbreviation for location
+#'@param startyr year to start the simulation
 #'@param endyr year to end the simulation
 #'@param Int1 boolean for intervention 1
 #'@param Int2 boolean for intervention 2
@@ -21,7 +15,7 @@
 #'@param Scen2 boolean for scenario 2
 #'@param Scen3 boolean for scenario 3
 #'@param prg_chng vector of program change values
-#'@param ttt_list
+#'@param ttt_list list of targeted testing and treatment values
 #'@return results data frame of output
 #'@export
 OutputsZint <-  function(samp_i=1,ParMatrix,loc, startyr=1950, endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,prg_chng, ttt_list) {
@@ -73,7 +67,7 @@ OutputsZint <-  function(samp_i=1,ParMatrix,loc, startyr=1950, endyr=2050,Int1=0
 
 #'wrapper function for the above function
 #'@name OutputsInt
-#'@param loc
+#'@param loc two-digit abbreviation for location
 #'@param ParMatrix parameters to use in the simulation
 #'@param n_cores how many cores to use
 #'@param endyr year to end the simulation
@@ -86,7 +80,7 @@ OutputsZint <-  function(samp_i=1,ParMatrix,loc, startyr=1950, endyr=2050,Int1=0
 #'@param Scen2 boolean for scenario 2
 #'@param Scen3 boolean for scenario 3
 #'@param prg_chng vector of program change values
-#'@param ttt_list
+#'@param ttt_list list of targeted testing and treatment values
 #'@return out outputs
 #'@export
 OutputsInt <- function(loc,ParMatrix,n_cores=1,endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0, prg_chng, ttt_list) {

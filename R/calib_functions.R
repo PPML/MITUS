@@ -3,9 +3,6 @@
 #'for the calibration of the State Level TB model in tb_model.cpp
 #'These llikelihood functions are called in IMIS_functions.R
 #'takes in the outputs and calibration data and creates likelihood functions
-#
-# data("US_CalibDat_2018-09-01", package='MITUS')# ParamInit
-#  wts <- CalibDat[["ImptWeights"]]
 
 #'Total Diagnosed Cases 1953-2016
 #'Motivation: Normal, mean centered with CI = +/- 5% of the mean
@@ -121,6 +118,8 @@ ltbi_us_11_lLik <- function(V) {
   V[9,] <- colSums(V[9:11,])
   (sum( dbeta(V[2:9,1]/rowSums(V[2:9,]),ltbi_us_11[,2],ltbi_us_11[,3],log=T) ) - adj_15)*2  }
 
+#'Likelihood function for double positive LTBI in the US born based on 2011 NHANES
+
 #'@name ltbi_us_11_dp_lLik
 #'@param V LTBI in US pop 2011 (row=11 ages, col= ltbi, non-ltbi)
 #'@return likelihood
@@ -139,6 +138,8 @@ ltbi_fb_11_lLik <- function(V) {
   adj_16          <- sum( dbeta(ltbi_fb_11[,2]/rowSums(ltbi_fb_11[,2:3]),ltbi_fb_11[,2],ltbi_fb_11[,3],log=T) )
   V[9,] <- colSums(V[9:11,])
   (sum( dbeta(V[2:9,1]/rowSums(V[2:9,]),ltbi_fb_11[,2],ltbi_fb_11[,3],log=T) ) - adj_16)*2  }
+
+#'Likelihood function for double positive LTBI in the NUS born based on 2011 NHANES
 
 #'@name ltbi_fb_11_dp_lLik
 #'@param V LTBI in FB pop 2011 (row=11 ages, col= ltbi, non-ltbi)

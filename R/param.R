@@ -3,10 +3,10 @@
 #'FUNCTION FILE. ALL VARIABLE NAMES THAT END IN t ARE INDEXED BY TIME
 #'VARIABLE NAMES BEGINNING WITH m ARE MATRICES & V ARE VECTORS.
 
-#'@name param
-#' @param P vector of
+#' @name param
+#' @param P vector of unformatted parameter values
 #' @param prg_chng vector of program change values
-#' @param loc
+#' @param loc two-digit abbreviation for location
 #' @return Params list
 #' @export
 param <- function (PV,loc,prg_chng){

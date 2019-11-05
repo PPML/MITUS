@@ -15,8 +15,9 @@ gen_st_val <-function(n=10, samp="LHS"){
 
 }
 
-#makes a matrix of the Parameter Vectors generated from StartVals
-#or optimized data opt_all
+#'makes a matrix of the Parameter Vectors generated from StartVals
+#'or optimized data opt_all
+
 #'@name gen_par_matrix
 #'@param startMat a matrix of values in the normal space
 #'@param savefile boolean, should this matrix be saved
