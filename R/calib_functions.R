@@ -76,15 +76,15 @@ notif_fb_lLik <- function(V,rho=0.005) {
 #'@param V table of notifications by fb 1993-2014 (row=22 years, col=fb then us)
 #'@return likelihood
 notif_fbus_slp_lLik <- function(V) {
-  notif_age_fb0     <- CalibDat[["age_cases_fb"]][20:24,12]
-  notif_age_us0     <- CalibDat[["age_cases_us"]][20:24,12]
+  notif_age_fb0     <- CalibDat[["age_cases_fb"]][21:24,12]
+  notif_age_us0     <- CalibDat[["age_cases_us"]][21:24,12]
   tot_case_nat<-cbind(notif_age_fb0,notif_age_us0)
   # calculate the slopes
-notif_fbus_slp5<-apply(log(tot_case_nat[,]),2,function(x) lm(x~I(1:5))$coef[2])
+  notif_fbus_slp5<-apply(log(tot_case_nat[,]),2,function(x) lm(x~I(1:4))$coef[2])
   # notif_fbus_slp5<-CalibDat$fbus_cases_slope5
   adj_3a         <- sum(dnorm(notif_fbus_slp5,notif_fbus_slp5,0.002/2,log=T))
-  V2 <- apply(log(V),2,function(x) lm(x~I(1:5))$coef[2])
-  sum(dnorm(notif_fbus_slp5,V2,0.002/2,log=T)) - adj_3a  }
+  V2 <- apply(log(V),2,function(x) lm(x~I(1:4))$coef[2])
+  sum(dnorm(notif_fbus_slp5,notif_fbus_slp5,0.002/2,log=T)) - adj_3a  }
 
 #' CASES HR DISTRIBUTION 1993-2014
 #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
@@ -202,9 +202,11 @@ tb_dth_age_lLik <- function(V,rho=0.01) {
 #'@param V total pop (rows=year, cols=us, fb)
 #'@return likelihood
 tot_pop_yr_fb_lLik <- function(V) {
-  tot_pop_yr_fb      <- CalibDat[["tot_pop_yr_fb"]]
-  adj_17             <- sum(dnorm(tot_pop_yr_fb[-1,4],tot_pop_yr_fb[-1,4],tot_pop_yr_fb[7,4]*0.1/1.96,log=T)*wts[1+1:6*10])
-  sum(dnorm(tot_pop_yr_fb[-1,4],V[c(11,21,31,41,51,61)],tot_pop_yr_fb[7,4]*0.1/1.96,log=T)*wts[1+1:6*10]) - adj_17  } # CI = +/- 2mil
+  tot_pop_yr_fb      <- rbind(CalibDat[["tot_pop_yr_fb"]], c(2016,sum(CalibDat[["tot_pop16_ag_fb"]][9,3:4]), as.numeric(CalibDat[["tot_pop16_ag_fb"]][9,3:4])))
+
+  pop_16             <- CalibDat[["tot_pop16_ag_fb"]][9,3:4]
+  adj_17             <- sum(dnorm(tot_pop_yr_fb[-1,4],tot_pop_yr_fb[-1,4],tot_pop_yr_fb[8,4]*0.1/1.96,log=T)*wts[c(1+1:6*10,67)])
+  sum(dnorm(tot_pop_yr_fb[-1,4],V[c(11,21,31,41,51,61,67)],tot_pop_yr_fb[8,4]*0.1/1.96,log=T)*wts[c(1+1:6*10,67)]) - adj_17  } # CI = +/- 2mil
 
 #' #' TOTAL POP AGE DISTRIBUTION 2014 by nativity
 #' #' Motivation: reported estimates represent pseudo-data for a multinomial likelihood, with ESS = 500

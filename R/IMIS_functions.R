@@ -81,8 +81,8 @@ llikelihoodZ <-  function(samp_i, start_mat) {
       addlik <- notif_fb_lLik(V=v3); addlik
       lLik <- lLik + addlik
       #' CASES FB, US 2012-2016  SLOPE - index updated
-      v3a   <- cbind(M[63:67,148]+M[63:67,149]+(M[63:67,201]+M[63:67,202]),
-                     M[63:67,147]+M[63:67,200])
+      v3a   <- cbind(M[64:67,148]+M[64:67,149]+(M[64:67,201]+M[64:67,202]),
+                     M[64:67,147]+M[64:67,200])
       addlik <- notif_fbus_slp_lLik(V=v3a); addlik
       lLik <- lLik + addlik
       #' #' CASES HR DISTRIBUTION 1993-2016 - index updated
