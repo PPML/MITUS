@@ -21,8 +21,9 @@ gen_st_val <-function(n=10, samp="LHS"){
 #'@name gen_par_matrix
 #'@param startMat a matrix of values in the normal space
 #'@param savefile boolean, should this matrix be saved
+#'@param simp.date MMDD of optim data
 #'@return matrix of Params in their original distributions
-gen_par_matrix<-function(startMat,savefile=FALSE ){
+gen_par_matrix<-function(startMat,savefile=FALSE, simp.date){
   ParMatrix<-matrix(NA,nrow(startMat),nrow(ParamInit))
   colnames(ParMatrix)<-rownames(ParamInit)
   for(i in 1:nrow(startMat)){
@@ -45,7 +46,7 @@ gen_par_matrix<-function(startMat,savefile=FALSE ){
   ParMatrix[i,]<-P
   }
   if (savefile==TRUE){
-    saveRDS(ParMatrix,file=paste("parAll",nrow(startMat),"_",Sys.time(),".rds", sep=""))
+    saveRDS(ParMatrix,file=paste0("~/MITUS/inst/", loc, "/", loc,  "_Param_all_",nrow(startMat),"_",simp.date,".rds"))
   }
   return(ParMatrix)
 
