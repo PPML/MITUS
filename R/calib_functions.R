@@ -83,7 +83,7 @@ notif_fbus_slp_lLik <- function(V) {
   # notif_fbus_slp5<-CalibDat$fbus_cases_slope5
   adj_3a         <- sum(dnorm(notif_fbus_slp5,notif_fbus_slp5,0.005,log=T))
   V2 <- apply(log(V),2,function(x) lm(x~I(1:4))$coef[2])
-  sum(dnorm(notif_fbus_slp5,notif_fbus_slp5,0.005,log=T)) - adj_3a  }
+  sum(dnorm(notif_fbus_slp5,V2,0.005,log=T)) - adj_3a  }
 
 #' CASES HR DISTRIBUTION 1993-2014
 #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
@@ -207,7 +207,7 @@ tot_pop_yr_fb_lLik <- function(V) {
   adj_17             <- sum(dnorm(tot_pop_yr_fb[-1,4],tot_pop_yr_fb[-1,4],tot_pop_yr_fb[8,4]*0.1/1.96,log=T)*wts[c(1+1:6*10,67)])
   sum(dnorm(tot_pop_yr_fb[-1,4],V[c(11,21,31,41,51,61,67)],tot_pop_yr_fb[8,4]*0.1/1.96,log=T)*wts[c(1+1:6*10,67)]) - adj_17  } # CI = +/- 2mil
 
-#' #' TOTAL POP AGE DISTRIBUTION 2014 by nativity
+#' #' TOTAL POP AGE DISTRIBUTION 2016 by nativity
 #' #' Motivation: reported estimates represent pseudo-data for a multinomial likelihood, with ESS = 500
 #' #'@param V US pop in 2016 (row=11 ages, col= rec fb, fb)
 #' #'@param ESS explained sum of squares
@@ -239,9 +239,10 @@ tot_pop_age_lLik <- function(V,ESS=500) {
 #' #'@param V vector of total deaths in US from 1971-2016, fraction of millions
 #' #'@return likelihood
 US_dth_tot_lLik <- function(V) {
-  US_deaths_tot   <- CalibDat[["US_tot_mort"]][c(11,21,31,41,51,61),-1]
-  adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.1/1.96,log=T)*wts[1+1:6*10])
-  sum(dnorm(US_deaths_tot,V,US_deaths_tot*0.1/1.96,log=T)*wts[1+1:6*10]) - adj_20a
+  # US_deaths_tot   <- CalibDat[["US_tot_mort"]][c(11,21,31,41,51,61),-1]
+  US_deaths_tot<-sum(readRDS(system.file("US/US_MortalityCountsByAge.rds", package="MITUS"))[,69])
+  adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.1/1.96,log=T)*wts[67])
+  sum(dnorm(US_deaths_tot,V,US_deaths_tot*0.1/1.96,log=T)*wts[67]) - adj_20a
 }
 
 #' TOTAL DEATHS AGE DISTRIBUTION 1999-2014
@@ -250,22 +251,22 @@ US_dth_tot_lLik <- function(V) {
 #'@param rho correlation parameter
 #'@return likelihood
 tot_dth_age_lLik <- function(V,rho=0.01) {
-  death_age <-readRDS(system.file("US/US_MortalityCountsByAge.rds", package="MITUS"))[,67:68]
+  death_age2 <-readRDS(system.file("US/US_MortalityCountsByAge.rds", package="MITUS"))[,68:69]
   death_agegrp<-matrix(NA,11,2)
-  death_agegrp[1,]<-colSums(death_age[1:5,])
-  death_agegrp[2,]<-colSums(death_age[6:15,])
-  death_agegrp[3,]<-colSums(death_age[16:25,])
-  death_agegrp[4,]<-colSums(death_age[26:35,])
-  death_agegrp[5,]<-colSums(death_age[36:45,])
-  death_agegrp[6,]<-colSums(death_age[46:55,])
-  death_agegrp[7,]<-colSums(death_age[56:65,])
-  death_agegrp[8,]<-colSums(death_age[66:75,])
-  death_agegrp[9,]<-colSums(death_age[76:85,])
-  death_agegrp[10,]<-colSums(death_age[86:95,])
-  death_agegrp[11,]<-colSums(death_age[96:111,])
+  death_agegrp[1,]<-colSums(death_age2[1:5,])
+  death_agegrp[2,]<-colSums(death_age2[6:15,])
+  death_agegrp[3,]<-colSums(death_age2[16:25,])
+  death_agegrp[4,]<-colSums(death_age2[26:35,])
+  death_agegrp[5,]<-colSums(death_age2[36:45,])
+  death_agegrp[6,]<-colSums(death_age2[46:55,])
+  death_agegrp[7,]<-colSums(death_age2[56:65,])
+  death_agegrp[8,]<-colSums(death_age2[66:75,])
+  death_agegrp[9,]<-colSums(death_age2[76:85,])
+  death_agegrp[10,]<-colSums(death_age2[86:95,])
+  death_agegrp[11,]<-colSums(death_age2[96:111,])
   death_agegrp<-t(death_agegrp)
-  adj_20b        <- sum(dDirMult(M=death_agegrp+0.1,n=death_agegrp,Rho=rho)*wts[66:67])
-  sum(dDirMult(M=V,n=death_agegrp,Rho=rho)*wts[66:67]) - adj_20b
+  adj_20b        <- sum(dDirMult(M=death_agegrp,n=death_agegrp,Rho=rho)*wts[67])
+  sum(dDirMult(M=V,n=death_agegrp,Rho=rho)*wts[67]) - adj_20b
 }
 
 #' Mortality Risk Group Distribution 1999-2014
