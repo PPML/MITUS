@@ -143,8 +143,8 @@ llikelihoodZ <-  function(samp_i, start_mat) {
       addlik <- tb_dth_age_lLik(V=v19); addlik
       lLik <- lLik + addlik
       #' Total DEATHS 2017
-      v20a<-M[68,121:131]
       # v20a<-rowSums(M[1+1:6*10,121:131])*1e6
+      v20a<-sum(M[68,121:131])*1e6
       addlik <-US_dth_tot_lLik(V=v20a); addlik
       lLik <- lLik + addlik
 
@@ -154,14 +154,14 @@ llikelihoodZ <-  function(samp_i, start_mat) {
       lLik <- lLik + addlik
 
       #' #' Mort_dist 2016
-      v21a<- v21  <- M[66:67,521:564]
-      for (i in 1:11){
-        denom<-M[66:67,2+i]
-        for (j in 1:ncol(v21)){
-          v21a[,(1:4)+4*(i-1)]<-v21[,(1:4)+4*(i-1)]/denom
-        } }
-      addlik <- mort_dist_lLik(V=v21a); addlik
-      lLik <- lLik + addlik
+      # v21a<- v21  <- M[66:67,521:564]
+      # for (i in 1:11){
+      #   denom<-M[66:67,2+i]
+      #   for (j in 1:ncol(v21)){
+      #     v21a[,(1:4)+4*(i-1)]<-v21[,(1:4)+4*(i-1)]/denom
+      #   } }
+      # addlik <- mort_dist_lLik(V=v21a); addlik
+      # lLik <- lLik + addlik
       #' #' Mort_dist 2016
       # v21a<- v21  <- M[51:67,521:564]
       # for (i in 1:11){

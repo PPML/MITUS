@@ -241,8 +241,8 @@ tot_pop_age_lLik <- function(V,ESS=500) {
 US_dth_tot_lLik <- function(V) {
   # US_deaths_tot   <- CalibDat[["US_tot_mort"]][c(11,21,31,41,51,61),-1]
   US_deaths_tot<-sum(readRDS(system.file("US/US_MortalityCountsByAge.rds", package="MITUS"))[,69])
-  adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.1/1.96,log=T)*wts[67])
-  sum(dnorm(US_deaths_tot,V,US_deaths_tot*0.1/1.96,log=T)*wts[67]) - adj_20a
+  adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.01/1.96,log=T)*wts[67])
+  sum(dnorm(US_deaths_tot,V,US_deaths_tot*0.01/1.96,log=T)*wts[67]) - adj_20a
 }
 
 #' TOTAL DEATHS AGE DISTRIBUTION 1999-2014
