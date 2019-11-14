@@ -124,9 +124,10 @@ fin_param <- function (PV,loc,prg_chng){
   TotImmAge0      <-matrix(0,151,11)
   for (i in 1:151){
     for (j in 1:11){
-      TotImmAge0[i,j]   <- TotImmig0[i]*ImmigInputs$AgeDist[j,i]
+      TotImmAge0[i,j]   <- TotImmig0[i]*as.matrix(ImmigInputs$AgeDist[j,i])
     } }
-  TotImmAge <-matrix(0,1801,11)
+
+TotImmAge <-matrix(0,1801,11)
   # for (i in 1:1801){
   for (j in 1:11){
     TotImmAge[,j]        <- SmoCurve(TotImmAge0[,j])
