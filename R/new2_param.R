@@ -11,10 +11,8 @@
 #' @return Params list
 #' @export
 fin2_param <- function (PV,loc,prg_chng, ttt_list){
-  # load("~/MITUS/data/US_ModelInputs_9-6-18.rda")
   ########## DEFINE A VARIABLE THAT WILL DETERMINE HOW LONG THE TIME DEPENDENT
-  ########## VARIABLES SHOULD BE (IN MONTHS) & SET ALL THE TIME VARIABLES FOR
-  ########## INTERVENTIONS
+  ########## VARIABLES SHOULD BE (IN MONTHS)
   month<-1201;
   prg_yr <-prg_chng["start_yr"]
   prg_m  <-(prg_yr-1950)*12
@@ -29,18 +27,23 @@ fin2_param <- function (PV,loc,prg_chng, ttt_list){
   } else{
     BgMort[10:67,2:12]<-weight_mort(loc)
   }
+  ###SSA projections for reductions in mortality going forward
+  ### these should be calculated and stored as new input data
   for(j in 68:151){
-    for (i in 1:2){ #ssa adjustment
+    for (i in 1:2){
       BgMort[j,i]<-BgMort[j-1,i]*(1-.0159)
     }
-    for (i in 3:7){
-      BgMort[j,i]<-BgMort[j-1,i]*(1-.0095)
+    for (i in 3:5){
+      BgMort[j,i]<-BgMort[j-1,i]*(1-.0090)
+    }
+    for (i in 6:7){
+      BgMort[j,i]<-BgMort[j-1,i]*(1-.0107)
     }
     for (i in 8:9){
       BgMort[j,i]<-BgMort[j-1,i]*(1-.0083)
     }
     for (i in 10:11){
-      BgMort[j,i]<-BgMort[j-1,i]*(1-.0052)
+      BgMort[j,i]<-BgMort[j-1,i]*(1-.0069)
     }
   }
   InitPop          <- Inputs[["InitPop"]]
@@ -73,7 +76,7 @@ fin2_param <- function (PV,loc,prg_chng, ttt_list){
   }
   mubt<-mubt[1:month,]
   for(i in 1:11){
-    mubt[,i] <- mubt[,i]*exp(PV[["TunmuAg"]])
+    mubt[,i] <- mubt[,i]*exp(PV[["TunmuAg"]]*i)
   }
 
   #########################     DISEASE SPECIFIC       ###########################
@@ -119,21 +122,21 @@ fin2_param <- function (PV,loc,prg_chng, ttt_list){
 
   ######################         IMMIGRATION             ########################
   ######################         OVERALL IMM.            ########################
-  TotImmig0       <- (c(ImmigInputs[[1]][1:151])+c(rep(0,65),cumsum(rep(PV["ImmigVolFut"],86))))/12*PV["ImmigVol"]
-  TotImmig1       <- TotImmig0
-  TotImmig        <- SmoCurve(TotImmig1)
-  AgeDist<-matrix(NA,11,1801)
-  TotImmAge<-matrix(NA,1801,11)
-  for (i in 1:11){
-    AgeDist[i,]         <- SmoCurve(ImmigInputs[["AgeDist"]][i,])}
-  for (i in 1:1801){
+  TotImmig0       <- (c(Inputs$ImmigInputs[[1]][1:151])+c(rep(0,67),cumsum(rep(PV["ImmigVolFut"],84))))/12*PV["ImmigVol"]
+  TotImmAge0      <-matrix(0,151,11)
+  for (i in 1:151){
     for (j in 1:11){
-      TotImmAge[i,j]   <- TotImmig[i]*AgeDist[j,i]
-    }}
-
+      TotImmAge0[i,j]   <- TotImmig0[i]*as.matrix(ImmigInputs$AgeDist[j,i])
+    } }
+  TotImmAge <-matrix(0,1801,11)
+  # for (i in 1:1801){
+  for (j in 1:11){
+    TotImmAge[,j]        <- SmoCurve(TotImmAge0[,j])
+  }
+  # }
   ######################           LTBI IMM.             ########################
-  PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:69]^PV["TunLtbiTrend"]*ImmigInputs[["PrevTrend25_34"]][69]^(1-PV["TunLtbiTrend"]),
-                        ImmigInputs[["PrevTrend25_34"]][70:151]*(PV["ImmigPrevFutLat"]/0.99)^(1:82))
+  PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:67]^(exp(PV["TunLtbiTrend"]))*ImmigInputs[["PrevTrend25_34"]][67]^(1-exp(PV["TunLtbiTrend"])),
+                        ImmigInputs[["PrevTrend25_34"]][68:151]*(PV["ImmigPrevFutLat"]/0.99)^(1:84))
   PrevTrend25_341l <-   PrevTrend25_340l
   PrevTrend25_34l  <- SmoCurve(PrevTrend25_341l)
   PrevTrend25_34_ls <- (PrevTrend25_34l);
@@ -142,16 +145,23 @@ fin2_param <- function (PV,loc,prg_chng, ttt_list){
   for(i in 1:11) ImmLat[,i] <- (1-exp((-(c(2.5,1:9*10,100)/100)[i]*PV["LtbiPar1"]-(c(2.5,1:9*10,100)/100)[i]^2*PV["LtbiPar2"])*PrevTrend25_34_ls))*TotImmAge[,i]
 
   ######################         ACTIVE TB IMM.           ########################
-  PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:69]^PV["TunActTrend"]*ImmigInputs[["PrevTrend25_34"]][69]^(1-PV["TunActTrend"]),
-                        ImmigInputs[["PrevTrend25_34"]][70:151]*(PV["ImmigPrevFutAct"]/0.99)^(1:82))
-  PrevTrend25_34a  <- SmoCurve(PrevTrend25_340a)
+  # PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:69]^exp(PV["TunActTrend"])*ImmigInputs[["PrevTrend25_34"]][69]^exp((1-PV["TunActTrend"])),
 
-  ImmAct         <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*PV["pImAct"]
-  ImmFst         <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*(1-PV["pImAct"])
+  PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:67]^(exp(PV["TunActTrend"]))*ImmigInputs[["PrevTrend25_34"]][67]^(1-exp(PV["TunActTrend"])),
+                        ImmigInputs[["PrevTrend25_34"]][68:151]*(PV["ImmigPrevFutAct"]/0.99)^(1:84))
+
+  PrevTrend25_34a  <- SmoCurve(PrevTrend25_340a)
+  act_prob<-rep(0,1801)
+  for (t in 1:1801){
+    act_prob[t]<-((PV[["pImActSlp"]]*t)/1801)+PV[["pImActIntc"]]
+  }
+
+  ImmAct         <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*act_prob
+  ImmFst         <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*(1-act_prob)
+
   ImmNon         <- TotImmAge-ImmAct-ImmFst-ImmLat
   ###################### TRUNCATE THESE VALS
   ImmAct<-ImmAct[1:month,];ImmFst<-ImmFst[1:month,]; ImmLat<-ImmLat[1:month,]; ImmNon<-ImmNon[1:month,]
-  # ImmNon[1:6,]<- ImmAct[1:6,]<-ImmFst[1:6,]<-ImmLat[1:6,]<-0
 
   ######################   EXOGENEOUS INFECTION RISK      ########################
 
@@ -198,7 +208,7 @@ fin2_param <- function (PV,loc,prg_chng, ttt_list){
   pfast      <- PV["pfast"]
   ORpfast1   <- PV["ORpfast1"] ## age group 1
   ORpfast2   <- PV["ORpfast2"] ## age group 2
-  ORpfastRF  <- PV["ORpfastH"] ##riskfactor
+  ORpfastRF  <- 20#PV["ORpfastH"] ##riskfactor
   ORpfastPI  <- PV["ORpfastPI"]
 
   ##############            ORIGINAL Mpfast[ag][hv]             ################
@@ -217,6 +227,8 @@ fin2_param <- function (PV,loc,prg_chng, ttt_list){
   #vector of ORpfastRF
   vORpfastPIRF<-vORpfastRF  <-c(1,1,1,1)
   vORpfastRF  <-(exp((0:3)/3*log(ORpfastRF)))
+  vORpfastRF<-vORpfastRF/sum(vORpfastRF*mort_dist)
+
   vORpfastPIRF  <- vORpfastRF*ORpfastPI
 
   ############ UPDATE PROBS FOR LEVEL 2 OF REACTIVATION ###########
@@ -238,7 +250,9 @@ fin2_param <- function (PV,loc,prg_chng, ttt_list){
 
   rslow      <- PV["rslow"]/12
   rslowRF    <- PV["rslowH"]/12
-  RRrslowRF  <- rslowRF/rslow
+
+  RRrslowRF  <- exp((0:3)/3*log(20))
+  RRrslowRF<-RRrslowRF/sum(RRrslowRF*mort_dist)
   rfast      <- PV["rfast"]/12
   #rrSlowFB0  <- PV["rrSlowFB"] #removed
   rrSlowFB   <- c(1,1,1)
@@ -248,7 +262,7 @@ fin2_param <- function (PV,loc,prg_chng, ttt_list){
   Vrslow     <- rep(1,4)
   ############# UPDATE LEVEL FOUR OF THE RATE OF SLOW BASED ON CALCULATED RR FROM
   ############# USER INPUTTED RR FOR THE RISK FACTOR
-  Vrslow<-rslow*exp((0:3)/3*log(RRrslowRF))
+  Vrslow<-rslow*RRrslowRF
 
   TunrslowAge  <- PV["TunrslowAge"]
   rrReactAg       <- exp(c(0,0,0,0,0,0,0.5,1:4)*PV["TunrslowAge"])
@@ -265,12 +279,13 @@ fin2_param <- function (PV,loc,prg_chng, ttt_list){
   ######################          LTBI DIAGNOSIS           ########################
 
   ######################        TEST SPECIFICATIONS          ######################
+  ####numbers from Stout paper
   Sens_IGRA <-c(.780,.675,.712,.789,.591)
   Spec_IGRA <-c(.979,.958,.989,.985,.931)
   IGRA_frc<-.33
   Sens_TST <-c(.726,.540,.691,.807,.570)
   Spec_TST <-c(.921,.965,.739,.70,.885)
-  names(Sens_TST)<- names(Spec_TST)<-names(Sens_IGRA)<- names(Spec_IGRA)<-c("lrUS","hrUS","youngNUS","NUS","hrNUS")
+  names(Sens_TST)<- names(Spec_TST)<-names(Sens_IGRA)<- names(Spec_IGRA)<-c("US","hivUS","youngNUS","NUS","hivNUS")
 
   ###calculate the weighted mean of sensitivity and specificity
   SensLt<-matrix(NA,length(Sens_IGRA),month)
@@ -297,35 +312,35 @@ fin2_param <- function (PV,loc,prg_chng, ttt_list){
   if (prg_chng["scrn_cov"] !=1) {
     rLtScrt[prg_m:length(rLtScrt)]<-rLtScrt[prg_m:length(rLtScrt)]*prg_chng["scrn_cov"];
   }
-
   ################################################################################
   #################### TTT ADDITIONAL SCREENING PROBABILITIES ####################
   ################################################################################
   ###this is dependent on a basecase run so load in that data
-  if (ttt_list[[3]]!=0){
-  load(system.file("US/US_results_1.rda", package="MITUS"))
-  x<-create_ttt_dist(ttt_list = ttt_list,
-                                     results = out[1,,],
-                                     PV = PV)
-  ttt_sampling_dist<-x[[1]]
-  ttt_pop_frc<-x[[2]]
-  ttt_ag<-switch(ttt_list[["AgeGrp"]], "All"=0:10,
-                                       "0 to 24"=0:2,
-                                       "25 to 64"=3:6,
-                                       "65+"=7:10
-                 )
-  ttt_na<-switch(ttt_list[["NativityGrp"]], "All"=0:2,
-                                             "USB"=0,
-                                             "NUSB"=1:2
-  )
-  ttt_ltbi<-ttt_list[["RRPrev"]]
-  } else{
-    ttt_sampling_dist<-matrix(0,4,4)
-    ttt_na<-99
-    ttt_ag<-99
-    ttt_pop_frc<-0
+  ttt_sampling_dist<-matrix(0,4,4)
+  ttt_na<-99
+  ttt_ag<-99
+  ttt_pop_frc<-0
+
+  if (ttt_list[[3]]!=0 & ttt_list[[4]]!=0){
+    load(system.file("US/US_results_1.rda", package="MITUS"))
+    x<-create_ttt_dist(ttt_list = ttt_list,
+                       results = out[1,,],
+                       PV = PV)
+    # if (ttt_list[[7]]!=1 | ttt_list[[8]]!=1){
+    ttt_sampling_dist<-x[[1]]#/12
+    # }
+    # ttt_pop_frc<-x[[2]]
+    ttt_ag<-switch(ttt_list[["AgeGrp"]], "All"=0:10,
+                   "0 to 24"=0:2,
+                   "25 to 64"=3:6,
+                   "65+"=7:10
+    )
+    ttt_na<-switch(ttt_list[["NativityGrp"]], "All"=0:2,
+                   "USB"=0,
+                   "NUSB"=1:2
+    )
   }
-  ################################################################################
+
   ###adjustments to the screening rates dependent on risk and TB status
   rrTestHr      <- PV["rrTestHr"] # RR of LTBI screening for HIV and HR as cmpared to general
   rrTestLrNoTb  <- PV["rrTestLrNoTb"] # RR of LTBI screening for individuals with no risk factors
@@ -339,16 +354,14 @@ fin2_param <- function (PV,loc,prg_chng, ttt_list){
   LtDxPar_lt   <-SensLt
   LtDxPar_nolt <- 1-SpecLt
   #adjust for High Risk Populations
-  LtDxPar_lt[c(1,4),]     <-rrTestHr*LtDxPar_lt[c(1,4),]
-  LtDxPar_nolt[c(1,4),]   <-rrTestHr*LtDxPar_nolt[c(1,4),]
+  LtDxPar_lt[2,]     <-rrTestHr*LtDxPar_lt[1,]
+  LtDxPar_nolt[2,]   <-rrTestHr*LtDxPar_nolt[1,]
+  #High risk foriegn born
+  LtDxPar_lt[5,]     <-rrTestHr*LtDxPar_lt[4,]
+  LtDxPar_nolt[5,]   <-rrTestHr*LtDxPar_nolt[4,]
   #adjust for no latent
-  LtDxPar_nolt[1,]<-LtDxPar_nolt[1,]*rrTestLrNoTb
+  LtDxPar_nolt[1,]   <-LtDxPar_nolt[1,]*rrTestLrNoTb
 
-  #add in screening rate
-#   for (i in 1:5){
-#   LtDxPar_lt[i,]<-LtDxPar_lt[i,]*rLtScrt[]
-#   LtDxPar_nolt[i,]<-LtDxPar_nolt[i,]*rLtScrt[]
-# }
   ######################          LTBI DIAGNOSIS           ########################
   ###################### LTBI TX EFFECTIVENESS PROGRAM CHANGE ########################
   if (prg_chng["ltbi_eff_frc"] != round(PV["EffLt"], 2)){
@@ -376,8 +389,6 @@ fin2_param <- function (PV,loc,prg_chng, ttt_list){
 
   pImmScen    <- PV["pImmScen"] # lack of reactivitiy to IGRA for Sp
 
-
-
   ################################################################################
   #######################         TB DIAGNOSIS            ########################
   #######################      TEST CHARACTERISTICS       ########################
@@ -397,7 +408,6 @@ fin2_param <- function (PV,loc,prg_chng, ttt_list){
   RRdxAge       <- 1+(c(rep(1,6),cumprod(seq(1.05,1.3,length.out=5)))-1)*TunRRdxAge
 
   #######################         ATTENDANCE RATE           ########################
-
   n_Spln   <- 5;
   n_Stps   <- 2010-1950+1;
   dif_pen   <- 1 # quadratic spline
@@ -424,19 +434,17 @@ fin2_param <- function (PV,loc,prg_chng, ttt_list){
   rDxt[,2]       <- (rDxt[,1]-min(rDxt[,1]))/PV["rrDxH"]+min(rDxt[,1]) #check this with Nick
   colnames(rDxt) <- c("Active","Active_HighRisk")
 
-  ################################################################################
-  ###########################     TREATMENT OUTCOMES    ##########################
-  ################################################################################
-
+  ######  TREATMENT OUTCOMES  ######
   TunTxMort	<- PV["TunTxMort"]	# Multiplier to adjust mortality rates while on treatment into reasonable range (based on observed data) 0 = no TB mort on TX
 
-  ###########################      REGIMEN DURATION      ##########################
-
+  # Regimen duration (no uncertainty?)
   d1st <- 1/9
 
-  ###########################       REGIMEN EFFICACY      ##########################
-
+  ## Regimen efficacy
   pCurPs  <- PV["pCurPs"]    # probability of cure with pansensitive TB, 1st line regimen (Menzies 09)
+  # TxE1		<- PV["TxEf1"]     # RR cure given mono-resistance, 1st line regimen 0.90
+  # TxE2		<- PV["TxEf2"]     # RR cure given multiresistance, 1st line or 2nd line 0.50
+  # TxE3		<- PV["TxEf3"]     # RR cure given effective 2nd line 0.90
 
   ###########################        REGIMEN DEFAULT       ##########################
 
@@ -455,8 +463,6 @@ fin2_param <- function (PV,loc,prg_chng, ttt_list){
 
   rDeftH        <- rDeft*PV["RRdefHR"] # second col is HR default rate
   rDeftH<-rDeftH[1:month]
-
-
 
   #########################        REGIMEN QUALITY       ##########################
 
@@ -481,6 +487,29 @@ fin2_param <- function (PV,loc,prg_chng, ttt_list){
   TxVec[1]       <-  d1st
   TxVec[2]       <-  pCurPs
   NixTrans<- rep(1,1201)
+
+  ## Tx quality
+  TxQual0         <- rep(NA,151)
+  TxQual0[1:30]   <- PV["TxQualEarly"]
+  TxQual0[44:62]  <- ORAdd(TxInputs[[2]][,2],PV["TunTxQual"])
+  TxQual0[63:151] <- TxQual0[62]
+  TxQual1         <- predict(smooth.spline(x=c(1950:1979,1993:2100),y=TxQual0[-(31:43)],spar=0.4),x=1950:2100)$y
+  TxQualt        <- SmoCurve(TxQual1);
+  TxQualt         <-TxQualt[1:1201]
+  RRcurDef      <- PV["RRcurDef"]
+
+  ## Retreatment
+  pReTx   <- LgtCurve(1985,2000,PV["pReTx"])   	# Probability Tx failure identified, patient initiated on tx experienced reg (may be same)
+
+  ### REMOVED ACQUIRED RESISTANCE PARAMETERS
+  ### REPLACED TX MAT WITH VECTOR FOR SINGLE VALUES
+  #####################   NEW TB TREATMENT TABLE ################
+  TxVec          <- rep(NA,2)
+  names(TxVec) <- c("TxCompRate","TxEff")
+  TxVec[1]       <-  d1st
+  TxVec[2]       <-  pCurPs
+  ### REMOVED ART PARAMETERS
+
 
   Params<-list()
   Params[["rDxt"]]      = rDxt
@@ -517,13 +546,13 @@ fin2_param <- function (PV,loc,prg_chng, ttt_list){
   Params[["LtTxPar"]]   = LtTxPar
   Params[["LtDxPar_lt"]]   = LtDxPar_lt
   Params[["LtDxPar_nolt"]]   = LtDxPar_nolt
+  Params[["ttt_month"]]<-ttt_month
+  Params[["ttt_sampling_dist"]]<-ttt_sampling_dist
+  Params[["ttt_na"]]<-ttt_na
+  Params[["ttt_ag"]]<-ttt_ag
+  Params[["ttt_pop_frc"]]<-ttt_pop_frc/12
+  Params[["ttt_ltbi"]]<-ttt_list[["RRPrev"]]
   Params[["rLtScrt"]]   = rLtScrt
-  Params[["ttt_samp_dist"]] = ttt_sampling_dist
-  Params[["ttt_ag"]] =ttt_ag
-  Params[["ttt_na"]] =ttt_na
-  Params[["ttt_ltbi"]] = ttt_ltbi
-  Params[["ttt_pop_frc"]]=ttt_pop_frc
-  Params[["ttt_month"]] =ttt_month
   Params[["RRdxAge"]]   = RRdxAge
   Params[["rRecov"]]    = rRecov
   Params[["pImmScen"]]  = pImmScen
@@ -534,7 +563,7 @@ fin2_param <- function (PV,loc,prg_chng, ttt_list){
   Params[["adj_fact"]] <- adj_fact
   Params[["NixTrans"]] <- NixTrans
 
-  Params[["ResNam"]]    <-func2_ResNam()
+  Params[["ResNam"]]    <- func_ResNam()
   return(Params)
 }
 
