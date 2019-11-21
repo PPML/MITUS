@@ -509,6 +509,8 @@ BEGIN_RCPP
 END_RCPP
 }
 
+RcppExport SEXP f2();
+
 static const R_CallMethodDef CallEntries[] = {
     {"_MITUS_cSim_demo_ag", (DL_FUNC) &_MITUS_cSim_demo_ag, 10},
     {"_MITUS_cSim_demo_agna", (DL_FUNC) &_MITUS_cSim_demo_agna, 10},
@@ -521,6 +523,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_MITUS_cSim_eRblnc", (DL_FUNC) &_MITUS_cSim_eRblnc, 44},
     {"_MITUS_cSim_flow", (DL_FUNC) &_MITUS_cSim_flow, 44},
     {"_MITUS_cSim_rblnc", (DL_FUNC) &_MITUS_cSim_rblnc, 46},
+    {"f2", (DL_FUNC) &f2, 0},
     {NULL, NULL, 0}
 };
 
