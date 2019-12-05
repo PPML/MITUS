@@ -5,10 +5,14 @@
 \title{The function requires the use of the ParamInit Rdata file and the
 StartValues Rdata file.}
 \usage{
-optim_data(batches)
+optim_data(batches, loc, date)
 }
 \arguments{
 \item{batches}{dataframe or matrix of starting values data frame}
+
+\item{loc}{two digit location code}
+
+\item{date}{MM-DD date on optim files}
 }
 \value{
 datafile of all the optimized data parameters

@@ -1,0 +1,45 @@
+---
+title: "Screening Multiple Targeted Groups in MITUS" 
+author: "Nicole A. B. Swartwood"
+date: "`r Sys.Date()`"
+output: rmarkdown::pdf_document
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+For the MITUS paper we require the ability to screen multiple groups that are targeted for testing and treatment of LTBI simultaneously. The screening of these groups is additive as we have assumed that each of the groups in this analysis are independent and mutually exclusive. In the case of 
+
+```{r, warning=FALSE, message=FALSE, fig.width=7.5, fig.height=6.5}
+library(MITUS)
+model_load()
+Opt <- readRDS("~/MITUS/inst/US/US_Optim_all_10_1031.rds")
+# View(Opt)
+ttt_list<-def_ttt()
+Par<-gen_par_matrix(Opt[,-59])
+prg_chng<-def_prgchng(Par[3,])
+new3_OutputsInt("US", Par, prg_chng = prg_chng, ttt_list = ttt_list)
+```
+
+```{r, warning=FALSE, message=FALSE, fig.width=7.5, fig.height=6.5}
+#load the package
+library(MITUS)
+#load the data for national
+model_load("US")
+#setup the risk population parameters
+ttt_input<-risk_pop_setup()
+#calculate the rates for each of the risk groups
+load(system.file("US/US_results_1.rda", package="MITUS"))
+ttt_params<-create_mult_ttt_dist(ttt_param_list = ttt_input,
+                     results = out[1,,],
+                     PV = P)
+rownames(ttt_params[[1]])<-names(ttt_input)
+#This is the overall sampling dist 
+print(ttt_params[[1]])
+#check that the total distributions don't sum to over 1 for any group
+colSums(ttt_params[[1]])/12 #it does so this is a problem -- revisit after getting workflow setup
+#feed these into the script that used to be in the param file (now functionalized)
+ttt<-ttt_functions(12,ttt_input)
+```
+
+

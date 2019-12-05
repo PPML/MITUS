@@ -18,14 +18,7 @@ lLik
 if any output is missing or negative or if any model state population is negative
 set the likelihood to a hugely negative number (penalized)
 TOTAL DIAGNOSED CASES 1953-2016 - index is same
-TOTAL FB DIAGNOSED CASES 1953-2016 - index is same
-v1a   <- M[57:67,148]+M[57:67,149]+(M[57:67,201]+M[57:67,202])
-addlik <- notif_fb_lik(V=v1a*1e6); addlik
-lLik <- lLik + addlik
-#' TOTAL US DIAGNOSED CASES 1953-2016 - index is same
-v1b   <-  M[57:67,147]+M[57:67,200]
-addlik <- notif_us_lik(V=v1b*1e6); addlik
-lLik <- lLik + addlik
+TOTAL US DIAGNOSED CASES 1953-2016 - index is same
 US CASES AGE DISTRIBUTION 1993-2016 - index updated
 FB CASES AGE DISTRIBUTION 1993-2016 - index updated
 CASES FB DISTRIBUTION 1993-2016 - index updated

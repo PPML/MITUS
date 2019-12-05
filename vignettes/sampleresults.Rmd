@@ -1,0 +1,318 @@
+---
+title: "Sample Results MITUS paper v1" 
+author: "Nicole A. B. Swartwood"
+date: "`r Sys.Date()`"
+output: rmarkdown::pdf_document
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+##Motivation: 
+
+Targeted testing and treatment is the foundation of the United States TB control population. Below we evaluate how effective targeting can be a control strategy through the application of a new, flexible mathematical model.  
+
+##Methods 
+We applied our model to each of the ATS/IDSA/CDC recommended screening populations to identify the potential impacts on population level LTBI prevalence, incident TB infections, active TB prevalence, and TB deaths. We also identified the number needed to screen in each population to avert one TB death in the general population. We then implemented a rolling screening program, that targeted these groups in decreasing order of numbers needed to screen to see how large of an impact of an extensive screening strategy would have. 
+
+##Results: 
+Below are described some sample results and plots that could be exhibited in the MITUS paper.   
+
+First, we describe the targeted populations of interest. The populations were chosen because they directly correspond with the joint screening recommendation of ATS, IDSA, and CDC for clinicians. They are as follows:  
+ 
+ - HIV 
+ - Diabetes
+ - Silicosis
+ - Chronic Kidney Disease  
+ 
+ - Children under five 
+ - People who Inject Drugs
+ - Immunosupressive Therapy
+ - Abnormal CXR consistent with Prior TB  
+
+ - Close Contacts to TB case
+ - Immigrants from a High Burden Country
+ - Lab Personnel (Healthcareworkers)
+ - Residents and Employees of High-Risk Congregate Settings  
+ 
+ For the purpose of this analysis, we assume these groups to be independent, except for a few well established intersections of the above population, see below:  
+ 
+ - HIV and PWID
+ - HIV and Diabetes 
+ - Diabetes and CKD
+ - Diabetes and Immigrants from High Burden Country  
+ 
+ These populations differ in their sizes, distributions across age and nativity groups, and the characteristics that identify as them as a high-risk group. 
+ 
+ 
+```{r, warning=FALSE, message=FALSE,echo=FALSE, fig.width=7.5, fig.height=6.5}
+library(MITUS)
+library(ggplot2)
+library(gridExtra)
+library(reshape2)
+model_load()
+#make the population matrix 
+HIV<-c(1.1,24.9,2.19,1)
+Diab<-c(30.3,3,1.89,2.12)
+Silca<-c(1,30,5,1)
+CKD<-c(37,15,12.8,1) #values to be updated
+Child5yr<-c(19.9,2,1.2,1.3)
+PWID<-c(6.6,3,2,1.5)
+Immunosup<-c(1,10,3,1)
+abCXR<-c(.15,2,1,2)
+Contact<-c(.2,1,1,8)
+Immigrants<-c(21,1,1,10)
+Healthcare<-c(18,1,1,5)
+Congregate<-c(4,1,1,8) 
+targetedPopDesc<-rbind(HIV,Diab,Silca,CKD,Child5yr,
+                       PWID,Immunosup,abCXR,Contact,
+                       Immigrants,Healthcare,Congregate)
+colnames(targetedPopDesc)<-c("PopSize",
+                             "RRTB",
+                             "RRMU",
+                             "RRLTBI")
+targetedPopDesc<-as.data.frame(targetedPopDesc)
+targetedPopDesc$'Population'<-rownames(targetedPopDesc)
+m_targetedPopDesc<-melt(targetedPopDesc[,-1],id.vars = 'Population')
+m_targ2<-melt(targetedPopDesc[,-c(2:4)],id.vars = 'Population')
+m_targ<-melt(targetedPopDesc[,],id.vars = c('Population', 'PopSize'))
+
+#let's visualize
+ggplot(m_targetedPopDesc,aes(x=Population, y=value, fill=variable))+
+  geom_bar(position="dodge", stat = "identity")+theme(axis.title.y = element_blank(), legend.position = 'bottom')+
+   coord_flip() +ggtitle("Targeted Populations and their Associated Rate Ratios")
+  # scale_y_continuous(limits = c(1,31))
+  # coord_cartesian(ylim=c(1,31)) +    scale_y_continuous(breaks = c(1,5,10,15,20,25,30))
+
+#population sizes 
+library(treemapify)
+
+ggplot(m_targ,aes(area=PopSize, fill=value, label=Population))+geom_treemap()+
+  geom_treemap_text(colour="white", place="centre") + facet_wrap(~variable) +
+  ggtitle("Targeted Populations and their Associated Rate Ratios", "Box size corresponds to population size, color gradient to the RR of interest.")
+
+ggplot(m_targ2,aes(area=value, fill=value, label=Population))+geom_treemap()+
+  geom_treemap_text(colour="white", place="centre") +
+  ggtitle("Targeted Populations and their Associated Rate Ratios", "Box size and color gradient corresponds to population size")
+##bar plots for the RRs, centered around 1 
+# progPlot<-ggplot(targetedPopDesc,aes(x=rownames(targetedPopDesc), y=RRTB))+
+#           geom_bar(stat="identity", width=.5)+theme(axis.title.y = element_blank())+coord_flip()
+# prevPlot<-ggplot(targetedPopDesc,aes(x=rownames(targetedPopDesc), y=RRLTBI))+
+#           geom_bar(stat="identity", width=.5)+theme(axis.title.y = element_blank(),axis.text.y = element_blank(),axis.ticks.y = element_blank())+coord_flip()
+# muPlot<-ggplot(targetedPopDesc,aes(x=rownames(targetedPopDesc), y=RRMU))+
+#           geom_bar(stat="identity", width=.5)+theme(axis.title.y = element_blank(),axis.text.y = element_blank(),axis.ticks.y = element_blank())+coord_flip()
+# grid.arrange(progPlot,prevPlot,muPlot,ncol=3)
+```
+
+### Single population analysis 
+For the initial analysis, each of the above named risk populations were screened from 2020-2025 at a rate of 20% each year. These were ran under the crude assumption that each of these populations are independent and mutually exclusive. These results are loosely informed by population size totals and characterizations from a brief literature review. These values should not be regarded for their validity, but for the plotting style and analysis structure.  
+```{r, warning=FALSE, message=FALSE,echo=FALSE, fig.width=7.5, fig.height=6.5}
+library(reshape2)
+loc<-"US"
+#load the model data
+model_load(loc)
+#load in the most recent national optim
+Opt<-readRDS("~/MITUS/inst/US/US_Optim_all_10_1114.rds")
+#set which run to use 
+samp<-2
+#convert into parameters
+Par<-gen_par_matrix(Opt[,-59])
+ttt_input<-risk_pop_setup()
+
+# results<-vector("list",12)
+
+
+results<-list()
+results_list<-list()
+
+for(j in 1:length(ttt_input)){
+ttt_vec<-ttt_input[[j]]
+scrn_rates<-c(.05,.10,.20,.5)
+
+ # for (i in 1:4) {
+  #use the basecase program change
+  defprg<-def_prgchng(Par[samp,-59])
+  #replace the screening rate with the rate of interest
+  ttt_vec[[4]]<-scrn_rates[3]
+    out<-OutputsZint(samp_i=samp,loc=loc,Par,endyr=2050,
+                      Int1 = 0,
+                      Int2 = 0,
+                      Int3 = 0,
+                      Int4 = 0,
+                      Int5 = 0,
+                      Scen1 = 0,
+                      Scen2 = 0,
+                      Scen3 = 0,
+                      prg_chng = defprg,
+                      ttt_list = ttt_vec)
+
+  results_list[[j]]<-out
+}
+names(results_list)<-names(ttt_input)
+#create a giant list of list of results
+# results<-list(results,results_list)
+# }
+intv_yr<-ttt_input[[1]][[5]]
+##extract outputs of interest
+##stratify these by nativity group (this will make things easier later when we split the 
+##targeted groups above)
+load("~/MITUS/inst/US/US_results_1.rda")
+basecase<-out[samp,,]
+# number of cases diagnosed US
+DxUSindex<-which(colnames(basecase)=="NOTIF_US_0_4"):which(colnames(basecase)=="NOTIF_US_MORT_95p")
+# number of cases diagnosed NUS
+DxNUSindex <- c(which(colnames(basecase)=="NOTIF_0_4"):which(colnames(basecase)=="NOTIF_95p"),which(colnames(basecase)=="NOTIF_MORT_0_4"):which(colnames(basecase)=="NOTIF_MORT_95p"))
+# number of treatment initiations US
+TxUSindex<-which(colnames(basecase)=="TLTBI_INITS") #needs arithmetic with NUS 
+# number of treatment initiations NUS
+TxNUSindex<-which(colnames(basecase)=="TLTBI_INITS_FB")
+# total ltbi averted US
+LtbiUSindex<-which(colnames(basecase)=="N_US_LTBI_0_4"):which(colnames(basecase)=="N_US_LTBI_95p")
+# total ltbi averted NUS
+LtbiNUSindex<-which(colnames(basecase)=="N_FB_LTBI_0_4"):which(colnames(basecase)=="N_FB_LTBI_95p")
+DeathsAvertUSindex  <- which(colnames(basecase)=="TBMORT_US_0_4"):which(colnames(basecase)=="TBMORT_US_95p")
+# total TB deaths averted NUS
+DeathsAvertNUSindex <- which(colnames(basecase)=="TBMORT_NUS_0_4"):which(colnames(basecase)=="TBMORT_NUS_95p")
+
+index_list<-list(DxUSindex, 
+                 DxNUSindex, 
+                 TxUSindex, 
+                 TxNUSindex,
+                 LtbiUSindex, 
+                 LtbiNUSindex,
+                 DeathsAvertUSindex,
+                 DeathsAvertNUSindex)
+#compare these to the most recent basecase 
+outcome_matrix<-matrix(NA, length(results_list), length(index_list))
+nus_frc <-CalibDat$tot_pop16_ag_fb[9,3]/CalibDat$tot_pop16_ag_fb[9,2]
+us_frc<-1-nus_frc
+#calculate each of these
+for(i in 1:length(results_list)){
+  results<-results_list[[i]]
+  outcome_matrix[i,1]<-sum(basecase[(intv_yr-1949):nrow(basecase),index_list[[1]]] - 
+                           results[(intv_yr-1949):nrow(results),index_list[[1]]])
+  outcome_matrix[i,2]<-sum((basecase[(intv_yr-1949):nrow(basecase),index_list[[2]]] -           basecase[(intv_yr-1949):nrow(basecase),index_list[[1]]])-
+                     (results[(intv_yr-1949):nrow(results),index_list[[2]]]-results[(intv_yr-1949):nrow(results),index_list[[1]]]))
+  outcome_matrix[i,3]<-sum((basecase[(intv_yr-1949):nrow(basecase),index_list[[3]]] - basecase[(intv_yr-1949):nrow(basecase),index_list[[4]]]) -
+                     (results[(intv_yr-1949):nrow(results),index_list[[3]]]-results[(intv_yr-1949):nrow(results),index_list[[4]]]))
+  outcome_matrix[i,4]<-sum(basecase[(intv_yr-1949):nrow(basecase),index_list[[4]]] - 
+                   results[(intv_yr-1949):nrow(results),index_list[[4]]])
+  outcome_matrix[i,5]<-sum(basecase[(intv_yr-1949):nrow(basecase),index_list[[5]]] - 
+                 results[(intv_yr-1949):nrow(results),index_list[[5]]])
+  outcome_matrix[i,6]<-sum(basecase[(intv_yr-1949):nrow(basecase),index_list[[6]]] - 
+               results[(intv_yr-1949):nrow(results),index_list[[6]]])
+  outcome_matrix[i,7]<-sum(basecase[(intv_yr-1949):nrow(basecase),index_list[[7]]] - 
+             results[(intv_yr-1949):nrow(results),index_list[[7]]])
+  outcome_matrix[i,8]<-sum(basecase[(intv_yr-1949):nrow(basecase),index_list[[8]]] - 
+             results[(intv_yr-1949):nrow(results),index_list[[8]]])
+}
+  outcome_matrix<-outcome_matrix
+  rownames(outcome_matrix)<-names(results_list)
+  colnames(outcome_matrix)<-c("DxUS", 
+                              "DxNUS", 
+                               "TxUS", 
+                               "TxNUS",
+                               "LtbiUS", 
+                               "LtbiNUS",
+                               "DeathsAvertUS",
+                               "DeathsAvertNUS")
+  
+##create a plot to show all these results 
+outcome_df<-as.data.frame(outcome_matrix)*1e6
+# outcome_df<-1/outcome_df
+library(ggplot2)
+# limits<-max(abs(min(na.omit(outcome_df[,1]))), abs(max(na.omit(outcome_df[,1]))))
+outcome_df$Population<-rownames(outcome_df)
+# add a row for population groups 
+outcome_df$"PopGroup"<-"High Progression"
+outcome_df[outcome_df$Population %in% c("Diabetes","CKD","PWID"),"PopGroup"]<-'Medium Progression'
+outcome_df[outcome_df$Population %in% c("Contact", "Immigrants", "Healthcare", "Congregate"),"PopGroup"]<-'High LTBI Prevalence'
+outcome_df<-outcome_df[-4,]
+
+m_outcome_df1<-melt(outcome_df[,c(1:2,9,10)],id.vars=c('Population', "PopGroup"), variable.name = "outcome")
+m_outcome_df2<-melt(outcome_df[,c(3:4,9,10)],id.vars=c('Population', "PopGroup"), variable.name = "outcome")
+m_outcome_df3<-melt(outcome_df[,c(5:6,9,10)],id.vars=c('Population', "PopGroup"), variable.name = "outcome")
+m_outcome_df4<-melt(outcome_df[,7:10],id.vars=c('Population', "PopGroup"), variable.name = "outcome")
+variable_names<-c("US-Born","Non-US Born")
+PopGroup<-c("High LTBI Prevalence","High Progression", "Medium Progression")
+variable_labeller2 <- function(variable,value){
+  if (variable=='outcome') {
+  return(variable_names[value])
+  } else {
+    return(PopGroup)
+  }
+}
+
+ggplot(m_outcome_df1,aes(x=Population, y=value, fill=PopGroup, label=value))+
+  geom_bar(stat="identity")+theme(axis.title.y = element_blank(), legend.position = 'bottom', axis.text.x = element_text(angle = 90, hjust = 1))+
+   # geom_text(color="white", size=2) +
+  # coord_flip()+
+  facet_grid(outcome~PopGroup, scales = "free", space="free_x", labeller = variable_labeller2)+ ggtitle("Changes in the Cumulative Active TB Case Notifications in US and NUS born Populations")
+ggplot(m_outcome_df2,aes(x=Population, y=value, fill=PopGroup, label=value))+
+  geom_bar(stat="identity")+theme(axis.title.y = element_blank(), legend.position = 'bottom', axis.text.x = element_text(angle = 90, hjust = 1))+
+   # geom_text(color="white", size=2) +
+  # coord_flip()+
+  facet_grid(outcome~PopGroup, scales = "free", space="free_x", labeller = variable_labeller2)+ ggtitle("Changes in the Cumulative TLTBI Initiations in US and NUS born Populations")
+ggplot(m_outcome_df3,aes(x=Population, y=value, fill=PopGroup, label=value))+
+  geom_bar(stat="identity")+theme(axis.title.y = element_blank(), legend.position = 'bottom', axis.text.x = element_text(angle = 90, hjust = 1))+
+   # geom_text(color="white", size=2) +
+  # coord_flip()+
+  facet_grid(outcome~PopGroup, scales = "free", space="free_x", labeller = variable_labeller2)+ ggtitle("Changes in the Cumulative LTBI Prevalence in US and NUS born Populations")
+ggplot(m_outcome_df4,aes(x=Population, y=value, fill=PopGroup, label=value))+
+  geom_bar(stat="identity")+theme(axis.title.y = element_blank(), legend.position = 'bottom', axis.text.x = element_text(angle = 90, hjust = 1))+
+   # geom_text(color="white", size=2) +
+  # coord_flip()+
+  facet_grid(outcome~PopGroup, scales = "free", space="free_x", labeller = variable_labeller2)+ ggtitle("Changes in the Cumulative TB Deaths in US and NUS born Populations")
+#create a table of the number needed to screen sorted by high to low values 
+#chose to sort by cases averted (not deaths but can change)
+library(dplyr)
+outcome_df2<-outcome_df[,7:10]
+outcome_df2[,1]<-outcome_df2[,1]+outcome_df2[,2]
+outcome_df2<-outcome_df2[,-2]
+#rm CKD from list of inputs 
+popsize_list<-ttt_input
+popsize_list[[4]]<-NULL
+for (i in 1:nrow(outcome_df2)){
+  outcome_df2[,1]<- (popsize_list[[i]][[3]]*1e6)/outcome_df2[,1]
+}
+#outcome_df2
+outcome_sort<-arrange(outcome_df2, DeathsAvertUS)
+outcome_sort[,1]<-round(outcome_sort[,1],1)
+
+# final_outcome<-as.data.frame(outcome_sort[,2],outcome_sort[,3],as.numeric(outcome_sort[,1]))
+# final_outcome
+# final_outcome[,3]<-as.numeric(final_outcome[,3])
+colnames(outcome_sort)<-c("NNS_Death","Population", "Population Group")
+outcome_sort$type<-ifelse(outcome_sort$NNS_Death< 0, "below", "above")
+outcome_sort
+
+ggplot(outcome_sort, aes(x=Population, y=NNS_Death, label=NNS_Death))+
+         geom_point(stat="identity", aes(col=type), size=6)+
+           scale_color_manual(name="NNS for One Averted Death", 
+                     labels = c("Averted Deaths","Additional Deaths"), 
+                     values = c("above"="#00ba38", "below"="#f8766d")) + 
+  geom_text(color="black", size=3) + coord_flip() + ggtitle("Number Needed to Screen in Each Risk Population to Avert 1 TB Death")
+```
+This final plot could be transformed into a panel plot that explores other NNS outcomes, such as incident infections or prevalent LTBI or active TB cases. 
+
+### Joint population analysis
+MITUS was not designed to implement multiple TTT interventions. If we want to design our interventions in a rolling fashion, i.e. screen all the Immigrant Population, then Healthcare Workers, Diabetes, etc. I will need to update how the code processes TTT interventions. 
+
+```{r, warning=FALSE, message=FALSE,echo=FALSE, fig.width=7.5, fig.height=6.5}
+loc<-"US"
+#load the model data
+model_load(loc)
+#load in the most recent national optim
+Opt<-readRDS("~/MITUS/inst/US/US_Optim_all_10_1114.rds")
+#set which run to use 
+samp<-2
+#convert into parameters
+Par<-gen_par_matrix(Opt[,-59])
+ttt_input<-risk_pop_setup()
+
+#order the populations in the order of their case averted 
+#and screen in order of their NTS values 
+
+
+
+```

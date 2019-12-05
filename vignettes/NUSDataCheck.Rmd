@@ -1,0 +1,112 @@
+---
+title: "MITUS -- non-US data check"
+geometry: margin=2cm
+output: rmarkdown::pdf_document
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+## National level non-US born data sources:
+```{r, message=FALSE, warning=FALSE}
+library(MITUS)
+model_load("US") #load in the national level data
+names(Inputs$ImmigInputs) #explore what inputs we use for Immigration
+
+Inputs$ImmigInputs$LtbiPars
+Inputs$ImmigInputs$RR_Active_TB_Age
+Inputs$ImmigInputs$TBBurdenImmig #burden of TB overtime in immigration in relation to 2018
+Inputs$ImmigInputs$PrevTrend25_34
+newtrend<-crude_rate(Inputs,"US")
+
+plot(1,1,ylim=c(min(newtrend,Inputs$ImmigInputs$PrevTrend25_34),max(newtrend,Inputs$ImmigInputs$PrevTrend25_34) ),xlim=c(1950,2100),xlab="",ylab="",axes=F)
+axis(1);axis(2,las=2);box()
+lines(1950:2100,newtrend)
+lines(1950:2100,Inputs$ImmigInputs$PrevTrend25_34, col="red")
+mtext("Comparison of TB Burden in Immigrants in old/new model",3,.8,font=2,cex=1.2)
+legend("topright",c("old burden","new burden"),cex=1.0,
+       pch=c(15,15),lwd=c(NA,NA),lty=c(NA,NA),col=c("red","black"),bg="white",pt.cex=c(1.8,1.8))
+```
+
+## National level non-US born data sources:
+```{r, message=FALSE, warning=FALSE}
+library(MITUS)
+model_load("NC") #load in the national level data
+names(Inputs$ImmigInputs) #explore what inputs we use for Immigration
+
+Inputs$ImmigInputs$LtbiPars
+Inputs$ImmigInputs$RR_Active_TB_Age
+Inputs$ImmigInputs$TBBurdenImmig #burden of TB overtime in immigration in relation to 2018
+
+```
+
+#compare all new immigration burden data for locs of interest
+```{r, message=FALSE, warning=FALSE}
+library(MITUS)
+locs<-c("CA", "TX", "NY", "FL", "IL", "NJ" ,"GA" ,"PA", "MD", "VA","MA", "NC", "WA", "AZ" ,"OH")
+
+oldprev<-newprev<-matrix(NA,length(locs),151)
+tbimmig<-matrix(NA,length(locs),69)
+
+
+for (loc in locs){
+  model_load(loc)
+  prevtrend<-Inputs$ImmigInputs$PrevTrend25_34
+  newtrend<-crude_rate(Inputs,loc)
+  tbimmigz<-Inputs$ImmigInputs$TBBurdenImmig
+  oldprev[which(locs==loc),]<-prevtrend
+  newprev[which(locs==loc),]<-newtrend
+  tbimmig[which(locs==loc),]<-tbimmigz
+}
+col<-rainbow(length(locs))
+plot(1,1,ylim=c(min(newprev,oldprev),max(newprev,oldprev) ),xlim=c(1950,2100),xlab="",ylab="",axes=F)
+axis(1);axis(2,las=2);box()
+lines(1950:2100,Inputs$ImmigInputs$PrevTrend25_34)
+for (i in 1:nrow(newprev)) lines(1950:2100,newprev[i,], col=col[i])
+mtext("Comparison of TB Burden in Immigrants in old/new model by state",3,.8,font=2,cex=1.2)
+legend("topright",c("old burden",locs),cex=1.0,
+       pch=rep(15,length(locs)+1),lwd=rep(15,length(locs)+1),lty=c(NA,NA),col=c("black",col),bg="white",pt.cex=rep(1.8,length(locs)+1), ncol = 2)
+
+##also check the raw TB burden immig 
+plot(1,1,ylim=c(min(tbimmig),max(tbimmig) ),xlim=c(1950,2018),xlab="",ylab="",axes=F)
+axis(1);axis(2,las=2);box()
+# lines(1950:2018,Inputs$ImmigInputs$PrevTrend25_34)
+for (i in 1:nrow(newprev)) lines(1950:2018,tbimmig[i,], col=col[i])
+mtext("Comparison of TB Burden in Immigrants in old/new model by state",3,.8,font=2,cex=1.2)
+legend("topright",locs,cex=1.0,
+       pch=rep(15,length(locs)),lwd=rep(15,length(locs)),lty=c(NA,NA),col=col,bg="white",pt.cex=rep(1.8,length(locs)), ncol = 2)
+```
+## Check Calibration Data Points
+```{r, message=FALSE, warning=FALSE}
+library(MITUS)
+model_load()
+
+names(CalibDat)
+
+#check that the sample_size for nativity stratified cases are the same as tot cases
+cbind(CalibDat$fb_cases[,3],CalibDat$tot_cases[41:64,2]*1e6)
+#check that the sample_size of age_cases aligns with fb_cases
+cbind(CalibDat$age_cases_fb[,12],CalibDat$fb_cases[,3]*CalibDat$fb_cases[,2])
+#these are not the same -- what are the sources for these data 
+#check the slopes between the two data sources 
+  #age cases 
+  notif_age_fb0     <- CalibDat[["age_cases_fb"]][20:24,12]
+  notif_age_us0     <- CalibDat[["age_cases_us"]][20:24,12]
+  tot_case_nat<-cbind(notif_age_fb0,notif_age_us0)
+  notif_fbus_slp0<-apply(log(tot_case_nat[,]),2,function(x) lm(x~I(1:5))$coef[2])
+  notif_fbus_slp0
+  #percent cases 
+  notif_fb1     <-CalibDat$fb_cases[20:24,3]*CalibDat$fb_cases[20:24,2]
+  notif_us1     <-(CalibDat$tot_cases[60:64,2]*1e6)-notif_fb1
+  tot_case_nat<-cbind(notif_fb1,notif_us1)
+  notif_fbus_slp1<-apply(log(tot_case_nat[,]),2,function(x) lm(x~I(1:5))$coef[2])
+  notif_fbus_slp1
+  #CalibDat
+  CalibDat$fbus_cases_slope5
+```
+
+#check immigration age distribution 
+in the model, we have had too few non-US born individuals in the 25-44 and 45-54 age groups. is this an inputs problem?
+
+

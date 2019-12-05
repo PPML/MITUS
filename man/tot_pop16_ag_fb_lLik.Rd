@@ -2,7 +2,7 @@
 % Please edit documentation in R/calib_functions.R
 \name{tot_pop16_ag_fb_lLik}
 \alias{tot_pop16_ag_fb_lLik}
-\title{#' TOTAL POP AGE DISTRIBUTION 2014 by nativity
+\title{#' TOTAL POP AGE DISTRIBUTION 2016 by nativity
 #' Motivation: reported estimates represent pseudo-data for a multinomial likelihood, with ESS = 500
 #'@param V US pop in 2016 (row=11 ages, col= rec fb, fb)
 #'@param ESS explained sum of squares
@@ -11,7 +11,7 @@
 tot_pop16_ag_fb_lLik(V, ESS = 500)
 }
 \description{
-#' TOTAL POP AGE DISTRIBUTION 2014 by nativity
+#' TOTAL POP AGE DISTRIBUTION 2016 by nativity
 #' Motivation: reported estimates represent pseudo-data for a multinomial likelihood, with ESS = 500
 #'@param V US pop in 2016 (row=11 ages, col= rec fb, fb)
 #'@param ESS explained sum of squares
