@@ -5,12 +5,14 @@
 \title{makes a matrix of the Parameter Vectors generated from StartVals
 or optimized data opt_all}
 \usage{
-gen_par_matrix(startMat, savefile = FALSE)
+gen_par_matrix(startMat, savefile = FALSE, simp.date)
 }
 \arguments{
 \item{startMat}{a matrix of values in the normal space}
 
 \item{savefile}{boolean, should this matrix be saved}
+
+\item{simp.date}{MMDD of optim data}
 }
 \value{
 matrix of Params in their original distributions
