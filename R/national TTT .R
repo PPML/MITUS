@@ -22,25 +22,28 @@ def_ttt_nat_ag<-function(){
 }
 
 #this function returns the sampling distribution for each age and nativity group
-create_ttt_dist<-function(ttt_list,results,PV){
+create_ttt_mdist<-function(ttt_input,results,PV){
+  all_samp_rates<-list()
+  frc_of_pop<-rep(1,22)
+  samp_dist<-matrix(1,22,17)
+
+  #for each of the ttt populations
+for (intv in 1:length(ttt_input)){
+  ttt_list<-ttt_input[[intv]]
+  start_yr<-as.numeric(ttt_list[[5]])-1950
+  US_dist<-results[start_yr,33:43]/sum(results[start_yr,33:43])
+  NUS_dist<-results[start_yr,44:54]/sum(results[start_yr,44:54])
   #get the appropriate distribution outputs from the MITUS simulation in the start year
 ag<-c("0-4", "5-14", "15-24", "25-34", "35-44", "45-54", "55-64", "65-74", "75-84", "85-94", "95p")
 na<-c("US", "NUS")
 for (n in 1:2){
   for (a in 1:11){
-  x<-list()
-  # for (i in 1:length(ag)){
-  #   for(j in 1:length(na)){
-      x[[i+(3*(j-1))]]<-grep(paste(ag[i], na[j], sep = "_"), colnames(results))
-    # }}
+  y<-grep(paste(ag[a], na[n], sep = "_"), colnames(results))
 
-  y<-x[unlist(lapply(x, length) != 0)]
   dist<-rep(0,16)
   #need to format the start year
-  start_yr<-as.numeric(ttt_list[[5]])-1950
-  for (i in 1:length(y)){
-    dist<-dist+results[start_yr,y[[i]]]
-  }
+  # for (i in 1:length(y)){
+  dist<-results[start_yr,y]
   dist<-matrix(dist,4,4)
   colnames(dist) <- paste0("p",0:3) # progresison
   rownames(dist) <- paste0("m",0:3) # mortality
@@ -71,12 +74,17 @@ for (n in 1:2){
   par = fit$par
 
   #5 calc transition rates for TTT
-  ttt_pop_yr =ttt_list[[3]]*ttt_list[[4]] # divide by 1e6 since model in millions
+  ttt_pop_yr =ttt_list[[3]]*ttt_list[[4]]*ifelse(n==1,US_dist[a], NUS_dist[a]) # divide by 1e6 since model in millions
   rr_samp <- (exp(par[1])^(0:3)) %*% t(exp(par[2])^(0:3))
   an_samp_rate <- rr_samp * ttt_pop_yr / sum(rr_samp*dist)
-  ttt_params<-list()
-  ttt_params[['an_samp_rate']]<-an_samp_rate
-  ttt_params[['frc_of_totpop']]<-(ttt_list[["NRiskGrp"]]*ttt_list[["FrcScrn"]])/results[start_yr,2]
+  samp_dist[((n-1)*11)+a,1:16]<-as.vector(an_samp_rate)
+  # print(paste(a,n,(ttt_list[["NRiskGrp"]]*ttt_list[["FrcScrn"]]*ifelse(n==1,US_dist[a], NUS_dist[a]))/results[start_yr,(((n-1)*11)+a)+32]))
+  samp_dist[((n-1)*11)+a,17]<-(ttt_list[["NRiskGrp"]]*ttt_list[["FrcScrn"]]*ifelse(n==1,US_dist[a], NUS_dist[a]))/results[start_yr,(((n-1)*11)+a)+32]
+#this will be the real implementation after the risk group age/nativity distributions are finalized
+  # frc_of_pop<-(ttt_list[["NRiskGrp"]]*ttt_list[["FrcScrn"]]*ifelse(n==1,ttt_list[[1]][a], ttt_list[[2]][a]))/results[start_yr,(((n-1)*11)+a)+32]
+  # samp_dist[((n-1)*11)+a,17]<-frc_of_pop
   } }##end of age and nativity loop
-  return(ttt_params)
+  all_samp_rates[[intv]]<-samp_dist
+}##end of population loop
+  return(all_samp_rates)
 }
