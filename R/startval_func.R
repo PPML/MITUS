@@ -23,7 +23,8 @@ gen_st_val <-function(n=10, samp="LHS"){
 #'@param savefile boolean, should this matrix be saved
 #'@param simp.date MMDD of optim data
 #'@return matrix of Params in their original distributions
-gen_par_matrix<-function(startMat,savefile=FALSE, simp.date){
+
+gen_par_matrix<-function(startMat,savefile=FALSE, simp.date, loc){
   ParMatrix<-matrix(NA,nrow(startMat),nrow(ParamInit))
   colnames(ParMatrix)<-rownames(ParamInit)
   for(i in 1:nrow(startMat)){
