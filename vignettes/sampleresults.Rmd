@@ -108,56 +108,35 @@ ggplot(m_targ2,aes(area=value, fill=value, label=Population))+geom_treemap()+
 For the initial analysis, each of the above named risk populations were screened from 2020-2025 at a rate of 20% each year. These were ran under the crude assumption that each of these populations are independent and mutually exclusive. These results are loosely informed by population size totals and characterizations from a brief literature review. These values should not be regarded for their validity, but for the plotting style and analysis structure.  
 ```{r, warning=FALSE, message=FALSE,echo=FALSE, fig.width=7.5, fig.height=6.5}
 library(reshape2)
+library(MITUS)
 loc<-"US"
 #load the model data
 model_load(loc)
 #load in the most recent national optim
-Opt<-readRDS("~/MITUS/inst/US/US_Optim_all_10_1114.rds")
-#set which run to use 
-samp<-2
-#convert into parameters
+Opt <- readRDS("~/MITUS/inst/US/US_Optim_all_10_1031.rds")
 Par<-gen_par_matrix(Opt[,-59])
+prg_chng<-def_prgchng(Par[3,])
+#setup the risk population parameters
 ttt_input<-risk_pop_setup()
-
-# results<-vector("list",12)
-
-
-results<-list()
-results_list<-list()
-
-for(j in 1:length(ttt_input)){
-ttt_vec<-ttt_input[[j]]
-scrn_rates<-c(.05,.10,.20,.5)
-
- # for (i in 1:4) {
-  #use the basecase program change
-  defprg<-def_prgchng(Par[samp,-59])
-  #replace the screening rate with the rate of interest
-  ttt_vec[[4]]<-scrn_rates[3]
-    out<-OutputsZint(samp_i=samp,loc=loc,Par,endyr=2050,
-                      Int1 = 0,
-                      Int2 = 0,
-                      Int3 = 0,
-                      Int4 = 0,
-                      Int5 = 0,
-                      Scen1 = 0,
-                      Scen2 = 0,
-                      Scen3 = 0,
-                      prg_chng = defprg,
-                      ttt_list = ttt_vec)
-
-  results_list[[j]]<-out
-}
-names(results_list)<-names(ttt_input)
-#create a giant list of list of results
-# results<-list(results,results_list)
-# }
 intv_yr<-ttt_input[[1]][[5]]
-##extract outputs of interest
-##stratify these by nativity group (this will make things easier later when we split the 
-##targeted groups above)
-load("~/MITUS/inst/US/US_results_1.rda")
-basecase<-out[samp,,]
+#create a list to hold all the results 
+results_list<-list()
+##create some loop that moves through the list 
+for (i in 1:length(ttt_input)){
+  ttt_input_intv<-ttt_input[1]
+  results<-national_OutputsZint(samp_i = 3,
+                     ParMatrix = Par, 
+                     prg_chng = prg_chng, 
+                     ttt_input=ttt_input_intv)
+  results_list[[i]]<-results
+}
+
+#also run the basecase 
+basecase<-national_OutputsZint(samp_i = 3, 
+                           ParMatrix = Par, 
+                           loc="US", 
+                           prg_chng = def_prgchng(Par[3,]),
+                           ttt_input = list(def_ttt_nat_ag()))
 # number of cases diagnosed US
 DxUSindex<-which(colnames(basecase)=="NOTIF_US_0_4"):which(colnames(basecase)=="NOTIF_US_MORT_95p")
 # number of cases diagnosed NUS
@@ -303,9 +282,9 @@ loc<-"US"
 #load the model data
 model_load(loc)
 #load in the most recent national optim
-Opt<-readRDS("~/MITUS/inst/US/US_Optim_all_10_1114.rds")
+Opt<-readRDS("~/MITUS/inst/US/US_Optim_all_10_1031.rds")
 #set which run to use 
-samp<-2
+samp<-3
 #convert into parameters
 Par<-gen_par_matrix(Opt[,-59])
 ttt_input<-risk_pop_setup()

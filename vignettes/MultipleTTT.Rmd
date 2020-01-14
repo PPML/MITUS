@@ -15,10 +15,10 @@ library(MITUS)
 model_load()
 Opt <- readRDS("~/MITUS/inst/US/US_Optim_all_10_1031.rds")
 # View(Opt)
-ttt_list<-def_ttt()
+ttt_list<-def_ttt_nat_ag()
 Par<-gen_par_matrix(Opt[,-59])
 prg_chng<-def_prgchng(Par[3,])
-new3_OutputsInt("US", Par, prg_chng = prg_chng, ttt_list = ttt_list)
+national_OutputsInt("US", Par, prg_chng = prg_chng, ttt_list = ttt_list)
 ```
 
 ```{r, warning=FALSE, message=FALSE, fig.width=7.5, fig.height=6.5}

@@ -31,8 +31,8 @@ create_ttt_mdist<-function(ttt_input,results,PV){
 for (intv in 1:length(ttt_input)){
   ttt_list<-ttt_input[[intv]]
   start_yr<-as.numeric(ttt_list[[5]])-1950
-  US_dist<-results[start_yr,33:43]/sum(results[start_yr,33:43])
-  NUS_dist<-results[start_yr,44:54]/sum(results[start_yr,44:54])
+  US_dist<-results[start_yr,33:43]
+  NUS_dist<-results[start_yr,44:54]
   #get the appropriate distribution outputs from the MITUS simulation in the start year
 ag<-c("0-4", "5-14", "15-24", "25-34", "35-44", "45-54", "55-64", "65-74", "75-84", "85-94", "95p")
 na<-c("US", "NUS")
@@ -74,9 +74,9 @@ for (n in 1:2){
   par = fit$par
 
   #5 calc transition rates for TTT
-  ttt_pop_yr =ttt_list[[3]]*ttt_list[[4]]*ifelse(n==1,US_dist[a], NUS_dist[a]) # divide by 1e6 since model in millions
+  ttt_pop_yr =ttt_list[[3]]*ttt_list[[4]]*ifelse(n==1,ttt_list[[1]][a], ttt_list[[2]][a]) # divide by 1e6 since model in millions
   rr_samp <- (exp(par[1])^(0:3)) %*% t(exp(par[2])^(0:3))
-  an_samp_rate <- rr_samp * ttt_pop_yr / sum(rr_samp*dist)
+  an_samp_rate <- rr_samp * ttt_pop_yr / sum(rr_samp*ifelse(n==1,US_dist[[1]][a], NUS_dist[[2]][a]))
   samp_dist[((n-1)*11)+a,1:16]<-as.vector(an_samp_rate)
   # print(paste(a,n,(ttt_list[["NRiskGrp"]]*ttt_list[["FrcScrn"]]*ifelse(n==1,US_dist[a], NUS_dist[a]))/results[start_yr,(((n-1)*11)+a)+32]))
   samp_dist[((n-1)*11)+a,17]<-(ttt_list[["NRiskGrp"]]*ttt_list[["FrcScrn"]]*ifelse(n==1,US_dist[a], NUS_dist[a]))/results[start_yr,(((n-1)*11)+a)+32]
