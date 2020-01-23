@@ -26,7 +26,7 @@ new2_OutputsZint <-  function(samp_i=1,ParMatrix,loc, startyr=1950, endyr=2050,I
   names(Par1) <- colnames(ParMatrix) }
 
   P <- Par1
-  print(P)
+  # print(P)
   Int1 <<- Int1;
   Int2 <<- Int2;
   Int3 <<- Int3;
