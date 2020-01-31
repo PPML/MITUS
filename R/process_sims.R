@@ -39,7 +39,7 @@ OutputsZint <-  function(samp_i=1,ParMatrix,loc, startyr=1950, endyr=2050,Int1=0
   # prms <-list()
   # prms <- fin2_param(P,loc,prg_chng, ttt_list)
   IP <- list()
-  IP <- param_init(P,loc,Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3,prg_chng,ttt_list)
+  IP <- param_init(P,loc="US",Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3,prg_chng,ttt_list)
 # data("trans_mat_nat",package="MITUS")
   # trans_mat_tot_ages<-trans_mat_tot_ages_nat
   # tm<-matrix(0,16,16)
@@ -59,7 +59,7 @@ OutputsZint <-  function(samp_i=1,ParMatrix,loc, startyr=1950, endyr=2050,Int1=0
                   ttt_ag = IP[["ttt_ag"]], ttt_na = IP[["ttt_na"]], ttt_month = IP[["ttt_month"]], ttt_ltbi = IP[["ttt_ltbi"]], ttt_pop_frc = IP[["ttt_pop_frc"]], RRdxAge  = IP[["RRdxAge"]] , rRecov     = IP[["rRecov"]]    , pImmScen = IP[["pImmScen"]]   ,
                   EarlyTrend = IP[["EarlyTrend"]], ag_den=IP[["aging_denom"]],  NixTrans = IP[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)$Outputs
   colnames(m) <- func_ResNam();
-  results<<-as.matrix(m)
+  results<-as.matrix(m)
 
   return(results)
 }

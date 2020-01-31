@@ -1,0 +1,299 @@
+---
+title: "Tabby 2 Interventions" 
+author: "Nicole A. B. Swartwood"
+date: "`r Sys.Date()`"
+output: rmarkdown::pdf_document
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r, warning=FALSE, message=FALSE,echo=FALSE, fig.width=7.5, fig.height=6.5}
+library(MITUS)
+model_load()
+# Par<-readRDS("~/MITUS/inst/US/US_Param_all_10_1031.rds")
+prgchng<-def_prgchng(Par[3,])
+#create all basic risk pops
+ttt_risk_pops<-risk_pop_setup()
+
+ttt_risk_pops[[12]]<-NULL
+ttt_risk_pops[[11]]<-NULL
+ttt_risk_pops[[9]]<-NULL
+ttt_risk_pops[[8]]<-NULL
+ttt_risk_pops[[4]]<-NULL
+
+######### calculate the basecase for comparisons #########  
+results<-OutputsZint(3, Par, "US", prg_chng = def_prgchng(Par[3,]), ttt_list=def_ttt())
+ltbi_count_bc<-cbind(2018:2049,rowSums(results[69:100,55:76]))
+tb_count_bc<-cbind(2018:2049,rowSums(results[69:100,136:146]+results[69:100,189:199]))
+TxInits_bc<-cbind(2018:2049,results[69:100,152])
+TBDeaths_bc<-cbind(2018:2049,results[69:100,253]+results[69:100,254])
+TxInits_count<-TBDeaths_count<-tb_count<-ltbi_count<-list()
+TxInits_perred<-TBDeaths_perred<-tb_perred<-ltbi_perred<-TxInits_list<-TBDeaths_list<-tb_list<-ltbi_list<-results_list<-list()
+
+######### run intevention for each population ######### 
+for (i in 1:length(ttt_risk_pops)){
+  print(names(ttt_risk_pops)[i])
+  ttt_list<-ttt_risk_pops[[i]]
+  print(paste0("Size of Population is ", ttt_list[[3]]))
+  #parameters found in the optimizer for ttt_dist
+  params<-param_init(PV=Par[3,], loc="US", prg_chng = def_prgchng(Par[3,]), ttt_list = ttt_list)
+  #ttt sampling distribution 
+  print(params$ttt_sampling_dist)
+  #make empty lists 
+  results<-OutputsZint(3, Par, "US", prg_chng = prgchng, ttt_list=ttt_list)
+  results_list[[i]]<-results
+  ltbi_list[[i]]<-cbind(2018:2049,rowSums(results[69:100,55:76]))
+  tb_list[[i]]<-cbind(2018:2049,rowSums(results[69:100,136:146]+results[69:100,189:199]))
+  TxInits_list[[i]]<-cbind(2018:2049,results[69:100,152])
+  TBDeaths_list[[i]]<-cbind(2018:2049,results[69:100,253]+results[69:100,254])
+  
+  ltbi_count[[i]]<-(ltbi_count_bc - ltbi_list[[i]])[,2]
+  tb_count[[i]]<-(tb_count_bc - tb_list[[i]])[,2]
+  TxInits_count[[i]]<-(TxInits_bc - TxInits_list[[i]])[,2]
+  TBDeaths_count[[i]]<-(TBDeaths_bc - TBDeaths_list[[i]])[,2]
+  
+  ltbi_perred[[i]]<-(((ltbi_count_bc - ltbi_list[[i]]) / ltbi_count_bc)*100)[,2]
+  tb_perred[[i]]<-(((tb_count_bc - tb_list[[i]]) / tb_count_bc)*100)[,2]
+  TxInits_perred[[i]]<-(((TxInits_bc - TxInits_list[[i]]) / TxInits_bc)*100)[,2]
+  TBDeaths_perred[[i]]<-(((TBDeaths_bc - TBDeaths_list[[i]]) / TBDeaths_bc)*100)[,2]
+}
+
+percent_reductions_30yr<-percent_reductions_15yr<-percent_reductions_1yr<-data.frame(Population=character(),
+                                                                                     Year=numeric(),
+                                                                                     LTBI=numeric(),
+                                                                                     ActiveTB=numeric(),
+                                                                                     TLTBIInits=numeric(), 
+                                                                                     TBDeaths=numeric(), stringsAsFactors = FALSE)
+# rownames(percent_reductions)<-names(ttt_risk_pops)
+#colnames(percent_reductions)<-c( "LTBI", 
+#"IGRA + LTBI",
+# "Active TB", "TBDeaths Inits.", "TBDeaths ")
+for (i in 1:length(ttt_risk_pops)){
+  percent_reductions_1yr[i,1]<-paste(names(ttt_risk_pops)[i], "screened", sep=" ")
+  percent_reductions_1yr[i,2]<-2021
+  percent_reductions_1yr[i,3]<-round(ltbi_perred[[i]][4],2)
+  percent_reductions_1yr[i,4]<-round(tb_perred[[i]][4],2)
+  percent_reductions_1yr[i,5]<-round(TxInits_perred[[i]][4],2)
+  percent_reductions_1yr[i,6]<-round(TBDeaths_perred[[i]][4],2)
+  
+  percent_reductions_15yr[i,1]<-paste(names(ttt_risk_pops)[i], "screened", sep=" ")
+  percent_reductions_15yr[i,2]<-2035
+  percent_reductions_15yr[i,3]<-round(ltbi_perred[[i]][17],2)
+  percent_reductions_15yr[i,4]<-round(tb_perred[[i]][17],2)
+  percent_reductions_15yr[i,5]<-round(TxInits_perred[[i]][17],2)
+  percent_reductions_15yr[i,6]<-round(TBDeaths_perred[[i]][17],2)
+  
+  percent_reductions_30yr[i,1]<-paste(names(ttt_risk_pops)[i], "screened", sep=" ")
+  percent_reductions_30yr[i,2]<-2050
+  percent_reductions_30yr[i,3]<-round(ltbi_perred[[i]][32],2)
+  percent_reductions_30yr[i,4]<-round(tb_perred[[i]][32],2)
+  percent_reductions_30yr[i,5]<-round(TxInits_perred[[i]][32],2)
+  percent_reductions_30yr[i,6]<-round(TBDeaths_perred[[i]][32],2)
+}
+
+percent_reductions<-rbind(percent_reductions_1yr,
+                          percent_reductions_15yr,
+                          percent_reductions_30yr)
+colnames(percent_reductions)<-c("Population", 
+                                "Year", 
+                                "LTBI", 
+                                #"IGRA + LTBI",
+                                "Active TB", "TLTBI Inits.", "TB Deaths")
+library(kableExtra)
+kable(percent_reductions)%>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+
+#do a plot 
+library(ggplot2)
+library(reshape2)
+
+perred<-melt(percent_reductions, id.vars = c("Population", "Year"))
+
+
+plot1<-ggplot(perred, aes(x=Year,y=value, color=Population))+geom_line()+facet_wrap(variable~., scales = "free_y")+theme_bw()+expand_limits(y=0)+ggtitle("Percent Reductions in Selected TB Outcomes with 100% Screening in 2020")
+
+plot1
+
+###actual values 
+counts_30yr<-counts_15yr<-counts_1yr<-data.frame(Population=character(),
+                                                 Year=numeric(),
+                                                 LTBI=numeric(),
+                                                 ActiveTB=numeric(),
+                                                 TLTBIInits=numeric(), 
+                                                 TBDeaths=numeric(), stringsAsFactors = FALSE)
+# rownames(counts)<-names(ttt_risk_pops)
+#colnames(counts)<-c( "LTBI", 
+#"IGRA + LTBI",
+# "Active TB", "TBDeaths Inits.", "TBDeaths ")
+for (i in 1:length(ttt_risk_pops)){
+  
+  counts_1yr[i,1]<-paste(names(ttt_risk_pops)[i], "screened", sep=" ")
+  counts_1yr[i,2]<-2021
+  counts_1yr[i,3]<-round(ltbi_count[[i]][4]*1e6,1)
+  counts_1yr[i,4]<-round(tb_count[[i]][4]*1e6,1)
+  counts_1yr[i,5]<-round(TxInits_count[[i]][4]*1e6,1)
+  counts_1yr[i,6]<-round(TBDeaths_count[[i]][4]*1e6,1)
+  
+  counts_15yr[i,1]<-paste(names(ttt_risk_pops)[i], "screened", sep=" ")
+  counts_15yr[i,2]<-2035
+  counts_15yr[i,3]<-round(ltbi_count[[i]][17]*1e6,1)
+  counts_15yr[i,4]<-round(tb_count[[i]][17]*1e6,1)
+  counts_15yr[i,5]<-round(TxInits_count[[i]][17]*1e6,1)
+  counts_15yr[i,6]<-round(TBDeaths_count[[i]][17]*1e6,1)
+  
+  counts_30yr[i,1]<-paste(names(ttt_risk_pops)[i], "screened", sep=" ")
+  counts_30yr[i,2]<-2050
+  counts_30yr[i,3]<-round(ltbi_count[[i]][32]*1e6,1)
+  counts_30yr[i,4]<-round(tb_count[[i]][32]*1e6,1)
+  counts_30yr[i,5]<-round(TxInits_count[[i]][32]*1e6,1)
+  counts_30yr[i,6]<-round(TBDeaths_count[[i]][32]*1e6,1)
+}
+
+counts<-rbind(counts_1yr,
+              counts_15yr,
+              counts_30yr)
+colnames(counts)<-c("Population", 
+                    "Year", 
+                    "LTBI", 
+                    #"IGRA + LTBI",
+                    "Active TB", "TLTBI Inits.", "TB Deaths")
+library(kableExtra)
+kable(counts)%>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+
+counts<-melt(counts, id.vars = c("Population", "Year"))
+
+
+plot2<-ggplot(counts, aes(x=Year,y=value/1e6, color=Population))+geom_line()+facet_wrap(variable~., scales = "free_y")+theme_bw()+expand_limits(y=0)+ggtitle("Absolute Reductions in Selected TB Outcomes with 100% Screening in 2020, in millions")
+plot2
+```
+##test a range of percentages of Immigrant population
+
+```{r, warning=FALSE, message=FALSE,echo=FALSE, fig.width=7.5, fig.height=6.5}
+library(MITUS)
+###base case run ###
+model_load()
+ttt_list<-def_ttt()
+prgchng<-def_prgchng(Par[3,])
+load(system.file("US/US_results_1.rda", package="MITUS"))
+
+results<-out[1,,]
+ltbi_count_bc<-cbind(2018:2049,rowSums(results[69:100,55:76]))
+tb_count_bc<-cbind(2018:2049,rowSums(results[69:100,136:146]+results[69:100,189:199]))
+TxInits_bc<-cbind(2018:2049,results[69:100,152])
+TBDeaths_bc<-cbind(2018:2049,results[69:100,253]+results[69:100,254])
+### run the intervention populations ###
+model_load()
+prgchng<-def_prgchng(Par[3,])
+#create all basic risk pops
+ttt_list<-risk_pop_setup()[[10]]
+percent_tested<-seq(.1,1,.1)
+
+TxInits_perred<-TBDeaths_perred<-tb_perred<-ltbi_perred<- TxInits_list<-TBDeaths_list<-tb_list<-ltbi_list<-results_list<-list()
+for (i in 1:length(percent_tested)){
+  print(percent_tested[[i]])
+  ttt_list[[4]]<-percent_tested[[i]]
+  print(ttt_list[[4]])
+  ttt_month <-seq((ttt_list[["StartYr"]]-1950)*12,(ttt_list[["EndYr"]]-1949)*12,1)
+  
+  ttt_sampling_dist<-matrix(0,4,4)
+  ttt_na<-99
+  ttt_ag<-99
+  ttt_pop_frc<-0
+  
+  if (ttt_list[[3]]!=0 & ttt_list[[4]]!=0){
+    x<-create_ttt_dist(ttt_list = ttt_list,
+                       results = out[1,,],
+                       PV = Par[3,])
+    # if (ttt_list[[7]]!=1 | ttt_list[[8]]!=1){
+    ttt_sampling_dist<-x[[1]]#/12
+    # }
+    # ttt_pop_frc<-x[[2]]
+    ttt_ag<-switch(ttt_list[["AgeGrp"]], "All"=0:10,
+                   "0 to 24"=0:2,
+                   "25 to 64"=3:6,
+                   "65+"=7:10
+    )
+    ttt_na<-switch(ttt_list[["NativityGrp"]], "All"=0:2,
+                   "USB"=0,
+                   "NUSB"=1:2
+    )
+  }
+  
+  print(ttt_sampling_dist)
+  rm(ttt_sampling_dist)
+  results<-OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list)
+  results_list[[i]]<-results
+  ltbi_list[[i]]<-cbind(2018:2049,rowSums(results[69:100,55:76]))
+  tb_list[[i]]<-cbind(2018:2049,rowSums(results[69:100,136:146]+results[69:100,189:199]))
+  TxInits_list[[i]]<-cbind(2018:2049,results[69:100,152])
+  TBDeaths_list[[i]]<-cbind(2018:2049,results[69:100,253]+results[69:100,254])
+  ltbi_perred[[i]]<-(((ltbi_count_bc - ltbi_list[[i]]) / ltbi_count_bc)*100)[,2]
+  tb_perred[[i]]<-(((tb_count_bc - tb_list[[i]]) / tb_count_bc)*100)[,2]
+  TxInits_perred[[i]]<-(((TxInits_bc - TxInits_list[[i]]) / TxInits_bc)*100)[,2]
+  TBDeaths_perred[[i]]<-(((TBDeaths_bc - TBDeaths_list[[i]]) / TBDeaths_bc)*100)[,2]
+}
+#create a table with the estimated percent reductions 
+percent_reductions_30yr<-percent_reductions_15yr<-percent_reductions_1yr<-data.frame(Population=character(),
+                                                                                     Year=numeric(),
+                                                                                     LTBI=numeric(),
+                                                                                     ActiveTB=numeric(),
+                                                                                     TLTBIInits=numeric(), 
+                                                                                     TBDeaths=numeric(), stringsAsFactors = FALSE)
+# rownames(percent_reductions)<-names(ttt_risk_pops)
+#colnames(percent_reductions)<-c( "LTBI", 
+#"IGRA + LTBI",
+# "Active TB", "TBDeaths Inits.", "TBDeaths ")
+for (i in 1:length(percent_tested)){
+  percent_reductions_1yr[i,1]<-paste(percent_tested[[i]], "of NUSB", sep=" ")
+  percent_reductions_1yr[i,2]<-2021
+  percent_reductions_1yr[i,3]<-round(ltbi_perred[[i]][4],2)
+  percent_reductions_1yr[i,4]<-round(tb_perred[[i]][4],2)
+  percent_reductions_1yr[i,5]<-round(TxInits_perred[[i]][4],2)
+  percent_reductions_1yr[i,6]<-round(TBDeaths_perred[[i]][4],2)
+  
+  percent_reductions_15yr[i,1]<-paste(percent_tested[[i]], "of NUSB", sep=" ")
+  percent_reductions_15yr[i,2]<-2035
+  percent_reductions_15yr[i,3]<-round(ltbi_perred[[i]][17],2)
+  percent_reductions_15yr[i,4]<-round(tb_perred[[i]][17],2)
+  percent_reductions_15yr[i,5]<-round(TxInits_perred[[i]][17],2)
+  percent_reductions_15yr[i,6]<-round(TBDeaths_perred[[i]][17],2)
+  
+  percent_reductions_30yr[i,1]<-paste(percent_tested[[i]], "of NUSB", sep=" ")
+  percent_reductions_30yr[i,2]<-2050
+  percent_reductions_30yr[i,3]<-round(ltbi_perred[[i]][32],2)
+  percent_reductions_30yr[i,4]<-round(tb_perred[[i]][32],2)
+  percent_reductions_30yr[i,5]<-round(TxInits_perred[[i]][32],2)
+  percent_reductions_30yr[i,6]<-round(TBDeaths_perred[[i]][32],2)
+}
+
+percent_reductions<-rbind(percent_reductions_1yr,
+                          percent_reductions_15yr,
+                          percent_reductions_30yr)
+colnames(percent_reductions)<-c("Population", 
+                                "Year", 
+                                "LTBI", 
+                                #"IGRA + LTBI",
+                                "Active TB", "TLTBI Inits.", "TB Deaths")
+library(kableExtra)
+kable(percent_reductions)%>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+
+#do a plot 
+library(ggplot2)
+library(reshape2)
+
+perred<-melt(percent_reductions, id.vars = c("Population", "Year"))
+
+
+plot1<-ggplot(perred, aes(x=Year,y=value, color=Population))+geom_line()+facet_wrap(variable~., scales = "free_y")+theme_bw()+expand_limits(y=0)
+
+plot1
+
+```
+
+
+
+
