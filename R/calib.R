@@ -24,7 +24,7 @@ P <- P
 
 # P["TunrslowAge"]<-oldpar["TunrslowAge"]
 # # p[[""]]
-P[["ImmigVol"]]<-1;
+# P[["ImmigVol"]]<-1;
 # P[["TunNetMig"]]<-1
 # P[["TunMubt"]]<-1
 # P[["pImAct"]]<-.1
