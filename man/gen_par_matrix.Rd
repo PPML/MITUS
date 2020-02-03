@@ -5,7 +5,7 @@
 \title{makes a matrix of the Parameter Vectors generated from StartVals
 or optimized data opt_all}
 \usage{
-gen_par_matrix(startMat, savefile = FALSE, simp.date)
+gen_par_matrix(startMat, savefile = FALSE, simp.date, loc)
 }
 \arguments{
 \item{startMat}{a matrix of values in the normal space}

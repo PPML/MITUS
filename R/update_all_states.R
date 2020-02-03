@@ -1,4 +1,4 @@
-vector_all_locs<-c("US","CA", "MA", "FL", "GA", "IL", "TX", "NY", "NJ", "PA", "WA", "VA" )
+vector_all_locs<-c("CA", "MA", "FL", "GA", "IL", "TX", "NY", "NJ", "PA", "WA", "VA" )
 #the simp.date here is to append to the calibration plots;
 #the loaded optim data is not dependent on the simp.date
 #it is pulled directly from the model_load function.
