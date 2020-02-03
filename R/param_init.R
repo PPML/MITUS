@@ -27,6 +27,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   prg_yr <-prg_chng["start_yr"]
   prg_m  <-(prg_yr-1950)*12
   ttt_month <-seq((ttt_list[["StartYr"]]-1950)*12,(ttt_list[["EndYr"]]-1949)*12,1)
+  ttt_month <-ttt_month[-1]
   ################################################################################
   ##### INTERVENTION
   ################################################################################
