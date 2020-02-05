@@ -1,0 +1,536 @@
+###Intervention 1 -- screen entire treatment naive population in 2020
+```{r, warning=FALSE, message=FALSE,echo=FALSE, fig.width=7.5, fig.height=6.5}
+library(MITUS)
+model_load()
+ttt_list<-def_ttt()
+prgchng<-def_prgchng(Par[3,])
+results<-OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list)
+ltbi_count_bc<-cbind(2018:2049,rowSums(results[69:100,55:76]))
+tb_count_bc<-cbind(2018:2049,rowSums(results[69:100,136:146]+results[69:100,189:199]))
+TBDeaths_count_bc<-cbind(2018:2049,results[69:100,152])
+tx_comp_bc<-cbind(2018:2049,results[69:100,253]+results[69:100,254])
+#define Igra specificity and sensitivity
+Sens_IGRA <-c(.780,.675,.712,.789,.591)
+Spec_IGRA <-c(.979,.958,.989,.985,.931)
+results<-as.data.frame(results)
+us_ltbi_count_bc<-nus_ltbi_count_bc<-rep(0, length(69:100))
+for (i in 69:100){
+v0<-cbind(t(results[i,55:65]),t(results[i,33:43]-results[i,55:65]))
+us_ltbi_count_bc[i-68]<- outer(v0[,1],c(Sens_IGRA[1],(1-Sens_IGRA[1])))+outer(v0[,2],c((1-Spec_IGRA[1]),Spec_IGRA[1]))
+v1<-cbind(t(results[i,66:76]),t(results[i,44:54]-results[i,66:76]))
+v1b <- (v1[1,1]*c(Sens_IGRA[3],(1-Sens_IGRA[3])))+(v1[1,2]*c((1-Spec_IGRA[3]),Spec_IGRA[3]))
+#over age 5
+v1c <- outer(v1[2:11,1],c(Sens_IGRA[4],(1-Sens_IGRA[4])))+outer(v1[2:11,2],c((1-Spec_IGRA[4]),Spec_IGRA[4]))
+nus_ltbi_count_bc[i-68]<-sum(v1c,v1b)
+}
+igra_count_bc<-cbind(2018:2049,rowSums(cbind(us_ltbi_count_bc,nus_ltbi_count_bc)))
+#screen half a million in 2020
+model_load()
+ttt_list_1<-def_ttt()
+ttt_list_1[[3]]<-298.5648
+ttt_list_1[[4]]<-1
+ttt_list_1[[5]]<-2020
+ttt_list_1[[6]]<-2020
+
+results_1<-OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_1)
+tb_count_1<-cbind(2018:2049,rowSums(results_1[69:100,136:146]+results_1[69:100,189:199]))
+ltbi_count_1<-cbind(2018:2049,rowSums(results_1[69:100,55:76]))
+TBDeaths_count_1<-cbind(2018:2049,results_1[69:100,152])
+tx_comp_1<-cbind(2018:2049,results_1[69:100,132])
+results_1<-as.data.frame(results_1)
+us_ltbi_count_1<-nus_ltbi_count_1<-rep(0, length(69:100))
+for (i in 69:100){
+v0<-cbind(t(results_1[i,55:65]),t(results_1[i,33:43]-results_1[i,55:65]))
+us_ltbi_count_1[i-68]<- outer(v0[,1],c(Sens_IGRA[1],(1-Sens_IGRA[1])))+outer(v0[,2],c((1-Spec_IGRA[1]),Spec_IGRA[1]))
+v1<-cbind(t(results_1[i,66:76]),t(results_1[i,44:54]-results_1[i,66:76]))
+v1b <- (v1[1,1]*c(Sens_IGRA[3],(1-Sens_IGRA[3])))+(v1[1,2]*c((1-Spec_IGRA[3]),Spec_IGRA[3]))
+#over age 5
+v1c <- outer(v1[2:11,1],c(Sens_IGRA[4],(1-Sens_IGRA[4])))+outer(v1[2:11,2],c((1-Spec_IGRA[4]),Spec_IGRA[4]))
+nus_ltbi_count_1[i-68]<-sum(v1c,v1b)
+}
+igra_count_1<-cbind(2018:2049,rowSums(cbind(us_ltbi_count_1,nus_ltbi_count_1)))
+
+#add in shutting off TB in immigrants 
+model_load()
+ttt_list_1<-def_ttt()
+ttt_list_1[[3]]<-298.5648
+ttt_list_1[[4]]<-1
+ttt_list_1[[5]]<-2020
+ttt_list_1[[6]]<-2020
+
+results_2<-OutputsZint(1, Par, "US",Scen2 = 1, prg_chng = prgchng, ttt_list=ttt_list_1)
+tb_count_2<-cbind(2018:2049,rowSums(results_2[69:100,136:146]+results_2[69:100,189:199]))
+ltbi_count_2<-cbind(2018:2049,rowSums(results_2[69:100,55:76]))
+TBDeaths_count_2<-cbind(2018:2049,results_2[69:100,152])
+tx_comp_2<-cbind(2018:2049,results_2[69:100,132])
+
+#shutting off TB in immigrants 
+model_load()
+ttt_list_3<-def_ttt()
+
+results_3<-OutputsZint(1, Par, "US",Scen2 = 1, prg_chng = prgchng, ttt_list=ttt_list_3)
+tb_count_3<-cbind(2018:2049,rowSums(results_3[69:100,136:146]+results_3[69:100,189:199]))
+ltbi_count_3<-cbind(2018:2049,rowSums(results_3[69:100,55:76]))
+TBDeaths_count_3<-cbind(2018:2049,results_3[69:100,152])
+tx_comp_3<-cbind(2018:2049,results_3[69:100,132])
+
+##### ##### ##### ##### ##### ##### CALCULATIONS ##### ##### ##### ##### ##### #####
+##### ##### ##### ##### ##### PERCENT REDUCTION ##### ##### ##### ##### ##### #####
+
+ltbi_perred_1<-((ltbi_count_bc - ltbi_count_1) / ltbi_count_bc)*100
+# igra_perred_1<-((igra_count_bc - igra_count_1) / igra_count_bc)*100
+tb_perred_1<-((tb_count_bc - tb_count_1) / tb_count_bc)*100
+TBDeaths_perred_1<-((TBDeaths_count_bc - TBDeaths_count_1) / TBDeaths_count_bc)*100
+tx_perred_1<-((tx_comp_bc - tx_comp_1) / tx_comp_bc)*100
+
+percent_reduction_1<-cbind(ltbi_perred_1[,2],
+                           #igra_perred_1[,2],
+                           tb_perred_1[,2],TBDeaths_perred_1[,2],tx_perred_1[,2])[-1,]
+percent_reduction_1<-round(percent_reduction_1[-1,],2)
+rownames(percent_reduction_1)<-ltbi_count_bc[3:32,1]
+colnames(percent_reduction_1)<-c("LTBI", 
+                                 #"IGRA + LTBI",
+                                 "Active TB", "TBDeaths Inits.", "TBDeaths ")
+percent_reduction_1<-percent_reduction_1[c(2,15,30),]
+library(kableExtra)
+kable(percent_reduction_1)%>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+##### ##### ##### ##### ##### ##### PLOTS ##### ##### ##### ##### ##### #####
+#plot one - Active TB
+plot(0,0,ylim=c(min(range(tb_count_bc[,2], range(tb_count_1[,2]),range(tb_count_2[,2]),range(tb_count_3[,2]))),max(range(tb_count_1[,2]),range(tb_count_3[,2]), range(tb_count_bc[,2]),range(tb_count_2[,2]))),xlim=c(2018,2049),xlab="",ylab="",axes=F,col=NA)
+axis(1);axis(2,las=2);box()
+lines(tb_count_bc, type = "p")
+lines(tb_count_1, col="red")
+lines(tb_count_2, col="blue")
+lines(tb_count_3, col="darkgreen")
+
+mtext("Year",1,2.5,cex=1.2)
+mtext("TB Notifications (in millions)",3,.8,font=2,cex=1)
+legend("topright",c("BaseCase","Screen entire treatment naive population in 2020","Screen all & No TB in Immigrants", "No TB in Immigrants"),cex=1,
+       pch=c(15,15,15,15),lwd=c(NA,NA,NA,NA),lty=c(NA,NA,NA,NA),col=c("grey50","red", "blue", "darkgreen"),bg="white",pt.cex=c(1.8,1.8,1.8,1.8)
+)
+
+#plot two - LTBI
+plot(0,0,ylim=c(min(range(ltbi_count_bc[,2], range(ltbi_count_1[,2]),range(ltbi_count_2[,2]),range(ltbi_count_3[,2]))),max(range(ltbi_count_1[,2]),range(ltbi_count_3[,2]), range(ltbi_count_bc[,2]),range(ltbi_count_2[,2]))),xlim=c(2018,2049),xlab="",ylab="",axes=F,col=NA)
+axis(1);axis(2,las=2);box()
+lines(ltbi_count_bc, type = "p")
+lines(ltbi_count_1, col="red")
+lines(ltbi_count_2, col="blue")
+lines(ltbi_count_3, col="darkgreen")
+
+mtext("Year",1,2.5,cex=1.2)
+mtext("LTBI Population (in millions)",3,.8,font=2,cex=1)
+legend("topright",c("BaseCase","Screen entire treatment naive population in 2020","Screen all & No TB in Immigrants", "No TB in Immigrants"),cex=1,
+       pch=c(15,15,15,15),lwd=c(NA,NA,NA,NA),lty=c(NA,NA,NA,NA),col=c("grey50","red", "blue", "darkgreen"),bg="white",pt.cex=c(1.8,1.8,1.8,1.8)
+)
+
+
+##plot three total TBDeaths inits 
+plot(0,0,ylim=c(min(range(TBDeaths_count_bc[,2], range(TBDeaths_count_1[,2]),range(TBDeaths_count_2[,2]),range(TBDeaths_count_3[,2]))),max(range(TBDeaths_count_1[,2]),range(TBDeaths_count_3[,2]), range(TBDeaths_count_bc[,2]),range(TBDeaths_count_2[,2]))),xlim=c(2018,2049),xlab="",ylab="",axes=F,col=NA)
+axis(1);axis(2,las=2);box()
+lines(TBDeaths_count_bc, type = "p")
+lines(TBDeaths_count_1, col="red")
+lines(TBDeaths_count_2, col="blue")
+lines(TBDeaths_count_3, col="darkgreen")
+
+mtext("Year",1,2.5,cex=1.2)
+mtext("TBDeaths Initiations (in millions)",3,.8,font=2,cex=1)
+legend("topright",c("BaseCase","Screen entire treatment naive population in 2020","Screen all & No TB in Immigrants", "No TB in Immigrants"),cex=1,
+       pch=c(15,15,15,15),lwd=c(NA,NA,NA,NA),lty=c(NA,NA,NA,NA),col=c("grey50","red", "blue", "darkgreen"),bg="white",pt.cex=c(1.8,1.8,1.8,1.8)
+)
+
+
+##plot three total TBDeaths completions 
+plot(0,0,ylim=c(min(range(tx_comp_bc[,2], range(tx_comp_1[,2]),range(tx_comp_2[,2]),range(tx_comp_3[,2]))),max(range(tx_comp_1[,2]),range(tx_comp_3[,2]), range(tx_comp_bc[,2]),range(tx_comp_2[,2]))),xlim=c(2018,2049),xlab="",ylab="",axes=F,col=NA)
+axis(1);axis(2,las=2);box()
+lines(tx_comp_bc, type = "p")
+lines(tx_comp_1, col="red")
+lines(tx_comp_2, col="blue")
+lines(tx_comp_3, col="darkgreen")
+
+mtext("Year",1,2.5,cex=1.2)
+mtext("TBDeaths Completions (in millions)",3,.8,font=2,cex=1)
+legend("topright",c("BaseCase","Screen entire treatment naive population in 2020","Screen all & No TB in Immigrants", "No TB in Immigrants"),cex=1,
+       pch=c(15,15,15,15),lwd=c(NA,NA,NA,NA),lty=c(NA,NA,NA,NA),col=c("grey50","red", "blue", "darkgreen"),bg="white",pt.cex=c(1.8,1.8,1.8,1.8)
+)
+```
+
+An analysis that screens high-risk populations with disregard to age and nativity distributions. 
+```{r, warning=FALSE, message=FALSE,echo=FALSE, fig.width=7.5, fig.height=6.5}
+library(MITUS)
+###base case run ###
+model_load()
+ttt_list<-def_ttt()
+prgchng<-def_prgchng(Par[3,])
+results<-OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list)
+ltbi_count_bc<-cbind(2018:2049,rowSums(results[69:100,55:76]))
+tb_count_bc<-cbind(2018:2049,rowSums(results[69:100,136:146]+results[69:100,189:199]))
+TBDeaths_count_bc<-cbind(2018:2049,results[69:100,152])
+tx_comp_bc<-cbind(2018:2049,results[69:100,253]+results[69:100,254])
+### run the intervention populations ###
+model_load()
+prgchng<-def_prgchng(Par[3,])
+#create all basic risk pops
+ttt_risk_pops<-risk_pop_setup()
+# names(ttt_risk_pops)
+ttt_risk_pops[[12]]<-NULL
+ttt_risk_pops[[11]]<-NULL
+ttt_risk_pops[[9]]<-NULL
+ttt_risk_pops[[8]]<-NULL
+ttt_risk_pops[[4]]<-NULL
+## individual analyses 
+tx_perred<-TBDeaths_perred<-tb_perred<-ltbi_perred<-tx_comp_list<-TBDeaths_list<-tb_list<-ltbi_list<-results_list<-list()
+
+for (i in 1:length(ttt_risk_pops)){
+  # print(i)
+  ttt_list<-ttt_risk_pops[[i]]
+  results<-OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list)
+  results_list[[i]]<-results
+  ltbi_list[[i]]<-cbind(2018:2049,rowSums(results[69:100,55:76]))
+  tb_list[[i]]<-cbind(2018:2049,rowSums(results[69:100,136:146]+results[69:100,189:199]))
+  TBDeaths_list[[i]]<-cbind(2018:2049,results[69:100,152])
+  tx_comp_list[[i]]<-cbind(2018:2049,results[69:100,253]+results[69:100,254])
+  ltbi_perred[[i]]<-(((ltbi_count_bc - ltbi_list[[i]]) / ltbi_count_bc)*100)[,2]
+  tb_perred[[i]]<-(((tb_count_bc - tb_list[[i]]) / tb_count_bc)*100)[,2]
+  TBDeaths_perred[[i]]<-(((TBDeaths_count_bc - TBDeaths_list[[i]]) / TBDeaths_count_bc)*100)[,2]
+  tx_perred[[i]]<-(((tx_comp_bc - tx_comp_list[[i]]) / tx_comp_bc)*100)[,2]
+}
+
+#create a table with the estimated percent reductions 
+percent_reductions_30yr<-percent_reductions_15yr<-percent_reductions_1yr<-matrix(0,length(ttt_risk_pops), 6)
+# rownames(percent_reductions)<-names(ttt_risk_pops)
+#colnames(percent_reductions)<-c( "LTBI", 
+                                 #"IGRA + LTBI",
+                                # "Active TB", "TBDeaths Inits.", "TBDeaths ")
+
+for (i in 1:nrow(percent_reductions_1yr)){
+  percent_reductions_1yr[i,1]<-names(ttt_risk_pops)[i]
+  percent_reductions_1yr[i,2]<-2021
+  percent_reductions_1yr[i,3]<-round(ltbi_perred[[i]][4],2)
+  percent_reductions_1yr[i,4]<-round(tb_perred[[i]][4],2)
+  percent_reductions_1yr[i,5]<-round(TBDeaths_perred[[i]][4],2)
+  percent_reductions_1yr[i,6]<-round(tx_perred[[i]][4],2)
+  
+  percent_reductions_15yr[i,1]<-names(ttt_risk_pops)[i]
+  percent_reductions_15yr[i,2]<-2035
+  percent_reductions_15yr[i,3]<-round(ltbi_perred[[i]][17],2)
+  percent_reductions_15yr[i,4]<-round(tb_perred[[i]][17],2)
+  percent_reductions_15yr[i,5]<-round(TBDeaths_perred[[i]][17],2)
+  percent_reductions_15yr[i,6]<-round(tx_perred[[i]][17],2)
+   
+  percent_reductions_30yr[i,1]<-names(ttt_risk_pops)[i]
+  percent_reductions_30yr[i,2]<-2050
+  percent_reductions_30yr[i,3]<-round(ltbi_perred[[i]][32],2)
+  percent_reductions_30yr[i,4]<-round(tb_perred[[i]][32],2)
+  percent_reductions_30yr[i,5]<-round(TBDeaths_perred[[i]][32],2)
+  percent_reductions_30yr[i,6]<-round(tx_perred[[i]][32],2)
+}
+
+percent_reductions<-rbind(percent_reductions_1yr,
+                          percent_reductions_15yr,
+                          percent_reductions_30yr)
+colnames(percent_reductions)<-c("Population", 
+                                "Year", 
+                                "LTBI", 
+                                 #"IGRA + LTBI",
+                                 "Active TB", "TBDeaths Inits.", "TBDeaths ")
+
+kable(percent_reductions)%>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+```
+absolute numbers 
+```{r, warning=FALSE, message=FALSE,echo=FALSE, fig.width=7.5, fig.height=6.5}
+library(MITUS)
+###base case run ###
+model_load()
+ttt_list<-def_ttt()
+prgchng<-def_prgchng(Par[3,])
+results<-OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list)
+ltbi_count_bc<-cbind(2018:2049,rowSums(results[69:100,55:76]))
+tb_count_bc<-cbind(2018:2049,rowSums(results[69:100,136:146]+results[69:100,189:199]))
+TBDeaths_count_bc<-cbind(2018:2049,results[69:100,152])
+tx_comp_bc<-cbind(2018:2049,results[69:100,253]+results[69:100,254])
+### run the intervention populations ###
+model_load()
+prgchng<-def_prgchng(Par[3,])
+#create all basic risk pops
+ttt_risk_pops<-risk_pop_setup()
+# names(ttt_risk_pops)
+ttt_risk_pops[[12]]<-NULL
+ttt_risk_pops[[11]]<-NULL
+ttt_risk_pops[[9]]<-NULL
+ttt_risk_pops[[8]]<-NULL
+ttt_risk_pops[[4]]<-NULL
+## individual analyses 
+tx_perred<-TBDeaths_perred<-tb_perred<-ltbi_perred<-tx_comp_list<-TBDeaths_list<-tb_list<-ltbi_list<-results_list<-list()
+
+for (i in 1:length(ttt_risk_pops)){
+  # print(i)
+  ttt_list<-ttt_risk_pops[[i]]
+  results<-OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list)
+  results_list[[i]]<-results
+  ltbi_list[[i]]<-cbind(2018:2049,rowSums(results[69:100,55:76]))
+  tb_list[[i]]<-cbind(2018:2049,rowSums(results[69:100,136:146]+results[69:100,189:199]))
+  TBDeaths_list[[i]]<-cbind(2018:2049,results[69:100,152])
+  tx_comp_list[[i]]<-cbind(2018:2049,results[69:100,253]+results[69:100,254])
+  ltbi_perred[[i]]<-(ltbi_count_bc - ltbi_list[[i]])[,2]*1e6
+  tb_perred[[i]]<-(tb_count_bc - tb_list[[i]])[,2]*1e6
+  TBDeaths_perred[[i]]<-(TBDeaths_count_bc - TBDeaths_list[[i]])[,2]*1e6
+  tx_perred[[i]]<-(tx_comp_bc - tx_comp_list[[i]])[,2]*1e6
+}
+
+#create a table with the estimated percent reductions 
+percent_reductions_30yr<-percent_reductions_15yr<-percent_reductions_1yr<-matrix(0,length(ttt_risk_pops), 6)
+# rownames(percent_reductions)<-names(ttt_risk_pops)
+#colnames(percent_reductions)<-c( "LTBI", 
+                                 #"IGRA + LTBI",
+                                # "Active TB", "TBDeaths Inits.", "TBDeaths ")
+
+for (i in 1:nrow(percent_reductions_1yr)){
+  percent_reductions_1yr[i,1]<-names(ttt_risk_pops)[i]
+  percent_reductions_1yr[i,2]<-2021
+  percent_reductions_1yr[i,3]<-round(ltbi_perred[[i]][4],2)
+  percent_reductions_1yr[i,4]<-round(tb_perred[[i]][4],2)
+  percent_reductions_1yr[i,5]<-round(TBDeaths_perred[[i]][4],2)
+  percent_reductions_1yr[i,6]<-round(tx_perred[[i]][4],2)
+  
+  percent_reductions_15yr[i,1]<-names(ttt_risk_pops)[i]
+  percent_reductions_15yr[i,2]<-2035
+  percent_reductions_15yr[i,3]<-round(ltbi_perred[[i]][17],2)
+  percent_reductions_15yr[i,4]<-round(tb_perred[[i]][17],2)
+  percent_reductions_15yr[i,5]<-round(TBDeaths_perred[[i]][17],2)
+  percent_reductions_15yr[i,6]<-round(tx_perred[[i]][17],2)
+   
+  percent_reductions_30yr[i,1]<-names(ttt_risk_pops)[i]
+  percent_reductions_30yr[i,2]<-2050
+  percent_reductions_30yr[i,3]<-round(ltbi_perred[[i]][32],2)
+  percent_reductions_30yr[i,4]<-round(tb_perred[[i]][32],2)
+  percent_reductions_30yr[i,5]<-round(TBDeaths_perred[[i]][32],2)
+  percent_reductions_30yr[i,6]<-round(tx_perred[[i]][32],2)
+}
+
+percent_reductions<-rbind(percent_reductions_1yr,
+                          percent_reductions_15yr,
+                          percent_reductions_30yr)
+colnames(percent_reductions)<-c("Population", 
+                                "Year", 
+                                "LTBI", 
+                                 #"IGRA + LTBI",
+                                 "Active TB", "TBDeaths Inits.", "TBDeaths ")
+
+kable(percent_reductions)%>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+```
+cumulative cases averted
+```{r, warning=FALSE, message=FALSE,echo=FALSE, fig.width=7.5, fig.height=6.5}
+library(MITUS)
+###base case run ###
+model_load()
+ttt_list<-def_ttt()
+prgchng<-def_prgchng(Par[3,])
+results<-OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list)
+ltbi_count_bc<-cbind(2018:2035,rowSums(results[69:86,55:76]))
+tb_count_bc<-cbind(2018:2035,rowSums(results[69:100,136:146]+results[69:100,189:199]))
+TBDeaths_count_bc<-cbind(2018:2035,results[69:100,152])
+tx_comp_bc<-cbind(2018:2035,results[69:100,253]+results[69:100,254])
+### run the intervention populations ###
+model_load()
+prgchng<-def_prgchng(Par[3,])
+#create all basic risk pops
+ttt_risk_pops<-risk_pop_setup()
+# names(ttt_risk_pops)
+ttt_risk_pops[[12]]<-NULL
+ttt_risk_pops[[11]]<-NULL
+ttt_risk_pops[[9]]<-NULL
+ttt_risk_pops[[8]]<-NULL
+ttt_risk_pops[[4]]<-NULL
+## individual analyses 
+tx_perred<-TBDeaths_perred<-tb_perred<-ltbi_perred<-tx_comp_list<-TBDeaths_list<-tb_list<-ltbi_list<-results_list<-list()
+
+for (i in 1:length(ttt_risk_pops)){
+  # print(i)
+  ttt_list<-ttt_risk_pops[[i]]
+  results<-OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list)
+  results_list[[i]]<-results
+  ltbi_list[[i]]<-cbind(2018:2035,rowSums(results[69:86,55:76]))
+  tb_list[[i]]<-cbind(2018:2035,rowSums(results[69:86,136:146]+results[69:86,189:199]))
+  TBDeaths_list[[i]]<-cbind(2018:2035,results[69:86,253]+results[69:86,254])
+  tx_comp_list[[i]]<-cbind(2018:2035,results[69:86,253]+results[69:86,254])
+  ltbi_perred[[i]]<-cumsum(ltbi_count_bc[,2] - ltbi_list[[i]][,2])*1e6
+  tb_perred[[i]]<-cumsum(tb_count_bc[,2] - tb_list[[i]][,2])*1e6
+  TBDeaths_perred[[i]]<-cumsum(TBDeaths_count_bc[,2] - TBDeaths_list[[i]][,2])*1e6
+  tx_perred[[i]]<-cumsum(tx_comp_bc[,2] - tx_comp_list[[i]][,2])*1e6
+}
+
+#create a table with the estimated percent reductions 
+percent_reductions_30yr<-percent_reductions_15yr<-percent_reductions_1yr<-matrix(0,length(ttt_risk_pops), 6)
+# rownames(percent_reductions)<-names(ttt_risk_pops)
+#colnames(percent_reductions)<-c( "LTBI", 
+                                 #"IGRA + LTBI",
+                                # "Active TB", "TBDeaths Inits.", "TBDeaths ")
+
+for (i in 1:nrow(percent_reductions_1yr)){
+  percent_reductions_1yr[i,1]<-names(ttt_risk_pops)[i]
+  percent_reductions_1yr[i,2]<-2021
+  percent_reductions_1yr[i,3]<-round(ltbi_perred[[i]][4],2)
+  percent_reductions_1yr[i,4]<-round(tb_perred[[i]][4],2)
+  percent_reductions_1yr[i,5]<-round(TBDeaths_perred[[i]][4],2)
+  percent_reductions_1yr[i,6]<-round(tx_perred[[i]][4],2)
+  
+  percent_reductions_15yr[i,1]<-names(ttt_risk_pops)[i]
+  percent_reductions_15yr[i,2]<-2035
+  percent_reductions_15yr[i,3]<-round(ltbi_perred[[i]][17],2)
+  percent_reductions_15yr[i,4]<-round(tb_perred[[i]][17],2)
+  percent_reductions_15yr[i,5]<-round(TBDeaths_perred[[i]][17],2)
+  percent_reductions_15yr[i,6]<-round(tx_perred[[i]][17],2)
+   
+  # percent_reductions_30yr[i,1]<-names(ttt_risk_pops)[i]
+  # percent_reductions_30yr[i,2]<-2050
+  # percent_reductions_30yr[i,3]<-round(ltbi_perred[[i]][32],2)
+  # percent_reductions_30yr[i,4]<-round(tb_perred[[i]][32],2)
+  # percent_reductions_30yr[i,5]<-round(TBDeaths_perred[[i]][32],2)
+  # percent_reductions_30yr[i,6]<-round(tx_perred[[i]][32],2)
+}
+
+percent_reductions<-rbind(percent_reductions_1yr,
+                          percent_reductions_15yr)
+                          # percent_reductions_30yr)
+colnames(percent_reductions)<-c("Population", 
+                                "Year", 
+                                "LTBI", 
+                                 #"IGRA + LTBI",
+                                 "Active TB", "TBDeaths", "Tx Comp ")
+
+kable(percent_reductions)%>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+```
+
+why is diabetic estimate so high 
+```{r, warning=FALSE, message=FALSE,echo=FALSE, fig.width=7.5, fig.height=6.5}
+library(MITUS)
+###base case run ###
+model_load()
+ttt_list<-def_ttt()
+prgchng<-def_prgchng(Par[3,])
+results<-OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list)
+ltbi_count_bc<-cbind(2018:2049,rowSums(results[69:100,55:76]))
+tb_count_bc<-cbind(2018:2049,rowSums(results[69:100,136:146]+results[69:100,189:199]))
+TBDeaths_count_bc<-cbind(2018:2049,results[69:100,152])
+tx_comp_bc<-cbind(2018:2049,results[69:100,253]+results[69:100,254])
+### run the intervention populations ###
+model_load()
+prgchng<-def_prgchng(Par[3,])
+
+#create the non-diabetic intervention
+risk_pop<-def_ttt()
+risk_pop[[3]]<-30.3
+risk_pop[[4]]<-1
+risk_pop[[6]]<-2020
+
+risk_pop2<-risk_pop
+risk_pop2[[3]]<-risk_pop[[3]]/10
+
+diabetes_pop<-risk_pop
+diabetes_pop[[7]]<-1.5
+diabetes_pop[[8]]<-2
+
+ttt_risk_pops<-list(risk_pop2,risk_pop, diabetes_pop)
+names(ttt_risk_pops)<-c("10% non-diabetics","non-diabetics", "diabetics")
+## individual analyses
+tx_perred<-TBDeaths_perred<-tb_perred<-ltbi_perred<-tx_comp_list<-TBDeaths_list<-tb_list<-ltbi_list<-results_list<-list()
+
+for (i in 1:length(ttt_risk_pops)){
+  # print(i)
+  ttt_list<-ttt_risk_pops[[i]]
+  results<-OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list)
+  results_list[[i]]<-results
+  ltbi_list[[i]]<-cbind(2018:2049,rowSums(results[69:100,55:76]))
+  tb_list[[i]]<-cbind(2018:2049,rowSums(results[69:100,136:146]+results[69:100,189:199]))
+  TBDeaths_list[[i]]<-cbind(2018:2049,results[69:100,152])
+  tx_comp_list[[i]]<-cbind(2018:2049,results[69:100,253]+results[69:100,254])
+  ltbi_perred[[i]]<-(((ltbi_count_bc - ltbi_list[[i]]) / ltbi_count_bc)*100)[,2]
+  tb_perred[[i]]<-(((tb_count_bc - tb_list[[i]]) / tb_count_bc)*100)[,2]
+  TBDeaths_perred[[i]]<-(((TBDeaths_count_bc - TBDeaths_list[[i]]) / TBDeaths_count_bc)*100)[,2]
+  tx_perred[[i]]<-(((tx_comp_bc - tx_comp_list[[i]]) / tx_comp_bc)*100)[,2]
+}
+
+#create a table with the estimated percent reductions
+percent_reductions_30yr<-percent_reductions_15yr<-percent_reductions_1yr<-matrix(0,length(ttt_risk_pops), 6)
+# rownames(percent_reductions)<-names(ttt_risk_pops)
+#colnames(percent_reductions)<-c( "LTBI",
+                                 #"IGRA + LTBI",
+                                # "Active TB", "TBDeaths Inits.", "TBDeaths ")
+
+for (i in 1:nrow(percent_reductions_1yr)){
+  percent_reductions_1yr[i,1]<-names(ttt_risk_pops)[i]
+  percent_reductions_1yr[i,2]<-2021
+  percent_reductions_1yr[i,3]<-round(ltbi_perred[[i]][4],2)
+  percent_reductions_1yr[i,4]<-round(tb_perred[[i]][4],2)
+  percent_reductions_1yr[i,5]<-round(TBDeaths_perred[[i]][4],2)
+  percent_reductions_1yr[i,6]<-round(tx_perred[[i]][4],2)
+
+  percent_reductions_15yr[i,1]<-names(ttt_risk_pops)[i]
+  percent_reductions_15yr[i,2]<-2035
+  percent_reductions_15yr[i,3]<-round(ltbi_perred[[i]][17],2)
+  percent_reductions_15yr[i,4]<-round(tb_perred[[i]][17],2)
+  percent_reductions_15yr[i,5]<-round(TBDeaths_perred[[i]][17],2)
+  percent_reductions_15yr[i,6]<-round(tx_perred[[i]][17],2)
+
+  percent_reductions_30yr[i,1]<-names(ttt_risk_pops)[i]
+  percent_reductions_30yr[i,2]<-2050
+  percent_reductions_30yr[i,3]<-round(ltbi_perred[[i]][32],2)
+  percent_reductions_30yr[i,4]<-round(tb_perred[[i]][32],2)
+  percent_reductions_30yr[i,5]<-round(TBDeaths_perred[[i]][32],2)
+  percent_reductions_30yr[i,6]<-round(tx_perred[[i]][32],2)
+}
+
+percent_reductions<-rbind(percent_reductions_1yr,
+                          percent_reductions_15yr,
+                          percent_reductions_30yr)
+colnames(percent_reductions)<-c("Population",
+                                "Year",
+                                "LTBI",
+                                 #"IGRA + LTBI",
+                                 "Active TB", "TBDeaths Inits.", "TBDeaths ")
+
+kable(percent_reductions)%>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+
+#explore the sampling rates
+samp_rates<-list()
+#non diabetic 10%
+    load(system.file("US/US_results_1.rda", package="MITUS"))
+    for (i in 1:length(ttt_risk_pops)){
+    samp_rates[[i]]<-create_ttt_dist(ttt_list = ttt_risk_pops[[i]],
+                       results = out[1,,],
+                       PV = Par[3,])
+    }
+
+samp_rates[[1]]<-matrix(unlist(samp_rates[[1]]),4,4)
+samp_rates[[2]]<-matrix(unlist(samp_rates[[2]]),4,4)
+samp_rates[[3]]<-matrix(unlist(samp_rates[[3]]),4,4)
+
+#what is their relationship
+ratio10<-samp_rates[[1]]/samp_rates[[2]]
+ratioD<-samp_rates[[2]]/samp_rates[[3]]
+```
+what are the difference between fixed and free parameters in states 
+```{r, warning=FALSE, message=FALSE,echo=FALSE, fig.width=7.5, fig.height=6.5}
+
+#for the United States
+library(MITUS)
+model_load("US")
+US_free<-colnames(StartVal)
+#for an example state 
+model_load("CA")
+state_free<-colnames(StartVal)
+
+diff<-setdiff(US_free,state_free)
+
+#the fixed parameters are: 
+diff
+
+same<-intersect(US_free, state_free)
+#the free parameters are: 
+same
+```
