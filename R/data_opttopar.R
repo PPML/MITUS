@@ -1,21 +1,6 @@
 #'Function to create a Starting Values for the Parameters
 #'to be Optimized.
-#'
-#'@name gen_st_val
-#'@param n number of datasets you want to generate
-#'@param samp Which sampling method to use. "NORM" for random normal samples or "LHS" for latin hypercube sampling.
-#'@return rData file of starting values
-#'@export
-gen_st_val <-function(n=10, samp="LHS"){
-  if(identical(samp,"LHS")==FALSE & identical(samp,"NORM")==FALSE) stop("'samp' must be either 'LHS' or 'NORM'")
-  if(identical(samp,"NORM")==TRUE) StartVal <-sample.prior1(n)
-  if(identical(samp,"LHS") ==TRUE) StartVal <- sample.prior2(n)
-  colnames(StartVal)<-rownames(ParamInitZ)
-  save(StartVal, file=paste("~/MITUS/data/US_StartVal_", Sys.Date(),".rda", sep=""))
-
-}
-
-#'makes a matrix of the Parameter Vectors generated from StartVals
+##'makes a matrix of the Parameter Vectors generated from StartVals
 #'or optimized data opt_all
 
 #'@name gen_par_matrix

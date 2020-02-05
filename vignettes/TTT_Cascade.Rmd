@@ -16,7 +16,7 @@ For baseline screening, MITUS assumes a baseline screening rate of approximately
 library(MITUS)
 model_load()
 Par<-readRDS("~/MITUS/inst/US/US_Param_all_10_1031.rds")
-params<-fin2_param_init(Par[3,], loc = "US", prg_chng=def_prgchng(Par[3,]), ttt_list=def_ttt())
+params<-param_init(Par[3,], loc = "US", prg_chng=def_prgchng(Par[3,]), ttt_list=def_ttt())
 params$rLtScrt[((2020-1949)*12)+1]
 ```
 The rate of screening is modified for high-risk populations and populations without latent TB. 
@@ -32,7 +32,7 @@ Sensitivity and specificity are calculated based on the Shaw paper. They are spe
 library(MITUS)
 model_load()
 Par<-readRDS("~/MITUS/inst/US/US_Param_all_10_1031.rds")
-params<-fin2_param_init(Par[3,], loc = "US", prg_chng=def_prgchng(Par[3,]), ttt_list=def_ttt())
+params<-param_init(Par[3,], loc = "US", prg_chng=def_prgchng(Par[3,]), ttt_list=def_ttt())
 print("Sensitivities are: ")
 params$LtDxPar_lt[,((2020-1949)*12)+1]
 print("Specificities are: ")
@@ -46,7 +46,7 @@ For additional screening for TTT we first calculate a matrix of sampling probabi
 library(MITUS)
 model_load()
 Par<-readRDS("~/MITUS/inst/US/US_Param_all_10_1031.rds")
-params2<-fin2_param_init(Par[3,], loc = "US", prg_chng=def_prgchng(Par[3,]), ttt_list=risk_pop_setup()[[1]])
+params2<-param_init(Par[3,], loc = "US", prg_chng=def_prgchng(Par[3,]), ttt_list=risk_pop_setup()[[1]])
 print("For example, calculating these probabilities for 1.1 million individuals with HIV: ")
 params2$ttt_sampling_dist
 ```

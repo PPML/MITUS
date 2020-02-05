@@ -14,7 +14,7 @@ library(MITUS)
 model_load()
 ttt_list<-def_ttt()
 prgchng<-def_prgchng(Par[1,])
-results<-new2_OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list)
+results<-OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list)
 ltbi_count_bc<-cbind(2018:2049,rowSums(results[69:100,55:76]))
 tb_count_bc<-cbind(2018:2049,rowSums(results[69:100,136:146]+results[69:100,189:199]))
 tltbi_count_bc<-cbind(2018:2049,results[69:100,152])
@@ -35,7 +35,7 @@ ttt_list_1[[7]]<-2
 #     ttt_sampling_dist<-x[[1]]/12
 # print(ttt_sampling_dist)
 
-results_1<-new2_OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_1)
+results_1<-OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_1)
 tb_count_1<-cbind(2018:2049,rowSums(results_1[69:100,136:146]+results_1[69:100,189:199]))
 ltbi_count_1<-cbind(2018:2049,rowSums(results_1[69:100,55:76]))
 tltbi_count_1<-cbind(2018:2049,results_1[69:100,152])
@@ -56,7 +56,7 @@ ttt_list_2[[8]]<-2
 #     ttt_sampling_dist<-x[[1]]/12
 # print(ttt_sampling_dist)
 
-results_2<-new2_OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_2)
+results_2<-OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_2)
 tb_count_2<-cbind(2018:2049,rowSums(results_2[69:100,136:146]+results_2[69:100,189:199]))#*1E6
 ltbi_count_2<-cbind(2018:2049,rowSums(results_2[69:100,55:76]))#*1E6
 tltbi_count_2<-cbind(2018:2049,results_2[69:100,152])
@@ -77,7 +77,7 @@ ttt_list_3[[9]]<-2
 #     ttt_sampling_dist<-x[[1]]/12
 # print(ttt_sampling_dist)
 
-results_3<-new2_OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_3)
+results_3<-OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_3)
 tb_count_3<-cbind(2018:2049,rowSums(results_3[69:100,136:146]+results_3[69:100,189:199]))#*1E6
 ltbi_count_3<-cbind(2018:2049,rowSums(results_3[69:100,55:76]))#*1E6
 tltbi_count_3<-cbind(2018:2049,results_3[69:100,152])
@@ -98,7 +98,7 @@ ttt_list_4[[9]]<-1
 #                        PV = PV)
 #     ttt_sampling_dist<-x[[1]]/12
 # print(ttt_sampling_dist)
-results_4<-new2_OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_4)
+results_4<-OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_4)
 tb_count_4<-cbind(2018:2049,rowSums(results_4[69:100,136:146]+results_4[69:100,189:199]))#*1E6
 ltbi_count_4<-cbind(2018:2049,rowSums(results_4[69:100,55:76]))#*1E6
 tltbi_count_4<-cbind(2018:2049,results_4[69:100,152])
@@ -187,7 +187,7 @@ library(MITUS)
 model_load()
 prgchng<-def_prgchng(Par[1,])
 ttt_list<-def_ttt()
-results<-new2_OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list)
+results<-OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list)
 ltbi_count_bc<-cbind(2018:2049,rowSums(results[69:100,55:76]))
 tb_count_bc<-cbind(2018:2049,rowSums(results[69:100,136:146]+results[69:100,189:199]))
 tltbi_count_bc<-cbind(2018:2049,results[69:100,152])
@@ -208,7 +208,7 @@ ttt_list_1[[9]]<-1
 #     ttt_sampling_dist<-x[[1]]/12
 # print(ttt_sampling_dist)
 
-results_1<-new2_OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_1)
+results_1<-OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_1)
 tb_count_1<-cbind(2018:2049,rowSums(results_1[69:100,136:146]+results_1[69:100,189:199]))
 ltbi_count_1<-cbind(2018:2049,rowSums(results_1[69:100,55:76]))
 tltbi_count_1<-cbind(2018:2049,results_1[69:100,152])
@@ -229,7 +229,7 @@ ttt_list_2[[9]]<-2
 #     ttt_sampling_dist<-x[[1]]/12
 # print(ttt_sampling_dist)
 
-results_2<-new2_OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_2)
+results_2<-OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_2)
 tb_count_2<-cbind(2018:2049,rowSums(results_2[69:100,136:146]+results_2[69:100,189:199]))#*1E6
 ltbi_count_2<-cbind(2018:2049,rowSums(results_2[69:100,55:76]))#*1E6
 tltbi_count_2<-cbind(2018:2049,results_2[69:100,152])
@@ -250,7 +250,7 @@ ttt_list_3[[9]]<-5
 #     ttt_sampling_dist<-x[[1]]/12
 # print(ttt_sampling_dist)
 
-results_3<-new2_OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_3)
+results_3<-OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_3)
 tb_count_3<-cbind(2018:2049,rowSums(results_3[69:100,136:146]+results_3[69:100,189:199]))#*1E6
 ltbi_count_3<-cbind(2018:2049,rowSums(results_3[69:100,55:76]))#*1E6
 tltbi_count_3<-cbind(2018:2049,results_3[69:100,152])
@@ -271,7 +271,7 @@ ttt_list_4[[9]]<-10
 #                        PV = PV)
 #     ttt_sampling_dist<-x[[1]]/12
 # print(ttt_sampling_dist)
-results_4<-new2_OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_4)
+results_4<-OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_4)
 tb_count_4<-cbind(2018:2049,rowSums(results_4[69:100,136:146]+results_4[69:100,189:199]))#*1E6
 ltbi_count_4<-cbind(2018:2049,rowSums(results_4[69:100,55:76]))#*1E6
 tltbi_count_4<-cbind(2018:2049,results_4[69:100,152])
@@ -381,7 +381,7 @@ library(MITUS)
 model_load()
 prgchng<-def_prgchng(Par[1,])
 ttt_list<-def_ttt()
-results<-new2_OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list)
+results<-OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list)
 ltbi_count_bc<-cbind(2018:2049,rowSums(results[69:100,55:76]))
 tb_count_bc<-cbind(2018:2049,rowSums(results[69:100,136:146]+results[69:100,189:199]))
 tltbi_count_bc<-cbind(2018:2049,results[69:100,152])
@@ -402,7 +402,7 @@ ttt_list_1[[9]]<-1
 #     ttt_sampling_dist<-x[[1]]/12
 # print(ttt_sampling_dist)
 
-results_1<-new2_OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_1)
+results_1<-OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_1)
 tb_count_1<-cbind(2018:2049,rowSums(results_1[69:100,136:146]+results_1[69:100,189:199]))
 ltbi_count_1<-cbind(2018:2049,rowSums(results_1[69:100,55:76]))
 tltbi_count_1<-cbind(2018:2049,results_1[69:100,152])
@@ -423,7 +423,7 @@ ttt_list_2[[9]]<-2
 #     ttt_sampling_dist<-x[[1]]/12
 # print(ttt_sampling_dist)
 
-results_2<-new2_OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_2)
+results_2<-OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_2)
 tb_count_2<-cbind(2018:2049,rowSums(results_2[69:100,136:146]+results_2[69:100,189:199]))#*1E6
 ltbi_count_2<-cbind(2018:2049,rowSums(results_2[69:100,55:76]))#*1E6
 tltbi_count_2<-cbind(2018:2049,results_2[69:100,152])
@@ -444,7 +444,7 @@ ttt_list_3[[9]]<-5
 #     ttt_sampling_dist<-x[[1]]/12
 # print(ttt_sampling_dist)
 
-results_3<-new2_OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_3)
+results_3<-OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_3)
 tb_count_3<-cbind(2018:2049,rowSums(results_3[69:100,136:146]+results_3[69:100,189:199]))#*1E6
 ltbi_count_3<-cbind(2018:2049,rowSums(results_3[69:100,55:76]))#*1E6
 tltbi_count_3<-cbind(2018:2049,results_3[69:100,152])
@@ -465,7 +465,7 @@ ttt_list_4[[9]]<-10
 #                        PV = PV)
 #     ttt_sampling_dist<-x[[1]]/12
 # print(ttt_sampling_dist)
-results_4<-new2_OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_4)
+results_4<-OutputsZint(1, Par, "US", prg_chng = prgchng, ttt_list=ttt_list_4)
 tb_count_4<-cbind(2018:2049,rowSums(results_4[69:100,136:146]+results_4[69:100,189:199]))#*1E6
 ltbi_count_4<-cbind(2018:2049,rowSums(results_4[69:100,55:76]))#*1E6
 tltbi_count_4<-cbind(2018:2049,results_4[69:100,152])
