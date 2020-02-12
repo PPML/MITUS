@@ -27,6 +27,7 @@ fin2_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sc
   prg_yr <-prg_chng["start_yr"]
   prg_m  <-(prg_yr-1950)*12
   ttt_month <-seq((ttt_list[["StartYr"]]-1950)*12,(ttt_list[["EndYr"]]-1949)*12,1)
+  ttt_month <-ttt_month[-1]
   ################################################################################
   ##### INTERVENTION
   ################################################################################
@@ -356,7 +357,7 @@ fin2_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sc
   ttt_sampling_dist<-matrix(0,4,4)
   ttt_na<-99
   ttt_ag<-99
-  ttt_pop_frc<-0
+  ttt_pop_srcn<-0
 
   if (ttt_list[[3]]!=0 & ttt_list[[4]]!=0){
     load(system.file("US/US_results_1.rda", package="MITUS"))
@@ -364,9 +365,9 @@ fin2_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sc
                        results = out[1,,],
                        PV = PV)
     # if (ttt_list[[7]]!=1 | ttt_list[[8]]!=1){
-    ttt_sampling_dist<-x[[1]]#/12
+    ttt_sampling_dist<-x[[1]]/12
     # }
-    # ttt_pop_frc<-x[[2]]
+    # ttt_pop_srcn<-x[[2]]
     ttt_ag<-switch(ttt_list[["AgeGrp"]], "All"=0:10,
                    "0 to 24"=0:2,
                    "25 to 64"=3:6,
@@ -385,7 +386,7 @@ fin2_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sc
   ### hold the three different sensitivity and specificity measures; one will be for those whose
   ### true LTBI status is positive and the other is for those whose true TB status is negative.
   LtDxPar_nolt <- LtDxPar_lt <- matrix(NA,nrow(SensLt),month);
-  rownames(LtDxPar_lt) <- rownames(LtDxPar_nolt) <- rownames(SensLt)
+  rownames(LtDxPar_lt) <- rownames(LtDxPar_nolt) <- c("US","HR.US","youngNUS","NUS","HR.NUS")
 
   ##adjust for no latent
   LtDxPar_lt   <-SensLt
@@ -627,7 +628,7 @@ fin2_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Sc
   InputParams[["ttt_sampling_dist"]]<-ttt_sampling_dist
   InputParams[["ttt_na"]]<-ttt_na
   InputParams[["ttt_ag"]]<-ttt_ag
-  InputParams[["ttt_pop_frc"]]<-ttt_pop_frc/12
+  InputParams[["ttt_pop_frc"]]<-ttt_pop_srcn/12
   InputParams[["ttt_ltbi"]]<-ttt_list[["RRPrev"]]
   InputParams[["rLtScrt"]]   = rLtScrt
   InputParams[["RRdxAge"]]   = RRdxAge
