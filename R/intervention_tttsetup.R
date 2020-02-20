@@ -84,7 +84,7 @@ create_ttt_dist<-function(ttt_list,results,PV){
   ttt_params<-list()
   ttt_params[['an_samp_rate']]<-pmin(an_samp_rate,6)
   #what is the fraction of the total treatment native population?
-  # ttt_params[['frc_of_totpop']]<-(ttt_list[["NRiskGrp"]]*ttt_list[["FrcScrn"]])/results[start_yr,683]
+  ttt_params[['frc_of_totpop']]<-(ttt_list[["NRiskGrp"]]*ttt_list[["FrcScrn"]])/results[start_yr,683]
 
   return(ttt_params)
 }

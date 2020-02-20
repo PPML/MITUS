@@ -41,7 +41,7 @@ using namespace Rcpp;
 //'@param ttt_na which nativity groups to apply ttt
 //'@param ttt_ltbi how much to increase ltbi
 //'@param ttt_month when to apply ttt interventions
-//'@param ttt_pop_frc population size to apply the ltbi prev to
+//'@param ttt_pop_scrn population size to apply the ltbi prev to
 //'@param LtDxPar_lt matrix of latent diagnosis parameters
 //'@param LtDxPar_nolt matrix of latent diagnosis parameters
 //'@param LtTxPar matrix of latent treatment parameters
@@ -96,7 +96,7 @@ Rcpp::List cSim(
     std::vector<double> ttt_ag,
     std::vector<double> ttt_na,
     std::vector<int> ttt_month,
-    double              ttt_pop_frc,
+    double              ttt_pop_scrn,
     double              ttt_ltbi,
     Rcpp::NumericMatrix LtTxPar,
     Rcpp::NumericMatrix LtDxPar_lt,
