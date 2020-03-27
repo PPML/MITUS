@@ -3,16 +3,16 @@ national_risk_pop_setup<-function(){
   HIV<-c(1.1,10,2.3,1)
   Diab<-c(30.3,1.5,1.9,1)
   Silica<-c(1800/1e6,1.26,5,1)#values from linas paper, mort from ?
-  ESRD<-c(20,18,15.8,1)#match tabby2
-  Child5yr<-c(19.9,2,1.2,1.3)
-  PWID<-c(6.6,1,3,8.2)#values from linas paper, mort from https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.1002964
-  Immunosup<-c(8.9,2,1,1.89) #value from linas paper, mort from Overall and cancer related mortality among patients with ocular inflammation treated with immunosuppressive drugs: retrospective cohort study
-  Prisoners<-c(2.3, 1, 1, 1)
+  ESRD<-c(747/1e3,18,15.8,1)#match tabby2
+  Child5yr<-c(19.9,1,1,1)
+  PWID<-c(6.6,1,8.3,8.2)#values from linas paper, mort from https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.1002964
+  Immunosup<-c(8.9,2,1,1) #value from linas paper, mort from Overall and cancer related mortality among patients with ocular inflammation treated with immunosuppressive drugs: retrospective cohort study
+  Prisoners<-c(2.23, 1, 1, 5.9)
   Homeless<-c(96100/1e6, 1, 3.4, 5.3)
   load(system.file("US/US_results_1.rda", package="MITUS"))
   results<-out[1,,]
   Immigrants<-c(sum(results[71,635:682]),1,1,1) #match tabby2
-  Healthcare<-c(18,1,1,5)
+  Healthcare<-c(18,1,1,1)
   # Congregate<-c(4,1,3.4,5.3) #values are for homeless rn
   ################################################################################
   ####################              HIV POPULATION            ####################
@@ -62,8 +62,8 @@ national_risk_pop_setup<-function(){
   ####################              Child5yr            ####################
   ################################################################################
   Child5yr_ttt_vec<-def_ttt_nat_ag()
-  Child5yr_ttt_vec[[1]]<- c(1, rep(0,10))
-  Child5yr_ttt_vec[[2]]<- c(1, rep(0,10))
+  Child5yr_ttt_vec[[1]]<- c(.9865639, rep(0,10))
+  Child5yr_ttt_vec[[2]]<- c(.1343614, rep(0,10))
   Child5yr_ttt_vec[[3]]<-Child5yr[1]
   Child5yr_ttt_vec[[4]]<-1
   Child5yr_ttt_vec[[5]]<-2020
@@ -170,7 +170,7 @@ national_risk_pop_setup<-function(){
                     Healthcare_ttt_vec
                    )
   names(all_pop_ttt)<-c("HIV", "Diabetes","Silicosis","ESRD","Child5yr",
-                        "PWID","ImmunosupTherapy","Prisoners","Homeless",
+                        "PWID","ImmSup","Prisoners","Homeless",
                         "Immigrants","Healthcare")
   return(all_pop_ttt)
 }
