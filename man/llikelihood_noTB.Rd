@@ -15,12 +15,6 @@ llikelihood_noTB_rblnc(start_mat, loc = "US", n_cores = 1)
 \item{loc}{two digit postal code of location}
 
 \item{n_cores}{number of cores to use on the cluster}
-
-\item{start_mat}{matrix of parameters}
-
-\item{loc}{two digit postal code of location}
-
-\item{n_cores}{number of cores to use on the cluster}
 }
 \value{
 lLik

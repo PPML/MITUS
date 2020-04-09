@@ -4,8 +4,20 @@
 \alias{national_param_init}
 \title{This function takes the same inputs as the Outputs}
 \usage{
-national_param_init(PV, loc, Int1 = 0, Int2 = 0, Int3 = 0, Int4 = 0,
-  Int5 = 0, Scen1 = 0, Scen2 = 0, Scen3 = 0, prg_chng, ttt_input)
+national_param_init(
+  PV,
+  loc,
+  Int1 = 0,
+  Int2 = 0,
+  Int3 = 0,
+  Int4 = 0,
+  Int5 = 0,
+  Scen1 = 0,
+  Scen2 = 0,
+  Scen3 = 0,
+  prg_chng,
+  ttt_input
+)
 }
 \arguments{
 \item{PV}{vector of Inputs to format}
