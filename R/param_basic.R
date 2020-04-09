@@ -296,7 +296,7 @@ param <- function (PV, loc="US"){
   #rDefLt        <- PV["pDefLt"]/(1-PV["pDefLt"])  # based on 50% tx completion with 6 mo INH regimen 2.0 [1.0,3.0] from Menzies Ind J Med Res 2011
   EffLt         <- PV["EffLt"]
   ######NEW PARAMETER FOR MITUS MODEL
-  pTlInt        <- .80
+  pTlInt        <- .72
   LtTxPar       <- c(pTlInt,PV["pDefLt"],EffLt)
 
   LtDxPar <- matrix(NA,3,2);
