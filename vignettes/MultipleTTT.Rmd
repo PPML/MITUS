@@ -15,10 +15,10 @@ library(MITUS)
 model_load()
 Opt <- readRDS("~/MITUS/inst/US/US_Optim_all_10_1031.rds")
 # View(Opt)
-ttt_list<-def_ttt_nat_ag()
+ttt_input<-def_ttt_nat_ag()
 Par<-gen_par_matrix(Opt[,-59])
 prg_chng<-def_prgchng(Par[3,])
-national_OutputsInt("US", Par, prg_chng = prg_chng, ttt_list = ttt_list)
+national_OutputsInt("US", Par, prg_chng = prg_chng, ttt_input = list(ttt_input))
 ```
 
 ```{r, warning=FALSE, message=FALSE, fig.width=7.5, fig.height=6.5}
@@ -27,7 +27,7 @@ library(MITUS)
 #load the data for national
 model_load("US")
 #setup the risk population parameters
-ttt_input<-risk_pop_setup()
+# ttt_input<-risk_pop_setup()
 Opt <- readRDS("~/MITUS/inst/US/US_Optim_all_10_1031.rds")
 Par<-gen_par_matrix(Opt[,-59])
 prg_chng<-def_prgchng(Par[3,])
@@ -45,16 +45,79 @@ params<-national_param_init(PV=Par[3,],
                             loc="US")
 
 ##old param files
-old_param<-fin2_param_init(PV=Par[3,], 
+old_param<-param_init(PV=Par[3,], 
                            loc="US", 
                            prg_chng = def_prgchng(Par[3,]), 
                            ttt_list=def_ttt())
-##will need to create a new cSim file to run this 
 results<-national_OutputsZint(samp_i = 3,
                      ParMatrix = Par, 
+                     loc="US",
                      prg_chng = prg_chng, 
-                     ttt_input=list(def_ttt_nat_ag()))
+                     ttt_input=list(def_ttt_nat_ag()))[1:100,]
+any(is.na(results))
+
+old_results<-OutputsZint(samp_i = 3,
+                     ParMatrix = Par, 
+                     loc="US",
+                     prg_chng = prg_chng, 
+                     ttt_list=def_ttt())[1:100,]
+any(is.na(results))
+pub_list<-list(params[["Mpfast"]],params[["Mrslow"]], params[["rfast"]],params[["rRecov"]])
+
+calib_graphs(old_results,pub_list)
+
+
+params<-national_param_init(PV=Par[3,],
+                            ttt_input = national_risk_pop_setup(),
+                            prg_chng = prg_chng,
+                            loc="US")
 ```
+
+
+```{r, warning=FALSE, message=FALSE, fig.width=7.5, fig.height=6.5}
+#load the package
+library(MITUS)
+#load the data for national
+model_load("US")
+
+#how much extra screening should we expect??? 
+screen_pop<-0
+ttt_input<-national_risk_pop_setup()
+for(i in 1:length(ttt_input)){
+  screen_pop<-screen_pop+as.numeric(ttt_input[[i]][3])
+}
+screen_pop
+#setup the risk population parameters
+prg_chng<-def_prgchng(Par[3,])
+#how to run these in MITUS
+#we need to format all these parameters p
+#specialized param_init function 
+#which ttt parameters are independent of groups and which are dependent
+#start_year and end_year are independent for this analysis 
+#frc of population is dependent (is in the matrix above)
+#total screening rates are dependent but are passed in a collective manner
+#Rate Ratio of LTBI prevalence is dependent (should be formatted as a vector)
+params<-national_param_init(PV=Par[3,],
+                            ttt_input = national_risk_pop_setup(),
+                            prg_chng = prg_chng,
+                            loc="US")
+
+results<-national_OutputsZint(samp_i = 3,
+                     ParMatrix = Par, 
+                     loc="US",
+                     prg_chng = prg_chng, 
+                     ttt_input=national_risk_pop_setup())[1:100,]
+any(is.na(results))
+
+pub_list<-list(params[["Mpfast"]],params[["Mrslow"]], params[["rfast"]],params[["rRecov"]])
+
+calib_graphs(results,pub_list)
+
+```
+
+
+
+
 
 Set up an analysis where we successively layer intervention groups
 

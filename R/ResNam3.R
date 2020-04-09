@@ -124,8 +124,8 @@ func3_ResNam<-function(){
               paste("N_NM3",StatList[[4]],sep="_"),
               paste("N_NM4",StatList[[4]],sep="_"),
 
-              paste("0-4","NM1",StatList[[4]],sep="_"),
-              paste("0-4","NM2",StatList[[4]],sep="_"),
+              paste("%_0-4","NM1",StatList[[4]],sep="_"),
+              paste("%_0-4","NM2",StatList[[4]],sep="_"),
               paste("0-4","NM3",StatList[[4]],sep="_"),
               paste("0-4","NM4",StatList[[4]],sep="_"),
 

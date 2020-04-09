@@ -5,7 +5,7 @@
 ################################################################################
 
 #' This function takes the same inputs as the Outputs
-#'@name national_param_init
+#'@name  national_param_init
 #'@param PV vector of Inputs to format
 #'@param loc two letter abbreviation
 #'@param Int1 boolean for intervention 1
@@ -22,11 +22,14 @@
 #'@export
 national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,prg_chng, ttt_input){
   ########## DEFINE A VARIABLE THAT WILL DETERMINE HOW LONG THE TIME DEPENDENT
-  ########## VARIABLES SHOULD BE (IN MONTHS)
-  month<-1201;
+  ########## VARIABLES SHOULD BE
+  month<-1213;
+  intv_yr<-2020
+  intv_m<-((intv_yr-1949)*12)+1
   prg_yr <-prg_chng["start_yr"]
-  prg_m  <-(prg_yr-1950)*12
-  ttt_month <-seq((ttt_input[[1]][["StartYr"]]-1950)*12,(ttt_input[[1]][["EndYr"]]-1949)*12,1)
+  prg_m  <-((prg_yr-1949)*12)+1
+  ttt_month <-seq((ttt_input[[1]][["StartYr"]]-1950)*12,(ttt_input[[1]][["EndYr"]]-1949)*12,1) #passed to c++ so one less than r iterator
+  ttt_month <-ttt_month[-1]
   ################################################################################
   ##### INTERVENTION
   ################################################################################
@@ -182,10 +185,10 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   #### #### #### SCEN 2 #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
   if(Scen2==1) {
-    for(i in 1:11) ImmLat[,i] <- ImmLat[,i]*(1-LgtCurve(2018,2019,1))
-    for(i in 1:11) ImmAct[,i] <- ImmAct[,i]*(1-LgtCurve(2018,2019,1))
-    for(i in 1:11) ImmFst[,i] <- ImmFst[,i]*(1-LgtCurve(2018,2019,1))
-    ImmNon        <- TotImmAge[1:1201,]-ImmAct-ImmFst-ImmLat
+    for(i in 1:11) ImmLat[,i] <- ImmLat[,i]*(1-LgtCurve(intv_yr,intv_yr+1,1))
+    for(i in 1:11) ImmAct[,i] <- ImmAct[,i]*(1-LgtCurve(intv_yr,intv_yr+1,1))
+    for(i in 1:11) ImmFst[,i] <- ImmFst[,i]*(1-LgtCurve(intv_yr,intv_yr+1,1))
+    ImmNon        <- TotImmAge[1:month,]-ImmAct-ImmFst-ImmLat
 
   }
 
@@ -193,11 +196,11 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   #### #### #### SCEN 3 #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
   if(Scen3==1) {
-    adjf <- (1-0.5)^(1/10/12);  adjfV <- adjf^(0:384)
-    for(i in 1:11) ImmLat[817:1201,i] <- ImmLat[817:1201,i]*adjfV
-    for(i in 1:11) ImmAct[817:1201,i] <- ImmAct[817:1201,i]*adjfV
-    for(i in 1:11) ImmFst[817:1201,i] <- ImmFst[817:1201,i]*adjfV
-    ImmNon         <- TotImmAge[1:1201,]-ImmAct-ImmFst-ImmLat
+    adjf <- (1-0.5)^(1/10/12);  adjfV <- adjf^(0:(length(intv_m:month)-1))
+    for(i in 1:11) ImmLat[intv_m:month,i] <- ImmLat[intv_m:month,i]*adjfV
+    for(i in 1:11) ImmAct[intv_m:month,i] <- ImmAct[intv_m:month,i]*adjfV
+    for(i in 1:11) ImmFst[intv_m:month,i] <- ImmFst[intv_m:month,i]*adjfV
+    ImmNon         <- TotImmAge[1:month,]-ImmAct-ImmFst-ImmLat
   }
 
   ######################   EXOGENEOUS INFECTION RISK      ########################
@@ -338,8 +341,8 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   ######################     IGRA FRACTION PROGRAM CHANGE    ########################
   if (prg_chng["IGRA_frc"] != IGRA_frc){
     for (i in 1:nrow(SensLt)){
-      SensLt[i,prg_m:ncol(SensLt)]    <-rep((Sens_IGRA[i]*prg_chng["IGRA_frc"] + (1-prg_chng["IGRA_frc"])*Sens_TST[i]),1+1201-prg_m)
-      SpecLt[i,prg_m:ncol(SpecLt)]    <-rep((Spec_IGRA[i]*prg_chng["IGRA_frc"] + (1-prg_chng["IGRA_frc"])*Spec_TST[i]),1+1201-prg_m)
+      SensLt[i,prg_m:ncol(SensLt)]    <-rep((Sens_IGRA[i]*prg_chng["IGRA_frc"] + (1-prg_chng["IGRA_frc"])*Sens_TST[i]),1+month-prg_m)
+      SpecLt[i,prg_m:ncol(SpecLt)]    <-rep((Spec_IGRA[i]*prg_chng["IGRA_frc"] + (1-prg_chng["IGRA_frc"])*Spec_TST[i]),1+month-prg_m)
     }}
 
   ### ADJUST THIS FOR THE FOREIGN BORN
@@ -352,51 +355,34 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   ################################################################################
   #################### TTT ADDITIONAL SCREENING PROBABILITIES ####################
   ################################################################################
-  ###this is dependent on a basecase run so load in that data
-  # ttt_sampling_dist<-matrix(0,4,4)
-  # ttt_na<-99
-  # ttt_ag<-99
-  # ttt_pop_frc<-0
-  # if (ttt_list[[3]]!=0 & ttt_list[[4]]!=0){
-    load(system.file("US/US_results_1.rda", package="MITUS"))
+  ###    default sampling distribution is set to zero & ltbi prevalence to 1   ###
+  ttt_sampling_dist<-matrix(0,length(ttt_input),22*16)
+  ttt_ltbi<-as.vector(rep(1,length(ttt_input)))
+  ###  if the population & fraction to be screened are non zero update values  ###
+  if (ttt_input[[1]][[3]]!=0 & ttt_input[[1]][[4]]!=0){
+    ###this is dependent on a basecase run so load in that data
+    load(system.file("US/US_longresults_1.rda", package="MITUS"))
     ttt_params<-create_ttt_mdist(ttt_input = ttt_input,
-                       results = out[3,,],
-                       PV = PV)
-    ttt_ltbi<-as.vector(rep(1,length(ttt_params)))
-    ttt_sampling_dist<-matrix(0,22,16)
+                                 results = out[3,,],
+                                 PV = PV)
     for (i in 1:length(ttt_params)){
-      ttt_sampling_dist<-ttt_sampling_dist+ttt_params[[i]][,1:16]
+      ttt_sampling_dist[i,]<-as.vector(ttt_params[[i]][,-(ncol(ttt_params[[i]]))])
       ttt_ltbi[i]<-ttt_input[[i]][[9]]
     }
-
-    ttt_pop_frc<-matrix(1,length(ttt_params),22)
-    for (i in 1:length(ttt_params)){
-      ttt_pop_frc[i,]<-ttt_params[[i]][,17]
-    # }
-
-
-    ###Orignal Tabby2 Coding ####  ####  ####  ####  ####  ####  ####
-    # ttt_sampling_dist<-x[[1]]#/12
-    # ttt_ag<-switch(ttt_list[["AgeGrp"]], "All"=0:10,
-    #                "0 to 24"=0:2,
-    #                "25 to 64"=3:6,
-    #                "65+"=7:10
-    # )
-    # ttt_na<-switch(ttt_list[["NativityGrp"]], "All"=0:2,
-    #                "USB"=0,
-    #                "NUSB"=1:2
-    # )
-    ####  ####  ####  ####  ####  ####  ####  ####  ####  ####  ####
   }
 
-  ###adjustments to the screening rates dependent on risk and TB status
+################################################################################
+################################################################################
+################################################################################
+
+###adjustments to the screening rates dependent on risk and TB status
   rrTestHr      <- PV["rrTestHr"] # RR of LTBI screening for HIV and HR as cmpared to general
   rrTestLrNoTb  <- PV["rrTestLrNoTb"] # RR of LTBI screening for individuals with no risk factors
   ### because of the introduction of new time varying parameters, we will create 2 matrices to
   ### hold the three different sensitivity and specificity measures; one will be for those whose
   ### true LTBI status is positive and the other is for those whose true TB status is negative.
   LtDxPar_nolt <- LtDxPar_lt <- matrix(NA,nrow(SensLt),month);
-  rownames(LtDxPar_lt) <- rownames(LtDxPar_nolt) <- rownames(SensLt)
+  rownames(LtDxPar_lt) <- rownames(LtDxPar_nolt) <- c("US","HR.US","youngNUS","NUS","HR.NUS")
 
   ##adjust for no latent
   LtDxPar_lt   <-SensLt
@@ -413,16 +399,16 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   #### #### #### INT 1 #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
   pctDoc <- (1-0.28)
   if(Int1==1) {
-    for(i in 1:11) ImmLat[,i] <- ImmLat[,i]*(1-LgtCurve(2018,2023,1)*SensLt[4,1]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
-    for(i in 1:11) ImmAct[,i] <- ImmAct[,i]*(1-LgtCurve(2018,2023,1)*SensLt[4,1]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
-    for(i in 1:11) ImmFst[,i] <- ImmFst[,i]*(1-LgtCurve(2018,2023,1)*SensLt[4,1]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
-    ImmNon      <- TotImmAge[1:1201,]-ImmAct-ImmFst-ImmLat
+    for(i in 1:11) ImmLat[,i] <- ImmLat[,i]*(1-LgtCurve(intv_yr,intv_yr+5,1)*SensLt[4,1]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
+    for(i in 1:11) ImmAct[,i] <- ImmAct[,i]*(1-LgtCurve(intv_yr,intv_yr+5,1)*SensLt[4,1]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
+    for(i in 1:11) ImmFst[,i] <- ImmFst[,i]*(1-LgtCurve(intv_yr,intv_yr+5,1)*SensLt[4,1]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
+    ImmNon      <- TotImmAge[1:month,]-ImmAct-ImmFst-ImmLat
   }
 
   ######################          LTBI DIAGNOSIS           ########################
   ###################### LTBI TX EFFECTIVENESS PROGRAM CHANGE ########################
   if (prg_chng["ltbi_eff_frc"] != round(PV["EffLt"], 2)){
-    EffLt         <- c(rep(PV["EffLt"],prg_m-1),rep(prg_chng["ltbi_eff_frc"],1+1201-prg_m))
+    EffLt         <- c(rep(PV["EffLt"],prg_m-1),rep(prg_chng["ltbi_eff_frc"],1+month-prg_m))
   } else {
     EffLt         <- rep(PV["EffLt"],month)
   }
@@ -449,7 +435,7 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
 
   #### #### #### INT 2 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
   ### HOW TO ADD PROGRAM CHANGE HERE?
-  if(Int2==1) { rLtScrt     <- rLtScrt  + LgtCurve(2018,2023,1)*rLtScrt*1}
+  if(Int2==1) { rLtScrt     <- rLtScrt  + LgtCurve(intv_yr,intv_yr+5,1)*rLtScrt*1}
   pImmScen   <- PV["pImmScen"] # lack of reactivitiy to IGRA for Sp
 
   ################################################################################
@@ -490,7 +476,7 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   rDx[62:151]    <- rDx[61] + (rDx[61]-rDx[60])*cumsum((0.75^(1:90)))
   rDxt0          <- SmoCurve(rDx)/12;
   rDxt1          <- cbind(rDxt0,rDxt0)
-  rDxt1<-rDxt1[1:1201,]
+  rDxt1<-rDxt1[1:month,]
 
   # Put it all together
   rDxt           <- 1/(1/rDxt1+DelaySp)*SensSp
@@ -499,7 +485,7 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
 
   #### #### #### INT 3 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
-  if(Int3==1) { for(i in 1:2) { rDxt[,i] <- rDxt[,i]+ rDxt[,i]*LgtCurve(2018,2023,1)     }   }
+  if(Int3==1) { for(i in 1:2) { rDxt[,i] <- rDxt[,i]+ rDxt[,i]*LgtCurve(intv_yr,intv_yr+5,1)     }   }
 
   #### #### #### INT 3 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
@@ -548,19 +534,19 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   #########################         RETREATMENT         ##########################
 
   pReTx   <- LgtCurve(1985,2000,PV["pReTx"])   	# Probability Tx failure identified, patient initiated on tx experienced reg (may be same)
-  pReTx   <- pReTx[1:1201]
+  pReTx   <- pReTx[1:month]
   #####################         NEW TB TREATMENT VECTOR       ####################
 
   TxVec           <- rep(NA,2)
   names(TxVec) <- c("TxCompRate","TxEff")
   TxVec[1]       <-  d1st
   TxVec[2]       <-  pCurPs
-  NixTrans<- rep(1,1201)
+  NixTrans<- rep(1,month)
   #### #### #### INT 4 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
-  if(Int4==1) {  rDeftH <- rDeftH*(1-LgtCurve(2018,2023,0.5))      }
-  if(Int4==1) {  rDeft<-rDeft[1:1201]
-  rDeft<- rDeft * (1-LgtCurve(2018,2023,0.5))      }
+  if(Int4==1) {  rDeftH <- rDeftH*(1-LgtCurve(intv_yr,intv_yr+5,0.5))      }
+  if(Int4==1) {  rDeft<-rDeft[1:month]
+  rDeft<- rDeft * (1-LgtCurve(intv_yr,intv_yr+5,0.5))      }
 
   #### #### #### INT 4 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
   ## Tx quality
@@ -570,18 +556,18 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   TxQual0[63:151] <- TxQual0[62]
   TxQual1         <- predict(smooth.spline(x=c(1950:1979,1993:2100),y=TxQual0[-(31:43)],spar=0.4),x=1950:2100)$y
   TxQualt        <- SmoCurve(TxQual1);
-  TxQualt         <-TxQualt[1:1201]
+  TxQualt         <-TxQualt[1:month]
   RRcurDef      <- PV["RRcurDef"]
 
   #### #### #### INT 4 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
-  if(Int4==1) {  TxQualt<- 1-(1-TxQualt)*(1-LgtCurve(2018,2023,0.5))      }
+  if(Int4==1) {  TxQualt<- 1-(1-TxQualt)*(1-LgtCurve(intv_yr,intv_yr+5,0.5))      }
 
   #### #### #### INT 4 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
   #### #### #### SCEN 1 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
-  NixTrans <- 1-LgtCurve(2018,2019,1)
+  NixTrans <- 1-LgtCurve(intv_yr,intv_yr+1,1)
   if(Scen1==0) {  NixTrans[] <- 1     }
 
   #### #### #### SCEN 1 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
@@ -636,9 +622,7 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   InputParams[["LtDxPar_nolt"]]   = LtDxPar_nolt
   InputParams[["ttt_month"]]<-ttt_month
   InputParams[["ttt_sampling_dist"]]<-ttt_sampling_dist
-  # InputParams[["ttt_na"]]<-ttt_na
-  # InputParams[["ttt_ag"]]<-ttt_ag
-  InputParams[["ttt_pop_frc"]]<-ttt_pop_frc/12
+  InputParams[["ttt_pop_scrn"]]<-1
   InputParams[["ttt_ltbi"]]<-ttt_ltbi
   InputParams[["rLtScrt"]]   = rLtScrt
   InputParams[["RRdxAge"]]   = RRdxAge

@@ -123,11 +123,12 @@ intv_yr<-ttt_input[[1]][[5]]
 results_list<-list()
 ##create some loop that moves through the list 
 for (i in 1:length(ttt_input)){
-  ttt_input_intv<-ttt_input[1]
+  ttt_input_intv<-ttt_input[[i]]
   results<-national_OutputsZint(samp_i = 3,
                      ParMatrix = Par, 
+                     loc="US", 
                      prg_chng = prg_chng, 
-                     ttt_input=ttt_input_intv)
+                     ttt_list=list(ttt_input_intv))
   results_list[[i]]<-results
 }
 
