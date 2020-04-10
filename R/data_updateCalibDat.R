@@ -7,10 +7,12 @@
 # percent_recent_nus_cases
 # age_cases_us<- c(3.16,2.26,4.84,5.49,5.4,6.67,9.47,6.05,4.45,2.0)
 # age_cases_nus<-c(.27,1.03,9.69,18.18,15.53,13.91,14.93,12.83,9.88,3.71)
+# age_cases<-((age_cases_us/100*(1-percent_nus_cases/100)*total_cases)+(age_cases_nus/100*percent_nus_cases/100*total_cases))/total_cases
+#
 # percent_homeless_cases<-4.11
 # percent_us_homeless_cases<-8.44
 # ##### ACS Table S0501
-# total_population<-327167439
+# total_population<-327167439/1e6
 # percent_nus_pop<-13.67
 #
 # #need to also update the following CSV in inst/extdata/
@@ -19,11 +21,18 @@
 # #ag.deaths.us.2017.csv mortality.org
 #
 # ##### load in the current calibration data
-#   model_load()
+#   # model_load()
 #   newCalibDat<-CalibDat
 #   #### 2017 updates
 #   newCalibDat$tot_cases<-rbind(newCalibDat$tot_cases, c(2017, 9088/1e6))
 #   newCalibDat$fb_cases<-rbind(newCalibDat$fb_cases, c(2-17,70.3/100, 9088))
+#
+#
+#   newCalibDat$age_cases<-rbind(newCalibDat$age_cases,
+#                                c(2017,
+#                                  (((c(.33,1.14,9.24,18.53,14.92,13.93,15.87,12.81,9.51,3.67)/100* 9088*.703)
+#                                + (c(3.85,2.41,4.77,6.41,5.12,6.84,9.03,5.92,3.87,1.96)/100*9088*(1-.703)))/9088),
+#                                 9088))
 #
 #   newCalibDat$age_cases_fb<-rbind(newCalibDat$age_cases_fb,
 #                                   c(2017,
@@ -43,16 +52,19 @@
 #
 #   newCalibDat$fb_cases<-rbind(newCalibDat$fb_cases, c(year,percent_nus_cases/100, total_cases))
 #
-#
+#   newCalibDat$age_cases<-rbind(newCalibDat$age_cases,
+#                                c(year,
+#                                  age_cases,
+#                                  total_cases))
 #
 #   newCalibDat$age_cases_fb<-rbind(newCalibDat$age_cases_fb,
 #                                   c(year,
 #                                   age_cases_nus/100,
-#                                   total_cases*(percent_nus_pop/100)))
+#                                   total_cases*(percent_nus_cases/100)))
 #   newCalibDat$age_cases_us<-rbind(newCalibDat$age_cases_us,
 #                                   c(year,
 #                                   age_cases_us/100,
-#                                   total_cases*(1-(percent_nus_pop/100))))
+#                                   total_cases*(1-(percent_nus_cases/100))))
 #
 #   newCalibDat$homeless_cases<-rbind(newCalibDat$homeless_cases,c(year,percent_homeless_cases))
 #
