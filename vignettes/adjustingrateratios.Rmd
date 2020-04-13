@@ -1,0 +1,282 @@
+---
+title: "Rate Ratios for Targeted Groups in MITUS" 
+author: "Nicole A. B. Swartwood"
+date: "`r Sys.Date()`"
+output: rmarkdown::pdf_document
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+Addendum: attempt to determine the RR of each population with respect to the condition free population, not the general population. That is, we need to calculate the $RR_{diab}$ as compared to $nondiab\_pop$ population, not the $tot\_pop$. 
+
+We know that the:  
+$$RR_{diab} = \frac{rate_{diab}}{rate_{pop-diab} + rate_{diab}}$$  
+$$rate_{pop-diab}=\frac{rate_{diab}}{RR_{diab}-rate_{diab}}$$
+$$rate_{pop-diab}=\frac{1}{\frac{1}{rate_{pop}}{-1}}$$
+
+
+
+
+
+
+As we consider the joint populations in the MITUS screening strategy, we need a methodology to adjust the rate ratios of the single populations to account for the effects of the comorbid groups within the risk population (i.e., how does the risk of diabetes and PWID affect the magnitude of risk in thos within those with diabetes) We can either adjust the risk ratio of the total diabetes population,with all two-way risk populations) or the risk ratio of the diabetes population exclusive of all other conditions. 
+
+We can use a simplified example to examine these two options. Let's consider the diabetic population and the additional risk factors Non-US Born and PWID. 
+
+The total diabetic population is 34 million, the PWID population 6 million, 
+and the non-US born population is 44 million. 
+
+We define our TB risk populations as the set $\{diab, nusb, pwid, diab+nusb,
+diab+pwid\}$ where the single populations such as $diab$, $nusb$, $pwid$ represent the
+populations with only those TB risk factors and no others. 
+
+We also adopt an approach where for an joint population $jointpop =
+a+b$ (i.e. one of $diab+nusb, diab+pwid$) we assume that $rrLTBI(jointpop) =
+max(rrLTBI(a), rrLTBI(b))$. 
+
+$rrLTBI(diab+nusb) = 5.16$ and 
+
+$rrLTBI(diab+pwid) = 8.2$, by our assumption above.
+
+We also need to estimate the population sizes of each of these populations in consideration. A simple joint population estimation is used below, but we will update these based on literature. 
+
+$popsize(diab + nusb) = 330 * (34 / 330 * 44 / 330) = 4.5m$
+
+$popsize(diab + pwid) = 330 * (34 / 330 * 6.6 / 330) = .7m$
+
+$popsize(diab) = 34 - 4.5 - .7 = 28.8m$
+
+We need to define the function that provides the rate ratio of 
+LTBI prevalence (compared to the total US population) for a given risk group.  
+
+## Option #1  
+
+We assume that $rrLTBI(diab)= 1$, that is the rate ratio in the literature is an estimate of the "only diabetes" population, exclusive of any joint risks. 
+
+$new\_rate = \frac{rrLTBI(diab)*popsize(diab) + 5.16 * rrLTBI(diab + nusb)*popsize(diab + nusb) +rrLTBI(diab+pwid) * popsize(diab + pwid)}{popsize(diab \cup (diab+nusb) \cup (diab+pwid))}$
+
+
+$\frac{ 1 * 28.8 + 5.16 * 4.5 + 8.2 * .7 }
+{ 34m } = 1.69$
+
+## Option #2   
+
+We assume that $rrLTBI(diab \cup (diab+nusb) \cup (diab+pwid)) = 1$, that is the rate ratio in the literature is an estimate of the total diabetes population, inclusive and exclusive of joint risks. 
+
+$rrLTBI( diab \cup (diab+nusb) \cup (diab+pwid)) = 1 = \frac{ new\_rate * popsize(diab) + 5.16 * popsize(diab + nusb) + 8.2 * popsize(diab + pwid) }
+{ popsize (  diab \cup  (diab+nusb) \cup (diab+pwid) ) }$
+
+$RR\_lit= RR\_all = \frac{ new\_rate * popsize(diab) + 5.16 * popsize(diab + nusb) + 8.2 * popsize(diab + pwid) }
+{  34m }$
+
+$1 = \frac{ new\_rate * 28.8 + 5.16 * 4.5 + 8.2 * .7 }
+{ 34m }$
+
+$\frac{34 - (5.16 * 4.5 + 8.2 * .7)}{ 28.8 } = new\_rate = .175$
+
+Below is a table with adjustments; the first three columns of RR's are using option #1 and the last three are using option #2. 
+
+```{r, warning=FALSE, echo=FALSE, message=FALSE} 
+#load package and model data
+library(MITUS)
+model_load("US")
+#define the risk populations 
+all_pop_list<-national_risk_pop_setup()
+#revise the non-US born 
+all_pop_list[[10]][[3]]<-44
+all_pop_list[[10]][[9]]<-5.16
+
+all_pop_list[[5]][[7]]<-2.5
+
+########## ########## ########## ########## ########## ########## ########## ##########
+########## ########## ########## ########## ########## ########## ########## ##########
+########## ########## ########## JOINT POPULATION TABLE ######### ########## ##########
+########## ########## ########## ########## ########## ########## ########## ##########
+library(kableExtra)
+library(dplyr)
+library(magrittr)
+
+# jointpop is initialized with all the pairwise combinations of risk groups, 
+# a column of 0s for population sizes, and a Y indicating they're Inc by default
+jointpop<-t(combn(names(all_pop_list), 2))
+jointpop<-cbind.data.frame(jointpop, rep(0.0,nrow(jointpop)), rep("Y",nrow(jointpop)))
+jointpop %<>% mutate_if(is.factor, as.character)
+
+# x will be used to store the population sizes - initialized here with 0s
+x<-rep(0,nrow(jointpop))
+
+#naive population size estimates
+for(i in 1:nrow(jointpop)){
+  
+  # all_pop_list has the population sizes in millions of the risk groups.
+  x[i]<-round(
+    ((all_pop_list[[jointpop[i,1]]][["NRiskGrp"]]/330) * 
+       (all_pop_list[[jointpop[i,2]]][["NRiskGrp"]]/330)) * (330*1E6),0)
+}
+
+# exclude populations estimated to be less than 1800
+for(i in 1:nrow(jointpop)){
+  if (x[i]<1800){
+    jointpop[i,4]<-"N"
+  }
+}
+
+# insert x as the population size columns
+jointpop[,3]<-x
+
+# format as a sorted data frame
+colnames(jointpop)<-c("pop1", "pop2", "PopEst", "Inc")
+jointpop<-as.data.frame(jointpop)
+jointpop<-arrange(jointpop, PopEst)
+
+
+# remove additional populations 
+rm_index<-c(13,17,23,24,26,31,36,37,38,41,42,43,49,52)
+jointpop[rm_index,4]<-"N"
+jointpop<-arrange(jointpop, PopEst)
+
+#add in a column for the higher of the two RR for each of these 
+jointpop<-cbind(jointpop, matrix(1,nrow(jointpop),3))
+names<-c(colnames(jointpop)[1:4], "RRprg","RRmu","RRPrev")
+colnames(jointpop)<-names
+
+# if a two risk-factor population is selected to be Inc in the analysis, 
+# we calculate their rate ratios as the maximum of the respective rate ratios 
+# for either of the risk factors used to define this population.
+
+for(i in 1:nrow(jointpop)){
+  if (jointpop[i,4]=="N"){
+    jointpop[i,5:7]<- NA
+  } else {
+    jointpop[i,"RRprg"]<-max(all_pop_list[[jointpop[i,1]]][["RRprg"]], all_pop_list[[jointpop[i,2]]][["RRprg"]])
+    jointpop[i,"RRmu"]<-max(all_pop_list[[jointpop[i,1]]][["RRmu"]], all_pop_list[[jointpop[i,2]]][["RRmu"]])
+    jointpop[i,"RRPrev"]<-max(all_pop_list[[jointpop[i,1]]][["RRPrev"]], all_pop_list[[jointpop[i,2]]][["RRPrev"]])
+  }
+}
+
+# List the Inc first
+jointpop<-arrange(jointpop,desc(Inc))
+
+jointpop[jointpop$Inc=="N","PopEst"]<-0
+
+
+# Print jointpop
+# kable(jointpop)
+########## ########## ########## ########## ########## ########## ########## ##########
+########## ########## ########## ########## ########## ########## ########## ##########
+########## ########## ########## SINGLE POPULATION TABLE ######### ########## ##########
+########## ########## ########## ########## ########## ########## ########## ##########
+
+#add in pops alone 
+# indv_pops<-matrix(NA,length(all_pop_list), ncol(jointpop))
+# using a matrix here implicitly forced a character matrix, which isn't great when 
+# working with a lot of numbers. 
+
+# we use jointpop to build the indv_pops data frame containing each risk factor
+# combined with "alone" as its second risk factor. We assign default values so
+# we can spot it if something is being missed after updating with the correct
+# values. (e.g. Those with Diabetes alone and no other risk factor)
+indv_pops <- jointpop
+indv_pops$pop1[1:length(all_pop_list)] <- names(all_pop_list)
+indv_pops$pop2 <- 'alone'
+indv_pops$PopEst <- 0
+indv_pops$Inc <- 'Y'
+indv_pops[,c('RRprg','RRmu', 'RRPrev')] <- 0
+
+# filter indv_pops for only unique row entries (so as to de-duplicate)
+indv_pops %<>% unique
+
+# additionally, we will calculate rate ratios for the risk populations of 
+# all of those with a given risk factor (e.g. all of those who have diabetes)
+# including 
+all_pops <- indv_pops
+
+# calculate the population size of individuals by each individual risk factor who are
+# part of the estimated 2 risk factor groups in jointpop
+joint_risk_popsizes<-rep(0, length(all_pop_list))
+names(joint_risk_popsizes)<-names(all_pop_list)
+
+# go through each of the jointpop pairs of risk factors and if either risk 
+# factor match the jth risk factor from all_pop_list, increase the value in the 
+# jth poisition of joint_risk_popsizes by that population size
+for (j in 1:length(all_pop_list)){
+  for (i in 1:nrow(jointpop)){
+    if (jointpop[i,4]=="Y"){
+      if (jointpop[i,1]==names(all_pop_list)[j] | jointpop[i,2]==names(all_pop_list)[j]){
+        joint_risk_popsizes[j]<-joint_risk_popsizes[j]+jointpop[i,3]
+      }
+    }}
+}
+
+# set up a data frame with the "-alone" populations information
+for (i in 1:nrow(indv_pops)){
+  indv_pops[i,1]<-names(all_pop_list)[i]
+  indv_pops[i,2]<-"alone"
+  indv_pops[i,3]<-all_pop_list[[i]][["NRiskGrp"]]*1e6 - joint_risk_popsizes[names(all_pop_list)[i]]
+  indv_pops[i,4]<-"Y"
+  indv_pops[i,5]<-all_pop_list[[i]][["RRprg"]]
+  indv_pops[i,6]<-all_pop_list[[i]][["RRmu"]]
+  indv_pops[i,7]<-all_pop_list[[i]][["RRPrev"]]
+}
+
+# set up a data frame with the "all of those with" populations information
+for (i in 1:nrow(all_pops)){
+  all_pops[i,1]<-names(all_pop_list)[i]
+  all_pops[i,2]<-"all"
+  all_pops[i,3]<-all_pop_list[[i]][["NRiskGrp"]]*1e6
+  all_pops[i,4]<-"Y"
+  all_pops[i,5]<-0
+  all_pops[i,6]<-0
+  all_pops[i,7]<-0
+}
+
+# combine all populations into one table for 
+pops <- rbind.data.frame(all_pops, indv_pops, jointpop)
+pops <- cbind.data.frame(pops,"RRprg2"=rep(NA,nrow(pops)), "RRmu2"=rep(NA,nrow(pops)), "RRPrev2"=rep(NA,nrow(pops)))
+# go through each of the "all of those with" populations and 
+# calculate the weighted average rate ratio from their component "alone" and 
+# two risk factor subpopulations.
+
+num_all_pops <- nrow(filter(pops, pop2 == 'all'))
+
+not_all_pops <- filter(pops, pop2 != 'all')
+not_all_pops2 <- filter(pops, (pop2 != 'all' & pop2 !="alone"))
+
+for (i in 1:num_all_pops) {
+  pop <- pops[[i,1]]
+  
+  # filter for those with pop either alone or in combination with another risk 
+  # factor; only use those intended to be Inc
+  matching_pops <- filter(not_all_pops, (pop1 == pop | pop2 == pop) & Inc == 'Y')
+  matching_pops2 <-filter(not_all_pops2, (pop1 == pop | pop2 == pop) & Inc == 'Y')
+
+  # double check that the matching pops sum up to the "all of those with" population 
+  stopifnot(abs(sum(matching_pops$PopEst) - pops[[i,'PopEst']]) < 1)
+  pops[i,'RRprg'] <- stats::weighted.mean(x = matching_pops$RRprg, w = matching_pops$PopEst)
+  pops[i,'RRmu'] <- stats::weighted.mean(x = matching_pops$RRmu, w = matching_pops$PopEst)
+  pops[i,'RRPrev'] <- stats::weighted.mean(x = matching_pops$RRPrev, w = matching_pops$PopEst)
+
+  pops[i+11,'RRprg2'] <-((pops[i,3]*pops[i+11,5]) - (sum(matching_pops2$RRprg*matching_pops2$PopEst)))/pops[i+11,3]
+  pops[i+11,'RRmu2'] <- ((pops[i,3]*pops[i+11,6]) - (sum(matching_pops2$RRmu*matching_pops2$PopEst)))/pops[i+11,3]
+  pops[i+11,'RRPrev2'] <-((pops[i,3]*pops[i+11,7]) - (sum(matching_pops2$RRPrev*matching_pops2$PopEst)))/pops[i+11,3]
+  
+  if(nrow(matching_pops2)==0) {
+    pops[i+11,8:10]<-pops[i+11,5:7]
+  }
+  }
+
+pops[1:11,"RRprg2"]<-pops[12:22,"RRprg"]
+pops[1:11,"RRmu2"]<-pops[12:22,"RRmu"]
+pops[1:11,"RRPrev2"]<-pops[12:22,"RRPrev"]
+
+pops[,c('RRprg', 'RRmu', 'RRPrev','RRprg2', 'RRmu2', 'RRPrev2')] %<>% round(2)
+
+knitr::kable(pops[1:22,] %>% filter(Inc=="Y"), 'latex', longtable = T, caption = "Single Population Values") %>%  
+  kable_styling(latex_options = c('striped', 'repeat_header'))
+
+knitr::kable(pops[23:nrow(pops),] %>% filter(Inc=="Y"), 'latex', longtable = T, caption = "Joint Population Values") %>%  
+  kable_styling(latex_options = c('striped', 'repeat_header'))
+
+```

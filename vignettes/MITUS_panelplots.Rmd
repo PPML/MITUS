@@ -1,0 +1,325 @@
+---
+title: "MITUS Results #3" 
+author: "Nicole A. B. Swartwood"
+date: "`r Sys.Date()`"
+output: rmarkdown::pdf_document
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+##Run each population separately & find the NNS ordering. 
+```{r, warning=FALSE, echo=FALSE, message=FALSE} 
+
+##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+##### ##### ##### ##### ##### GET ALL THE RESULTS ##### ##### ##### ##### ##### ##### ##### ##### 
+#load the packages 
+library(MITUS)
+library(scales)
+library(dplyr)
+library(reshape2)
+library(magrittr)
+library(ggplot2)
+library(gridExtra)
+
+#load the data for national
+model_load("US")
+#set the default program change 
+prg_chng<-def_prgchng(Par[3,])
+#run the basecase 
+basecase<-national_OutputsZint(samp_i = 3, 
+                           ParMatrix = Par, 
+                           loc="US", 
+                           prg_chng = def_prgchng(Par[3,]),
+                           ttt_input = list(def_ttt_nat_ag()))[1:100,]
+
+ltbi_count_bc<-cbind(2016:2049,rowSums(results[67:100,55:76]))
+tb_count_bc<-cbind(2016:2049,rowSums(results[67:100,136:146]+results[67:100,189:199]))
+TLTBI.InitiationsInits_bc<-cbind(2016:2049,results[67:100,152])
+TBDeaths_bc<-cbind(2016:2049,results[67:100,253]+results[67:100,254])
+
+
+ltbi_count_bc<-cbind(2018:2049,rowSums(results[69:100,55:76]))
+tb_count_bc<-cbind(2018:2049,rowSums(results[69:100,136:146]+results[69:100,189:199]))
+TLTBI.InitiationsInits_bc<-cbind(2018:2049,results[69:100,152])
+TBDeaths_bc<-cbind(2018:2049,results[69:100,253]+results[69:100,254])
+
+
+#make the list with all populations 
+all_pop_list<-national_risk_pop_setup()
+#make an empty list to hold each populations results 
+results_list<-list()
+TLTBI.InitiationsInits_count<-TBDeaths_count<-tb_count<-ltbi_count<-list()
+TLTBI.InitiationsInits_perred<-TBDeaths_perred<-tb_perred<-ltbi_perred<-TLTBI.InitiationsInits_list<-TBDeaths_list<-tb_list<-ltbi_list<-results_list<-list()
+#run the model and get results for each individual population 
+for (i in 1:length(all_pop_list)){
+  one_pop_list<-all_pop_list[[i]]
+  print(paste0("expected screening is ", one_pop_list[[3]]))
+  results_list[[i]]<-national_OutputsZint(samp_i = 3,
+                     ParMatrix = Par, 
+                     loc="US",
+                     prg_chng = prg_chng, 
+                     ttt_input=list(one_pop_list))[1:100,]
+  
+  ltbi_list[[i]]<-cbind(2018:2049,rowSums(results[69:100,55:76]))
+  tb_list[[i]]<-cbind(2018:2049,rowSums(results[69:100,136:146]+results[69:100,189:199]))
+  TLTBI.InitiationsInits_list[[i]]<-cbind(2018:2049,results[69:100,152])
+  TBDeaths_list[[i]]<-cbind(2018:2049,results[69:100,253]+results[69:100,254])
+  
+  ltbi_count[[i]]<-(ltbi_count_bc-ltbi_list[[i]] )[,2]
+  tb_count[[i]]<-(tb_count_bc-tb_list[[i]])[,2]
+  TLTBI.InitiationsInits_count[[i]]<-(TLTBI.InitiationsInits_bc-TLTBI.InitiationsInits_list[[i]])[,2]
+  TBDeaths_count[[i]]<-(TBDeaths_bc-TBDeaths_list[[i]])[,2]
+  
+  ltbi_perred[[i]]<-(((ltbi_count_bc-ltbi_list[[i]]) / ltbi_count_bc)*100)[,2]
+  tb_perred[[i]]<-(((tb_count_bc-tb_list[[i]] ) / tb_count_bc)*100)[,2]
+  TLTBI.InitiationsInits_perred[[i]]<-(((TLTBI.InitiationsInits_bc -TLTBI.InitiationsInits_list[[i]] ) / TLTBI.InitiationsInits_bc)*100)[,2]
+  TBDeaths_perred[[i]]<-(((TBDeaths_bc - TBDeaths_list[[i]]) / TBDeaths_bc)*100)[,2]
+}
+########## ########## ########## ########## ########## ########## ########## ########## ########## 
+########## ########## ########## ########## ########## ########## ########## ########## ########## 
+###format the data 
+########## ########## ########## ########## ########## ########## ########## ########## ########## 
+########## ########## ########## ########## ########## ########## ########## ########## ########## 
+#year of the intervention 
+intv_yr<-2020
+# number of cases diagnosed US
+ActiveTBDiagnosesUSindex<-which(colnames(basecase)=="NOTIF_US_0_4"):which(colnames(basecase)=="NOTIF_US_MORT_95p")
+# number of cases diagnosed NUS
+ActiveTBDiagnosesNUSindex <- c(which(colnames(basecase)=="NOTIF_0_4"):which(colnames(basecase)=="NOTIF_95p"),which(colnames(basecase)=="NOTIF_MORT_0_4"):which(colnames(basecase)=="NOTIF_MORT_95p"))
+# number of treatment initiations US
+TLTBI.InitiationsUSindex<-which(colnames(basecase)=="TLTBI_INITS") #needs arithmetic with NUS 
+# number of treatment initiations NUS
+TLTBI.InitiationsNUSindex<-which(colnames(basecase)=="TLTBI_INITS_FB")
+# total ltbi averted US
+LtbiUSindex<-which(colnames(basecase)=="N_US_LTBI_0_4"):which(colnames(basecase)=="N_US_LTBI_95p")
+# total ltbi averted NUS
+LtbiNUSindex<-which(colnames(basecase)=="N_FB_LTBI_0_4"):which(colnames(basecase)=="N_FB_LTBI_95p")
+TB.DeathsUSindex  <- which(colnames(basecase)=="TBMORT_US_0_4"):which(colnames(basecase)=="TBMORT_US_95p")
+# total TB deaths averted NUS
+TB.DeathsNUSindex <- which(colnames(basecase)=="TBMORT_NUS_0_4"):which(colnames(basecase)=="TBMORT_NUS_95p")
+
+index_list<-list(ActiveTBDiagnosesUSindex, 
+                 ActiveTBDiagnosesNUSindex, 
+                 TLTBI.InitiationsUSindex, 
+                 TLTBI.InitiationsNUSindex,
+                 LtbiUSindex, 
+                 LtbiNUSindex,
+                 TB.DeathsUSindex,
+                 TB.DeathsNUSindex)
+#compare these to the most recent basecase 
+outcome_matrix<-matrix(NA, length(results_list), length(index_list))
+nus_frc <-CalibDat$tot_pop16_ag_fb[9,3]/CalibDat$tot_pop16_ag_fb[9,2]
+us_frc<-1-nus_frc
+#calculate each of these
+for(i in 1:length(results_list)){
+  results<-results_list[[i]]
+  outcome_matrix[i,1]<-sum(results[(intv_yr-1949):nrow(results),index_list[[1]]]-
+                           basecase[(intv_yr-1949):nrow(basecase),index_list[[1]]])
+  outcome_matrix[i,2]<-sum((results[(intv_yr-1949):nrow(results),index_list[[2]]]-results[(intv_yr-1949):nrow(results),index_list[[1]]])-
+                              (basecase[(intv_yr-1949):nrow(basecase),index_list[[2]]] - basecase[(intv_yr-1949):nrow(basecase),index_list[[1]]]))
+  outcome_matrix[i,3]<-sum((results[(intv_yr-1949):nrow(results),index_list[[3]]]-results[(intv_yr-1949):nrow(results),index_list[[4]]])-
+                           (basecase[(intv_yr-1949):nrow(basecase),index_list[[3]]] - basecase[(intv_yr-1949):nrow(basecase),index_list[[4]]]))
+  outcome_matrix[i,4]<-sum(results[(intv_yr-1949):nrow(results),index_list[[4]]]- basecase[(intv_yr-1949):nrow(basecase),index_list[[4]]])
+  outcome_matrix[i,5]<-sum(results[(intv_yr-1949):nrow(results),index_list[[5]]]-
+                           basecase[(intv_yr-1949):nrow(basecase),index_list[[5]]])
+  outcome_matrix[i,6]<-sum(results[(intv_yr-1949):nrow(results),index_list[[6]]]-
+                           basecase[(intv_yr-1949):nrow(basecase),index_list[[6]]])
+  outcome_matrix[i,7]<-sum(results[(intv_yr-1949):nrow(results),index_list[[7]]]-
+                           basecase[(intv_yr-1949):nrow(basecase),index_list[[7]]])
+  outcome_matrix[i,8]<-sum(results[(intv_yr-1949):nrow(results),index_list[[8]]]-
+                           basecase[(intv_yr-1949):nrow(basecase),index_list[[8]]])
+}
+names(results_list)<-names(all_pop_list)
+  # outcome_matrix<-outcome_matrix
+  rownames(outcome_matrix)<-names(results_list)
+  colnames(outcome_matrix)<-c("ActiveTBDiagnosesUS", 
+                              "ActiveTBDiagnosesNUS", 
+                               "TLTBI.InitiationsUS", 
+                               "TLTBI.InitiationsNUS",
+                               "LtbiUS", 
+                               "LtbiNUS",
+                               "TB.DeathsUS",
+                               "TB.DeathsNUS")
+outcome_matrix[,7]<-outcome_matrix[,7]+outcome_matrix[,8]  
+outcome_matrix <- outcome_matrix[,-8]
+outcome_matrix[,5]<-outcome_matrix[,5]+outcome_matrix[,6]
+outcome_matrix <- outcome_matrix[,-6]
+outcome_matrix[,3]<-outcome_matrix[,3]+outcome_matrix[,4]
+outcome_matrix <- outcome_matrix[,-4]
+outcome_matrix[,1]<-outcome_matrix[,1]+outcome_matrix[,2]
+outcome_matrix <- outcome_matrix[,-2]
+
+##create a plot to show all these results 
+outcome_df<-as.data.frame(outcome_matrix)*1e6
+
+colnames(outcome_df)<-c("ActiveTBDiagnoses", 
+                        "TLTBI.Initiations", 
+                        "LatentTB.Infections", 
+                        "TB.Deaths")
+outcome_df$Population<-rownames(outcome_df)
+# add a row for population groups 
+outcome_df$"PopGroup"<-"High Progression"
+outcome_df[outcome_df$Population %in% c("Diabetes","ESRD","PWID"),"PopGroup"]<-'Medium Progression'
+outcome_df[outcome_df$Population %in% c("Prisoners", "Immigrants", "Healthcare", "Homeless"),"PopGroup"]<-'High LTBI Prevalence'
+# outcome_df<-outcome_df[-4,]
+outcome_df[,1:4]<-round(outcome_df[,1:4],0)
+m_outcome_df1<-melt(outcome_df[,c(1,5,6)],id.vars=c('Population', "PopGroup"), variable.name = "outcome")
+m_outcome_df2<-melt(outcome_df[,c(2,5,6)],id.vars=c('Population', "PopGroup"), variable.name = "outcome")
+m_outcome_df3<-melt(outcome_df[,c(3,5,6)],id.vars=c('Population', "PopGroup"), variable.name = "outcome")
+m_outcome_df4<-melt(outcome_df[,4:6],id.vars=c('Population', "PopGroup"), variable.name = "outcome")
+variable_names<-c("US-Born","Non-US Born")
+PopGroup<-c("High LTBI Prevalence","High Progression", "Medium Progression")
+variable_labeller2 <- function(variable,value){
+  if (variable=='outcome') {
+  return(variable_names[value])
+  } else {
+    return(PopGroup)
+  }
+}
+m_outcome_dfall<-rbind(m_outcome_df1,m_outcome_df2,m_outcome_df3,m_outcome_df4 )
+########## ########## ########## ########## ########## ########## ########## ########## ########## 
+########## ########## ########## ########## ########## ########## ########## ########## ########## 
+#make a data frame for all the time changes 
+########## ########## ########## ########## ########## ########## ########## ########## ########## 
+########## ########## ########## ########## ########## ########## ########## ########## ########## 
+percent_reductions_allyr<-counts_allyr<-results_allyr<-data.frame(Population=character(),
+                                                                                     Year=numeric(),
+                                                                                     LTBI=numeric(),
+                                                                                     ActiveTB=numeric(),
+                                                                                     TLTBIInits=numeric(), 
+                                                                                     TBDeaths=numeric(), stringsAsFactors = FALSE)
+years<-seq(2018,2049,1)
+for (i in 1:length(all_pop_list)){
+  for (j in 1:32){
+  percent_reductions_allyr[(j-1)*11+(i),1]<-names(all_pop_list)[i]
+  percent_reductions_allyr[(j-1)*11+(i),2]<-years[j]
+  percent_reductions_allyr[(j-1)*11+(i),3]<-round(ltbi_perred[[i]][j],5)
+  percent_reductions_allyr[(j-1)*11+(i),4]<-round(tb_perred[[i]][j],5)
+  percent_reductions_allyr[(j-1)*11+(i),5]<-round(TLTBI.InitiationsInits_perred[[i]][j],5)
+  percent_reductions_allyr[(j-1)*11+(i),6]<-round(TBDeaths_perred[[i]][j],5)
+  
+  counts_allyr[(j-1)*11+(i),1]<-names(all_pop_list)[i]
+  counts_allyr[(j-1)*11+(i),2]<-years[j]
+  counts_allyr[(j-1)*11+(i),3]<-round(ltbi_count[[i]][j],5)
+  counts_allyr[(j-1)*11+(i),4]<-round(tb_count[[i]][j],5)
+  counts_allyr[(j-1)*11+(i),5]<-round(TLTBI.InitiationsInits_count[[i]][j],5)
+  counts_allyr[(j-1)*11+(i),6]<-round(TBDeaths_count[[i]][j],5)
+  
+  results_allyr[(j-1)*11+(i),1]<-names(all_pop_list)[i]
+  results_allyr[(j-1)*11+(i),2]<-years[j]
+  results_allyr[(j-1)*11+(i),3]<-round(ltbi_list[[i]][j,2],5)
+  results_allyr[(j-1)*11+(i),4]<-round(tb_list[[i]][j,2],5)
+  results_allyr[(j-1)*11+(i),5]<-round(TLTBI.InitiationsInits_list[[i]][j,2],5)
+  results_allyr[(j-1)*11+(i),6]<-round(TBDeaths_list[[i]][j,2],5)
+}}
+percent_reductions_allyr$"PopGroup"<-results_allyr$"PopGroup"<-counts_allyr$"PopGroup"<-"High Progression"
+percent_reductions_allyr[percent_reductions_allyr$Population %in% c("Diabetes","ESRD","PWID"),"PopGroup"]<-'Medium Progression'
+counts_allyr[counts_allyr$Population %in% c("Diabetes","ESRD","PWID"),"PopGroup"]<-'Medium Progression'
+results_allyr[results_allyr$Population %in% c("Diabetes","ESRD","PWID"),"PopGroup"]<-'Medium Progression'
+
+percent_reductions_allyr[percent_reductions_allyr$Population %in% c("Prisoners", "Immigrants", "Healthcare", "Homeless"),"PopGroup"]<-'High LTBI Prevalence'
+counts_allyr[counts_allyr$Population %in% c("Prisoners", "Immigrants", "Healthcare", "Homeless"),"PopGroup"]<-'High LTBI Prevalence'
+results_allyr[results_allyr$Population %in% c("Prisoners", "Immigrants", "Healthcare", "Homeless"),"PopGroup"]<-'High LTBI Prevalence'
+########## ########## ########## ########## ########## ########## ########## ########## ########## 
+########## ########## ########## ########## ########## ########## ########## ########## ########## 
+#filter down the years of interest
+########## ########## ########## ########## ########## ########## ########## ########## ########## 
+########## ########## ########## ########## ########## ########## ########## ########## ########## 
+outcomeyears<-c(2020,2025,2035,2049)
+
+cumulative_myear<-matrix(0,length(all_pop_list)*length(outcomeyears),5)
+cumulative_myear<-as.data.frame(cumulative_myear)
+cumulative_myear[,1]<-rep(names(all_pop_list),length(outcomeyears))
+cumulative_myear[,2]<-rep(outcomeyears[1:4],each=length(all_pop_list))
+for(i in 1:nrow(cumulative_myear)){
+    y<-switch(as.character(cumulative_myear[i,2]),"2020"=2020, "2025"=2020:2025, "2035"=2020:2035, "2049"=2020:2049)
+    # print(y)
+cumulative_myear[i,3]<- sum((counts_allyr %>% filter(Population==cumulative_myear[i,1] & Year %in% y))[,"LTBI"])
+cumulative_myear[i,4]<- sum((counts_allyr %>% filter(Population==cumulative_myear[i,1] & Year %in% y))[,"ActiveTB"])     
+cumulative_myear[i,5]<- sum((counts_allyr %>% filter(Population==cumulative_myear[i,1] & Year %in% y))[,"TBDeaths"])
+}
+
+colnames(cumulative_myear)<-c("Population", "Year", "LTBIs", "ActiveTBCases", "TBDeaths")
+mcumulative_myear<-melt(cumulative_myear, id.vars=c("Population", "Year"))
+
+########## ########## ########## ########## ########## ########## ########## ########## ##########
+########## ########## ########## ########## ########## ########## ########## ########## ########## 
+#setup for plotting
+#set a custom theme
+theme_custom <-theme_bw() + 
+theme(axis.title.y = element_blank(), legend.position = 'bottom', axis.text.x = element_text(angle = 30, hjust = 1))
+########## ########## ########## ########## ########## ########## ########## ########## ########## 
+########## ########## ########## ########## ########## ########## ########## ########## ########## 
+#create a table of the number needed to screen sorted by high to low values 
+#chose to sort by cases averted (not deaths but can change)
+########## ########## ########## ########## ########## ########## ########## ########## ########## 
+########## ########## ########## NNS for Cases Averted ########## ########## ##########
+########## ########## ########## ########## ########## ########## ########## ########## ##########
+outcome_df2<-outcome_df[,c(1,5,6)]
+popsize_list<-all_pop_list
+for (i in 1:nrow(outcome_df2)){
+  outcome_df2[i,1]<- -(popsize_list[[i]][[3]]*1e6)/outcome_df2[i,1]
+}
+outcome_df2<-outcome_df2[-3,]
+outcome_sort<-arrange(outcome_df2, ActiveTBDiagnoses)
+colnames(outcome_sort)<-c("NNS_Cases","Population", "Population Group")
+
+outcome_sort[,1]<-round(outcome_sort[,1],5)
+rownames(outcome_sort)<-outcome_sort[,2]
+outcome_levels <- rownames(outcome_sort)[order(outcome_sort[,1])]
+
+outcome_sort$PopOrder<-factor(outcome_sort$Population, levels = outcome_levels)
+
+
+NNS_plot<-ggplot(outcome_sort, aes(x=PopOrder, y=round(NNS_Cases,0), label=round(NNS_Cases,0)))+
+         geom_point(stat="identity", size=3)+
+         scale_color_manual(values = "#ff5733")+ 
+         theme_custom +ylab("NNS")+ expand_limits(y=c(0,max(outcome_sort[,1])+50))+
+         geom_text(color="black", size=2, aes(y=NNS_Cases+5000)) + coord_flip() +
+         ggtitle("Number Needed to Screen to Avert 1 TB Case by 2050")
+########## ########## ########## ########## ########## ########## ########## ########## ##########
+########## ########## ########## NNT (Initiate) for Cases Averted ########## ########## ##########
+########## ########## ########## ########## ########## ########## ########## ########## ##########
+outcome_df3<-outcome_df[,c(1,2,5,6)]
+
+popsize_list<-all_pop_list
+for (i in 1:nrow(outcome_df3)){
+  outcome_df3[i,1]<- outcome_df3[i,2]/outcome_df3[i,1]
+}
+outcome_df3<-outcome_df3[-3,]
+outcome_df3<-outcome_df3[,-2]
+#outcome_df3
+outcome_sort3<-arrange(outcome_df3, ActiveTBDiagnoses)
+
+colnames(outcome_sort3)<-c("NNT_Cases","Population", "Population Group")
+
+outcome_sort3[,1]<-round(outcome_sort3[,1],5)
+rownames(outcome_sort3)<-outcome_sort3[,2]
+outcome_levels <- rownames(outcome_sort3)[order(outcome_sort3[,1])]
+
+outcome_sort3$PopOrder<-factor(outcome_sort3$Population, levels = outcome_levels)
+
+
+NNT_plot<-ggplot(outcome_sort3, aes(x=PopOrder, y=round(NNT_Cases,0), label=round(NNT_Cases,0)))+
+         geom_point(stat="identity", size=3)+
+         scale_color_manual(values=c("#c70039")) + ylab("NNT")+ theme_custom +
+         geom_text(color="black", size=2, aes(y=NNT_Cases+1)) + coord_flip() + 
+    ggtitle("Number Needed to Initiate TLTBI to Avert Additional 1 TB Case by 2050")
+
+gridExtra::grid.arrange(NNS_plot, NNT_plot)
+
+####only for saving a pdf 
+NNS_NNT_plot<-gridExtra::arrangeGrob(NNS_plot, NNT_plot)
+ggsave("~/MITUS/NNS_NNT_plot.pdf", NNS_NNT_plot)
+########## ########## ########## ########## ########## ########## ########## ########## ########## 
+########## ########## ########## ########## ########## ########## ########## ########## ########## 
+#dodged bar plot of cumulative TB outcomes averted 
+########## ########## ########## ########## ########## ########## ########## ########## ########## 
+
+averted_plot<-ggplot(mcumulative_myear %>% filter(variable=='ActiveTBCases' | variable=='TBDeaths'), aes(x=Population, y=(value)*1e6,  fill=factor(Year, levels=c("2020", "2025", "2035", "2049")), label=round(value*1e6,0)))+geom_col(position = position_dodge())+theme_custom+theme(legend.title = element_blank()) +ggtitle("Cumulative Additional TB Cases and Deaths Averted")+scale_fill_manual(values = c("#581854","#900c3f","#c70039", "#ff5733"))+facet_wrap(.~variable, ncol=1, scales = "free_y")
+
+ggsave("~/MITUS/averted_plot.pdf", averted_plot)
+
+```

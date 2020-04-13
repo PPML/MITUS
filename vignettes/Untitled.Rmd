@@ -1,0 +1,64 @@
+---
+title: Thinking Out MITUS Math
+output_format: pdf_document
+---
+  
+Let's think about a limited scope example. 
+
+Let's look at the breakdown of the diabetic population into those
+who are non-us born and those who inject drugs. 
+
+(These choices were made fairly arbitrarily, just looking for large 
+  groups with plausible data for an example). 
+
+The diabetic population is 34 million, the PWID population 6 million, 
+and the non-US born population is 44 million. 
+
+Suppose we're thinking about TB risk groups $R = \{diab, nusb, pwid, diab+nusb,
+diab+pwid\}$ where singletons such as $diab$, $nusb$, $pwid$ represent the
+populations with only those TB risk factors and no others. 
+
+Let $rrLTBI \colon R \to \mathbb{R}$ be the function that provides the rate ratio of 
+LTBI prevalence (compared to the total US population) for a given risk group. 
+Similarly, we'll use the $popsize \colon R \to \mathbb{R}$ function to denote 
+population sizes.
+
+We believe that $rrLTBI(\cup \{ diab, diab+nusb, diab+pwid \}) = 1$ from the table 
+provided. 
+
+We are thinking of adopting an approach where for an intersectional group $g =
+  a+b$ (i.e. one of $diab+nusb, diab+pwid$) we assume that $rrLTBI(g) =
+  max(rrLTBI(a), rrLTBI(b))$. 
+
+Let's work out an example... 
+
+$rrLTBI(diab+nusb) = 5.16$ and 
+
+$rrLTBI(diab+pwid) = 8.2$, by our assumption schema.
+
+Pushing the math further out, we get the following: 
+
+$rrLTBI(\cup \{ diab, diab+nusb, diab+pwid \}) = 1 = \frac{ new\_rate * popsize(diab) + 5.16 * popsize(diab + nusb) + 8.2 * popsize(diab + pwid) }
+{ popsize ( \cup \{ diab, diab+nusb, diab+pwid \} ) }$
+
+$1 = \frac{ new\_rate * popsize(diab) + 5.16 * popsize(diab + nusb) + 8.2 * popsize(diab + pwid) }
+{  34m }$
+
+$popsize(diab + nusb) = 330 * (34 / 330 * 44 / 330) = 4.5m$
+
+$popsize(diab + pwid) = 330 * (34 / 330 * 6.6 / 330) = .7m$
+
+$popsize(diab) = 34 - 4.5 - .7 = 28.8m$
+
+
+$1 = \frac{ new\_rate * 28.8 + 5.16 * 4.5 + 8.2 * .7 }
+{ 34m }$
+
+$\frac{34 - (5.16 * 4.5 + 8.2 * .7)}{ 28.8 } = new\_rate = .175$
+
+Alternatively, one can assume a 1 for the $new\_rate$ and the overall diabetic 
+$rrLTBI$ ends up a little higher than estimated (1). 
+
+$\frac{ 1 * 28.8 + 5.16 * 4.5 + 8.2 * .7 }
+{ 34m } = 1.69$
+
