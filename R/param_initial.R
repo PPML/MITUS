@@ -140,6 +140,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
 
   ######################         IMMIGRATION             ########################
   ######################         OVERALL IMM.            ########################
+  PV["ImmigVol"]<-1
   TotImmig0       <- (c(Inputs$ImmigInputs[[1]][1:151])+c(rep(0,67),cumsum(rep(PV["ImmigVolFut"],84))))/12*PV["ImmigVol"]
   TotImmAge0      <-matrix(0,151,11)
   for (i in 1:151){
