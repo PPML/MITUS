@@ -4,8 +4,9 @@
 #'@name llikelihoodZ
 #'@param samp_i sample id
 #'@param start_mat matrix of parameters  # Par = par_1
+#'@param TB boolean for TB likelihoods
 #'@return lLik
-llikelihoodZ <-  function(samp_i, start_mat) {
+llikelihoodZ <-  function(samp_i, start_mat, TB=1) {
   if(min(dim(as.data.frame(start_mat)))==1) {
     Par <- as.numeric(start_mat);
     names(Par) <- names(start_mat)
@@ -54,6 +55,7 @@ llikelihoodZ <-  function(samp_i, start_mat) {
       M <- zz$Outputs
       colnames(M) <- prms[["ResNam"]]
       lLik <- 0
+      if(TB==1){
       #' TOTAL DIAGNOSED CASES 1953-2016 - index is same
       v1   <- M[4:69,"NOTIF_ALL"]+M[4:69,"NOTIF_MORT_ALL"]
       addlik <- notif_tot_lik(V=v1); addlik
@@ -109,25 +111,48 @@ llikelihoodZ <-  function(samp_i, start_mat) {
       addlik <- (tltbi_dist_lLik(V=v13))*2; addlik
       lLik <- lLik + addlik
       #' #' LTBI PREVALENCE BY AGE 2011, US - index updated
-      v15  <- cbind(M[62,55:65],M[62,33:43]-M[62,55:65])
-      v15a<-v15
-      Sens_IGRA <-c(.780,.675,.712,.789,.591)
-      Spec_IGRA <-c(.979,.958,.989,.985,.931)
-      names(Sens_IGRA)<- names(Spec_IGRA)<-c("lrUS","hrUS","youngNUS","NUS","hrNUS")
-      v15b <- (outer(v15a[,1],c(Sens_IGRA[1],(1-Sens_IGRA[1])))+outer(v15a[,2],c((1-Spec_IGRA[1]),Spec_IGRA[1])))#*(prms$rLtScrt[750]*12)
+      v15b <- cbind(M[62,55:65],M[62,33:43]-M[62,55:65])
+      # v15a<-v15
+      # Sens_IGRA <-c(.780,.675,.712,.789,.591)
+      # Spec_IGRA <-c(.979,.958,.989,.985,.931)
+      # names(Sens_IGRA)<- names(Spec_IGRA)<-c("lrUS","hrUS","youngNUS","NUS","hrNUS")
+      # v15b <- (outer(v15a[,1],c(Sens_IGRA[1],(1-Sens_IGRA[1])))+outer(v15a[,2],c((1-Spec_IGRA[1]),Spec_IGRA[1])))#*(prms$rLtScrt[750]*12)
       # v15b <- (outer(v15a[,1],c(Sens_IGRA[1],(1-Sens_IGRA[1])))+outer(v15a[,2],c((1-(Spec_IGRA[1]*P[["rrTestLrNoTb"]])),(Spec_IGRA[1]*P[["rrTestLrNoTb"]]))))*(prms$rLtScrt[750]*12)
       addlik <- ltbi_us_11_lLik(V=v15b)*2; addlik
       lLik <- lLik + addlik
       #' LTBI PREVALENCE BY AGE 2011, FB - index updated
-      v16  <- cbind(M[62,66:76],M[62,44:54]-M[62,66:76])
-      v16a <- v16
-      #under age 5
-      v16b <- (v16a[1,1]*c(Sens_IGRA[3],(1-Sens_IGRA[3])))+(v16a[1,2]*c((1-Spec_IGRA[3]),Spec_IGRA[3]))#*(prms$rLtScrt[750]*12)
-      #over age 5
-      v16c <- outer(v16a[2:11,1],c(Sens_IGRA[4],(1-Sens_IGRA[4])))+outer(v16a[2:11,2],c((1-Spec_IGRA[4]),Spec_IGRA[4]))#*(prms$rLtScrt[750]*12)
-      v16d<-rbind(v16b,v16c)
+      v16d  <- cbind(M[62,66:76],M[62,44:54]-M[62,66:76])
+      # v16a <- v16
+      # #under age 5
+      # v16b <- (v16a[1,1]*c(Sens_IGRA[3],(1-Sens_IGRA[3])))+(v16a[1,2]*c((1-Spec_IGRA[3]),Spec_IGRA[3]))#*(prms$rLtScrt[750]*12)
+      # #over age 5
+      # v16c <- outer(v16a[2:11,1],c(Sens_IGRA[4],(1-Sens_IGRA[4])))+outer(v16a[2:11,2],c((1-Spec_IGRA[4]),Spec_IGRA[4]))#*(prms$rLtScrt[750]*12)
+      # v16d<-rbind(v16b,v16c)
       addlik <- ltbi_fb_11_lLik(V=v16d)*2; addlik
       lLik <- lLik + addlik
+
+      #' TOTAL DEATHS WITH TB 1999-2014 - index updated
+      v19  <- M[50:68,227:237]
+      addlik <- tb_dth_tot_lLik(V=v19); addlik
+      lLik <- lLik + addlik
+      #' TB DEATHS 1999-2014 BY AGE - index updated above
+      addlik <- tb_dth_age_lLik(V=v19); addlik
+      lLik <- lLik + addlik
+      #' LIKELIHOOD FOR BORGDORFF, FEREBEE & SUTHERLAND ESTIMATES
+
+      v2456  <- list(prms[["Mpfast"]],prms[["Mrslow"]], prms[["rfast"]],prms[["rRecov"]])
+      addlik <- borgdorff_lLik( Par=v2456); addlik
+      lLik <- lLik + addlik
+      addlik <- ferebee_lLik(Par=v2456); addlik
+      lLik <- lLik + addlik
+      addlik <- sutherland_lLik(Par=v2456); addlik
+      lLik <- lLik + addlik
+
+      # ### ### ### LIKELIHOOD FOR TIEMERSMA ESTS ### ### ### ### ### ### ~~~
+      v35   <- c(P["rSlfCur"],P["muIp"])
+      addlik <- tiemersma_lLik(Par=v35); addlik
+      lLik <- lLik + addlik
+      }
       #' TOTAL POP EACH DECADE, BY US/FB - index updated (maybe)
       v17  <- M[,31]+M[,32]
       addlik <- tot_pop_yr_fb_lLik(V=v17); addlik
@@ -135,13 +160,6 @@ llikelihoodZ <-  function(samp_i, start_mat) {
       #' TOTAL POP AGE DISTRIBUTION 2016 index updated
       v18  <- cbind(M[69,33:43],M[69,44:54])
       addlik <- tot_pop18_ag_fb_lLik(V=v18); addlik
-      lLik <- lLik + addlik
-      #' TOTAL DEATHS WITH TB 1999-2014 - index updated
-      v19  <- M[50:68,227:237]
-      addlik <- tb_dth_tot_lLik(V=v19); addlik
-      lLik <- lLik + addlik
-      #' TB DEATHS 1999-2014 BY AGE - index updated above
-      addlik <- tb_dth_age_lLik(V=v19); addlik
       lLik <- lLik + addlik
       #' Total DEATHS 2017
       v20a<-rowSums(M[c(1+1:6*10,68),121:131])*1e6
@@ -177,20 +195,7 @@ llikelihoodZ <-  function(samp_i, start_mat) {
       addlik <- homeless_10_lLik(V=v23b); addlik
       lLik <- lLik + addlik
 
-      #' LIKELIHOOD FOR BORGDORFF, FEREBEE & SUTHERLAND ESTIMATES
 
-      v2456  <- list(prms[["Mpfast"]],prms[["Mrslow"]], prms[["rfast"]],prms[["rRecov"]])
-      addlik <- borgdorff_lLik( Par=v2456); addlik
-      lLik <- lLik + addlik
-      addlik <- ferebee_lLik(Par=v2456); addlik
-      lLik <- lLik + addlik
-      addlik <- sutherland_lLik(Par=v2456); addlik
-      lLik <- lLik + addlik
-
-      # ### ### ### LIKELIHOOD FOR TIEMERSMA ESTS ### ### ### ### ### ### ~~~
-      v35   <- c(P["rSlfCur"],P["muIp"])
-      addlik <- tiemersma_lLik(Par=v35); addlik
-      lLik <- lLik + addlik
 
 
       ### ### ### FB RT LIKELIHOOD
@@ -208,13 +213,14 @@ llikelihoodZ <-  function(samp_i, start_mat) {
 #'@name llikelihood
 #'@param start_mat matrix of parameters
 #'@param n_cores number of cores to use on the cluster
+#'@param TB boolean for TB likelihoods
 #'@return lLik
 #'@export
-llikelihood <- function(start_mat,n_cores=1) {
+llikelihood <- function(start_mat,n_cores=1, TB=1) {
   if(dim(as.data.frame(start_mat))[2]==1) {
-    lLik <- llikelihoodZ(1,t(as.data.frame(start_mat)))
+    lLik <- llikelihoodZ(1,t(as.data.frame(start_mat)), TB=TB)
   } else {
-    lLik <- unlist(mclapply(1:nrow(start_mat),llikelihoodZ,start_mat=start_mat,mc.cores=n_cores))
+    lLik <- unlist(mclapply(1:nrow(start_mat),llikelihoodZ,start_mat=start_mat,mc.cores=n_cores, TB=TB))
   }
   return((lLik))
 }
