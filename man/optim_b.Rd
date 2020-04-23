@@ -11,12 +11,14 @@ optimization.
 The function requires the use of the ParamInit Rdata file and the
 StartValues Rdata file.}
 \usage{
-optim_b(df, samp_i = 1)
+optim_b(df, samp_i = 1, TB = 1)
 }
 \arguments{
 \item{df}{dataframe or matrix of starting values data frame}
 
 \item{samp_i}{which rows of the data frame to use}
+
+\item{TB}{boolean for TB likelihoods}
 }
 \value{
 8 datasets from optimization loop

@@ -6,12 +6,14 @@
 functions found in calib_functions.R and updates the
 this is the function that goes into the optimizer}
 \usage{
-llikelihoodZ(samp_i, start_mat)
+llikelihoodZ(samp_i, start_mat, TB = 1)
 }
 \arguments{
 \item{samp_i}{sample id}
 
 \item{start_mat}{matrix of parameters  # Par = par_1}
+
+\item{TB}{boolean for TB likelihoods}
 }
 \value{
 lLik
@@ -32,16 +34,16 @@ TOTAL LTBI TREATMENT INITS 2002 - index updated
 DIST LTBI TREATMENT INITS 2002 - index updated
 #' LTBI PREVALENCE BY AGE 2011, US - index updated
 LTBI PREVALENCE BY AGE 2011, FB - index updated
-TOTAL POP EACH DECADE, BY US/FB - index updated (maybe)
-TOTAL POP AGE DISTRIBUTION 2016 index updated
 TOTAL DEATHS WITH TB 1999-2014 - index updated
 TB DEATHS 1999-2014 BY AGE - index updated above
+LIKELIHOOD FOR BORGDORFF, FEREBEE & SUTHERLAND ESTIMATES
+TOTAL POP EACH DECADE, BY US/FB - index updated (maybe)
+TOTAL POP AGE DISTRIBUTION 2016 index updated
 Total DEATHS 2017
 #' Total DEATHS 1999-2016 BY AGE
 #' Mort_dist 2016
 #' Mort_dist 2016
 HOMELESS POP 2010 - index updated
-LIKELIHOOD FOR BORGDORFF, FEREBEE & SUTHERLAND ESTIMATES
 }
 \description{
 This scrprmst creates a function that loops over the log-likelihood

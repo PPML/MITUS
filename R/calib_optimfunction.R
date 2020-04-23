@@ -9,15 +9,16 @@
 #'@name optim_b
 #'@param df dataframe or matrix of starting values data frame
 #'@param samp_i which rows of the data frame to use
+#'@param TB boolean for TB likelihoods
 #'@return 8 datasets from optimization loop
 #'@export
 
-optim_b <- function(df, samp_i=1){
+optim_b <- function(df, samp_i=1, TB=1){
 # data("StartVal_2018-08-06", package = "MITUS")
 
 
 posterior = function(theta) {
-   -lprior(theta) - llikelihood(theta,n_cores)
+   -lprior(theta) - llikelihood(theta,n_cores, TB=TB)
  }
 
 if(min(dim(as.data.frame(df)))==1) {

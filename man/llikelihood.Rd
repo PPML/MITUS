@@ -4,12 +4,14 @@
 \alias{llikelihood}
 \title{Local parallelization via multicore}
 \usage{
-llikelihood(start_mat, n_cores = 1)
+llikelihood(start_mat, n_cores = 1, TB = 1)
 }
 \arguments{
 \item{start_mat}{matrix of parameters}
 
 \item{n_cores}{number of cores to use on the cluster}
+
+\item{TB}{boolean for TB likelihoods}
 }
 \value{
 lLik
