@@ -203,7 +203,7 @@ tb_dth_age_lLik <- function(V,rho=0.01) {
 tot_pop_yr_fb_lLik <- function(V) {
   tot_pop_yr_fb      <- CalibDat[["tot_pop_yr_fb"]]
   adj_17             <- sum(dnorm(tot_pop_yr_fb[-1,4],tot_pop_yr_fb[-1,4],tot_pop_yr_fb[8,4]*0.1/1.96,log=T)*wts[c(1+1:6*10,69)])
-  sum(dnorm(tot_pop_yr_fb[-1,4],V[c(11,21,31,41,51,61,69)],tot_pop_yr_fb[8,4]*0.1/1.96,log=T)*wts[c(1+1:6*10,69)]) - adj_17  } # CI = +/- 2mil
+  sum(dnorm(tot_pop_yr_fb[-1,4],V[c(11,21,31,41,51,61,69)],tot_pop_yr_fb[8,4]*0.01/1.96,log=T)*wts[c(1+1:6*10,69)]) - adj_17  } # CI = +/- 2mil
 
 #' #' TOTAL POP AGE DISTRIBUTION 2016 by nativity
 #' #' Motivation: reported estimates represent pseudo-data for a multinomial likelihood, with ESS = 500
