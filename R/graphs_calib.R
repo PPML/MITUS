@@ -454,18 +454,18 @@ calib_graphs <- function(df, Par_list){
   ################################################################################
   #LTBI Prevalance by Age in 2011, US born
 
-  Va  <- cbind(t(df[62,55:65]),t(df[62,33:43]-df[62,55:65]))
-  # pIGRA<-1
-  # v1<-V*pIGRA
-  # Sens_IGRA <-c(.780,.675,.712,.789,.591)
-  # Spec_IGRA <-c(.979,.958,.989,.985,.931)
-  # names(Sens_IGRA)<- names(Spec_IGRA)<-c("lrUS","hrUS","youngNUS","NUS","hrNUS")
-  # Va <- outer(v1[,1],c(Sens_IGRA[1],(1-Sens_IGRA[1])))+outer(v1[,2],c((1-Spec_IGRA[1]),Spec_IGRA[1]))
-  #
-  # # Va <- outer(V[,1],c(0.74382,(1-0.74382)))+outer(V[,2],c((1-0.94014),0.94014))
-  # # Va <- outer(V[,1],c(Sens_IGRA,(1-Sens_IGRA)))+outer(V[,2],c((1-Spec_IGRA),Spec_IGRA))
-  # # Va<-V
-  # colnames(V) <- c("LTBI", "No-LTBI")
+  V <- cbind(t(df[62,55:65]),t(df[62,33:43]-df[62,55:65]))
+  pIGRA<-1
+  v1<-V*pIGRA
+  Sens_IGRA <-c(.780,.675,.712,.789,.591)
+  Spec_IGRA <-c(.979,.958,.989,.985,.931)
+  names(Sens_IGRA)<- names(Spec_IGRA)<-c("lrUS","hrUS","youngNUS","NUS","hrNUS")
+  Va <- outer(v1[,1],c(Sens_IGRA[1],(1-Sens_IGRA[1])))+outer(v1[,2],c((1-Spec_IGRA[1]),Spec_IGRA[1]))
+
+  # Va <- outer(V[,1],c(0.74382,(1-0.74382)))+outer(V[,2],c((1-0.94014),0.94014))
+  # Va <- outer(V[,1],c(Sens_IGRA,(1-Sens_IGRA)))+outer(V[,2],c((1-Spec_IGRA),Spec_IGRA))
+  # Va<-V
+  colnames(V) <- c("LTBI", "No-LTBI")
 
   V1 <- Va[-11,]; V1<-V1[-10,]
   V1[9,] <- V1[9,]+Va[10,]+Va[11,]
@@ -499,18 +499,18 @@ calib_graphs <- function(df, Par_list){
   ################################################################################
   #LTBI Prevalance by Age in 2011, non-US born
 
-  v1d  <- cbind(t(df[62,66:76]),t(df[62,44:54]-df[62,66:76]))
+  V <- cbind(t(df[62,66:76]),t(df[62,44:54]-df[62,66:76]))
 
-  # Va <- outer(V[,1],c(0.74382,(1-0.74382)))+outer(V[,2],c((1-0.94014),0.94014))
-  #make this IGRA positive
-  # pIGRA<-1
-  # v1<-V*pIGRA
-  # #under age 5
-  # v1b <- (v1[1,1]*c(Sens_IGRA[3],(1-Sens_IGRA[3])))+(v1[1,2]*c((1-Spec_IGRA[3]),Spec_IGRA[3]))
-  # #over age 5
-  # v1c <- outer(v1[2:11,1],c(Sens_IGRA[4],(1-Sens_IGRA[4])))+outer(v1[2:11,2],c((1-Spec_IGRA[4]),Spec_IGRA[4]))
-  # v1d<-rbind(v1b,v1c)
-  # colnames(v1d) <- c("LTBI", "No-LTBI")
+  Va <- outer(V[,1],c(0.74382,(1-0.74382)))+outer(V[,2],c((1-0.94014),0.94014))
+ # make this IGRA positive
+  pIGRA<-1
+  v1<-V*pIGRA
+  #under age 5
+  v1b <- (v1[1,1]*c(Sens_IGRA[3],(1-Sens_IGRA[3])))+(v1[1,2]*c((1-Spec_IGRA[3]),Spec_IGRA[3]))
+  #over age 5
+  v1c <- outer(v1[2:11,1],c(Sens_IGRA[4],(1-Sens_IGRA[4])))+outer(v1[2:11,2],c((1-Spec_IGRA[4]),Spec_IGRA[4]))
+  v1d<-rbind(v1b,v1c)
+  colnames(v1d) <- c("LTBI", "No-LTBI")
 
   V1 <- v1d[-11,]; V1<-V1[-10,]
   V1[9,] <- V1[9,]+v1d[10,]+v1d[11,]

@@ -202,8 +202,8 @@ tb_dth_age_lLik <- function(V,rho=0.01) {
 #'@return likelihood
 tot_pop_yr_fb_lLik <- function(V) {
   tot_pop_yr_fb      <- CalibDat[["tot_pop_yr_fb"]]
-  adj_17             <- sum(dnorm(tot_pop_yr_fb[-1,4],tot_pop_yr_fb[-1,4],tot_pop_yr_fb[8,4]*0.1/1.96,log=T)*wts[c(1+1:6*10,69)])
-  sum(dnorm(tot_pop_yr_fb[-1,4],V[c(11,21,31,41,51,61,69)],tot_pop_yr_fb[8,4]*0.01/1.96,log=T)*wts[c(1+1:6*10,69)]) - adj_17  } # CI = +/- 2mil
+  adj_17             <- sum(dnorm(tot_pop_yr_fb[-1,4],tot_pop_yr_fb[-1,4],tot_pop_yr_fb[8,4]*0.05/1.96,log=T)*wts[c(1+1:6*10,69)])
+  sum(dnorm(tot_pop_yr_fb[-1,4],V[c(11,21,31,41,51,61,69)],tot_pop_yr_fb[8,4]*0.05/1.96,log=T)*wts[c(1+1:6*10,69)]) - adj_17  } # CI = +/- 2mil
 
 #' #' TOTAL POP AGE DISTRIBUTION 2016 by nativity
 #' #' Motivation: reported estimates represent pseudo-data for a multinomial likelihood, with ESS = 500
@@ -238,8 +238,8 @@ tot_pop_age_lLik <- function(V,ESS=500) {
 US_dth_tot_lLik <- function(V) {
   US_deaths_tot   <- CalibDat[["US_tot_mort"]][c(11,21,31,41,51,61,68),-1]
   # US_deaths_tot<-sum(readRDS(system.file("US/US_MortalityCountsByAge.rds", package="MITUS"))[,69])
-  adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.01/1.96,log=T)*wts[c(11,21,31,41,51,61,68)])
-  sum(dnorm(US_deaths_tot,V,US_deaths_tot*0.01/1.96,log=T)*wts[c(11,21,31,41,51,61,68)]) - adj_20a
+  adj_20a         <- sum(dnorm(US_deaths_tot,US_deaths_tot,US_deaths_tot*0.05/1.96,log=T)*wts[c(11,21,31,41,51,61,68)])
+  sum(dnorm(US_deaths_tot,V,US_deaths_tot*0.05/1.96,log=T)*wts[c(11,21,31,41,51,61,68)]) - adj_20a
 }
 
 #' TOTAL DEATHS AGE DISTRIBUTION 1999-2014

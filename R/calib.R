@@ -31,7 +31,7 @@ P <- P
 # P[["TunMubt"]]<-1
 # P[["pImAct"]]<-.1
 # P[["LtbiPar1"]]<-.4
-# P[["LtbiPar2"]]<-.8
+# P[["LtbiPar2"]]<-.4
 # P[["sigmaFb"]]<-.25
 # P[["sigmaHr"]]<-0
 

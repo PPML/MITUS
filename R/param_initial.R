@@ -170,10 +170,10 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
                         ImmigInputs[["PrevTrend25_34"]][68:151]*(PV["ImmigPrevFutAct"]/0.99)^(1:84))
 
   PrevTrend25_34a  <- SmoCurve(PrevTrend25_340a)
-  act_prob<-rep(0,1801)
-  for (t in 1:1801){
-    act_prob[t]<-((PV[["pImActSlp"]]*t)/1801)+PV[["pImActIntc"]]
-  }
+  act_prob<-rep(1,1801)
+  # for (t in 1:1801){
+  #   act_prob[t]<-1#((PV[["pImActSlp"]]*t)/1801)+PV[["pImActIntc"]]
+  # }
 
   ImmAct         <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*act_prob
   ImmFst         <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*(1-act_prob)
