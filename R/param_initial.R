@@ -141,7 +141,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   ######################         IMMIGRATION             ########################
   ######################         OVERALL IMM.            ########################
   # PV["ImmigVol"]<-1
-  TotImmig0       <- (c(Inputs$ImmigInputs[[1]][1:151])+c(rep(0,67),cumsum(rep(PV["ImmigVolFut"],84))))/12*PV["ImmigVol"]
+  TotImmig0       <- (c(Inputs$ImmigInputs[[1]][1:151])+c(rep(0,71),cumsum(rep(PV["ImmigVolFut"],80))))/12*PV["ImmigVol"]
   TotImmAge0      <-matrix(0,151,11)
   for (i in 1:151){
     for (j in 1:11){
@@ -154,11 +154,10 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   }
   # }
   ######################           LTBI IMM.             ########################
-  PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:67]^(exp(PV["TunLtbiTrend"]))*ImmigInputs[["PrevTrend25_34"]][67]^(1-exp(PV["TunLtbiTrend"])),
-                        ImmigInputs[["PrevTrend25_34"]][68:151]*(PV["ImmigPrevFutLat"]/0.99)^(1:84))
+  PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:71]^(exp(PV["TunLtbiTrend"]))*ImmigInputs[["PrevTrend25_34"]][71]^(1-exp(PV["TunLtbiTrend"])),
+                        ImmigInputs[["PrevTrend25_34"]][72:151]*(PV["ImmigPrevFutLat"]/0.99)^(1:80))
   PrevTrend25_341l <-   PrevTrend25_340l
-  PrevTrend25_34l  <- SmoCurve(PrevTrend25_341l)
-  PrevTrend25_34_ls <- (PrevTrend25_34l);
+  PrevTrend25_34_ls  <- SmoCurve(PrevTrend25_341l)
   PrevTrend25_34_ls <- PrevTrend25_34_ls/PrevTrend25_34_ls[(2011-1950)*12+6]
   ImmLat          <- matrix(NA,length(PrevTrend25_34_ls),11)
   for(i in 1:11) ImmLat[,i] <- (1-exp((-(c(2.5,1:9*10,100)/100)[i]*PV["LtbiPar1"]-(c(2.5,1:9*10,100)/100)[i]^2*PV["LtbiPar2"])*PrevTrend25_34_ls))*TotImmAge[,i]
@@ -166,11 +165,11 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   ######################         ACTIVE TB IMM.           ########################
   # PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:69]^exp(PV["TunActTrend"])*ImmigInputs[["PrevTrend25_34"]][69]^exp((1-PV["TunActTrend"])),
 
-  PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:67]^(exp(PV["TunActTrend"]))*ImmigInputs[["PrevTrend25_34"]][67]^(1-exp(PV["TunActTrend"])),
-                        ImmigInputs[["PrevTrend25_34"]][68:151]*(PV["ImmigPrevFutAct"]/0.99)^(1:84))
+  PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:71]^(exp(PV["TunActTrend"]))*ImmigInputs[["PrevTrend25_34"]][71]^(1-exp(PV["TunActTrend"])),
+                        ImmigInputs[["PrevTrend25_34"]][72:151]*(PV["ImmigPrevFutAct"]/0.99)^(1:80))
 
   PrevTrend25_34a  <- SmoCurve(PrevTrend25_340a)
-  act_prob<-rep(1,1801)
+  act_prob<-rep(PV["pImActSlp"],1801)
   # for (t in 1:1801){
   #   act_prob[t]<-1#((PV[["pImActSlp"]]*t)/1801)+PV[["pImActIntc"]]
   # }
@@ -207,7 +206,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   ######################   EXOGENEOUS INFECTION RISK      ########################
 
   ExogInf        <- matrix(NA,length(PrevTrend25_34a),5)
-  ExogInf        <- PV["ExogInf"]*PrevTrend25_34a/PrevTrend25_340a["2013"]/12
+  ExogInf        <- PV["ExogInf"]*PrevTrend25_34a/PrevTrend25_340a["2020"]/12
   ExogInf        <- ExogInf[1:month]
   #removed *(ImmigInputs[[7]][4]*DrN[,i]+(1-ImmigInputs[[7]][4])*DrE[,i])
 
