@@ -128,7 +128,7 @@ llikelihoodZ <-  function(samp_i, start_mat, TB=1) {
       # #over age 5
       v16c <- outer(v16a[2:11,1],c(Sens_IGRA[4],(1-Sens_IGRA[4])))+outer(v16a[2:11,2],c((1-Spec_IGRA[4]),Spec_IGRA[4]))#*(prms$rLtScrt[750]*12)
       v16d<-rbind(v16b,v16c)
-      addlik <- ltbi_fb_11_lLik(V=v16d)*2; addlik
+      addlik <- ltbi_fb_11_lLik(V=v16d); addlik
       lLik <- lLik + addlik
 
       #' TOTAL DEATHS WITH TB 1999-2014 - index updated
