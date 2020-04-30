@@ -25,8 +25,8 @@ notif_tot_lik <- function(V) {
 
 notif_fb_lik <- function(V) {
   notif_fb     <- CalibDat[["age_cases_fb"]][14:26,12]
-  adj_1         <- sum(dnorm(notif_fb,notif_fb,notif_fb*0.05/1.96,log=T)*wts[57:69])
-  sum(dnorm(notif_fb,V,notif_fb*0.05/1.96,log=T)*wts[57:69]) - adj_1
+  adj_1         <- sum(dnorm(notif_fb,notif_fb,notif_fb*0.01/1.96,log=T)*wts[57:69])
+  sum(dnorm(notif_fb,V,notif_fb*0.01/1.96,log=T)*wts[57:69]) - adj_1
 }
 
 #' CASES FB DISTRIBUTION 1993-2014
