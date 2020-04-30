@@ -118,6 +118,7 @@ llikelihoodZ <-  function(samp_i, start_mat, TB=1) {
       IGRA_frc<-.33
       Sens_TST <-c(.726,.540,.691,.807,.570)
       Spec_TST <-c(.921,.965,.739,.70,.885)
+      Sens<-Spec<-rep(0,5)
       for (i in 1:5){
       Sens[i]<-(Sens_IGRA[i]*IGRA_frc + (1-IGRA_frc)*Sens_TST[i])
       Spec[i]<-(Spec_IGRA[i]*IGRA_frc + (1-IGRA_frc)*Spec_TST[i])
