@@ -244,7 +244,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   pfast      <- PV["pfast"]
   ORpfast1   <- PV["ORpfast1"] ## age group 1
   ORpfast2   <- PV["ORpfast2"] ## age group 2
-  ORpfastRF  <- 20#PV["ORpfastH"] ##riskfactor
+  ORpfastRF  <- PV["ORpfastH"] ##riskfactor
   ORpfastPI  <- PV["ORpfastPI"]
 
   ##############            ORIGINAL Mpfast[ag][hv]             ################
@@ -263,7 +263,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   #vector of ORpfastRF
   vORpfastPIRF<-vORpfastRF  <-c(1,1,1,1)
   vORpfastRF  <-(exp((0:3)/3*log(ORpfastRF)))
-  vORpfastRF<-vORpfastRF/sum(vORpfastRF*mort_dist)
+  vORpfastRF  <-vORpfastRF/sum(vORpfastRF*mort_dist)
 
   vORpfastPIRF  <- vORpfastRF*ORpfastPI
 
@@ -287,7 +287,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   rslow      <- PV["rslow"]/12
   rslowRF    <- PV["rslowH"]/12
 
-  RRrslowRF  <- exp((0:3)/3*log(20))
+  RRrslowRF  <- exp((0:3)/3*log(rslowRF/rslow))
   RRrslowRF<-RRrslowRF/sum(RRrslowRF*mort_dist)
   rfast      <- PV["rfast"]/12
   #rrSlowFB0  <- PV["rrSlowFB"] #removed
