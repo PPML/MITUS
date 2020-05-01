@@ -259,7 +259,7 @@ calib_graphs <- function(df, Par_list){
   #plot text
   mtext("Year",1,2.5,cex=1.2)
   mtext("Total TB Cases Identified (000s), 1953-2018",3,.8,font=2,cex=1.2)
-  legend("bottomleft",c("Reported data (all)","Reported data (US born)","Reported data (non-US born)",
+  legend("topright",c("Reported data (all)","Reported data (US born)","Reported data (non-US born)",
                         "Model (all)","Model (US born)","Model (non-US born)"),
          pch=c(19,19,19,NA,NA,NA),lwd=c(1,1,1,2,2,2),lty=c(3,3,3,1,1,1),col=c(1,4,3,1,4,3),bg="white",ncol=2,cex=.8,pt.cex=0.4)
 
@@ -401,7 +401,7 @@ calib_graphs <- function(df, Par_list){
     V4[i]<-(V3[i]/sum(V3))*100
   }
   #format the plot
-  plot(0,0,ylim=c(0,max(range(V4))),xlim=c(0.6,10.4),xlab="",ylab="",axes=F,col=NA)
+  plot(0,0,ylim=c(0,max(range(V4))+5),xlim=c(0.6,10.4),xlab="",ylab="",axes=F,col=NA)
   axis(1,1:10,paste(c("0-4",paste(0:7*10+5,1:8*10+4,sep="-"),"85+"),"\nyears",sep=""),
        tick=F,cex.axis=0.6)
   axis(1,1:11-0.5,rep("",11))
