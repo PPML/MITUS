@@ -115,32 +115,27 @@ llikelihoodZ <-  function(samp_i, start_mat, TB=1) {
       v15a<-v15
       Sens_IGRA <-c(.780,.675,.712,.789,.591)
       Spec_IGRA <-c(.979,.958,.989,.985,.931)
-      IGRA_frc<-.33
-      Sens_TST <-c(.726,.540,.691,.807,.570)
-      Spec_TST <-c(.921,.965,.739,.70,.885)
-      Sens<-Spec<-rep(0,5)
-      for (i in 1:5){
-      Sens[i]<-(Sens_IGRA[i]*IGRA_frc + (1-IGRA_frc)*Sens_TST[i])
-      Spec[i]<-(Spec_IGRA[i]*IGRA_frc + (1-IGRA_frc)*Spec_TST[i])
-}
-      names(Sens)<- names(Spec)<-c("lrUS","hrUS","youngNUS","NUS","hrNUS")
+#       IGRA_frc<-.33
+#       Sens_TST <-c(.726,.540,.691,.807,.570)
+#       Spec_TST <-c(.921,.965,.739,.70,.885)
+#       Sens<-Spec<-rep(0,5)
+#       for (i in 1:5){
+#       Sens[i]<-(Sens_IGRA[i]*IGRA_frc + (1-IGRA_frc)*Sens_TST[i])
+#       Spec[i]<-(Spec_IGRA[i]*IGRA_frc + (1-IGRA_frc)*Spec_TST[i])
+# }
+      names(Sens_IGRA)<- names(Spec_IGRA)<-c("lrUS","hrUS","youngNUS","NUS","hrNUS")
 
-      v15b <- (outer(v15a[,1],c(Sens[1],(1-Sens[1])))+outer(v15a[,2],c((1-Spec[1]),Spec[1])))#*(prms$rLtScrt[750]*12)
+      v15b <- (outer(v15a[,1],c(Sens_IGRA[1],(1-Sens_IGRA[1])))+outer(v15a[,2],c((1-Spec_IGRA[1]),Spec_IGRA[1])))#*(prms$rLtScrt[750]*12)
 
-      # Sens_IGRA <-c(.780,.675,.712,.789,.591)
-      # Spec_IGRA <-c(.979,.958,.989,.985,.931)
-      # names(Sens_IGRA)<- names(Spec_IGRA)<-c("lrUS","hrUS","youngNUS","NUS","hrNUS")
-      # v15b <- (outer(v15a[,1],c(Sens_IGRA[1],(1-Sens_IGRA[1])))+outer(v15a[,2],c((1-Spec_IGRA[1]),Spec_IGRA[1])))#*(prms$rLtScrt[750]*12)
-      # v15b <- (outer(v15a[,1],c(Sens_IGRA[1],(1-Sens_IGRA[1])))+outer(v15a[,2],c((1-(Spec_IGRA[1]*P[["rrTestLrNoTb"]])),(Spec_IGRA[1]*P[["rrTestLrNoTb"]]))))*(prms$rLtScrt[750]*12)
       addlik <- ltbi_us_11_lLik(V=v15b); addlik
       lLik <- lLik + addlik
       #' LTBI PREVALENCE BY AGE 2011, FB - index updated
       v16  <- cbind(M[62,66:76],M[62,44:54]-M[62,66:76])
       v16a <- v16
       # #under age 5
-      v16b <- (v16a[1,1]*c(Sens[3],(1-Sens[3])))+(v16a[1,2]*c((1-Spec[3]),Spec[3]))#*(prms$rLtScrt[750]*12)
+      v16b <- (v16a[1,1]*c(Sens_IGRA[3],(1-Sens_IGRA[3])))+(v16a[1,2]*c((1-Spec_IGRA[3]),Spec_IGRA[3]))#*(prms$rLtScrt[750]*12)
       # #over age 5
-      v16c <- outer(v16a[2:11,1],c(Sens[4],(1-Sens[4])))+outer(v16a[2:11,2],c((1-Spec[4]),Spec[4]))#*(prms$rLtScrt[750]*12)
+      v16c <- outer(v16a[2:11,1],c(Sens_IGRA[4],(1-Sens_IGRA[4])))+outer(v16a[2:11,2],c((1-Spec_IGRA[4]),Spec_IGRA[4]))#*(prms$rLtScrt[750]*12)
 
       # #under age 5
      # v16b <- (v16a[1,1]*c(Sens_IGRA[3],(1-Sens_IGRA[3])))+(v16a[1,2]*c((1-Spec_IGRA[3]),Spec_IGRA[3]))#*(prms$rLtScrt[750]*12)
