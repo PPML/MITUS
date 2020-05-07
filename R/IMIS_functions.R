@@ -61,13 +61,13 @@ llikelihoodZ <-  function(samp_i, start_mat, TB=1) {
       addlik <- notif_tot_lik(V=v1); addlik
       lLik <- lLik + addlik
       # TOTAL FB DIAGNOSED CASES 1953-2016 - index is same
-      # v1a   <- M[57:69,148]+M[57:69,149]+(M[57:69,201]+M[57:69,202])
-      # addlik <- notif_fb_lik(V=v1a*1e6); addlik
-      # lLik <- lLik + addlik
+      v1a   <- M[57:69,148]+M[57:69,149]+(M[57:69,201]+M[57:69,202])
+      addlik <- notif_fb_lik(V=v1a*1e6); addlik
+      lLik <- lLik + addlik
       #' TOTAL US DIAGNOSED CASES 1953-2016 - index is same
-      # v1b   <-  M[57:69,147]+M[57:69,200]
-      # addlik <- notif_us_lik(V=v1b*1e6); addlik
-      # lLik <- lLik + addlik
+      v1b   <-  M[57:69,147]+M[57:69,200]
+      addlik <- notif_us_lik(V=v1b*1e6); addlik
+      lLik <- lLik + addlik
       #' US CASES AGE DISTRIBUTION 1993-2016 - index updated
       v2   <- M[44:69,205:215]+M[44:69,216:226]
       v2a <- v2[,-11]; v2a[,10] <- v2a[,10]+v2[,11]
@@ -79,10 +79,10 @@ llikelihoodZ <-  function(samp_i, start_mat, TB=1) {
       addlik <- notif_age_fb_lLik(V=v2b); addlik
       lLik <- lLik + addlik
       #' CASES FB DISTRIBUTION 1993-2016 - index updated
-      v3   <- cbind(M[44:69,148]+M[44:69,149]+(M[44:69,201]+M[44:69,202]),
-                    M[44:69,147]+M[44:69,200])
-      addlik <- notif_fb_lLik(V=v3); addlik
-      lLik <- lLik + addlik
+      # v3   <- cbind(M[44:69,148]+M[44:69,149]+(M[44:69,201]+M[44:69,202]),
+      #               M[44:69,147]+M[44:69,200])
+      # addlik <- notif_fb_lLik(V=v3); addlik
+      # lLik <- lLik + addlik
       #' CASES FB, US 2012-2016  SLOPE - index updated
       v3a   <- cbind(M[65:69,148]+M[65:69,149]+(M[65:69,201]+M[65:69,202]),
                      M[65:69,147]+M[65:69,200])
