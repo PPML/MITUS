@@ -244,7 +244,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   pfast      <- PV["pfast"]
   ORpfast1   <- PV["ORpfast1"] ## age group 1
   ORpfast2   <- PV["ORpfast2"] ## age group 2
-  ORpfastRF  <- PV["ORpfastH"] ##riskfactor
+  ORpfastRF  <- 40 ##riskfactor
   ORpfastPI  <- PV["ORpfastPI"]
 
   ##############            ORIGINAL Mpfast[ag][hv]             ################
@@ -285,9 +285,9 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   MpfastPI[,]  <- MpfastPI[,]/(1+MpfastPI[,]);
 
   rslow      <- PV["rslow"]/12
-  rslowRF    <- PV["rslowH"]/12
+  rrslowRF    <- 40 #PV["rslowH"]/12
 
-  RRrslowRF  <- exp((0:3)/3*log(rslowRF/rslow))
+  RRrslowRF  <- exp((0:3)/3*log(rrslowRF))
   RRrslowRF<-RRrslowRF/sum(RRrslowRF*mort_dist)
   rfast      <- PV["rfast"]/12
   #rrSlowFB0  <- PV["rrSlowFB"] #removed
