@@ -57,15 +57,15 @@ llikelihoodZ <-  function(samp_i, start_mat, TB=1) {
       lLik <- 0
       if(TB==1){
       #' TOTAL DIAGNOSED CASES 1953-2016 - index is same
-      v1   <- M[4:69,"NOTIF_ALL"]+M[4:69,"NOTIF_MORT_ALL"]
+      v1   <- M[4:43,"NOTIF_ALL"]+M[4:43,"NOTIF_MORT_ALL"]
       addlik <- notif_tot_lik(V=v1); addlik
       lLik <- lLik + addlik
       # TOTAL FB DIAGNOSED CASES 1953-2016 - index is same
-      v1a   <- M[57:69,148]+M[57:69,149]+(M[57:69,201]+M[57:69,202])
+      v1a   <- M[44:69,148]+M[44:69,149]+(M[44:69,201]+M[44:69,202])
       addlik <- notif_fb_lik(V=v1a*1e6); addlik
       lLik <- lLik + addlik
       #' TOTAL US DIAGNOSED CASES 1953-2016 - index is same
-      v1b   <-  M[57:69,147]+M[57:69,200]
+      v1b   <-  M[44:69,147]+M[44:69,200]
       addlik <- notif_us_lik(V=v1b*1e6); addlik
       lLik <- lLik + addlik
       #' US CASES AGE DISTRIBUTION 1993-2016 - index updated
@@ -95,9 +95,9 @@ llikelihoodZ <-  function(samp_i, start_mat, TB=1) {
       lLik <- lLik + addlik
       #' CASES FB RECENT ENTRY DISTRIBUTION 1993-2014 index updated
       #' recent immigrants column one; long term in column two
-      # v6   <- M[44:65,148:149]+M[44:65,201:202]
-      # addlik <- notif_fb_rec_lLik(V=v6); addlik
-      # lLik <- lLik + addlik
+      v6   <- M[44:65,148:149]+M[44:65,201:202]
+      addlik <- notif_fb_rec_lLik(V=v6); addlik
+      lLik <- lLik + addlik
       #' TREATMENT OUTCOMES 1993-2014 - index updated
       v11  <- M[44:65,132:134]
       addlik <- tx_outcomes_lLik(V=v11); addlik
