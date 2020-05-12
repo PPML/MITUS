@@ -14,8 +14,8 @@
 
 notif_tot_lik <- function(V) {
   notif_tot     <- CalibDat[["tot_cases"]][1:40,2]
-  adj_1         <- sum(dnorm(notif_tot,notif_tot,notif_tot*0.05/1.96,log=T)*wts[4:43])
-  sum(dnorm(notif_tot,V,notif_tot*0.5/1.96,log=T)*wts[4:43]) - adj_1
+  adj_1         <- sum(dnorm(notif_tot,notif_tot,notif_tot*0.1/1.96,log=T)*wts[4:43])
+  sum(dnorm(notif_tot,V,notif_tot*0.1/1.96,log=T)*wts[4:43]) - adj_1
 }
 
 #' CASES FB DISTRIBUTION 1993-2014
@@ -35,8 +35,8 @@ notif_fb_lLik <- function(V,rho=0.01) {
 
 notif_fb_lik <- function(V) {
   notif_fb     <- CalibDat[["age_cases_fb"]][1:26,12]
-  adj_1         <- sum(dnorm(notif_fb,notif_fb,notif_fb*0.01/1.96,log=T)*wts[44:69])
-  sum(dnorm(notif_fb,V,notif_fb*0.01/1.96,log=T)*wts[44:69]) - adj_1
+  adj_1         <- sum(dnorm(notif_fb,notif_fb,notif_fb*0.1/1.96,log=T)*wts[44:69])
+  sum(dnorm(notif_fb,V,notif_fb*0.1/1.96,log=T)*wts[44:69]) - adj_1
 }
 
 #'US Diagnosed Cases 1953-2016
@@ -46,8 +46,8 @@ notif_fb_lik <- function(V) {
 
 notif_us_lik <- function(V) {
   notif_us     <- CalibDat[["age_cases_us"]][1:26,12]
-  adj_1         <- sum(dnorm(notif_us,notif_us,notif_us*0.01/1.96,log=T)*wts[44:69])
-  sum(dnorm(notif_us,V,notif_us*0.01/1.96,log=T)*wts[44:69]) - adj_1
+  adj_1         <- sum(dnorm(notif_us,notif_us,notif_us*0.1/1.96,log=T)*wts[44:69])
+  sum(dnorm(notif_us,V,notif_us*0.1/1.96,log=T)*wts[44:69]) - adj_1
 }
 #'US Cases Age Distribution 1993-2013
 #'Motivation: dirichlet-multinomial data with additional non-sampling biases
@@ -101,9 +101,9 @@ notif_us_hr_lLik <- function(V,rho=0.005) {
 #'@param V table of notifications by FB 1993-2014 (row=22 years, col=pos then neg)
 #'@param rho correlation parameter
 #'@return likelihood
-notif_fb_rec_lLik <- function(V,rho=0.01) {
+notif_fb_rec_lLik <- function(V,rho=0.005) {
   notif_fb_rec   <- cbind(CalibDat[["fb_recent_cases2"]][,2],1-CalibDat[["fb_recent_cases2"]][,2])*CalibDat[["fb_recent_cases2"]][,3]
-  adj_6          <- sum(dDirMult(M=notif_fb_rec,n=notif_fb_rec,Rho=0.01)*wts[44:69])
+  adj_6          <- sum(dDirMult(M=notif_fb_rec,n=notif_fb_rec,Rho=rho)*wts[44:69])
   sum(dDirMult(M=V,n=notif_fb_rec,Rho=rho)*wts[44:69]) - adj_6
 }
 
@@ -192,7 +192,7 @@ tb_dth_tot_lLik <- function(V) {
 #'@return likelihood
 tb_dth_age_lLik <- function(V,rho=0.01) {
   tb_deaths_age  <- CalibDat[["tb_deaths"]][,-1]
-  adj_19b        <- sum(dDirMult(M=tb_deaths_age+.1,n=tb_deaths_age,Rho=0.01)*wts[50:68])
+  adj_19b        <- sum(dDirMult(M=tb_deaths_age+.1,n=tb_deaths_age,Rho=rho)*wts[50:68])
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
   sum(dDirMult(M=(V*1e6),n=tb_deaths_age,Rho=rho)*wts[50:68]) - adj_19b  }
 
