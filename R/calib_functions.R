@@ -17,6 +17,27 @@ notif_tot_lik <- function(V) {
   adj_1         <- sum(dnorm(notif_tot,notif_tot,notif_tot*0.1/1.96,log=T)*wts[4:43])
   sum(dnorm(notif_tot,V,notif_tot*0.1/1.96,log=T)*wts[4:43]) - adj_1
 }
+#'FB Diagnosed Cases 1953-2016
+#'Motivation: Normal, mean centered with CI = +/- 5% of the mean
+#'@param V vector of total notifications 1953-2014
+#'@return likelihood
+
+notif_fb_lik <- function(V) {
+  notif_fb     <- CalibDat[["age_cases_fb"]][,12]
+  adj_1         <- sum(dnorm(notif_fb,notif_fb,notif_fb*0.1/1.96,log=T)*wts[44:69])
+  (sum(dnorm(notif_fb,V,notif_fb*0.1/1.96,log=T)*wts[44:69]) - adj_1)*2
+}
+
+#'US Diagnosed Cases 1953-2016
+#'Motivation: Normal, mean centered with CI = +/- 5% of the mean
+#'@param V vector of total notifications 1953-2014
+#'@return likelihood
+
+notif_us_lik <- function(V) {
+  notif_us     <- CalibDat[["age_cases_us"]][1:26,12]
+  adj_1         <- sum(dnorm(notif_us,notif_us,notif_us*0.1/1.96,log=T)*wts[44:69])
+  (sum(dnorm(notif_us,V,notif_us*0.1/1.96,log=T)*wts[44:69]) - adj_1)*2
+}
 
 #' CASES FB DISTRIBUTION 1993-2014
 #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
@@ -28,27 +49,6 @@ notif_fb_lLik <- function(V,rho=0.01) {
   adj_3         <- sum(dDirMult(M=notif_fb,n=notif_fb,Rho=rho)*wts[44:69])
   (sum(dDirMult(M=V,n=notif_fb,Rho=rho)*wts[44:69]) - adj_3 )*2 }
 
-#'FB Diagnosed Cases 1953-2016
-#'Motivation: Normal, mean centered with CI = +/- 5% of the mean
-#'@param V vector of total notifications 1953-2014
-#'@return likelihood
-
-notif_fb_lik <- function(V) {
-  notif_fb     <- CalibDat[["age_cases_fb"]][1:26,12]
-  adj_1         <- sum(dnorm(notif_fb,notif_fb,notif_fb*0.1/1.96,log=T)*wts[44:69])
-  sum(dnorm(notif_fb,V,notif_fb*0.1/1.96,log=T)*wts[44:69]) - adj_1
-}
-
-#'US Diagnosed Cases 1953-2016
-#'Motivation: Normal, mean centered with CI = +/- 5% of the mean
-#'@param V vector of total notifications 1953-2014
-#'@return likelihood
-
-notif_us_lik <- function(V) {
-  notif_us     <- CalibDat[["age_cases_us"]][1:26,12]
-  adj_1         <- sum(dnorm(notif_us,notif_us,notif_us*0.1/1.96,log=T)*wts[44:69])
-  sum(dnorm(notif_us,V,notif_us*0.1/1.96,log=T)*wts[44:69]) - adj_1
-}
 #'US Cases Age Distribution 1993-2013
 #'Motivation: dirichlet-multinomial data with additional non-sampling biases
 #'@param V table of us notifications by age 1993-2013 (row=21 years, col=11 ages)
@@ -101,7 +101,7 @@ notif_us_hr_lLik <- function(V,rho=0.005) {
 #'@param V table of notifications by FB 1993-2014 (row=22 years, col=pos then neg)
 #'@param rho correlation parameter
 #'@return likelihood
-notif_fb_rec_lLik <- function(V,rho=0.005) {
+notif_fb_rec_lLik <- function(V,rho=0.01) {
   notif_fb_rec   <- cbind(CalibDat[["fb_recent_cases2"]][,2],1-CalibDat[["fb_recent_cases2"]][,2])*CalibDat[["fb_recent_cases2"]][,3]
   adj_6          <- sum(dDirMult(M=notif_fb_rec,n=notif_fb_rec,Rho=rho)*wts[44:69])
   sum(dDirMult(M=V,n=notif_fb_rec,Rho=rho)*wts[44:69]) - adj_6
