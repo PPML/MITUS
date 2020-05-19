@@ -23,7 +23,7 @@ notif_tot_lik <- function(V) {
 #'@return likelihood
 
 notif_fb_lik <- function(V) {
-  notif_fb     <- CalibDat[["age_cases_fb"]][,12]
+  notif_fb      <- CalibDat[["age_cases_fb"]][,12]
   adj_1         <- sum(dnorm(notif_fb,notif_fb,notif_fb*0.1/1.96,log=T)*wts[44:69])
   (sum(dnorm(notif_fb,V,notif_fb*0.1/1.96,log=T)*wts[44:69]) - adj_1)*2
 }
@@ -95,6 +95,30 @@ notif_us_hr_lLik <- function(V,rho=0.005) {
   notif_us_hr      <- cbind(CalibDat[["us_homeless_cases"]][,2],1-CalibDat[["us_homeless_cases"]][,2])*CalibDat[["us_homeless_cases"]][,3]
   adj_5b           <- sum(dDirMult(M=notif_us_hr,n=notif_us_hr,Rho=0.005)*wts[44:69])
   sum(dDirMult(M=V,n=notif_us_hr,Rho=rho)*wts[44:69]) - adj_5b  }
+
+#' CASES HR DISTRIBUTION 1993-2014
+#' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
+#'@param V table of notifications by hr 1993-2014 (row=22 years, col=pos then neg)
+#'@param rho correlation parameter
+#'@return likelihood
+notif_hr_lLik <- function(V,rho=0.005) {
+  notif_hr      <- cbind(CalibDat[["homeless_cases"]][,2],1-CalibDat[["homeless_cases"]][,2])*CalibDat[["homeless_cases"]][,3]
+  adj_5b           <- sum(dDirMult(M=notif_hr,n=notif_hr,Rho=0.005)*wts[44:69])
+  sum(dDirMult(M=V,n=notif_hr,Rho=rho)*wts[44:69]) - adj_5b  }
+
+#'CASES HR NATIVITY DISTRIBUTION 1993-2018
+#'@param V
+#'@param rho
+#'@return likelihood
+
+notif_hr_dist_lLik<-function(V,rho=0.005){
+  hr_dist_us<-CalibDat[["us_homeless_cases"]][,2]*CalibDat[["us_homeless_cases"]][,3]
+  hr_dist_tot<-CalibDat[["homeless_cases"]][,2]*CalibDat[["homeless_cases"]][,3]
+  #US, NUSB
+  notif_hr_dist<-cbind(hr_dist_us,(hr_dist_tot-hr_dist_us))
+  adj_5c <-sum(dDirMult(M=notif_hr_dist,n=notif_hr_dist,Rho=0.005)*wts[44:69])
+  sum(dDirMult(M=V,n=notif_hr_dist,Rho=rho)*wts[44:69]) - adj_5c
+}
 
 #' CASES FB RECENT ENTRY DISTRIBUTION 1993-2013
 #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases

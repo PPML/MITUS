@@ -53,7 +53,7 @@ llikelihoodZ <-  function(samp_i, start_mat, TB=1) {
       lLik <- -10^12
     } else {
       M <- zz$Outputs
-      colnames(M) <- prms[["ResNam"]]
+      colnames(M) <- func_ResNam()
       lLik <- 0
       if(TB==1){
       #' TOTAL DIAGNOSED CASES 1953-2016 - index is same
@@ -90,9 +90,18 @@ llikelihoodZ <-  function(samp_i, start_mat, TB=1) {
       lLik <- lLik + addlik
       #' #' CASES HR DISTRIBUTION 1993-2016 - index updated
       #' high risk first column, low risk second column
+      # v5b   <- cbind(M[44:69,151],M[44:69,150]) + cbind(M[44:69,204],M[44:69,203])
+      # addlik <- notif_us_hr_lLik(V=v5b); addlik
+      # lLik <- lLik + addlik
+      #' #' CASES HR DISTRIBUTION 1993-2016 - index updated
+      #' high risk first column, low risk second column
       v5b   <- cbind(M[44:69,151],M[44:69,150]) + cbind(M[44:69,204],M[44:69,203])
-      addlik <- notif_us_hr_lLik(V=v5b); addlik
+      addlik <- notif_hr_lLik(V=v5b); addlik
       lLik <- lLik + addlik
+      # CASES HR NATIVTY DISTRIBUTION
+      v5c<-cbind(M[44:69,685],M[44:69,687])
+      addlik<-notif_hr_dist_lLik(V=v5c); addlik
+      lLik <-lLik +addlik
       #' CASES FB RECENT ENTRY DISTRIBUTION 1993-2014 index updated
       #' recent immigrants column one; long term in column two
       v6   <- M[44:69,148:149]+M[44:69,201:202]
