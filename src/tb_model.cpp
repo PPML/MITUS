@@ -2168,7 +2168,25 @@ Rcpp::List cSim(
                 for(int rg=0; rg<2; rg++) {
                   for(int na=0; na<3; na++) {
                     Outputs[y][682] += V1[ag][tb][0][im][nm][rg][na];   //TREATMENT NAIVE
-                  } } } } } }      } ////end of mid-year results bracket
+                  } } } } } }
+
+/////////////////// NOTIFICATIONS BY NATIVITY AND RISK GROUP //////////////////
+        for(int ag=0; ag<11; ag++) {
+          for(int lt=0; lt<2; lt++) {
+            for(int im=0; im<4; im++) {
+              for(int nm=0; nm<4; nm++) {
+                  for(int na=0; na<3; na++) {
+                    if (na <1){
+                    Outputs[y][683] += Vdx[ag][4 ][lt][im][nm][0][na];
+                    Outputs[y][684] += Vdx[ag][4 ][lt][im][nm][1][na];
+                    } else {
+                    Outputs[y][685] += Vdx[ag][4 ][lt][im][nm][0][na];
+                    Outputs[y][686] += Vdx[ag][4 ][lt][im][nm][1][na];
+                    }
+                  } } } } }
+        for(int i=683; i<687; i++) { Outputs[y][i] = Outputs[y][i]*12; } //yes these are updated
+
+        } ////end of mid-year results bracket
       ///////////////////////////////////////////////////////////////////////////////////
       //////////////////////////////END MIDYEAR RESULTS//////////////////////////////////
       //////////////////////////////////////////////////////////////////////////////////
