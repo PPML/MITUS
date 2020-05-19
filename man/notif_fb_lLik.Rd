@@ -5,7 +5,7 @@
 \title{CASES FB DISTRIBUTION 1993-2014
 Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases}
 \usage{
-notif_fb_lLik(V, rho = 0.005)
+notif_fb_lLik(V, rho = 0.01)
 }
 \arguments{
 \item{V}{table of notifications by fb 1993-2014 (row=22 years, col=fb then us)}
