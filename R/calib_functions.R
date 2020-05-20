@@ -14,8 +14,8 @@
 
 notif_tot_lik <- function(V) {
   notif_tot     <- CalibDat[["tot_cases"]][1:40,2]
-  adj_1         <- sum(dnorm(notif_tot,notif_tot,notif_tot*0.1/1.96,log=T)*wts[4:43])
-  sum(dnorm(notif_tot,V,notif_tot*0.1/1.96,log=T)*wts[4:43]) - adj_1
+  adj_1         <- sum(dnorm(notif_tot,notif_tot,notif_tot*0.05/1.96,log=T)*wts[4:43])
+  sum(dnorm(notif_tot,V,notif_tot*0.05/1.96,log=T)*wts[4:43]) - adj_1
 }
 #'FB Diagnosed Cases 1953-2016
 #'Motivation: Normal, mean centered with CI = +/- 5% of the mean
@@ -24,8 +24,8 @@ notif_tot_lik <- function(V) {
 
 notif_fb_lik <- function(V) {
   notif_fb      <- CalibDat[["age_cases_fb"]][,12]
-  adj_1         <- sum(dnorm(notif_fb,notif_fb,notif_fb*0.1/1.96,log=T)*wts[44:69])
-  (sum(dnorm(notif_fb,V,notif_fb*0.1/1.96,log=T)*wts[44:69]) - adj_1)*2
+  adj_1         <- sum(dnorm(notif_fb,notif_fb,notif_fb*0.05/1.96,log=T)*wts[44:69])
+  (sum(dnorm(notif_fb,V,notif_fb*0.05/1.96,log=T)*wts[44:69]) - adj_1)*2
 }
 
 #'US Diagnosed Cases 1953-2016
@@ -35,8 +35,8 @@ notif_fb_lik <- function(V) {
 
 notif_us_lik <- function(V) {
   notif_us     <- CalibDat[["age_cases_us"]][1:26,12]
-  adj_1         <- sum(dnorm(notif_us,notif_us,notif_us*0.1/1.96,log=T)*wts[44:69])
-  (sum(dnorm(notif_us,V,notif_us*0.1/1.96,log=T)*wts[44:69]) - adj_1)*2
+  adj_1         <- sum(dnorm(notif_us,notif_us,notif_us*0.05/1.96,log=T)*wts[44:69])
+  (sum(dnorm(notif_us,V,notif_us*0.05/1.96,log=T)*wts[44:69]) - adj_1)
 }
 
 #' CASES FB DISTRIBUTION 1993-2014
@@ -104,13 +104,22 @@ notif_us_hr_lLik <- function(V,rho=0.005) {
 notif_hr_lLik <- function(V,rho=0.005) {
   notif_hr      <- cbind(CalibDat[["homeless_cases"]][,2],1-CalibDat[["homeless_cases"]][,2])*CalibDat[["homeless_cases"]][,3]
   adj_5b           <- sum(dDirMult(M=notif_hr,n=notif_hr,Rho=0.005)*wts[44:69])
-  sum(dDirMult(M=V,n=notif_hr,Rho=rho)*wts[44:69]) - adj_5b  }
+  sum(dDirMult(M=V*1e6,n=notif_hr,Rho=rho)*wts[44:69]) - adj_5b  }
 
+#' CASES HR DISTRIBUTION 1993-2014
+#' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
+#'@param V table of notifications by hr 1993-2014 (row=22 years, col=pos then neg)
+#'@param rho correlation parameter
+#'@return likelihood
+notif_hr2_lLik <- function(V,rho=0.005) {
+  notif_hr2      <- CalibDat[["homeless_cases"]][,2]*CalibDat[["homeless_cases"]][,3]
+  adj_5d<-sum(dnorm(notif_hr2,notif_hr2,notif_hr2*0.1/1.96,log=T)*wts[44:69])
+  (sum(dnorm(notif_hr2,V*1e6,notif_hr2*0.1/1.96,log=T)*wts[44:69]) - adj_5d)
+}
 #'CASES HR NATIVITY DISTRIBUTION 1993-2018
 #'@param V
 #'@param rho
 #'@return likelihood
-
 notif_hr_dist_lLik<-function(V,rho=0.005){
   hr_dist_us<-CalibDat[["us_homeless_cases"]][,2]*CalibDat[["us_homeless_cases"]][,3]
   hr_dist_tot<-CalibDat[["homeless_cases"]][,2]*CalibDat[["homeless_cases"]][,3]
