@@ -1,4 +1,3 @@
-#' attempting to see if sync works
 #' Basic Functions Used In Package
 #' This script includes several functions that are useful for data manipulation
 #' throughout the package.
@@ -126,6 +125,7 @@ dDirMult <- function(M,n,Rho) {
   rowSums(lgamma(n+M/Rho))-rowSums(lgamma(M/Rho))
 }
 #'@name getmode
+#'
 #'@param x some vector (character or numeric)
 #'@return mode
 #'@export
@@ -133,3 +133,18 @@ getmode <- function(v) {
   uniqv <- unique(v)
   uniqv[which.max(tabulate(match(v, uniqv)))]
 }
+
+### LIST OF LOCATION VECTORS IN TERMS OF ABSOLUTE INCIDENCE OTIS
+ordered_locs<-c(
+  "CA", "TX", "NY", "FL", "IL",
+  "NJ", "GA", "PA", "MD", "VA",
+  "MA", "NC", "WA", "AZ", "OH",
+  "MN", "TN", "HI", "IN", "MI",
+  "LA", "AL", "SC", "MO", "OR", #25
+  "MS", "AR", "OK", "NV", "KY",
+  "CO", "AK", "CT", "IA", "WI",
+  "NM", "DC", "KS", "NE", "DE",
+  "RI", "UT", "ID", "ME", "ND",
+  "NH", "SD", "WV", "MT", "VT",
+  "WY"
+)
