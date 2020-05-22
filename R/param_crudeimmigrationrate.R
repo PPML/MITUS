@@ -6,7 +6,7 @@ totcase<-Inputs$ImmigInputs$TBBurdenImmig*(90/1e5)*(Inputs$ImmigInputs$TotByYear
 RR<-Inputs$ImmigInputs[["RR_Active_TB_Age"]]
 
 AgeDist<-as.matrix(Inputs$ImmigInputs$AgeDist)
-
+nonzeroages<-which(rowSums(AgeDist)!=0)
 #calculate the age specific population
 TotImmigAge<-matrix(NA,11,69)
 for (i in 1:69){
@@ -16,7 +16,7 @@ for (i in 1:69){
 
 newprev<-rep(NA,69)
 for (j in 1:ncol(Inputs$ImmigInputs$AgeDist[,1:69])){
-for (i in 1:length(RR)){
+for (i in nonzeroages){
     newprev[j]<-totcase[j]/sum(RR[i]*TotImmigAge[i,j]*1e6)
   }
 }
