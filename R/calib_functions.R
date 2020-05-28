@@ -325,8 +325,8 @@ mort_dist_lLik <- function(V,rho=0.1) {
 #'@return likelihood
 homeless_10_lLik <- function(V) {
   homeless_pop      <- CalibDat[["homeless_pop"]][1]
-  adj_23b          <- dnorm(homeless_pop,homeless_pop,homeless_pop*0.25/1.96,log=T)
-  dnorm(homeless_pop,V,homeless_pop*0.25/1.96,log=T) - adj_23b   }
+  adj_23b          <- dnorm(homeless_pop,homeless_pop,homeless_pop*0.1/1.96,log=T)
+  dnorm(homeless_pop,V,homeless_pop*0.1/1.96,log=T) - adj_23b   }
 ########################################################################################
 #'Functions for likelihood of different published estimates
 ########################################################################################
