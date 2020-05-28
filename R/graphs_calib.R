@@ -64,6 +64,18 @@ calib_graphs <- function(df, Par_list){
   legend("topright",c("US born","Non-US Born","Reported data"),cex=1,
          pch=c(15,15,19),lwd=c(NA,NA,1),lty=c(NA,NA,3),col=c("lightblue","pink",1),bg="white",pt.cex=c(1.8,1.8,0.3))
 
+  ### ### ### Population HR DISTRIBUTION 1993-2013  ### ### ### ### ### ###
+  V   <- df[44:69,29]
+  us_homeless<-CalibDat$homeless_pop
+  plot(0,0,ylim=c(0,max(V)*1.1),xlim=c(1993,2018),xlab="",ylab="",axes=F)
+  axis(1);axis(2,las=2);box()
+  abline(h=axTicks(2),col="grey85")
+  points(rep(2010,3),us_homeless,pch=19,cex=0.8,col=c(4,4,4))
+  lines(1993:2018,V,lwd=2,col="blue")
+
+  mtext("Year",1,2.5,cex=0.9)
+  mtext("Population Homeless in Past Yr",3,.8,font=2,cex=0.8)
+  legend("bottomright",c("Reported data","Fitted model"),pch=c(19,NA),lwd=c(1,2),col=c(4,4),lty=c(NA,1),bg="white",pt.cex=0.6)
 
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   ### ### ### ### ### ### TOTAL POP AGE DISTRIBUTION 2014 all ages ### ### ### ### ### ###
@@ -326,27 +338,32 @@ calib_graphs <- function(df, Par_list){
   ################################################################################
   #Percent of Non-US Born Cases from Recent Immigrant Population
 
-  V <- cbind(df[55:65,"NOTIF_F1"]+df[55:65,"NOTIF_MORT_F1"],df[55:65,"NOTIF_F2"]+df[55:65,"NOTIF_MORT_F2"])
+  V <- cbind(df[44:69,"NOTIF_F1"]+df[44:69,"NOTIF_MORT_F1"],df[44:69,"NOTIF_F2"]+df[44:69,"NOTIF_MORT_F2"])
   V <- V[,1]/rowSums(V)
 
   #format the plot
-  plot(0,0,ylim=c(0,60),xlim=c(2004,2014),xlab="",ylab="",axes=F)
+  plot(0,0,ylim=c(0,60),xlim=c(1993,2018),xlab="",ylab="",axes=F)
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
 
   #plot the model data
-  lines(2004:2014,V*100,lwd=2,col=4)
+  lines(1993:2018,V*100,lwd=2,col=4)
 
   #reported data for comparison
+  notif_fb_rec2   <- cbind(CalibDat[["fb_recent_cases2"]][,2],1-CalibDat[["fb_recent_cases2"]][,2])*CalibDat[["fb_recent_cases2"]][,3]
+
+  points(1993:2018,notif_fb_rec2[1:26,1]/rowSums(notif_fb_rec2[1:26,])*100,pch=19,cex=0.6, col="darkred")
+  lines(1993:2018,notif_fb_rec2[1:26,1]/rowSums(notif_fb_rec2[1:26,])*100,lty=3, col="darkred")
+
   notif_fb_rec   <- cbind(CalibDat[["fb_recent_cases"]][,2],1-CalibDat[["fb_recent_cases"]][,2])*CalibDat[["fb_recent_cases"]][,3]
 
-  points(2004:2014,notif_fb_rec[12:22,1]/rowSums(notif_fb_rec[12:22,])*100,pch=19,cex=0.6)
-  lines(2004:2014,notif_fb_rec[12:22,1]/rowSums(notif_fb_rec[12:22,])*100,lty=3)
+  points(1993:2014,notif_fb_rec[1:22,1]/rowSums(notif_fb_rec[1:22,])*100,pch=19,cex=0.6)
+  lines(1993:2014,notif_fb_rec[1:22,1]/rowSums(notif_fb_rec[1:22,])*100,lty=3)
 
   #plot text
   mtext("Year",1,2.5,cex=1.2)
   mtext("Percent of Non-US Born Cases Arrived in Past 2 Yrs",3,.8,font=2,cex=1.2)
-  legend("topright",c("Reported data","Model"),pch=c(19,NA),lwd=c(1,2),col=c(1,4),lty=c(3,1),bg="white",pt.cex=0.6)
+  legend("bottomright",c("Reported data","Smoothed Data","Model"),pch=c(19,19,NA),lwd=c(1,1,2),col=c(1,"darkred",4),lty=c(3,3,1),bg="white",pt.cex=0.6)
 
   ################################################################################
   #Age distribution of Cases
@@ -423,6 +440,72 @@ calib_graphs <- function(df, Par_list){
          pt.cex=c(1,2),col=c("black","lightblue"),bg="white")
 
   ################################################################################
+  #Average Age of TB Cases
+  age_case   <- df[,136:146]+df[,205:215]
+  ages<-c(2,9.5,19.5,29.5,39.5,49.5,
+          59.5,69.5,79.5,89.5,99.5)
+  avg_age<-rep(0,nrow(age_case))
+  for (i in 1:nrow(age_case)){
+    avg_age[i]<-sum(age_case[i,]*ages)/sum(age_case[i,])
+  }
+
+  #format the plot
+  plot(0,0,ylim=c(0,max(avg_age)+5),xlim=c(1950,2018),xlab="",ylab="",axes=F)
+  axis(1);axis(2,las=2);box()
+  abline(h=axTicks(2),col="grey85")
+
+  #plot the model data
+  lines(1950:2019,avg_age,lwd=2,col="blue")    #0-24 yrs
+
+  #plot text
+  mtext("Average Age of Notified TB Case, 1950-2018",3,.8,font=2,cex=1.2)
+  mtext("Year",1,2.5,cex=1.2)
+
+  ################################################################################
+  ### ### ### CASES HR DISTRIBUTION 1993-2013  ### ### ### ### ### ###
+  V   <- (df[44:69,151]+df[44:69,204])/(df[44:69,151]+df[44:69,150]+df[44:69,204]+df[44:69,203])
+  notif_us_hr<-CalibDat$homeless_cases
+  plot(0,0,ylim=c(0,max(V,notif_us_hr[,2])*110),xlim=c(1993,2018),xlab="",ylab="",axes=F)
+  axis(1);axis(2,las=2);box()
+  abline(h=axTicks(2),col="grey85")
+  points(1993:2018,notif_us_hr[,2]*100,pch=19,cex=0.6)
+  lines(1993:2018,notif_us_hr[,2]*100,lty=3)
+  lines(1993:2018,V*100,lwd=2,col=4)
+  mtext("Year",1,2.5,cex=0.9)
+  mtext("Percent of TB Cases Homeless in Past Yr",3,.8,font=2,cex=0.8)
+  legend("topright",c("Reported data","Fitted model"),pch=c(19,NA),lwd=c(1,2),col=c(1,4),lty=c(3,1),bg="white",pt.cex=0.6)
+  ################################################################################
+  ### Recent infection
+  #colnames(M)
+  Vall <- (df[69,172:187]/df[69,156:171])
+  plot(-1,0,ylim=c(0.02,1),xlim=c(0.5,16.5),xlab="",ylab="",axes=F)
+  axis(2,las=2);box()
+  axis(1,1:16,c("All",paste(c("0-4","5-14","15-24","25-34","35-44","45-54","55-64","65-74","75-84","85-94","95+"),
+                            "yrs"),"US born","Foreign born","FB >2yrs","Homeless"),tick=F,cex.axis=0.7,las=2,
+       mgp=c(3, 0.25, 0))
+
+  abline(h=axTicks(2),col="grey85")
+  mtext("Fraction of Incident TB from Recent Infection (<2 years)",3,.8,font=2,cex=0.8)
+
+  for(i in 1:16) lines(rep(i,2),c(0,Vall[i]),col="forestgreen",lwd=10,lend="butt")
+  text(1:16,Vall,format(round(Vall,2),nsmall=2),cex=0.7,pos=3)
+  ################################################################################
+  ### ### ### LTBI INITIATIONS 1993-2011 Distribution ### ### ### ### ### ###
+  v13  <- df[43:65,153:154]/df[43:65,152]
+  TLTBI_dist<-CalibDat$TLTBI_dist
+  tltbi_vol<-CalibDat$TLTBI_volume
+  plot(1,1,ylim=c(0.001,1)*100,xlim=c(1992,2015),xlab="",ylab="",axes=F,log="y")
+  axis(1);axis(2,las=2);box()
+  abline(h=axTicks(2),col="grey85")
+  points(rep(2002,2),TLTBI_dist*100,pch=19,cex=0.8,col=c("red3",4,6))
+  for(i in 1:2) lines(1992:2014,v13[,i]*100,lwd=2,col=c("red3",4,6)[i])
+  lines(rep(2002,2),tltbi_vol[2:3]/1e3,lwd=2,col="black")
+
+  mtext("Year",1,2.5,cex=0.9)
+  mtext("IPT Treatment Initiations By Risk Group (%)",3,.8,font=2,cex=0.8)
+  legend("bottomleft",c("Foreign-born","Homeless","Reported data","Fitted model"),
+         pch=c(15,15,19,NA),lwd=c(NA,NA,NA,2),col=c("red3",4,1,1),bg="white",pt.cex=c(1.8,1.8,0.8,NA))
+  ################################################################################
   # Treatment Outcomes 1993-2014
 
   V   <- df[55:65,132:134]
@@ -457,8 +540,8 @@ calib_graphs <- function(df, Par_list){
   V <- cbind(t(df[62,55:65]),t(df[62,33:43]-df[62,55:65]))
   pIGRA<-1
   v1<-V*pIGRA
-  Sens_IGRA <-c(.780,.675,.712,.789,.591)
-  Spec_IGRA <-c(.979,.958,.989,.985,.931)
+  Sens_IGRA <-c(.780,.780,.712,.789,.789)
+  Spec_IGRA <-c(.979,.979,.989,.985,.985)
   names(Sens_IGRA)<- names(Spec_IGRA)<-c("lrUS","hrUS","youngNUS","NUS","hrNUS")
   Va <- outer(v1[,1],c(Sens_IGRA[1],(1-Sens_IGRA[1])))+outer(v1[,2],c((1-Spec_IGRA[1]),Spec_IGRA[1]))
 
@@ -492,15 +575,13 @@ calib_graphs <- function(df, Par_list){
 
   #plot text
   mtext("Age Group",1,2.5,cex=1.2)
-  mtext("LTBI in US Born Population 2011 by Age (%)",3,.8,font=2,cex=1.2)
+  mtext("IGRA+ LTBI in US Born Population 2011 by Age (%)",3,.8,font=2,cex=1.2)
   legend("topleft",c("Reported data","Model"),pch=c(19,15),lwd=c(0,NA),
          pt.cex=c(1,2),col=c("black","lightblue"),bg="white")
 
   ################################################################################
   #LTBI Prevalance by Age in 2011, non-US born
-
   V <- cbind(t(df[62,66:76]),t(df[62,44:54]-df[62,66:76]))
-
   Va <- outer(V[,1],c(0.74382,(1-0.74382)))+outer(V[,2],c((1-0.94014),0.94014))
  # make this IGRA positive
   pIGRA<-1
@@ -534,7 +615,7 @@ calib_graphs <- function(df, Par_list){
 
   #plot text
   mtext("Age Group",1,2.5,cex=1.2)
-  mtext("LTBI in Non-US Born Population 2011 by Age (%)",3,.8,font=2,cex=1.2)
+  mtext("IGRA+LTBI in Non-US Born Population 2011 by Age (%)",3,.8,font=2,cex=1.2)
   legend("topleft",c("Reported data","Model"),pch=c(19,15),lwd=c(0,NA),
          pt.cex=c(1,2),col=c("black","lightblue"),bg="white")
 
@@ -589,10 +670,50 @@ calib_graphs <- function(df, Par_list){
   legend("topright",c("Reported data","Model"),pch=c(19,NA),lwd=c(1,2),
          col=c("black","blue"),lty=c(3,1),bg="white",pt.cex=c(0.6,NA))################################################################################
 
+  ###rate of decline in TB deaths over time
+  # V1<-rowSums(df[2:70,227:237])-rowSums(df[1:69,227:237])
+  # V2<-(df[2:70,"NOTIF_ALL"]+df[2:70,"NOTIF_MORT_ALL"])-df[1:69,"NOTIF_ALL"]+df[1:69,"NOTIF_MORT_ALL"] #total population
+  #
+  # plot(0,0,ylim=c(-.04,.005),xlim=c(1951,2019),xlab="",ylab="",axes=F)
+  # axis(1);axis(2,las=2);box()
+  # abline(h=axTicks(2),col="grey85")
+  # #plot the model data
+  # lines(1951:2019,V1,lwd=2,col="orange")
+  # lines(1951:2019,V2,lwd=2,col="purple")
+
+  ###rate of decline in TB deaths over time
+  V1<-(rowSums(df[60:69,227:237])-rowSums(df[59:68,227:237]))*1e6
+  V2<-((df[60:69,"NOTIF_ALL"]+df[60:69,"NOTIF_MORT_ALL"])-(df[59:68,"NOTIF_ALL"]+df[59:68,"NOTIF_MORT_ALL"]))*1e6 #total population
+  case_decline<-(CalibDat$tot_cases[57:66,2]-CalibDat$tot_cases[56:65,2])*1e6
+  death_decline<-rowSums(CalibDat$tb_deaths[,-1])[10:19]-rowSums(CalibDat$tb_deaths[,-1])[9:18]
+  plot(0,0,ylim=c(-1800,200),xlim=c(2009,2018),xlab="",ylab="",axes=F)
+  axis(1);axis(2,las=2);box()
+  abline(h=axTicks(2),col="grey85")
+  #plot the model data
+  lines(2009:2018,V2,lwd=2,col="violet")
+  lines(2009:2018,V1,lwd=2,col="orange")
+
+  points(2009:2018,case_decline,pch=19,cex=0.6,col="purple")
+  lines (2009:2018,case_decline,lty=3,col="purple")
+  # abline(lm(case_decline~time), col="blue")
+  points(2009:2018,death_decline,pch=19,cex=0.6,col="sienna")
+  lines (2009:2018,death_decline,lty=3,col="sienna")
+
+  mtext("Year",1,2.5,cex=1.2)
+  mtext("One Year Change in TB Cases and Deaths 2008-2018",3,.8,font=2,cex=1.2)
+  legend(ncol=2,"bottom",c("Reported deaths data", "Reported deaths cases","Model Deaths", "Model Cases"),pch=c(19,19,NA,NA),lwd=c(1,1,2,2),
+         col=c("sienna","purple", "orange", "violet"),lty=c(3,3,1,1),bg="white",pt.cex=c(0.6,.6,NA,NA))################################################################################
+
+  # V1<-rowSums(df[60:69,227:237])*1e6
+  # V2<-((df[60:69,"NOTIF_ALL"]+df[60:69,"NOTIF_MORT_ALL"]))*1e6 #total population
+  # case_decline<-(CalibDat$tot_cases[57:66,2])*1e6
+  # death_decline<-rowSums(CalibDat$tb_deaths[,-1])[10:19]
+
+
+
+
   ################################################################################
   graphs_pub(Par_list=Par_list)
-
-
   # dev.off()
 
   # }
