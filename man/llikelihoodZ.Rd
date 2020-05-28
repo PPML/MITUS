@@ -29,6 +29,8 @@ CASES FB, US 2012-2016  SLOPE - index updated
 high risk first column, low risk second column
 #' CASES HR DISTRIBUTION 1993-2016 - index updated
 high risk first column, low risk second column
+#' CASES HR DISTRIBUTION 1993-2016 - index updated
+high risk first column, low risk second column
 CASES FB RECENT ENTRY DISTRIBUTION 1993-2014 index updated
 recent immigrants column one; long term in column two
 TREATMENT OUTCOMES 1993-2014 - index updated
