@@ -127,8 +127,8 @@ llikelihoodZ <-  function(samp_i, start_mat, TB=1) {
       #' #' LTBI PREVALENCE BY AGE 2011, US - index updated
       v15 <- cbind(M[62,55:65],M[62,33:43]-M[62,55:65])
       v15a<-v15
-      Sens_IGRA <-c(.780,.675,.712,.789,.591)
-      Spec_IGRA <-c(.979,.958,.989,.985,.931)
+      Sens_IGRA <-c(.780,.780,.712,.789,.789)
+      Spec_IGRA <-c(.979,.979,.989,.985,.985)
 #       IGRA_frc<-.33
 #       Sens_TST <-c(.726,.540,.691,.807,.570)
 #       Spec_TST <-c(.921,.965,.739,.70,.885)
