@@ -95,9 +95,9 @@ llikelihoodZ <-  function(samp_i, start_mat, TB=1) {
       # lLik <- lLik + addlik
       #' #' CASES HR DISTRIBUTION 1993-2016 - index updated
       #' high risk first column, low risk second column
-      v5b   <- cbind(M[44:69,151],M[44:69,150]) + cbind(M[44:69,204],M[44:69,203])
-      addlik <- notif_hr_lLik(V=v5b); addlik
-      lLik <- lLik + addlik
+      # v5b   <- cbind(M[44:69,151],M[44:69,150]) + cbind(M[44:69,204],M[44:69,203])
+      # addlik <- notif_hr_lLik(V=v5b); addlik
+      # lLik <- lLik + addlik
       #' #' CASES HR DISTRIBUTION 1993-2016 - index updated
       #' high risk first column, low risk second column
       v5d   <- (M[44:69,151] + M[44:69,204])
