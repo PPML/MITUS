@@ -105,7 +105,7 @@ llikelihoodZ <-  function(samp_i, start_mat, TB=1) {
       lLik <- lLik + addlik
       # CASES HR NATIVTY DISTRIBUTION
       v5c<-cbind(M[44:69,685],M[44:69,687])
-      addlik<-notif_hr_dist_lLik(V=v5c); addlik
+      addlik<-notif_hr_dist_lLik(V=v5c)*2; addlik
       lLik <-lLik +addlik
       #' CASES FB RECENT ENTRY DISTRIBUTION 1993-2014 index updated
       #' recent immigrants column one; long term in column two

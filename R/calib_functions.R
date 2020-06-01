@@ -125,7 +125,7 @@ notif_hr_dist_lLik<-function(V,rho=0.005){
   hr_dist_tot<-CalibDat[["homeless_cases"]][,2]*CalibDat[["homeless_cases"]][,3]
   #US, NUSB
   notif_hr_dist<-cbind(hr_dist_us,(hr_dist_tot-hr_dist_us))
-  adj_5c <-sum(dDirMult(M=notif_hr_dist,n=notif_hr_dist,Rho=0.005)*wts[44:69])
+  adj_5c <-sum(dDirMult(M=notif_hr_dist,n=notif_hr_dist,Rho=rho)*wts[44:69])
   sum(dDirMult(M=V,n=notif_hr_dist,Rho=rho)*wts[44:69]) - adj_5c
 }
 
@@ -166,7 +166,7 @@ tltbi_tot_lLik   <- function(V) {
 #'@return likelihood
 tltbi_dist_lLik  <- function(V) {
   TLTBI_dist       <- CalibDat[["TLTBI_dist"]]
-  adj_13          <- sum( dbeta(TLTBI_dist,TLTBI_dist*100,(1-TLTBI_dist)*100,log=T) )
+  adj_13          <- sum(dbeta(TLTBI_dist,TLTBI_dist*100,(1-TLTBI_dist)*100,log=T) )
   sum( dbeta(TLTBI_dist,V*100,(1-V)*100,log=T) ) - adj_13  }
 
 #' LTBI PREVALENCE BY AGE 2011, US
@@ -324,9 +324,10 @@ mort_dist_lLik <- function(V,rho=0.1) {
 #'@param V scalar value of homeless pop in 2010
 #'@return likelihood
 homeless_10_lLik <- function(V) {
-  homeless_pop      <- CalibDat[["homeless_pop"]][1]
-  adj_23b          <- dnorm(homeless_pop,homeless_pop,homeless_pop*0.1/1.96,log=T)
-  dnorm(homeless_pop,V,homeless_pop*0.1/1.96,log=T) - adj_23b   }
+  homeless_pop      <- CalibDat[["homeless_pop"]]
+  adj_23b           <- dnorm(homeless_pop[1],homeless_pop[1],diff(homeless_pop[2:3])/2/1.96,log=T)
+  # adj_23b          <- dnorm(homeless_pop,homeless_pop,homeless_pop*0.1/1.96,log=T)
+  dnorm(homeless_pop[1],V,homeless_pop[1]*0.1/1.96,log=T) - adj_23b   }
 ########################################################################################
 #'Functions for likelihood of different published estimates
 ########################################################################################
