@@ -34,9 +34,9 @@ notif_decline_lLik_st <- function(V, st=st) {
 #'@return likelihood
 US_notif_tot_lLik_st <- function(V,st) {
   notif_tot     <- CalibDatState[["cases_yr_ag_nat_st"]][[st]][,12,"usb"]
-  adj_1         <- sum(dnorm(notif_tot,notif_tot,notif_tot*0.1/1.96,log=T)*wts[44:69])
+  adj_1         <- sum(dnorm(notif_tot,notif_tot,notif_tot*0.05/1.96,log=T)*wts[44:69])
   #notif tot is in real scale must scale outputs up
-  sum(dnorm(notif_tot,V*1e6,notif_tot*0.1/1.96,log=T)*wts[44:69]) - adj_1
+  sum(dnorm(notif_tot,V*1e6,notif_tot*0.05/1.96,log=T)*wts[44:69]) - adj_1
 }
 
 #'Total Diagnosed NUS Cases 1993-2017
@@ -120,7 +120,7 @@ notif_hr_lLik_st <- function(V,st,rho=0.005) { # V = table of notifications by t
 
 ### ### ### CASES FB RECENT ENTRY DISTRIBUTION 1993-2013  ### ### ### ### ### ### D
 # Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
-notif_fb_rec_lLik_st <- function(V,st,rho=0.02) { # V = table of notifications by rec 1993-2014 (row=22 years, col=pos then neg)
+notif_fb_rec_lLik_st <- function(V,st,rho=0.005) { # V = table of notifications by rec 1993-2014 (row=22 years, col=pos then neg)
   notif_rec<-CalibDatState[["rt_fb_cases_sm"]][which(CalibDatState[["rt_fb_cases_sm"]][,1]==stateID[st,1]),9]
   notif_fb          <- rbind(sum(CalibDatState[["cases_yr_ag_nat_st"]][[st]][2:6,12,"nusb"]),
                        sum(CalibDatState[["cases_yr_ag_nat_st"]][[st]][7:11,12,"nusb"]),
@@ -333,9 +333,9 @@ mort_dist_lLik_norm_st <- function(V) {
 # Motivation: norm, mean centered with CI = +/- 25% of mean
 
 homeless_10_lLik_st <- function(V,st) { # V = homeless pop in 2010 (scalar)
-  homeless_pop      <- CalibDatState[["homeless_pop"]][[st]][1]
-  adj_23b          <- dnorm(homeless_pop,homeless_pop,homeless_pop*0.2/1.96,log=T)
-  dnorm(homeless_pop,V,homeless_pop*0.2/1.96,log=T) - adj_23b   }
+  homeless_pop      <- CalibDatState[["homeless_pop"]][[st]]
+  adj_23b          <- dnorm(homeless_pop[1],homeless_pop[1],diff(homeless_pop[2:3])/2/1.96,log=T)
+  dnorm(homeless_pop[1],V,diff(homeless_pop[2:3])/2/1.96,log=T) - adj_23b   }
 
 ### ### ### LIKELIHOOD FOR BORGDORFF ESTIMATES  ### ### ### ### ### ###
 borgdorff_lLik_st <- function(Par_list,N_red=1) {  # Par_list = list(Mpfast[,c(1,3,2,4)], Mrslow[,c(1,3,2,4)], rfast, rRecov)

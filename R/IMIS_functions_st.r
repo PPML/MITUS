@@ -52,9 +52,9 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
       ### ### ### TB SPECIFIC LIKELIHOODS
       if(TB==1){
         ### ### ### TOTAL DIAGNOSED CASES 1993-2018  ### ### ### ### ### ### D
-        v1   <- M[44:69,"NOTIF_ALL"]+M[44:69,"NOTIF_MORT_ALL"]
-        addlik <- notif_tot_lLik_st(V=v1,st=st); addlik
-        lLik <- lLik + addlik
+        # v1   <- M[44:69,"NOTIF_ALL"]+M[44:69,"NOTIF_MORT_ALL"]
+        # addlik <- notif_tot_lLik_st(V=v1,st=st); addlik
+        # lLik <- lLik + addlik
         # print(paste("1:", lLik))
         ### ### ### ANN DECLINE IN CASES 1953-2015  ### ### ### ### ### ### D
         v1b   <- M[4:44,"NOTIF_ALL"]+M[4:44,"NOTIF_MORT_ALL"]
@@ -69,7 +69,7 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
         # print(paste("3:", lLik))
 
         # ### ### ### NUS CASES 1993-2016  ### ### ### ### ### ### D
-        v1c   <- rowSums(M[44:69,136:146]+M[44:69,189:199]) - (M[44:69,205:215]+M[44:69,216:226])
+        v1c   <- rowSums((M[44:69,136:146]+M[44:69,189:199]) - (M[44:69,205:215]+M[44:69,216:226]))
         addlik <- NUS_notif_tot_lLik_st(V=v1c,st=st); addlik
         lLik <- lLik + addlik
         # print(paste("4:", lLik))
