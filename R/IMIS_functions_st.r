@@ -96,15 +96,17 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
         lLik <- lLik + addlik
         # print(paste("8:", lLik))
         ### ### ### CASES HR DISTRIBUTION 1993-2014  ### ### ### ### ### ### D
-        v5b   <- cbind(M[45:69,151],M[45:69,150]) + cbind(M[45:69,204],M[45:69,203])
+        v5   <- M[45:69,151] + M[45:69,204]
+        v5b  <- rbind(sum(v5[1:5]),sum(v5[6:10]), sum(v5[11:15]),
+                      sum(v5[16:20]), sum(v5[21:25]))
         addlik <- notif_hr_lLik_st(V=v5b,st=st); addlik
         lLik <- lLik + addlik
         # print(paste("9:", lLik))
         ### ### ### CASES FB RECENT ENTRY DISTRIBUTION 1993-2014  ### ### ### ### ### ### D
         #recent, not recent
-        v6   <-M[45:69,148:149]+M[45:69,201:202]
-        v6b  <- rbind(colSums(v6[1:5,]),colSums(v6[6:10,]), colSums(v6[11:15,]),
-                      colSums(v6[16:20,]), colSums(v6[21:25,]))
+        v6   <-M[45:69,148]+M[45:69,201]
+        v6b  <- rbind(sum(v6[1:5]),sum(v6[6:10]), sum(v6[11:15]),
+                      sum(v6[16:20]), sum(v6[21:25]))
         addlik <- notif_fb_rec_lLik_st(V=v6b, st=st); addlik
         lLik <- lLik + addlik
         # print(paste("10:", lLik))

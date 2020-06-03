@@ -109,29 +109,55 @@ notif_fbus_slp_lLik_st <- function(V,st) {
 ### ### ### CASES HR DISTRIBUTION 1993-2014  ### ### ### ### ### ### D
 # Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
 
-notif_hr_lLik_st <- function(V,st,rho=0.005) { # V = table of notifications by tx history (row=97:16, col=n then e)
-  notif_hr0     <- CalibDatState[["hr_cases"]][[st]]
-  notif_hr      <- cbind(notif_hr0[,1],1-notif_hr0[,1])#*notif_us_hr0[,2]
-  adj_5b           <- sum(dDirMult(M=notif_hr+0.01,n=notif_hr,Rho=rho)*wts[c(45,50,55,60,65)])
-  V2 <- rbind(colSums(V[1:5,]),colSums(V[6:10,]),colSums(V[11:15,]),colSums(V[16:20,]), colSums(V[21:25,]))
-  #scale does not matter for dirichlet llikelihood
-  sum(dDirMult(M=V2,n=notif_hr,Rho=rho)*wts[c(45,50,55,60,65)]) - adj_5b
-  }
+# notif_hr_lLik_st <- function(V,st,rho=0.005) { # V = table of notifications by tx history (row=97:16, col=n then e)
+#   notif_hr0     <- CalibDatState[["hr_cases"]][[st]]
+#   notif_hr      <- cbind(notif_hr0[,1],1-notif_hr0[,1])#*notif_us_hr0[,2]
+#   adj_5b           <- sum(dDirMult(M=notif_hr+0.01,n=notif_hr,Rho=rho)*wts[c(45,50,55,60,65)])
+#   V2 <- rbind(colSums(V[1:5,]),colSums(V[6:10,]),colSums(V[11:15,]),colSums(V[16:20,]), colSums(V[21:25,]))
+#   #scale does not matter for dirichlet llikelihood
+#   sum(dDirMult(M=V2,n=notif_hr,Rho=rho)*wts[c(45,50,55,60,65)]) - adj_5b
+# }
+
+##smoothed estimates
+notif_hr_lLik_st <- function(V,st) { # V = table of notifications by tx history (row=97:16, col=n then e)
+  notif_hr<-CalibDatState[["hr_cases_sm"]][which(CalibDatState[["hr_cases_sm"]][,1]==stateID[st,1]),7]
+  notif_5yr          <-  c(sum(CalibDatState[["cases_yr_st"]][[st]][2:6,2]),
+                              sum(CalibDatState[["cases_yr_st"]][[st]][7:11,2]),
+                              sum(CalibDatState[["cases_yr_st"]][[st]][12:16,2]),
+                              sum(CalibDatState[["cases_yr_st"]][[st]][17:21,2]),
+                              sum(CalibDatState[["cases_yr_st"]][[st]][22:26,2]))
+  notif_hr_5yr      <- notif_hr*notif_5yr
+  adj_6           <- sum(dnorm(notif_hr_5yr,notif_hr_5yr,notif_hr_5yr*0.1/1.96,log=T)*wts[c(45,50,55,60,65)])
+  sum(dnorm(notif_hr_5yr,V*1e6,notif_hr_5yr*0.1/1.96,log=T)*wts[c(45,50,55,60,65)]) - adj_6
+}
 
 ### ### ### CASES FB RECENT ENTRY DISTRIBUTION 1993-2013  ### ### ### ### ### ### D
-# Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
-notif_fb_rec_lLik_st <- function(V,st,rho=0.005) { # V = table of notifications by rec 1993-2014 (row=22 years, col=pos then neg)
+# Motivation: should be a normal distribution because it is based on a model result
+
+notif_fb_rec_lLik_st<-function(V,st){
   notif_rec<-CalibDatState[["rt_fb_cases_sm"]][which(CalibDatState[["rt_fb_cases_sm"]][,1]==stateID[st,1]),9]
   notif_fb          <-  rbind(sum(CalibDatState[["cases_yr_ag_nat_st"]][[st]][2:6,12,"nusb"]),
-                        sum(CalibDatState[["cases_yr_ag_nat_st"]][[st]][7:11,12,"nusb"]),
-                        sum(CalibDatState[["cases_yr_ag_nat_st"]][[st]][12:16,12,"nusb"]),
-                        sum(CalibDatState[["cases_yr_ag_nat_st"]][[st]][17:21,12,"nusb"]),
-                        sum(CalibDatState[["cases_yr_ag_nat_st"]][[st]][22:26,12,"nusb"]))
-  notif_fb_rec      <- cbind(notif_rec*notif_fb, (1-notif_rec)*notif_fb)
-  adj_6             <- sum(dDirMult(M=notif_fb_rec,n=notif_fb_rec,Rho=rho)*wts[c(45,50,55,60,65)])
-  #scale does not matter for dirichlet llikelihood
-  (sum(dDirMult(M=V,n=notif_fb_rec,Rho=rho)*wts[c(45,50,55,60,65)]) - adj_6)*5
-  }
+                              sum(CalibDatState[["cases_yr_ag_nat_st"]][[st]][7:11,12,"nusb"]),
+                              sum(CalibDatState[["cases_yr_ag_nat_st"]][[st]][12:16,12,"nusb"]),
+                              sum(CalibDatState[["cases_yr_ag_nat_st"]][[st]][17:21,12,"nusb"]),
+                              sum(CalibDatState[["cases_yr_ag_nat_st"]][[st]][22:26,12,"nusb"]))
+  notif_fb_rec      <- notif_rec*notif_fb
+  adj_6           <- sum(dnorm(notif_fb_rec,notif_fb_rec,notif_fb_rec*0.1/1.96,log=T)*wts[c(45,50,55,60,65)])
+  sum(dnorm(notif_fb_rec,V*1e6,notif_fb_rec*0.1/1.96,log=T)*wts[c(45,50,55,60,65)]) - adj_6
+}
+
+# notif_fb_rec_lLik_st <- function(V,st,rho=0.005) { # V = table of notifications by rec 1993-2014 (row=22 years, col=pos then neg)
+#   notif_rec<-CalibDatState[["rt_fb_cases_sm"]][which(CalibDatState[["rt_fb_cases_sm"]][,1]==stateID[st,1]),9]
+#   notif_fb          <-  rbind(sum(CalibDatState[["cases_yr_ag_nat_st"]][[st]][2:6,12,"nusb"]),
+#                         sum(CalibDatState[["cases_yr_ag_nat_st"]][[st]][7:11,12,"nusb"]),
+#                         sum(CalibDatState[["cases_yr_ag_nat_st"]][[st]][12:16,12,"nusb"]),
+#                         sum(CalibDatState[["cases_yr_ag_nat_st"]][[st]][17:21,12,"nusb"]),
+#                         sum(CalibDatState[["cases_yr_ag_nat_st"]][[st]][22:26,12,"nusb"]))
+#   notif_fb_rec      <- cbind(notif_rec*notif_fb, (1-notif_rec)*notif_fb)
+#   adj_6             <- sum(dDirMult(M=notif_fb_rec,n=notif_fb_rec,Rho=rho)*wts[c(45,50,55,60,65)])
+#   #scale does not matter for dirichlet llikelihood
+#   (sum(dDirMult(M=V,n=notif_fb_rec,Rho=rho)*wts[c(45,50,55,60,65)]) - adj_6)*5
+#   }
 
 ### ### ### TREATMENT OUTCOMES 1993-2012  ### ### ### ### ### ### D
 # Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
