@@ -130,8 +130,8 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
         #make this IGRA positive
         pIGRA<-1
         v15a<-v15*pIGRA
-        Sens_IGRA <-c(.780,.675,.712,.789,.591)
-        Spec_IGRA <-c(.979,.958,.989,.985,.931)
+        Sens_IGRA <-c(.780,.780,.712,.789,.789)
+        Spec_IGRA <-c(.979,.979,.989,.985,.985)
         names(Sens_IGRA)<- names(Spec_IGRA)<-c("lrUS","hrUS","youngNUS","NUS","hrNUS")
         v15b <- outer(v15a[,1],c(Sens_IGRA[1],(1-Sens_IGRA[1])))+outer(v15a[,2],c((1-Spec_IGRA[1]),Spec_IGRA[1]))
         addlik <- ltbi_us_11_lLik(V=v15b)*2; addlik
