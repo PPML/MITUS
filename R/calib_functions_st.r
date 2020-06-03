@@ -122,15 +122,15 @@ notif_hr_lLik_st <- function(V,st,rho=0.005) { # V = table of notifications by t
 # Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
 notif_fb_rec_lLik_st <- function(V,st,rho=0.005) { # V = table of notifications by rec 1993-2014 (row=22 years, col=pos then neg)
   notif_rec<-CalibDatState[["rt_fb_cases_sm"]][which(CalibDatState[["rt_fb_cases_sm"]][,1]==stateID[st,1]),9]
-  notif_fb          <- rbind(sum(CalibDatState[["cases_yr_ag_nat_st"]][[st]][2:6,12,"nusb"]),
-                       sum(CalibDatState[["cases_yr_ag_nat_st"]][[st]][7:11,12,"nusb"]),
+  notif_fb          <-  rbind(sum(CalibDatState[["cases_yr_ag_nat_st"]][[st]][2:6,12,"nusb"]),
+                        sum(CalibDatState[["cases_yr_ag_nat_st"]][[st]][7:11,12,"nusb"]),
                         sum(CalibDatState[["cases_yr_ag_nat_st"]][[st]][12:16,12,"nusb"]),
                         sum(CalibDatState[["cases_yr_ag_nat_st"]][[st]][17:21,12,"nusb"]),
                         sum(CalibDatState[["cases_yr_ag_nat_st"]][[st]][22:26,12,"nusb"]))
   notif_fb_rec      <- cbind(notif_rec*notif_fb, (1-notif_rec)*notif_fb)
   adj_6             <- sum(dDirMult(M=notif_fb_rec,n=notif_fb_rec,Rho=rho)*wts[c(45,50,55,60,65)])
   #scale does not matter for dirichlet llikelihood
-  sum(dDirMult(M=V,n=notif_fb_rec,Rho=rho)*wts[c(45,50,55,60,65)]) - adj_6
+  (sum(dDirMult(M=V,n=notif_fb_rec,Rho=rho)*wts[c(45,50,55,60,65)]) - adj_6)*5
   }
 
 ### ### ### TREATMENT OUTCOMES 1993-2012  ### ### ### ### ### ### D
@@ -194,7 +194,7 @@ ltbi_fb_11_dp_lLik_st <- function(V) { # V = LTBI in FB pop 2011 (row=11 ages, c
 ### ### ### Total TB DEATHS 1999-2016 ### ### ### ### ### ### D
 
 tbdeaths_lLik_st <- function(V,st) { # V = vector of total notifications 1999-2016
-  tb_deaths <- CalibDatState[["tbdeaths"]][[st]][,2]
+  tb_deaths <- CalibDatState[["tbdeaths"]][[st]][,3]
   V2<-rowSums(V)*1e6
   adj_19    <- sum((dnorm(tb_deaths,tb_deaths,tb_deaths*0.2/1.96,log=T)*wts[50:67])[is.na(tb_deaths)==F])
   sum((dnorm(tb_deaths,V2,tb_deaths*0.2/1.96,log=T)*wts[50:67])[is.na(tb_deaths)==F]) - adj_19
