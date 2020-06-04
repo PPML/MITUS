@@ -188,11 +188,10 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
     addlik <- tot_pop_yr_fb_lLik_st(V=v17,st=st); addlik
     lLik <- lLik + addlik
     ### ### ### TOTAL US POP EACH DECADE, FOR US  ### ### ### ### ### ###  D ResNam
-    # v17b  <- M[,30]
-    # addlik <- tot_pop_yr_us_lLik_st_00_10(V=v17b,st=st); addlik
-    # lLik <- lLik + addlik
+    v17b  <- M[,30]
+    addlik <- tot_pop_yr_us_lLik_st(V=v17b,st=st); addlik
+    lLik <- lLik + addlik
     ### ### ### TOTAL POP AGE DISTRIBUTION 2017  ### ### ### ### ### ### D
-    ###not working
     v18  <- cbind(M[68,33:43],M[68,44:54])
     addlik <- tot_pop17_ag_fb_lLik_st(V=v18,st=st); addlik
     lLik <- lLik + addlik

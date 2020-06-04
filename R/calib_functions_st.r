@@ -275,6 +275,20 @@ tot_pop_yr_us_lLik_st_00_10 <- function(V,st) {
   adj_17b        <- sum(dnorm(tot_pop_yr_us[6:7],tot_pop_yr_us[6:7],tot_pop_yr_us[7]*0.1/1.96,log=T)*wts[1+5:6*10])
   sum(dnorm(tot_pop_yr_us[6:7],V[c(51,61)]*1e6,tot_pop_yr_us[7]*0.1/1.96,log=T)*wts[1+5:6*10]) - adj_17b  } # CI = +/- 2mil
 
+tot_pop_yr_us_lLik_st <- function(V,st) {
+
+  tot_pop_yr      <- CalibDatState[["pop_50_10"]][[st]]
+  tot_pop_yr_us   <- tot_pop_yr[tot_pop_yr[,2]==1,]
+  #get 2017 population
+  pop_ag_11_170  <- CalibDatState[["pop_00_17"]][[st]][,c(1,2,20)]
+  #get 2017 fb population
+  pop_ag_11_17us <-sum(pop_ag_11_170[pop_ag_11_170[,2]==1,3][-11])
+  #append the foreign born population
+  tot_pop_yr_us   <- c(tot_pop_yr_us[,-c(1:2)], pop_ag_11_17us)
+  adj_17          <- sum(dnorm(tot_pop_yr_us[-1],tot_pop_yr_us[-1],tot_pop_yr_us[7]*0.1/1.96,log=T)*wts[c(1+1:6*10,68)])
+  #total population is in real numbers so we need to scale up output
+  sum(dnorm(tot_pop_yr_us[-1],V[c(11,21,31,41,51,61,68)]*1e6,tot_pop_yr_us[7]*0.1/1.96,log=T)*wts[c(1+1:6*10,68)]) - adj_17}
+
 ### ### ### TOTAL POP AGE DISTRIBUTION 2017  ### ### ### ### ### ### D
 # Motivation: reported estimates represent pseudo-data for a multinomial likelihood, with ESS = 500
 tot_pop17_ag_fb_lLik_st <- function(V,st,ESS=500) { # V =  US pop in 2014 (row=11 ages, col= us, fb)
