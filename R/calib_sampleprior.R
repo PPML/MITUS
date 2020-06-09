@@ -13,4 +13,4 @@ sample.prior1 <- function(n) {
 #'@return n sample sets from the prior in a single object
 sample.prior2 <- function(n) {
   qnorm(randomLHS(n,sum(ParamInit$Calib==1)),0,1)   }
-#sample.prior  <- sample.prior2
+sample.prior  <- sample.prior2
