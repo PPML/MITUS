@@ -15,7 +15,8 @@ using namespace Rcpp;
 //'@param rrSlowFB rate of fast TB progression
 //'@param RRcurDef Rate Ratio for cure given treatment defaul
 //'@param rSlfCur rate of self cure from active TB
-//'@param p_HR probability of high risk population @ entry into the model
+//'@param p_HR_US probability of high risk population @ entry into the model
+//'@param p_HR_NUS probability of high risk population @ entry into the model
 //'@param vTMort vector of TB mortality rates
 //'@param RRmuRF rate ratio of mortality across mortality risk group
 //'@param RRmuHR rate ratio of mortality across low/high risk dimension
@@ -71,7 +72,8 @@ Rcpp::List cSim(
     double              rfast,
     double              RRcurDef,
     double              rSlfCur,
-    double              p_HR,
+    double              p_HR_US,
+    double              p_HR_NUS,
     Rcpp::NumericMatrix vTMort,
     std::vector<double> RRmuRF,
     std::vector<double> RRmuHR,
@@ -331,17 +333,17 @@ Rcpp::List cSim(
     for(int im=0; im<4; im++) {
       for(int nm=0; nm<4; nm++) {
         ////////////////////        UNINFECTED/SUSCEPTIBLE POP /////////////////////////
-        V0[ag][0][0][im][nm][0][0] = InitPopN[ag][0]*0.40*(1-p_HR)*dist_genN[nm][im]; //low risk US born
-        V0[ag][0][0][im][nm][1][0] = InitPopN[ag][0]*0.40*(p_HR)*dist_genN[nm][im]; //high risk US born
+        V0[ag][0][0][im][nm][0][0] = InitPopN[ag][0]*0.40*(1-p_HR_US)*dist_genN[nm][im]; //low risk US born
+        V0[ag][0][0][im][nm][1][0] = InitPopN[ag][0]*0.40*(p_HR_US)*dist_genN[nm][im]; //high risk US born
 
-        V0[ag][0][0][im][nm][0][2] = InitPopN[ag][1]*0.40*(1-p_HR)*dist_genN[nm][im]; //low risk non-US born
-        V0[ag][0][0][im][nm][1][2] = InitPopN[ag][1]*0.40*(p_HR)*dist_genN[nm][im];  //high risk non-US born
+        V0[ag][0][0][im][nm][0][2] = InitPopN[ag][1]*0.40*(1-p_HR_NUS)*dist_genN[nm][im]; //low risk non-US born
+        V0[ag][0][0][im][nm][1][2] = InitPopN[ag][1]*0.40*(p_HR_NUS)*dist_genN[nm][im];  //high risk non-US born
         /////////////////////////   LATENT SLOW INFECTED POP  //////////////////////////
-        V0[ag][2][0][im][nm][0][0] = InitPopN[ag][0]*0.60*(1-p_HR)*dist_genN[nm][im];
-        V0[ag][2][0][im][nm][1][0] = InitPopN[ag][0]*0.60*(p_HR)*dist_genN[nm][im];
+        V0[ag][2][0][im][nm][0][0] = InitPopN[ag][0]*0.60*(1-p_HR_US)*dist_genN[nm][im];
+        V0[ag][2][0][im][nm][1][0] = InitPopN[ag][0]*0.60*(p_HR_US)*dist_genN[nm][im];
 
-        V0[ag][2][0][im][nm][0][2] = InitPopN[ag][1]*0.60*(1-p_HR)*dist_genN[nm][im];
-        V0[ag][2][0][im][nm][1][2] = InitPopN[ag][1]*0.60*(p_HR)*dist_genN[nm][im];
+        V0[ag][2][0][im][nm][0][2] = InitPopN[ag][1]*0.60*(1-p_HR_NUS)*dist_genN[nm][im];
+        V0[ag][2][0][im][nm][1][2] = InitPopN[ag][1]*0.60*(p_HR_NUS)*dist_genN[nm][im];
       } } }
 
   //////create a 2nd array with same dimensions as V0 & populate w/ same values//
@@ -362,8 +364,8 @@ Rcpp::List cSim(
     ///////////USE DISTRIBUTION TO POPULATE THE MODEL ACROSS RISK GROUPS////////////
     for(int im=0; im<4; im++) {
       for(int nm=0; nm<4; nm++){
-        V1[0][0][0][im][nm][0][0]  += Birthst[0]*dist_genN[nm][im]*(1-p_HR);
-        V1[0][0][0][im][nm][1][0]  += Birthst[0]*dist_genN[nm][im]*(p_HR);
+        V1[0][0][0][im][nm][0][0]  += Birthst[0]*dist_genN[nm][im]*(1-p_HR_US);
+        V1[0][0][0][im][nm][1][0]  += Birthst[0]*dist_genN[nm][im]*(p_HR_US);
       } }
     // //////////////////////////////////IMMIGRATION///////////////////////////////////
     /////////////SINCE WE NO LONGER HAVE PREVIOUS TREATMENT AS A STATE SHOULD WE
@@ -373,17 +375,17 @@ Rcpp::List cSim(
       for(int im=0; im<4; im++) {
         for(int nm=0; nm<4; nm++){
 
-          V1[ag][0][0][im][nm][0][1]   += ImmNonN[0][ag]*dist_genN[nm][im]*(1-p_HR);  // NO TB, low risk
-          V1[ag][0][0][im][nm][1][1]   += ImmNonN[0][ag]*dist_genN[nm][im]*(p_HR);    // NO TB, high risk
+          V1[ag][0][0][im][nm][0][1]   += ImmNonN[0][ag]*dist_genN[nm][im]*(1-p_HR_NUS);  // NO TB, low risk
+          V1[ag][0][0][im][nm][1][1]   += ImmNonN[0][ag]*dist_genN[nm][im]*(p_HR_NUS);    // NO TB, high risk
 
-          V1[ag][2][0][im][nm][0][1]   += ImmLatN[0][ag]*dist_genN[nm][im]*(1-p_HR); // LATENT SLOW TB, low risk
-          V1[ag][2][0][im][nm][1][1]   += ImmLatN[0][ag]*dist_genN[nm][im]*(p_HR);   // LATENT SLOW TB, high risk
+          V1[ag][2][0][im][nm][0][1]   += ImmLatN[0][ag]*dist_genN[nm][im]*(1-p_HR_NUS); // LATENT SLOW TB, low risk
+          V1[ag][2][0][im][nm][1][1]   += ImmLatN[0][ag]*dist_genN[nm][im]*(p_HR_NUS);   // LATENT SLOW TB, high risk
 
-          V1[ag][3][0][im][nm][0][1]   += ImmFstN[0][ag]*dist_genN[nm][im]*(1-p_HR);   // LATENT FAST, low risk
-          V1[ag][3][0][im][nm][1][1]   += ImmFstN[0][ag]*dist_genN[nm][im]*(p_HR);   // LATENT FAST, high risk
+          V1[ag][3][0][im][nm][0][1]   += ImmFstN[0][ag]*dist_genN[nm][im]*(1-p_HR_NUS);   // LATENT FAST, low risk
+          V1[ag][3][0][im][nm][1][1]   += ImmFstN[0][ag]*dist_genN[nm][im]*(p_HR_NUS);   // LATENT FAST, high risk
 
-          V1[ag][4][0][im][nm][0][1]   += ImmActN[0][ag]*dist_genN[nm][im]*(1-p_HR);   //ACTIVE TB, low risk
-          V1[ag][4][0][im][nm][1][1]   += ImmActN[0][ag]*dist_genN[nm][im]*(p_HR);   //ACTIVE TB, high risk
+          V1[ag][4][0][im][nm][0][1]   += ImmActN[0][ag]*dist_genN[nm][im]*(1-p_HR_NUS);   //ACTIVE TB, low risk
+          V1[ag][4][0][im][nm][1][1]   += ImmActN[0][ag]*dist_genN[nm][im]*(p_HR_NUS);   //ACTIVE TB, high risk
         } } }
 
     ///////////////////////////////EMMIGRATION//////////////////////////////////////
@@ -447,13 +449,6 @@ Rcpp::List cSim(
           for(int nm=0; nm<4; nm++) {
             for(int rg=0; rg<2; rg++) {
               for(int na=0; na<3; na++) {
-                // /////          IF AGE > 4, IT TAKES 120 MONTHS TO LEAVE AGE GROUP          /////
-                // if(ag>0) {
-                //   temp2 = 120;
-                //   /////          IF AGE < 4, IT TAKES 60 MONTHS TO LEAVE AGE GROUP           /////
-                // } else {
-                //   temp2 = 60;
-                // }
                 temp = V0[ag][tb][0][im][nm][rg][na]/ag_denN[0][ag];
                 V1[ag  ][tb][0][im][nm][rg][na]  -= temp;
                 V1[ag+1][tb][0][im][nm][rg][na]  += temp;
@@ -500,9 +495,7 @@ Rcpp::List cSim(
               ///////// ranges under 1 every time step
               VNkl[1][0]  += V0[ag][tb][0][im][nm][1][0];
               ///////// LOW RISK NON US BORN
-              ///////// ranges from .5 -10 people between time steps
               VNkl[0][1]  += V0[ag][tb][0][im][nm][0][1] + V0[ag][tb][0][im][nm][0][2];
-              ///////// also ranges from .5 -10 people between time steps
               ///////// HIGH RISK NON US BORN
               VNkl[1][1]  += V0[ag][tb][0][im][nm][1][1] + V0[ag][tb][0][im][nm][1][2];
             } } } }
@@ -857,9 +850,9 @@ Rcpp::List cSim(
       for (int im=0; im<4; im++) {
         for (int nm=0; nm<4; nm++) {
           /////LOW RISK GROUP BIRTHS//////////////////////////////////////////////////////
-          V1[0][0][0][im][nm][0][0]  += Birthst[s]*dist_genN[nm][im]*(1-p_HR);
+          V1[0][0][0][im][nm][0][0]  += Birthst[s]*dist_genN[nm][im]*(1-p_HR_US);
           /////HIGH RISK GROUP BIRTHS//////////////////////////////////////////////////////
-          V1[0][0][0][im][nm][1][0]  += Birthst[s]*dist_genN[nm][im]*(p_HR);
+          V1[0][0][0][im][nm][1][0]  += Birthst[s]*dist_genN[nm][im]*(p_HR_US);
         } }
       // for(int ag=0; ag<11; ag++) {
       //   for(int tb=0; tb<6; tb++) {
@@ -880,17 +873,17 @@ Rcpp::List cSim(
         for(int im=0; im<4; im++) {
           for(int nm=0; nm<4; nm++) {
 
-            V1[ag][0][0][im][nm][0][1]   += ImmNonN[s][ag]*(1-p_HR)*dist_genN[nm][im];  // NO TB, low risk
-            V1[ag][0][0][im][nm][1][1]   += ImmNonN[s][ag]*(p_HR)*dist_genN[nm][im];    // NO TB, high risk
+            V1[ag][0][0][im][nm][0][1]   += ImmNonN[s][ag]*(1-p_HR_NUS)*dist_genN[nm][im];  // NO TB, low risk
+            V1[ag][0][0][im][nm][1][1]   += ImmNonN[s][ag]*(p_HR_NUS)*dist_genN[nm][im];    // NO TB, high risk
 
-            V1[ag][2][0][im][nm][0][1]   += ImmLatN[s][ag]*(1-p_HR)*dist_genN[nm][im]; // LATENT SLOW TB, low risk
-            V1[ag][2][0][im][nm][1][1]   += ImmLatN[s][ag]*(p_HR)*dist_genN[nm][im];   // LATENT SLOW TB, high risk
+            V1[ag][2][0][im][nm][0][1]   += ImmLatN[s][ag]*(1-p_HR_NUS)*dist_genN[nm][im]; // LATENT SLOW TB, low risk
+            V1[ag][2][0][im][nm][1][1]   += ImmLatN[s][ag]*(p_HR_NUS)*dist_genN[nm][im];   // LATENT SLOW TB, high risk
 
-            V1[ag][3][0][im][nm][0][1]   += ImmFstN[s][ag]*(1-p_HR)*dist_genN[nm][im];   // LATENT FAST, low risk
-            V1[ag][3][0][im][nm][1][1]   += ImmFstN[s][ag]*(p_HR)*dist_genN[nm][im];   // LATENT FAST, high risk
+            V1[ag][3][0][im][nm][0][1]   += ImmFstN[s][ag]*(1-p_HR_NUS)*dist_genN[nm][im];   // LATENT FAST, low risk
+            V1[ag][3][0][im][nm][1][1]   += ImmFstN[s][ag]*(p_HR_NUS)*dist_genN[nm][im];   // LATENT FAST, high risk
 
-            V1[ag][4][0][im][nm][0][1]   += ImmActN[s][ag]*(1-p_HR)*dist_genN[nm][im];   //ACTIVE TB, low risk
-            V1[ag][4][0][im][nm][1][1]   += ImmActN[s][ag]*(p_HR)*dist_genN[nm][im];   //ACTIVE TB, high risk
+            V1[ag][4][0][im][nm][0][1]   += ImmActN[s][ag]*(1-p_HR_NUS)*dist_genN[nm][im];   //ACTIVE TB, low risk
+            V1[ag][4][0][im][nm][1][1]   += ImmActN[s][ag]*(p_HR_NUS)*dist_genN[nm][im];   //ACTIVE TB, high risk
           } } }
       // for(int ag=0; ag<11; ag++) {
       //   for(int tb=0; tb<6; tb++) {
