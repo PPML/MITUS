@@ -215,12 +215,11 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   net_mig_nusb <- (NetMig[,"nusb"]*PV["TunNetMig"])^(1/12)-1
   ######################       HIGH-RISK ENTRY/EXIT      ########################
 
-  p_HR_US     <- PV["pHR_us"]
-  p_HR_NUS     <- PV["pHR_nus"]
+  p_HR     <- PV["pHR"]
   yr       <- c(2.5,1:10*10)
   r0_5     <- 1/3; r45_55 <- 1/20
   HR_exit  <- r0_5*((r45_55/r0_5)^(1/(50-2.5)))^(yr-2.5)
-  HR_entry <- HR_exit*(p_HR_US+p_HR_NUS)*1.3
+  HR_entry <- HR_exit*p_HR*1.3
   HrEntEx  <- cbind(HR_entry,HR_exit)/12
 
   ######################       TB TRANSMISSION           #######################
@@ -600,8 +599,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   InputParams[["rfast"]]     = rfast
   InputParams[["RRcurDef"]]  = RRcurDef
   InputParams[["rSlfCur"]]   = rSlfCur
-  InputParams[["p_HR_US"]]   = p_HR_US
-  InputParams[["p_HR_NUS"]]  = p_HR_NUS
+  InputParams[["p_HR"]]      = p_HR
   InputParams[["dist_gen"]]  = dist_gen
   InputParams[["vTMort"]]    = vTMort
   InputParams[["RRmuRF"]]    = RRmuRF
