@@ -14,7 +14,7 @@ model_load<-function(loc="US"){
 #'load necessary datasets
 #'Model Input
 if (loc=="US"){
-  CalibDat<<-readRDS(system.file("US/US_CalibDat_05-28-20.rds", package="MITUS"))
+  CalibDat<<-readRDS(system.file("US/US_CalibDat_06-17-20.rds", package="MITUS"))
   ParamInit<<-as.data.frame(readRDS(system.file("US/US_ParamInit_2020-06-01.rds", package="MITUS")))
   StartVal<<-readRDS(system.file("US/US_StartVal_2020-06-01.rds", package="MITUS"))
   Inputs<<-readRDS(system.file("US/US_Inputs_06-26-19.rds", package="MITUS"))

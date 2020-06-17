@@ -39,6 +39,14 @@ notif_us_lik <- function(V) {
   (sum(dnorm(notif_us,V,notif_us*0.05/1.96,log=T)*wts[44:69]) - adj_1)
 }
 
+#' DISTRIBUTION OF CASES RECENT TRANSMISSION VS NO RECENT TRANSMISSION
+#'@param V distribution of recent and not recent transmission
+#'@return likelihood
+recent_trans_dist_lLik  <- function(V) {
+  rct_trans_dist        <- CalibDat[["recent_trans_cases"]][1:2,1:2]/CalibDat[["recent_trans_cases"]][1:2,3]
+  adj_13          <- sum(dbeta(rct_trans_dist,rct_trans_dist*100,(1-rct_trans_dist)*100,log=T) )
+  sum( dbeta(rct_trans_dist,V*100,(1-V)*100,log=T) ) - adj_13  }
+
 #' CASES FB DISTRIBUTION 1993-2014
 #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
 #'@param V table of notifications by fb 1993-2014 (row=22 years, col=fb then us)

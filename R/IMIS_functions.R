@@ -88,6 +88,10 @@ llikelihoodZ <-  function(samp_i, start_mat, TB=1) {
                      M[65:69,147]+M[65:69,200])
       addlik <- notif_fbus_slp_lLik(V=v3a); addlik
       lLik <- lLik + addlik
+      # CASES RECENT TRANSMISSION DISTRIBUTION
+      v4 <- (colSums(M[68:69,184:185])/colSums(M[68:69,168:169]))
+      addlik <- recent_trans_dist_lLik(V=v4); addlik
+      lLik <- lLik + addlik
       #' #' CASES HR DISTRIBUTION 1993-2016 - index updated
       #' high risk first column, low risk second column
       # v5b   <- cbind(M[44:69,151],M[44:69,150]) + cbind(M[44:69,204],M[44:69,203])
