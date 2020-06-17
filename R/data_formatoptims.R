@@ -7,31 +7,29 @@
 #'@return datafile of all the optimized data parameters
 #'@export
 
-
 optim_data <- function(batches, loc, date){
-opt_all<-matrix(NA,batches,(nrow(ParamInitZ)+1))
+opt_all<-matrix(NA,max(batches),(nrow(ParamInitZ)+1))
 cnames<-c(rownames(ParamInitZ), "post_val")
 colnames(opt_all)<-cnames
-rnames<-rep(NA,batches)
-for (j in 1:batches){
+rnames<-rep(NA,max(batches))
+for (j in 1:max(batches)){
 rnames[j]<-paste("b_no_", j, sep="")
 }
 rownames(opt_all)<-rnames
 month<-strsplit(date, "-")[[1]][1]
 day<-strsplit(date, "-")[[1]][2]
-for (i in 1:batches){
-  load(paste("/Users/nis100/Desktop/US_042220/","Opt_", loc, "_r7_",i,"_2020-", date, ".rda", sep=""))
+for (i in batches){
+  load(paste("/Users/nis100/Desktop/US_061520/","Opt_", loc, "_r7_",i,"_2020-", date, ".rda", sep=""))
   opt_all[i,1:nrow(ParamInitZ)] <- o7$par
   opt_all[i,nrow(ParamInitZ)+1]<- o7$value
 }
-saveRDS(opt_all, file=paste("~/MITUS/inst/", loc,"/", loc, "_Optim_all_", batches,"_", month, day,".rds", sep = ""))
-
+saveRDS(opt_all, file=paste("~/MITUS/inst/", loc,"/", loc, "_Optim_all_", length(batches),"_", month, day,".rds", sep = ""))
 }
 
 optim_data_locs<-function(locs, date){
   for (loc in locs){
     model_load(loc)
-    optim_data(10,loc, date)
+    optim_data(1:10,loc, date)
   }
 }
 
@@ -40,10 +38,10 @@ calib_plots_locs<-function(locs, simp.date, batches=10){
   for (loc in locs){
     model_load(loc)
     Opt<-readRDS(system.file(paste0(loc,"/", loc, "_Optim_all_", batches,"_", simp.date,".rds"), package="MITUS"))
-    posterior<-round(Opt[,ncol(Opt)],2)
-    mode<-round(getmode(posterior), 2)
+    posterior<-round(Opt[,ncol(Opt)],2); print(posterior)
+    mode<-round(getmode(posterior), 2);print(mode)
     if (mode>1e11){ print(paste(loc, "did not optimize. Check optim manually", sep = " ")); next }
-    samp.i<-sample(which(posterior==mode), 1)
+    samp.i<-sample(which(posterior==mode), 1);print(samp.i)
     Opt<-Opt[,-ncol(Opt)]
     calib(samp.i, Opt, loc)
   }

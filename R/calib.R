@@ -15,10 +15,9 @@ Par3[idZ1] <- qgamma(Par2[idZ1], shape   = ParamInitZ[idZ1,6], rate   = ParamIni
 Par3[idZ2] <- qnorm( Par2[idZ2], mean    = ParamInitZ[idZ2,6], sd     = ParamInitZ[idZ2,7])
 P[ii] <- Par3
 P <- P
-
 # P["TunMubt"]<-1;
 # P["TunmuAg"]<-P["adj_ag1"]<-P["adj_ag11"]<-0
-# # P[["pfast"]]<-.3
+# P[["pfast"]]<-.08
 # P[["rslowH"]]<-oldpar["rslowH"]*2
 # P[["rslow"]]<-oldpar["rslow"]*2
 
@@ -28,12 +27,14 @@ P <- P
 # P["RRtbprev"]<-1;
 # P["TunLtbiTrend"]<-P["TunLtbiTrend"]*4
 # P[["TunNetMig"]]<-1
-# P[["TunMubt"]]<-1
+# P[["TunMubt"]]<-.1
 # P[["pImAct"]]<-.1
-# P[["LtbiPar1"]]<-.4
-# P[["LtbiPar2"]]<-.4
+# P[["LtbiPar1"]]<-1
+# P[["LtbiPar2"]]<-1
 # P[["sigmaFb"]]<-.25
 # P[["sigmaHr"]]<-0
+ # P[["RelCrHr"]]<-1
+
 
 prms <-list()
 prms<-param_init(PV=P, loc=loc, prg_chng = def_prgchng(P), ttt_list = def_ttt())
@@ -49,7 +50,7 @@ colnames(trans_mat_tot_ages) <-  rep(paste0(rep(paste0("p",0:3),each=4),"_",rep(
 if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
 zz <- cSim( nYrs       = 2020-1950         , nRes      = length(func_ResNam())  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
             Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]  ,
-            rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
+            rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR_US       = prms[["p_HR_US"]] , p_HR_NUS       = prms[["p_HR_NUS"]]      , dist_gen = prms[["dist_gen"]]    ,
             vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    ,
             HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat"]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst"]]    ,
             net_mig_usb = prms[["net_mig_usb"]], net_mig_nusb = prms[["net_mig_nusb"]],

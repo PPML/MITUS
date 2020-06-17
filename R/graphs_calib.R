@@ -386,8 +386,8 @@ calib_graphs <- function(df, Par_list){
   lines(2008:2018,rowSums(V2[,8:10])*1e3,lwd=2,col=cls[4])   #65+ yrs
 
   #reported data for comparison
-  notif_age     <- CalibDat[["age_cases"]][16:26,-c(1,12)]*CalibDat[["age_cases"]][16:26,12]
-
+  notif_age     <- CalibDat[["age_cases_us"]][16:26,-c(1,12)]*CalibDat[["age_cases_us"]][16:26,12]+
+                   CalibDat[["age_cases_fb"]][16:26,-c(1,12)]*CalibDat[["age_cases_fb"]][16:26,12]
   points(2008:2018,rowSums(notif_age[,1:3])/1e3,pch=19,cex=0.6,col=cls[1]) #0-24 yrs
   lines(2008:2018,rowSums(notif_age[,1:3])/1e3,col=cls[1],lty=3)
   points(2008:2018,rowSums(notif_age[,4:5])/1e3,pch=19,cex=0.6,col=cls[2]) #25-44 yrs

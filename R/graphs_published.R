@@ -90,19 +90,34 @@ mtext("Fraction without active TB (of those progressing <15yrs)",3,0.8,cex=0.8,f
 
 #################################### Plot 4
 
-# vec <- rep(0,4); names(vec) <- c("safe","slow","fast","prog")
-# survM15 <- NULL
-# for(i in 1:(50*12)) {
-#   if(i==1) {  vec <- c(0,1-Mpfast[3,1],Mpfast[3,1]*(1-pimmed),Mpfast[3,1]*pimmed) } else {
-#     vec[1] <- vec[1]+vec[2]*rRecov
-#     vec[4] <- vec[4]+vec[3]*rfast+vec[2]*rep(Mrslow[3:11,1],each=10*12)[i]
-#     vec[2] <- vec[2]-vec[2]*rRecov-vec[2]*rep(Mrslow[3:11,1],each=10*12)[i]
-#     vec[3] <- vec[3]-vec[3]*rfast  }
-#   survM15[i] <- 1- vec[4]  }
-#
-# plot(-1,-1,col=0,las=1,ylim=c(0,10),xlim=c(0,50),xlab="",ylab="")
-# abline(h=axTicks(2),col="grey90");box()
-# lines(seq(0,50*12)/12,c(0,(1-survM15)*100),col=4,lwd=2)
-# mtext("Years since infection",1,2.5,cex=0.9)
-# mtext("Cumulative incidence of active TB following M.tb infection at age 15 (%)",3,0.8,cex=0.8,font=2)
+vec <- rep(0,4); names(vec) <- c("safe","slow","fast","prog")
+survM15 <- NULL
+avg_Mrslow<-avg_Mpfast<-rep(0,11)
+
+for(i in 1:11) avg_Mpfast[i]<-sum(Mpfast[i,]*rowSums(dist_gen))
+for(i in 1:11) avg_Mrslow[i]<-sum(Mrslow[i,]*rowSums(dist_gen))
+
+for(i in 1:(50*12)) {
+  if(i==1) {
+    #no progression, slow progression, fast progression, immediate progression
+    vec <- c(0,1-avg_Mpfast[3],avg_Mpfast[3],0)
+} else {
+    vec[1] <- vec[1]+vec[2]*rRecov
+    vec[4] <- vec[4]+vec[3]*rfast+vec[2]*rep(avg_Mrslow[3:11],each=10*12)[i]
+    # print(vec[4])
+    vec[2] <- vec[2]-vec[2]*rRecov-vec[2]*rep(avg_Mrslow[3:11],each=10*12)[i]
+    vec[3] <- vec[3]-vec[3]*rfast  }
+  survM15[i] <- 1- vec[4]  }
+
+plot(-1,-1,col=0,las=1,ylim=c(0,(max(1-survM15)*1.25)*100),xlim=c(0,50),xlab="",ylab="")
+abline(h=axTicks(2),col="grey90");box()
+lines(seq(0,50*12)/12,c(0,(1-survM15)*100),col=4,lwd=2)
+mtext("Years since infection",1,2.5,cex=0.9)
+mtext("Cumulative incidence of active TB following M.tb infection at age 15 (%)",3,0.8,cex=0.8,font=2)
+survM15<-survM15[1:24]
+plot(-1,-1,col=0,las=1,ylim=c(0,(max(1-survM15)*1.25)*100),xlim=c(0,2),xlab="",ylab="")
+abline(h=axTicks(2),col="grey90");box()
+lines(seq(0,2*12)/12,c(0,(1-survM15)*100),col=4,lwd=2)
+mtext("Years since infection",1,2.5,cex=0.9)
+mtext("Cumulative incidence of active TB following M.tb infection at age 15 (%)",3,0.8,cex=0.8,font=2)
 }

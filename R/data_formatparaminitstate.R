@@ -62,6 +62,6 @@ format_paramInitst<-function(){
   ParamInit[ParamInit[,8]==-Inf,8] <- -100;  ParamInit[ParamInit[,8]==Inf,8] <- 100
   ParamInit_st<-ParamInit
   #'save it all
-  write.csv(ParamInit,file="ParamInitState_final.csv")
-  saveRDS(ParamInit_st,file=paste0("~/MITUS/inst/ST/ST_ParamInit_", Sys.Date(),".rds"))
+  write.csv(ParamInit,file="~/MITUS/inst/extdata/ParamInitState_final.csv")
+  # saveRDS(ParamInit_st,file=paste0("~/MITUS/inst/ST/ST_ParamInit_", Sys.Date(),".rds"))
 }

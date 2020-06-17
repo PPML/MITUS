@@ -3,7 +3,7 @@
 #'@param samp_i which row of the optim_data frame to use
 #'@return dataset
 #'@export
-fixed_vals<-function(samp_i){
+fixed_vals<-function(samp_i, US_opt_all){
   library(dplyr)
   model_load("US")
   fixed_prior<-c("EffLt","SensSp","pCurPs")
@@ -11,7 +11,7 @@ fixed_vals<-function(samp_i){
   pr_x<-as.vector(unlist(pr_x[,1]))
 #load the most up to date national optimized data set
 # and format the data back to their original distributions
-US_opt_all<-readRDS(system.file("US/US_Optim_all_10_1031.rds", package="MITUS"))
+# US_opt_all<-readRDS(system.file("US/US_Optim_all_10_1031.rds", package="MITUS"))
 Par<-US_opt_all[samp_i,-(ncol(US_opt_all))]
 Par2 <- pnorm(Par,0,1)
 # uniform to true
@@ -39,7 +39,10 @@ names(fixed_vals)<-c(fixed_prior,fixed_national)
 
 ###LOAD IN THE STATE DATA TO CREATE A NEW PARAM_INIT,
 ###START_VAL DATA SETS FOR A NEW OPTIMIZATION RUN
-model_load("CA")
+# model_load("CA")
+#read in the baseline state data from the csv in extdata
+ParamInit_st<-read.csv(system.file("extdata", "ParamInitST_final.csv", package="MITUS"))[,2:9]
+rownames(ParamInit_st)<-read.csv(system.file("extdata", "ParamInitST.csv", package="MITUS"))[,1]
 newparaminitst<-ParamInit_st[,]
 #IF THE COLNAME OF PARAM INIT IS IN THE fixed_vals
 #VECTOR THEN MAKE SURE THAT ParamInit_st$Calib <-0
