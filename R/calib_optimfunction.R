@@ -10,10 +10,11 @@
 #'@param df dataframe or matrix of starting values data frame
 #'@param samp_i which rows of the data frame to use
 #'@param TB boolean for TB likelihoods
+#'@param n_cores parallelization
 #'@return 8 datasets from optimization loop
 #'@export
 
-optim_b <- function(df, samp_i=1, TB=1){
+optim_b <- function(df, samp_i=1,n_cores=2, TB=1){
 # data("StartVal_2018-08-06", package = "MITUS")
 
 
@@ -62,11 +63,12 @@ b<-samp_i
 #'@param samp_i which rows of the data frame to use
 #'@param loc USPS code of state
 #'@param TB boolean for TB likelihoods
+#'@param n_cores
 #'@return 8 datasets from optimization loop
 #'@export
 
 
-optim_b_st <- function(df, samp_i=1, loc="MA", TB=1){
+optim_b_st <- function(df, samp_i=1,n_cores=2,loc="MA", TB=1){
   # data("StartVal_2018-08-06", package = "MITUS")
   posterior_st = function(theta) {
     -lprior(theta) - llikelihood_st(theta,loc,n_cores, TB=TB)
