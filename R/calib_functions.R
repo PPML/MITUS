@@ -128,7 +128,7 @@ notif_hr2_lLik <- function(V,rho=0.005) {
 #'@param V
 #'@param rho
 #'@return likelihood
-notif_hr_dist_lLik<-function(V,rho=0.005){
+notif_hr_dist_lLik<-function(V,rho=0.05){
   hr_dist_us<-CalibDat[["us_homeless_cases"]][,2]*CalibDat[["us_homeless_cases"]][,3]
   hr_dist_tot<-CalibDat[["homeless_cases"]][,2]*CalibDat[["homeless_cases"]][,3]
   #US, NUSB
