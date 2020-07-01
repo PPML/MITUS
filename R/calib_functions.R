@@ -120,11 +120,12 @@ notif_hr_lLik <- function(V,rho=0.005) {
 #'@param V table of notifications by hr 1993-2014 (row=22 years, col=pos then neg)
 #'@param rho correlation parameter
 #'@return likelihood
-notif_hr2_lLik <- function(V,rho=0.005) {
+notif_hr2_lLik <- function(V,rho=0.1) {
   notif_hr2      <- CalibDat[["homeless_cases"]][,2]*CalibDat[["homeless_cases"]][,3]
   adj_5d<-sum(dnorm(notif_hr2,notif_hr2,notif_hr2*0.1/1.96,log=T)*wts[44:69])
   (sum(dnorm(notif_hr2,V*1e6,notif_hr2*0.1/1.96,log=T)*wts[44:69]) - adj_5d)
 }
+
 #'CASES HR NATIVITY DISTRIBUTION 1993-2018
 #'@param V
 #'@param rho
@@ -143,7 +144,7 @@ notif_hr_dist_lLik<-function(V,rho=0.05){
 #'@param V table of notifications by FB 1993-2014 (row=22 years, col=pos then neg)
 #'@param rho correlation parameter
 #'@return likelihood
-notif_fb_rec_lLik <- function(V,rho=0.01) {
+notif_fb_rec_lLik <- function(V,rho=0.05) {
   notif_fb_rec   <- cbind(CalibDat[["fb_recent_cases2"]][,2],1-CalibDat[["fb_recent_cases2"]][,2])*CalibDat[["fb_recent_cases2"]][,3]
   adj_6          <- sum(dDirMult(M=notif_fb_rec,n=notif_fb_rec,Rho=rho)*wts[44:69])
   sum(dDirMult(M=V,n=notif_fb_rec,Rho=rho)*wts[44:69]) - adj_6
@@ -154,9 +155,9 @@ notif_fb_rec_lLik <- function(V,rho=0.01) {
 #'@param V table of treatment outcomes 1993-2012 (row=20 years, col= complete, discontinue, dead)
 #'@param rho correlation parameter
 #'@return likelihood
-tx_outcomes_lLik <- function(V,rho=0.005) {
+tx_outcomes_lLik <- function(V,rho=0.05) {
   tx_outcomes      <- cbind(1-rowSums(CalibDat[["tx_outcomes"]][,2:3]),CalibDat[["tx_outcomes"]][,2],CalibDat[["tx_outcomes"]][,3])*CalibDat[["tx_outcomes"]][,4]
-  adj_11           <- sum(dDirMult(M=tx_outcomes,n=tx_outcomes,Rho=0.005)*wts[44:65])
+  adj_11           <- sum(dDirMult(M=tx_outcomes,n=tx_outcomes,Rho=0.05)*wts[44:65])
   sum(dDirMult(M=V,n=tx_outcomes,Rho=rho)*wts[44:65]) - adj_11
 }
 
