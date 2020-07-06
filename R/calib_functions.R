@@ -144,7 +144,7 @@ notif_hr_dist_lLik<-function(V,rho=0.05){
 #'@param V table of notifications by FB 1993-2014 (row=22 years, col=pos then neg)
 #'@param rho correlation parameter
 #'@return likelihood
-notif_fb_rec_lLik <- function(V,rho=0.05) {
+notif_fb_rec_lLik <- function(V,rho=0.01) {
   notif_fb_rec   <- cbind(CalibDat[["fb_recent_cases2"]][,2],1-CalibDat[["fb_recent_cases2"]][,2])*CalibDat[["fb_recent_cases2"]][,3]
   adj_6          <- sum(dDirMult(M=notif_fb_rec,n=notif_fb_rec,Rho=rho)*wts[44:69])
   sum(dDirMult(M=V,n=notif_fb_rec,Rho=rho)*wts[44:69]) - adj_6
