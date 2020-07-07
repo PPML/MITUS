@@ -131,6 +131,15 @@ notif_hr_lLik_st <- function(V,st) { # V = table of notifications by tx history 
   sum(dnorm(notif_hr_5yr,V*1e6,notif_hr_5yr*0.1/1.96,log=T)*wts[c(45,50,55,60,65)]) - adj_6
 }
 
+#' DISTRIBUTION OF CASES RECENT TRANSMISSION VS NO RECENT TRANSMISSION
+#'@param V distribution of recent and not recent transmission
+#'@return likelihood
+recent_trans_dist_lLik_st  <- function(V,st) {
+  rct_trans_dist        <- CalibDat[["recent_trans_cases_sm"]][1:2,1]/CalibDat[["recent_trans_cases_sm"]][1:2,3]
+  adj_13          <- sum(dbeta(rct_trans_dist,rct_trans_dist*100,(1-rct_trans_dist)*100,log=T) )
+  sum(dbeta(rct_trans_dist,V[,1]*100,V[,2]*100,log=T) ) - adj_13
+}
+
 ### ### ### CASES FB RECENT ENTRY DISTRIBUTION 1993-2013  ### ### ### ### ### ### D
 # Motivation: should be a normal distribution because it is based on a model result
 
