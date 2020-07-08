@@ -89,7 +89,7 @@ llikelihoodZ <-  function(samp_i, start_mat, TB=1) {
       addlik <- notif_fbus_slp_lLik(V=v3a); addlik
       lLik <- lLik + addlik
       # CASES RECENT TRANSMISSION DISTRIBUTION
-      v4a <- (colSums(M[68:69,184:185])/colSums(M[68:69,168:169]))
+      v4a <- (colSums(M[66:69,184:185])/colSums(M[66:69,168:169]))
       v4 <- rbind(c(v4a[1],1-v4a[1]),c(v4a[2],1-v4a[2]))
       addlik <- recent_trans_dist_lLik(V=v4); addlik
       lLik <- lLik + addlik
