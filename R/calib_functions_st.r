@@ -135,9 +135,9 @@ notif_hr_lLik_st <- function(V,st) { # V = table of notifications by tx history 
 #'@param V distribution of recent and not recent transmission
 #'@return likelihood
 recent_trans_dist_lLik_st  <- function(V,st) {
-  rct_trans_dist        <- CalibDat[["recent_trans_cases_sm"]][1:2,1]/CalibDat[["recent_trans_cases_sm"]][1:2,3]
-  adj_13          <- sum(dbeta(rct_trans_dist,rct_trans_dist*100,(1-rct_trans_dist)*100,log=T) )
-  sum(dbeta(rct_trans_dist,V[,1]*100,V[,2]*100,log=T) ) - adj_13
+  rct_trans_dist        <- CalibDat[["rct_cases_sm"]][st,5]
+  adj_13          <- dbeta(rct_trans_dist,rct_trans_dist*100,(1-rct_trans_dist)*100,log=T)
+  dbeta(rct_trans_dist,V[1]*100,V[2]*100,log=T)  - adj_13
 }
 
 ### ### ### CASES FB RECENT ENTRY DISTRIBUTION 1993-2013  ### ### ### ### ### ### D
@@ -185,11 +185,9 @@ tltbi_tot_lLik_st   <- function(V,st) { # V = total TLTBI inits in 2002 (scalar)
   tltbi_vol        <- CalibDatState[["TLTBI_volume_state"]][[st]]
   adj_12           <- dnorm(tltbi_vol[1],tltbi_vol[1],diff(tltbi_vol[2:3])/1.96,log=T)
   dnorm(tltbi_vol[1],V*1e6,diff(tltbi_vol[2:3])/1.96,log=T) - adj_12
-
   }
 
 ### ### ### DISTRIBUTION OF LTBI TREATMENT INITS 2002  ### ### ### ### ### ###  D
-
 tltbi_dist_lLik_st  <- function(V) {
   TLTBI_dist       <- CalibDatState[["TLTBI_dist"]][1:2]
   adj_13           <- sum( dbeta(TLTBI_dist,TLTBI_dist*100,(1-TLTBI_dist)*100,log=T) )# V = dist TLTBI inits in 2002 (vector fraction FB, HR, HV in 2002)

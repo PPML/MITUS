@@ -5,7 +5,7 @@
 \title{TREATMENT OUTCOMES 1993-2014
 Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases}
 \usage{
-tx_outcomes_lLik(V, rho = 0.005)
+tx_outcomes_lLik(V, rho = 0.05)
 }
 \arguments{
 \item{V}{table of treatment outcomes 1993-2012 (row=20 years, col= complete, discontinue, dead)}

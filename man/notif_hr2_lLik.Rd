@@ -5,7 +5,7 @@
 \title{CASES HR DISTRIBUTION 1993-2014
 Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases}
 \usage{
-notif_hr2_lLik(V, rho = 0.005)
+notif_hr2_lLik(V, rho = 0.1)
 }
 \arguments{
 \item{V}{table of notifications by hr 1993-2014 (row=22 years, col=pos then neg)}

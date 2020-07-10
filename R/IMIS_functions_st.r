@@ -78,18 +78,18 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
         addlik <- notif_age_us_lLik_st(V=v2a,st=st); addlik
         lLik <- lLik + addlik
         # print(paste("5:", lLik))
-        ### ### ### FB CASES AGE DISTRIBUTION 1993-2013  ### ### ### ### ### ### D
+        ### ### ### NUSB CASES AGE DISTRIBUTION 1993-2013  ### ### ### ### ### ### D
         v2b   <- (M[44:69,136:146]+M[44:69,189:199]) - (M[44:69,205:215]+M[44:69,216:226])
         addlik <- notif_age_fb_lLik_st(V=v2b,st=st); addlik
         lLik <- lLik + addlik
         # print(paste("6:", lLik))
-        ### ### ### CASES FB DISTRIBUTION 1993-2014  ### ### ### ### ### ### D
+        ### ### ### CASES NUSB DISTRIBUTION 1993-2014  ### ### ### ### ### ### D
         v3   <-  cbind(M[44:69,148]+M[44:69,149]+(M[44:69,201]+M[44:69,202]),
                        M[44:69,147]+M[44:69,200])
         addlik <- notif_fb_lLik_st(V=v3,st=st); addlik
         lLik <- lLik + addlik
         # print(paste("7:", lLik))
-        ### ### ### CASES FB, US 2010-2014  SLOPE ### ### ### ### ### ### D
+        ### ### ### CASES NUSB, US 2010-2014  SLOPE ### ### ### ### ### ### D
         v4   <- cbind(M[65:69,148]+M[65:69,149]+(M[65:69,201]+M[65:69,202]),
                       M[65:69,147]+M[65:69,200])
         addlik <- notif_fbus_slp_lLik_st(V=v4,st=st); addlik
@@ -102,7 +102,12 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
         addlik <- notif_hr_lLik_st(V=v5b,st=st); addlik
         lLik <- lLik + addlik
         # print(paste("9:", lLik))
-        ### ### ### CASES FB RECENT ENTRY DISTRIBUTION 1993-2014  ### ### ### ### ### ### D
+        ### ### ### CASES RCT TRANS DISTRIBUTION 2015-2018  ### ### ### ### ### ### D
+        v4a <- (sum(M[66:69,184:185])/sum(M[66:69,168:169]))
+        v4 <- c(v4a,1-v4a)
+        addlik <- recent_trans_dist_lLik_st(V=v4,st=st); addlik
+        lLik <- lLik + addlik
+        ### ### ### CASES NUSB RECENT ENTRY DISTRIBUTION 1993-2014  ### ### ### ### ### ### D
         #recent, not recent
         v6   <-M[45:69,148]+M[45:69,201]
         v6b  <- rbind(sum(v6[1:5]),sum(v6[6:10]), sum(v6[11:15]),
@@ -137,7 +142,7 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
         # addlik <- ltbi_us_11_lLik(V=v15b)*2; addlik
         # lLik <- lLik + addlik
         # print(paste("14:", lLik))
-        #' LTBI PREVALENCE BY AGE 2011, FB - index updated
+        #' LTBI PREVALENCE BY AGE 2011, NUSB - index updated
         # v16  <- cbind(M[62,66:76],M[62,44:54]-M[62,66:76])
         # v16a <- v16*pIGRA
         # #under age 5
@@ -183,7 +188,7 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
       } ### END OF TB LIKELIHOODS
 
     ### ### ### DEMOGRAPHIC LIKELIHOOD FUNCTIONS  ### ### ### ### ### ###
-    ### ### ### TOTAL FB POP EACH DECADE, FOR FB  ### ### ### ### ### ###  D
+    ### ### ### TOTAL NUSB POP EACH DECADE, FOR NUSB  ### ### ### ### ### ###  D
     v17  <- M[,31]+M[,32]
     addlik <- tot_pop_yr_fb_lLik_st(V=v17,st=st); addlik
     lLik <- lLik + addlik

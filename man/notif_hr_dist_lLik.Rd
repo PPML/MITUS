@@ -4,7 +4,7 @@
 \alias{notif_hr_dist_lLik}
 \title{CASES HR NATIVITY DISTRIBUTION 1993-2018}
 \usage{
-notif_hr_dist_lLik(V, rho = 0.005)
+notif_hr_dist_lLik(V, rho = 0.05)
 }
 \value{
 likelihood
