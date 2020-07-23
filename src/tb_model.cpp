@@ -30,6 +30,7 @@ using namespace Rcpp;
 //'@param mubt background mortality over time
 //'@param RelInf beta
 //'@param RelInfRg beta based off of risk group
+//'@param RRcrAG rate ratio for contact rate by ag
 //'@param Vmix 1-sigma
 //'@param rEmmigFB rate of emmigration in non-US born population
 //'@param TxVec vector of parameters for TB Tx
@@ -86,6 +87,7 @@ Rcpp::List cSim(
     Rcpp::NumericMatrix mubt,
     std::vector<double> RelInf,
     std::vector<double> RelInfRg,
+    std::vector<double> RRcrAG,
     std::vector<double> Vmix,
     std::vector<double> rEmmigFB,
     std::vector<double> TxVec,
@@ -519,13 +521,13 @@ Rcpp::List cSim(
           for(int im=0; im<4; im++) {
             for(int nm=0; nm<4; nm++) {
               /////////  LOW RISK US BORN
-              VGjkl[0][0]  +=  V0[ag][tb][0][im][nm][0][0]                               *RelInf[tb];
+              VGjkl[0][0]  +=  V0[ag][tb][0][im][nm][0][0]                               *RelInf[tb]*RRcrAG[ag];
               ///////// HIGH RISK US BORN
-              VGjkl[1][0]  +=  V0[ag][tb][0][im][nm][1][0]                               *RelInf[tb];
+              VGjkl[1][0]  +=  V0[ag][tb][0][im][nm][1][0]                               *RelInf[tb]*RRcrAG[ag];
               ///////// LOW RISK NON US BORN
-              VGjkl[0][1]  += (V0[ag][tb][0][im][nm][0][1] + V0[ag][tb][0][im][nm][0][2])*RelInf[tb];
+              VGjkl[0][1]  += (V0[ag][tb][0][im][nm][0][1] + V0[ag][tb][0][im][nm][0][2])*RelInf[tb]*RRcrAG[ag];
               /////////  HIGH RISK NON US BORN
-              VGjkl[1][1]  += (V0[ag][tb][0][im][nm][1][1] + V0[ag][tb][0][im][nm][1][2])*RelInf[tb];
+              VGjkl[1][1]  += (V0[ag][tb][0][im][nm][1][1] + V0[ag][tb][0][im][nm][1][2])*RelInf[tb]*RRcrAG[ag];
             } } } }
 
       // for (int i=0; i<2; i++){
@@ -536,12 +538,13 @@ Rcpp::List cSim(
       // Step 2 (treated TB)
       // No contribution to force of infection
 
-      // Step 3
-      Vjaf[0]  =( RelInfRg[0]*VGjkl[0][0] +
-        RelInfRg[1]*VGjkl[1][0]*Vmix[0]+
-        RelInfRg[2]*VGjkl[0][1]*Vmix[1]+
-        RelInfRg[3]*VGjkl[1][1]*Vmix[1]*Vmix[0]) /
-          (RelInfRg[0]*VNkl[0][0] +
+      // Step 3 (Infected/Total)
+      Vjaf[0]  =( RelInfRg[0]*VGjkl[0][0] +        //low risk usb
+        RelInfRg[1]*VGjkl[1][0]*Vmix[0]+           //high risk usb
+        RelInfRg[2]*VGjkl[0][1]*Vmix[1]+           //low risk nusb
+        RelInfRg[3]*VGjkl[1][1]*Vmix[1]*Vmix[0])   //high risk nusb
+        /
+           (RelInfRg[0]*VNkl[0][0] +
             RelInfRg[1]*VNkl[1][0]*Vmix[0]+
             RelInfRg[2]*VNkl[0][1]*Vmix[1]+
             RelInfRg[3]*VNkl[1][1]*Vmix[1]*Vmix[0] + 1e-12);
@@ -1105,37 +1108,37 @@ Rcpp::List cSim(
 
       if (tb_dyn==1){
         ////////////////////////////  TRANSMISSION RISK  ////////////////////////////////
+
+        // Initialize to Zero
         for(int i=0; i<2; i++) {
           for(int j=0; j<2; j++) {
             VNkl [i][j] = 0;
-            VGjkl[i][j] = 0;   // set to zero
+            VGjkl[i][j] = 0;
           } }
+
         // Step 1
-        // take total population of mixing groups
+        // Total population of mixing groups
         for(int ag=0; ag<11; ag++) {
           for(int tb=0; tb<6; tb++) {
             for(int lt=0; lt<2; lt++) {
               for(int im=0; im<4; im++) {
                 for(int nm=0; nm<4; nm++) {
-
                   // LOW RISK US BORN
                   VNkl[0][0]  += V0[ag][tb][lt][im][nm][0][0];
                   ///////// HIGH RISK US BORN
-                  ///////// ranges under 1 every time step
                   VNkl[1][0]  += V0[ag][tb][lt][im][nm][1][0];
                   ///////// LOW RISK NON US BORN
-                  ///////// ranges from .5 -10 people between time steps
                   VNkl[0][1]  += V0[ag][tb][lt][im][nm][0][1] + V0[ag][tb][lt][im][nm][0][2];
-                  ///////// also ranges from .5 -10 people between time steps
                   ///////// HIGH RISK NON US BORN
                   VNkl[1][1]  += V0[ag][tb][lt][im][nm][1][1] + V0[ag][tb][lt][im][nm][1][2];
                 } } } } }
-
+        // // // output check // // //
         // for (int i=0; i<2; i++){
         //   for (int j=0; j<2; j++){
-        //     Rcpp::Rcout <<"sums are " <<  VNkl[i][j] << "for i= " << i << " and j = " <<  j << "\n";
+        //     Rcpp::Rcout <<"population sums are " <<  VNkl[i][j] << "for i= " << i << " and j = " <<  j << "\n";
         //   }
         // }
+
         // Step 2  (active TB)
         // Number of active cases* relative infectiousness
         for(int ag=0; ag<11; ag++) {
@@ -1143,34 +1146,38 @@ Rcpp::List cSim(
             for(int im=0; im<4; im++) {
               for(int nm=0; nm<4; nm++) {
                 for(int lt=0; lt<2; lt++) {
-
-                  /////////  LOW RISK US BORN
-                  VGjkl[0][0]  +=  V0[ag][tb][lt][im][nm][0][0]                                *RelInf[tb];
-                  ///////// HIGH RISK US BORN
-                  VGjkl[1][0]  +=  V0[ag][tb][lt][im][nm][1][0]                                *RelInf[tb];
-                  ///////// LOW RISK NON US BORN
-                  VGjkl[0][1]  += (V0[ag][tb][lt][im][nm][0][1] + V0[ag][tb][lt][im][nm][0][2])*RelInf[tb];
-                  /////////  HIGH RISK NON US BORN
-                  VGjkl[1][1]  += (V0[ag][tb][lt][im][nm][1][1] + V0[ag][tb][lt][im][nm][1][2])*RelInf[tb];
+                  // RelInf[tb] =0 for all values except active (non-treated) TB ([tb=4]) where it equals 1
+                  /////////  LOW RISK US BORN [risk group][nativity]
+                  VGjkl[0][0]  +=  V0[ag][tb][lt][im][nm][0][0]                                *RelInf[tb]*RRcrAG[ag];
+                  ///////// HIGH RISK US BORN [risk group][nativity]
+                  VGjkl[1][0]  +=  V0[ag][tb][lt][im][nm][1][0]                                *RelInf[tb]*RRcrAG[ag];
+                  ///////// LOW RISK NON US BORN [risk group][nativity]
+                  VGjkl[0][1]  += (V0[ag][tb][lt][im][nm][0][1] + V0[ag][tb][lt][im][nm][0][2])*RelInf[tb]*RRcrAG[ag];
+                  /////////  HIGH RISK NON US BORN [risk group][nativity]
+                  VGjkl[1][1]  += (V0[ag][tb][lt][im][nm][1][1] + V0[ag][tb][lt][im][nm][1][2])*RelInf[tb]*RRcrAG[ag];
                 } } } } }
-
+        // // // output check // // //
         // for (int i=0; i<2; i++){
         //   for (int j=0; j<2; j++){
         //     Rcpp::Rcout <<"VGs are " <<  VGjkl[i][j] << "for i= " << i << " and j = " <<  j << "\n";
         //   }
         // }
+
         // Step 2 (treated TB)
         // No contribution to force of infection
 
         // Step 3
+        // RelInfRg[0] = RelInfRg[2] = contact rate for low risk USB & NUSB, respectively
+        // RelInfRg[1] = RelInfRg[3] = (contact rate*RR.CR.HR) for high risk USB & NUSB, respectively
         Vjaf[0]  =( RelInfRg[0]*VGjkl[0][0] +
           RelInfRg[1]*VGjkl[1][0]*Vmix[0]+
           RelInfRg[2]*VGjkl[0][1]*Vmix[1]+
-          RelInfRg[3]*VGjkl[1][1]*Vmix[1]*Vmix[0]) /
-            ((RelInfRg[0]*VNkl[0][0] +
-              RelInfRg[1]*VNkl[1][0]*Vmix[0]+
-              RelInfRg[2]*VNkl[0][1]*Vmix[1]+
-              RelInfRg[3]*VNkl[1][1]*Vmix[1]*Vmix[0]) + 1e-12);
+          RelInfRg[3]*VGjkl[1][1]*Vmix[1]*Vmix[0])
+          /
+            (RelInfRg[0]*VNkl[0][0] +
+            RelInfRg[1]*VNkl[1][0]*Vmix[0]+
+            RelInfRg[2]*VNkl[0][1]*Vmix[1]+
+            RelInfRg[3]*VNkl[1][1]*Vmix[1]*Vmix[0] + 1e-12);
 
         Vjaf[1] = ((RelInfRg[1]*VGjkl[0][1]) + ( RelInfRg[3]*VGjkl[1][1]*Vmix[0])) /
           ((RelInfRg[1]*VNkl[0][1])  +  (RelInfRg[3]*VNkl[1][1]*Vmix[0]) + 1e-12);
@@ -1180,22 +1187,23 @@ Rcpp::List cSim(
 
         Vjaf[3] = VGjkl[1][1] / (VNkl[1][1] + 1e-12);
 
-
+        // // // output check // // //
         // for (int i=0; i<4; i++){
         //   Rcpp::Rcout << "Vjaf is "<<  Vjaf[i] << "\n";
         // }
 
         // Step 4
-        /// LOW RISK US BORN
+        // RelInfRg[0] = RelInfRg[2] = contact rate for low risk USB & NUSB, respectively
+        // RelInfRg[1] = RelInfRg[3] = (contact rate*RR.CR.HR) for high risk USB & NUSB, respectively
+        ///////// LOW RISK US BORN [risk group][nativity]
         VLjkl[0 ][0 ]  = (RelInfRg[0]*Vjaf[0]);
-        ///////// HIGH RISK US BORN
+        ///////// HIGH RISK US BORN [risk group][nativity]
         VLjkl[1 ][0 ]  = (RelInfRg[1]*Vjaf[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]);
-        ///////// LOW RISK NON US BORN
+        ///////// LOW RISK NON US BORN [risk group][nativity]
         VLjkl[0 ][1 ]  = ((RelInfRg[2]*Vjaf[2]*(1-Vmix[1]) + RelInfRg[0]*Vjaf[0]*Vmix[1])) + ExogInf[s];
-        ///////// HIGH RISK NON US BORN
+        ///////// HIGH RISK NON US BORN [risk group][nativity]
         ///check the use of RelInfRg here as beta, might need to be a combo param but unclear check the old param file
         VLjkl[1 ][1 ]  = ((RelInfRg[3]*Vjaf[3]*(1-Vmix[0])*(1-Vmix[1]) + RelInfRg[2]*Vjaf[2]*Vmix[0]*(1-Vmix[1]) + RelInfRg[1]*Vjaf[1]*Vmix[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]*Vmix[1]) ) + ExogInf[s];
-
 
         ///////////////////////////////INFECTION///////////////////////////////////////
         ///////////////////////for all age groups, risk groups/////////////////////////
@@ -1592,7 +1600,7 @@ Rcpp::List cSim(
                     Outputs[y][32+ag] += V1[ag][tb][lt][im][nm][rg][0]; // N_ by age and US (11)
                     Outputs[y][43+ag] += V1[ag][tb][lt][im][nm][rg][1]+V1[ag][tb][lt][im][nm][rg][2];   // N_ by age and FB (11)
                   } } } } } }
-        /////////////////    LATENT COUNTS BY NATIVITY, AGE, & LTBI    //////////////////////
+ /////////////////    LATENT COUNTS BY NATIVITY, AGE, & LTBI    //////////////////////
         for(int ag=0; ag<11; ag++) {
           for(int lt=0; lt<2; lt++) {
             for(int im=0; im<4; im++) {

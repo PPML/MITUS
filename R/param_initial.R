@@ -225,6 +225,17 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   ######################       TB TRANSMISSION           #######################
 
   CR           <- PV["CR"]/12
+  RRcrAG       <- c(0.517233655,
+                    0.77454377,
+                    1,
+                    0.765666833,
+                    0.783155643,
+                    0.754892753,
+                    0.581666584,
+                    0.321227236,
+                    0.244200692,
+                    0.244200692,
+                    0.244200692)
   RelInfRg     <- c(1.0,PV["RelCrHr"],1.0,PV["RelCrHr"])*CR
   TunTbTransTx <- 0#PV["TunTbTransTx"]  # set to zero?
   Vmix         <- 1-c(PV["sigmaHr"],PV["sigmaFb"])
@@ -613,6 +624,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   InputParams[["mubt"]]      = mubt
   InputParams[["RelInf"]]    = RelInf
   InputParams[["RelInfRg"]]  = RelInfRg
+  InputParams[["RRcrAG"]]    = RRcrAG
   InputParams[["Vmix"]]      = Vmix
   InputParams[["rEmmigFB"]]  = rEmmigFB
   InputParams[["TxVec"]]     = TxVec
