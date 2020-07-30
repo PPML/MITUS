@@ -170,8 +170,8 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
 
   PrevTrend25_34a  <- SmoCurve(PrevTrend25_340a)
 
-  ImmAct         <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*PV["pImmAct"]
-  ImmFst         <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*(1-PV["pImmAct"])
+  ImmAct         <- outer(PrevTrend25_34a*exp(PV["RRtbprev"]),ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*PV["pImmAct"]
+  ImmFst         <- outer(PrevTrend25_34a*exp(PV["RRtbprev"]),ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*(1-PV["pImmAct"])
 
   ImmNon         <- TotImmAge-ImmAct-ImmFst-ImmLat
   ###################### TRUNCATE THESE VALS
