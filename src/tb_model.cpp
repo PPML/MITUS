@@ -525,13 +525,13 @@ Rcpp::List cSim(
           for(int im=0; im<4; im++) {
             for(int nm=0; nm<4; nm++) {
               /////////  LOW RISK US BORN
-              VGjkl[0][0]  +=  V0[ag][tb][0][im][nm][0][0]                               *RelInf[tb]*RRcrAG[ag];
+              VGjkl[0][0]  +=  V0[ag][tb][0][im][nm][0][0]                               *RelInf[tb];
               ///////// HIGH RISK US BORN
-              VGjkl[1][0]  +=  V0[ag][tb][0][im][nm][1][0]                               *RelInf[tb]*RRcrAG[ag];
+              VGjkl[1][0]  +=  V0[ag][tb][0][im][nm][1][0]                               *RelInf[tb];
               ///////// LOW RISK NON US BORN
-              VGjkl[0][1]  += (V0[ag][tb][0][im][nm][0][1] + V0[ag][tb][0][im][nm][0][2])*RelInf[tb]*RRcrAG[ag];
+              VGjkl[0][1]  += (V0[ag][tb][0][im][nm][0][1] + V0[ag][tb][0][im][nm][0][2])*RelInf[tb];
               /////////  HIGH RISK NON US BORN
-              VGjkl[1][1]  += (V0[ag][tb][0][im][nm][1][1] + V0[ag][tb][0][im][nm][1][2])*RelInf[tb]*RRcrAG[ag];
+              VGjkl[1][1]  += (V0[ag][tb][0][im][nm][1][1] + V0[ag][tb][0][im][nm][1][2])*RelInf[tb];
             } } } }
 
       // for (int i=0; i<2; i++){
@@ -1155,13 +1155,13 @@ Rcpp::List cSim(
             for(int im=0; im<4; im++) {
               for(int nm=0; nm<4; nm++) {
                 /////////  LOW RISK US BORN
-                VGjkl[0][0]  +=  V0[ag][tb][lt][im][nm][0][0]                               *RelInf[tb]*RRcrAG[ag];
+                VGjkl[0][0]  +=  V0[ag][tb][lt][im][nm][0][0]                               *RelInf[tb];
                 ///////// HIGH RISK US BORN
-                VGjkl[1][0]  +=  V0[ag][tb][lt][im][nm][1][0]                               *RelInf[tb]*RRcrAG[ag];
+                VGjkl[1][0]  +=  V0[ag][tb][lt][im][nm][1][0]                               *RelInf[tb];
                 ///////// LOW RISK NON US BORN
-                VGjkl[0][1]  += (V0[ag][tb][lt][im][nm][0][1] + V0[ag][tb][lt][im][nm][0][2])*RelInf[tb]*RRcrAG[ag];
+                VGjkl[0][1]  += (V0[ag][tb][lt][im][nm][0][1] + V0[ag][tb][lt][im][nm][0][2])*RelInf[tb];
                 /////////  HIGH RISK NON US BORN
-                VGjkl[1][1]  += (V0[ag][tb][lt][im][nm][1][1] + V0[ag][tb][lt][im][nm][1][2])*RelInf[tb]*RRcrAG[ag];
+                VGjkl[1][1]  += (V0[ag][tb][lt][im][nm][1][1] + V0[ag][tb][lt][im][nm][1][2])*RelInf[tb];
               } } } } }
 
         // for (int i=0; i<2; i++){
