@@ -152,20 +152,20 @@ Rcpp::List cSim(
   double        pop_scrn;
   double        rr_ltbi;
   double        Outputs[nYrs][nRes];
-  double  	V0[11][6][2][4][4][2][3];
-  double  	V1[11][6][2][4][4][2][3];
-  double  	VMort[11][6][2][4][4][2][3];
+  double  	    V0[11][6][2][4][4][2][3];
+  double  	    V1[11][6][2][4][4][2][3];
+  double  	    VMort[11][6][2][4][4][2][3];
   double        Vdx[11][6][2][4][4][2][3];
   double        VLdx[11][6][2][4][4][2][3];
-  double        VNkl[2][2];  ///HIGH AND LOW RISK, NATIVITY
-  double        VGjkl[2][2]; ///HIGH AND LOW RISK, NATIVITY
-  double        Vjaf[4][11];     ///BY NUMBER OF MIXING GROUPS
-  double        VLjkl[2][2][11];  ///HIGH AND LOW RISK, NATIVITY
+  double        VNkl[2][2][11];  ///HIGH AND LOW RISK, NATIVITY, AGE
+  double        VGjkl[2][2][11]; ///HIGH AND LOW RISK, NATIVITY,AGE
+  double        Vjaf[4][11];     ///BY NUMBER OF MIXING GROUPS, AGE
+  double        VLjkl[2][2][11];  ///HIGH AND LOW RISK, NATIVITY,AGE
   int           N;
   double        dist_genN[dist_gen.nrow()][dist_gen.ncol()];
   double        temp_vec[4];
   double        temp_mat[4][4];
-  double   	temp_mat2[4][4];
+  double   	    temp_mat2[4][4];
   double   	ttt_dist[4][4];
   double 	trans_mat_tot_agesN[trans_mat_tot_ages.nrow()][trans_mat_tot_ages.ncol()];
   double        mat_sum;
@@ -267,14 +267,17 @@ Rcpp::List cSim(
 
   for(int i=0; i<2; i++) {
     for(int j=0; j<2; j++) {
-      VNkl[i][j] = 0;
-    } }
-  for(int i=0; i<2; i++) {
-    for(int j=0; j<2; j++) {
-      VGjkl[i][j] = 0;
-      for (int k=0; k<11; k++){
-      VLjkl[i][j][k] = 0;
-    } } }
+      for(int k=0; k<11; k++) {
+      VNkl[i][j][k] = 0;
+        VGjkl[i][j][k] = 0;
+        VLjkl[i][j][k] = 0;
+} } }
+  // for(int i=0; i<2; i++) {
+  //   for(int j=0; j<2; j++) {
+  //     VGjkl[i][j] = 0;
+  //     for (int k=0; k<11; k++){
+  //     VLjkl[i][j][k] = 0;
+  //   } } }
   ///effective contact rates
   for(int i=0; i<4; i++) {
     mort_dist[i]=0;
@@ -491,9 +494,10 @@ Rcpp::List cSim(
       ////////////////////////////  TRANSMISSION RISK  ////////////////////////////////
       for(int i=0; i<2; i++) {
         for(int j=0; j<2; j++) {
-          VNkl [i][j] = 0;
-          VGjkl[i][j] = 0;   // set to zero
-        } }
+          for(int k=0; k<11; k++) {
+          VNkl [i][j][k]= 0;
+          VGjkl[i][j][k] = 0;   // set to zero
+          } } }
       // Step 1
       // take total population of mixing groups
       for(int ag=0; ag<11; ag++) {
@@ -501,16 +505,16 @@ Rcpp::List cSim(
           for(int im=0; im<4; im++) {
             for(int nm=0; nm<4; nm++) {
               // LOW RISK US BORN
-              VNkl[0][0]  += V0[ag][tb][0][im][nm][0][0];
+              VNkl[0][0][ag]  += V0[ag][tb][0][im][nm][0][0];
               ///////// HIGH RISK US BORN
               ///////// ranges under 1 every time step
-              VNkl[1][0]  += V0[ag][tb][0][im][nm][1][0];
+              VNkl[1][0][ag]  += V0[ag][tb][0][im][nm][1][0];
               ///////// LOW RISK NON US BORN
               ///////// ranges from .5 -10 people between time steps
-              VNkl[0][1]  += V0[ag][tb][0][im][nm][0][1] + V0[ag][tb][0][im][nm][0][2];
+              VNkl[0][1][ag]  += V0[ag][tb][0][im][nm][0][1] + V0[ag][tb][0][im][nm][0][2];
               ///////// also ranges from .5 -10 people between time steps
               ///////// HIGH RISK NON US BORN
-              VNkl[1][1]  += V0[ag][tb][0][im][nm][1][1] + V0[ag][tb][0][im][nm][1][2];
+              VNkl[1][1][ag]  += V0[ag][tb][0][im][nm][1][1] + V0[ag][tb][0][im][nm][1][2];
             } } } }
 
       // for (int i=0; i<2; i++){
@@ -525,13 +529,13 @@ Rcpp::List cSim(
           for(int im=0; im<4; im++) {
             for(int nm=0; nm<4; nm++) {
               /////////  LOW RISK US BORN
-              VGjkl[0][0]  +=  V0[ag][tb][0][im][nm][0][0]                               *RelInf[tb];
+              VGjkl[0][0][ag]  +=  V0[ag][tb][0][im][nm][0][0]                               *RelInf[tb];
               ///////// HIGH RISK US BORN
-              VGjkl[1][0]  +=  V0[ag][tb][0][im][nm][1][0]                               *RelInf[tb];
+              VGjkl[1][0][ag]  +=  V0[ag][tb][0][im][nm][1][0]                               *RelInf[tb];
               ///////// LOW RISK NON US BORN
-              VGjkl[0][1]  += (V0[ag][tb][0][im][nm][0][1] + V0[ag][tb][0][im][nm][0][2])*RelInf[tb];
+              VGjkl[0][1][ag]  += (V0[ag][tb][0][im][nm][0][1] + V0[ag][tb][0][im][nm][0][2])*RelInf[tb];
               /////////  HIGH RISK NON US BORN
-              VGjkl[1][1]  += (V0[ag][tb][0][im][nm][1][1] + V0[ag][tb][0][im][nm][1][2])*RelInf[tb];
+              VGjkl[1][1][ag]  += (V0[ag][tb][0][im][nm][1][1] + V0[ag][tb][0][im][nm][1][2])*RelInf[tb];
             } } } }
 
       // for (int i=0; i<2; i++){
@@ -544,23 +548,23 @@ Rcpp::List cSim(
 
       // Step 3 (Infected/Total)
   for(int ag=0; ag<11; ag++) {
-      Vjaf[0][ag]  =( RelInfRg[0]*RRcrAG[ag]*VGjkl[0][0] +        //low risk usb
-        RelInfRg[1]*RRcrAG[ag]*VGjkl[1][0]*Vmix[0]+           //high risk usb
-        RelInfRg[2]*RRcrAG[ag]*VGjkl[0][1]*Vmix[1]+           //low risk nusb
-        RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1]*Vmix[1]*Vmix[0])   //high risk nusb
+      Vjaf[0][ag]  =( RelInfRg[0]*RRcrAG[ag]*VGjkl[0][0][ag] +        //low risk usb
+        RelInfRg[1]*RRcrAG[ag]*VGjkl[1][0][ag]*Vmix[0]+           //high risk usb
+        RelInfRg[2]*RRcrAG[ag]*VGjkl[0][1][ag]*Vmix[1]+           //low risk nusb
+        RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1][ag]*Vmix[1]*Vmix[0])   //high risk nusb
         /
-           (RelInfRg[0]*RRcrAG[ag]*VNkl[0][0] +
-            RelInfRg[1]*RRcrAG[ag]*VNkl[1][0]*Vmix[0]+
-            RelInfRg[2]*RRcrAG[ag]*VNkl[0][1]*Vmix[1]+
-            RelInfRg[3]*RRcrAG[ag]*VNkl[1][1]*Vmix[1]*Vmix[0] + 1e-12);
+           (RelInfRg[0]*RRcrAG[ag]*VNkl[0][0][ag] +
+            RelInfRg[1]*RRcrAG[ag]*VNkl[1][0][ag]*Vmix[0]+
+            RelInfRg[2]*RRcrAG[ag]*VNkl[0][1][ag]*Vmix[1]+
+            RelInfRg[3]*RRcrAG[ag]*VNkl[1][1][ag]*Vmix[1]*Vmix[0] + 1e-12);
 
-      Vjaf[1][ag] = ((RelInfRg[1]*RRcrAG[ag]*VGjkl[0][1]) + ( RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1]*Vmix[0])) /
-        ((RelInfRg[1]*RRcrAG[ag]*VNkl[0][1])  +  (RelInfRg[3]*RRcrAG[ag]*VNkl[1][1]*Vmix[0]) + 1e-12);
+      Vjaf[1][ag] = ((RelInfRg[1]*RRcrAG[ag]*VGjkl[0][1][ag]) + ( RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1][ag]*Vmix[0])) /
+        ((RelInfRg[1]*RRcrAG[ag]*VNkl[0][1][ag])  +  (RelInfRg[3]*RRcrAG[ag]*VNkl[1][1][ag]*Vmix[0]) + 1e-12);
 
-      Vjaf[2][ag] = ((RelInfRg[2]*RRcrAG[ag]*VGjkl[1][0]) +  (RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1]*Vmix[1])) /
-        ((RelInfRg[2]*RRcrAG[ag]*VNkl[1][1] ) +  (RelInfRg[3]*RRcrAG[ag]*VNkl[1][1]*Vmix[1]) + 1e-12);
+      Vjaf[2][ag] = ((RelInfRg[2]*RRcrAG[ag]*VGjkl[1][0][ag]) +  (RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1][ag]*Vmix[1])) /
+        ((RelInfRg[2]*RRcrAG[ag]*VNkl[1][1][ag] ) +  (RelInfRg[3]*RRcrAG[ag]*VNkl[1][1][ag]*Vmix[1]) + 1e-12);
 
-      Vjaf[3][ag] = VGjkl[1][1] / (VNkl[1][1] + 1e-12);
+      Vjaf[3][ag] = VGjkl[1][1][ag] / (VNkl[1][1][ag] + 1e-12);
 
   }
 
@@ -1119,9 +1123,10 @@ Rcpp::List cSim(
 
         for(int i=0; i<2; i++) {
           for(int j=0; j<2; j++) {
-            VNkl [i][j] = 0;
-            VGjkl[i][j] = 0;   // set to zero
-          } }
+            for(int k=0; k<11; k++) {
+            VNkl [i][j][k] = 0;
+            VGjkl[i][j][k] = 0;   // set to zero
+            } } }
         // Step 1
         // take total population of mixing groups
         for(int ag=0; ag<11; ag++) {
@@ -1130,16 +1135,16 @@ Rcpp::List cSim(
             for(int im=0; im<4; im++) {
               for(int nm=0; nm<4; nm++) {
                 // LOW RISK US BORN
-                VNkl[0][0]  += V0[ag][tb][lt][im][nm][0][0];
+                VNkl[0][0][ag]  += V0[ag][tb][lt][im][nm][0][0];
                 ///////// HIGH RISK US BORN
                 ///////// ranges under 1 every time step
-                VNkl[1][0]  += V0[ag][tb][lt][im][nm][1][0];
+                VNkl[1][0][ag]  += V0[ag][tb][lt][im][nm][1][0];
                 ///////// LOW RISK NON US BORN
                 ///////// ranges from .5 -10 people between time steps
-                VNkl[0][1]  += V0[ag][tb][lt][im][nm][0][1] + V0[ag][tb][lt][im][nm][0][2];
+                VNkl[0][1][ag]  += V0[ag][tb][lt][im][nm][0][1] + V0[ag][tb][lt][im][nm][0][2];
                 ///////// also ranges from .5 -10 people between time steps
                 ///////// HIGH RISK NON US BORN
-                VNkl[1][1]  += V0[ag][tb][lt][im][nm][1][1] + V0[ag][tb][lt][im][nm][1][2];
+                VNkl[1][1][ag]  += V0[ag][tb][lt][im][nm][1][1] + V0[ag][tb][lt][im][nm][1][2];
               } } } } }
 
         // for (int i=0; i<2; i++){
@@ -1155,13 +1160,13 @@ Rcpp::List cSim(
             for(int im=0; im<4; im++) {
               for(int nm=0; nm<4; nm++) {
                 /////////  LOW RISK US BORN
-                VGjkl[0][0]  +=  V0[ag][tb][lt][im][nm][0][0]                               *RelInf[tb];
+                VGjkl[0][0][ag]  +=  V0[ag][tb][lt][im][nm][0][0]                                *RelInf[tb];
                 ///////// HIGH RISK US BORN
-                VGjkl[1][0]  +=  V0[ag][tb][lt][im][nm][1][0]                               *RelInf[tb];
+                VGjkl[1][0][ag]  +=  V0[ag][tb][lt][im][nm][1][0]                                *RelInf[tb];
                 ///////// LOW RISK NON US BORN
-                VGjkl[0][1]  += (V0[ag][tb][lt][im][nm][0][1] + V0[ag][tb][lt][im][nm][0][2])*RelInf[tb];
+                VGjkl[0][1][ag]  += (V0[ag][tb][lt][im][nm][0][1] + V0[ag][tb][lt][im][nm][0][2])*RelInf[tb];
                 /////////  HIGH RISK NON US BORN
-                VGjkl[1][1]  += (V0[ag][tb][lt][im][nm][1][1] + V0[ag][tb][lt][im][nm][1][2])*RelInf[tb];
+                VGjkl[1][1][ag]  += (V0[ag][tb][lt][im][nm][1][1] + V0[ag][tb][lt][im][nm][1][2])*RelInf[tb];
               } } } } }
 
         // for (int i=0; i<2; i++){
@@ -1174,23 +1179,23 @@ Rcpp::List cSim(
 
         // Step 3 (Infected/Total)
         for(int ag=0; ag<11; ag++) {
-          Vjaf[0][ag]  =( RelInfRg[0]*RRcrAG[ag]*VGjkl[0][0] +        //low risk usb
-            RelInfRg[1]*RRcrAG[ag]*VGjkl[1][0]*Vmix[0]+           //high risk usb
-            RelInfRg[2]*RRcrAG[ag]*VGjkl[0][1]*Vmix[1]+           //low risk nusb
-            RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1]*Vmix[1]*Vmix[0])   //high risk nusb
+          Vjaf[0][ag]  =(RelInfRg[0]*RRcrAG[ag]*VGjkl[0][0][ag] +        //low risk usb
+            RelInfRg[1]*RRcrAG[ag]*VGjkl[1][0][ag]*Vmix[0]+           //high risk usb
+            RelInfRg[2]*RRcrAG[ag]*VGjkl[0][1][ag]*Vmix[1]+           //low risk nusb
+            RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1][ag]*Vmix[1]*Vmix[0])   //high risk nusb
           /
-            (RelInfRg[0]*RRcrAG[ag]*VNkl[0][0] +
-            RelInfRg[1]*RRcrAG[ag]*VNkl[1][0]*Vmix[0]+
-            RelInfRg[2]*RRcrAG[ag]*VNkl[0][1]*Vmix[1]+
-            RelInfRg[3]*RRcrAG[ag]*VNkl[1][1]*Vmix[1]*Vmix[0] + 1e-12);
+            (RelInfRg[0]*RRcrAG[ag]*VNkl[0][0][ag] +
+            RelInfRg[1]*RRcrAG[ag]*VNkl[1][0][ag]*Vmix[0]+
+            RelInfRg[2]*RRcrAG[ag]*VNkl[0][1][ag]*Vmix[1]+
+            RelInfRg[3]*RRcrAG[ag]*VNkl[1][1][ag]*Vmix[1]*Vmix[0] + 1e-12);
 
-          Vjaf[1][ag] = ((RelInfRg[1]*RRcrAG[ag]*VGjkl[0][1]) + ( RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1]*Vmix[0])) /
-            ((RelInfRg[1]*RRcrAG[ag]*VNkl[0][1])  +  (RelInfRg[3]*RRcrAG[ag]*VNkl[1][1]*Vmix[0]) + 1e-12);
+          Vjaf[1][ag] = ((RelInfRg[1]*RRcrAG[ag]*VGjkl[0][1][ag]) + ( RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1][ag]*Vmix[0])) /
+            ((RelInfRg[1]*RRcrAG[ag]*VNkl[0][1][ag])  +  (RelInfRg[3]*RRcrAG[ag]*VNkl[1][1][ag]*Vmix[0]) + 1e-12);
 
-          Vjaf[2][ag] = ((RelInfRg[2]*RRcrAG[ag]*VGjkl[1][0]) +  (RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1]*Vmix[1])) /
-            ((RelInfRg[2]*RRcrAG[ag]*VNkl[1][1] ) +  (RelInfRg[3]*RRcrAG[ag]*VNkl[1][1]*Vmix[1]) + 1e-12);
+          Vjaf[2][ag] = ((RelInfRg[2]*RRcrAG[ag]*VGjkl[1][0][ag]) +  (RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1][ag]*Vmix[1])) /
+            ((RelInfRg[2]*RRcrAG[ag]*VNkl[1][1][ag] ) +  (RelInfRg[3]*RRcrAG[ag]*VNkl[1][1][ag]*Vmix[1]) + 1e-12);
 
-          Vjaf[3][ag] = VGjkl[1][1] / (VNkl[1][1] + 1e-12);
+          Vjaf[3][ag] = VGjkl[1][1][ag] / (VNkl[1][1][ag] + 1e-12);
 
         }
 
