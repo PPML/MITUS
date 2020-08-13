@@ -44,8 +44,8 @@ notif_us_lik <- function(V) {
 #'@return likelihood
 recent_trans_dist_lLik  <- function(V) {
   rct_trans_dist        <- CalibDat[["recent_trans_cases"]][1:2,1]/CalibDat[["recent_trans_cases"]][1:2,3]
-  adj_13          <- sum(dbeta(rct_trans_dist,rct_trans_dist*100,(1-rct_trans_dist)*100,log=T) )
-  (sum(dbeta(rct_trans_dist,V[,1]*100,V[,2]*100,log=T) ) - adj_13)
+  adj_13          <- sum(dbeta(rct_trans_dist,rct_trans_dist*2500,(1-rct_trans_dist)*2500,log=T) )
+  (sum(dbeta(rct_trans_dist,V[,1]*2500,V[,2]*2500,log=T) ) - adj_13)
   }
 
 #' CASES FB DISTRIBUTION 1993-2014
@@ -63,10 +63,10 @@ notif_fb_lLik <- function(V,rho=0.01) {
 #'@param V table of us notifications by age 1993-2013 (row=21 years, col=11 ages)
 #'@param rho correlation parameter
 #'@return likelihood
-notif_age_us_lLik <- function(V,rho=0.005) {
+notif_age_us_lLik <- function(V,rho=0.001) {
   notif_age_us      <- CalibDat[["age_cases_us"]][,-c(1,12)]*CalibDat[["age_cases_us"]][,12]
   #weighted sum across the years
-  adj_2a            <- sum(dDirMult(M=notif_age_us,n=notif_age_us,Rho=0.005)*wts[44:69])
+  adj_2a            <- sum(dDirMult(M=notif_age_us,n=notif_age_us,Rho=0.001)*wts[44:69])
   sum(dDirMult(M=V,n=notif_age_us,Rho=rho)*wts[44:69]) - adj_2a
 }
 
@@ -75,9 +75,9 @@ notif_age_us_lLik <- function(V,rho=0.005) {
 #'@param V table of fb notifications by age 1993-2013 (row=21 years, col=11 ages)
 #'@param rho correlation parameter
 #'@return likelihood
-notif_age_fb_lLik <- function(V,rho=0.005) {
+notif_age_fb_lLik <- function(V,rho=0.001) {
   notif_age_fb     <- CalibDat[["age_cases_fb"]][,-c(1,12)]*CalibDat[["age_cases_fb"]][,12]
-  adj_2b           <- sum(dDirMult(M=notif_age_fb,n=notif_age_fb,Rho=0.005)*wts[44:69])
+  adj_2b           <- sum(dDirMult(M=notif_age_fb,n=notif_age_fb,Rho=0.001)*wts[44:69])
   sum(dDirMult(M=V,n=notif_age_fb,Rho=rho)*wts[44:69]) - adj_2b
 }
 
