@@ -354,7 +354,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
 
   ### ADJUST THIS FOR THE FOREIGN BORN
   ######################        SCREENING RATES          ######################
-  rLtScrt       <- LgtCurve(1985,2015,PV["rLtScr"])/12
+  rLtScrt       <- LgtCurve(1985,2015,(PV["rLtScr"]/1000))/12
   ######################  SCREENING RATE PROGRAM CHANGE ########################
   if (prg_chng["scrn_cov"] !=1) {
     rLtScrt[prg_m:length(rLtScrt)]<-rLtScrt[prg_m:length(rLtScrt)]*prg_chng["scrn_cov"];
