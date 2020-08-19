@@ -44,8 +44,8 @@ notif_us_lik <- function(V) {
 #'@return likelihood
 recent_trans_dist_lLik  <- function(V) {
   rct_trans_dist        <- CalibDat[["recent_trans_cases"]][1:2,1]/CalibDat[["recent_trans_cases"]][1:2,3]
-  adj_13          <- sum(dbeta(rct_trans_dist,rct_trans_dist*2500,(1-rct_trans_dist)*2500,log=T) )
-  (sum(dbeta(rct_trans_dist,V[,1]*2500,V[,2]*2500,log=T) ) - adj_13)
+  adj_13          <- sum(dbeta(rct_trans_dist,rct_trans_dist*1000,(1-rct_trans_dist)*1000,log=T) )
+  (sum(dbeta(rct_trans_dist,V[,1]*1000,V[,2]*1000,log=T) ) - adj_13)
   }
 
 #' CASES FB DISTRIBUTION 1993-2014
