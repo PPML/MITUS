@@ -15,5 +15,8 @@ mort_dist_lLik_st(V, rho = 0.01)
 tot_lik likelihood
 }
 \description{
-Mortality Risk Group Distribution 1999-2014
+
+}
+\details{
+
 }

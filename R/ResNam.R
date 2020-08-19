@@ -231,7 +231,9 @@ func_ResNam<-function(){
               paste("65+","NUS","NM3",StatList[[4]],sep="_"),
               paste("65+","NUS","NM4",StatList[[4]],sep="_"),
 
-              paste("N_LtTxNaive")
+              paste("N_LtTxNaive"),
+
+              paste("N_LtTests")
 
 
   )
