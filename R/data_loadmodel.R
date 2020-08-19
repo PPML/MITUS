@@ -17,7 +17,7 @@ if (loc=="US"){
   CalibDat<<-readRDS(system.file("US/US_CalibDat_07-27-20.rds", package="MITUS"))
   ParamInit<<-as.data.frame(readRDS(system.file("US/US_ParamInit_2020-08-14.rds", package="MITUS")))
   StartVal<<-readRDS(system.file("US/US_StartVal_2020-08-14.rds", package="MITUS"))
-  Inputs<<-readRDS(system.file("US/US_Inputs_08-12-20.rds", package="MITUS"))
+  Inputs<<-readRDS(system.file("US/US_Inputs_08-19-20.rds", package="MITUS"))
 
   # Inputs<<-readRDS(system.file("US/US_Inputs_06-26-19.rds", package="MITUS"))
   # TabOpt<<-readRDS(system.file("US/US_Optim_all_9_0609.rds", package="MITUS"))
