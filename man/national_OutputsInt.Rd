@@ -4,9 +4,22 @@
 \alias{national_OutputsInt}
 \title{wrapper function for the above function}
 \usage{
-national_OutputsInt(loc, ParMatrix, n_cores = 1, endyr = 2050, Int1 = 0,
-  Int2 = 0, Int3 = 0, Int4 = 0, Int5 = 0, Scen1 = 0, Scen2 = 0,
-  Scen3 = 0, prg_chng, ttt_list)
+national_OutputsInt(
+  loc,
+  ParMatrix,
+  n_cores = 1,
+  endyr = 2050,
+  Int1 = 0,
+  Int2 = 0,
+  Int3 = 0,
+  Int4 = 0,
+  Int5 = 0,
+  Scen1 = 0,
+  Scen2 = 0,
+  Scen3 = 0,
+  prg_chng,
+  ttt_list
+)
 }
 \arguments{
 \item{loc}{two-digit abbreviation for location}

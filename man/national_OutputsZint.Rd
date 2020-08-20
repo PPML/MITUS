@@ -5,9 +5,23 @@
 \title{THIS FUNCTION INPUTS A TABLE OF PARAMETERS AND RUNS THE TB MODEL
 AND GENERATES AN ARRAY OF OUTPUTS}
 \usage{
-national_OutputsZint(samp_i = 1, ParMatrix, loc, startyr = 1950,
-  endyr = 2050, Int1 = 0, Int2 = 0, Int3 = 0, Int4 = 0, Int5 = 0,
-  Scen1 = 0, Scen2 = 0, Scen3 = 0, prg_chng, ttt_input)
+national_OutputsZint(
+  samp_i = 1,
+  ParMatrix,
+  loc,
+  startyr = 1950,
+  endyr = 2050,
+  Int1 = 0,
+  Int2 = 0,
+  Int3 = 0,
+  Int4 = 0,
+  Int5 = 0,
+  Scen1 = 0,
+  Scen2 = 0,
+  Scen3 = 0,
+  prg_chng,
+  ttt_input
+)
 }
 \arguments{
 \item{samp_i}{which row of the parameter matrix to use}

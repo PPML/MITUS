@@ -4,7 +4,7 @@
 \alias{calib}
 \title{if any output is missing or negative or if any model state population is negative}
 \usage{
-calib(samp_i, optim_mat, loc)
+calib(samp_i, optim_mat, loc, pdf = TRUE, cex.size = 1)
 }
 \description{
 if any output is missing or negative or if any model state population is negative
