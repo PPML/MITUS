@@ -1,4 +1,4 @@
-calib<-function(samp_i,optim_mat, loc){
+calib<-function(samp_i,optim_mat, loc, pdf=TRUE, cex.size=1){
   if(min(dim(as.data.frame(optim_mat)))==1) {
   Par <- as.numeric(optim_mat);
   names(Par) <- names(optim_mat)
@@ -15,25 +15,24 @@ Par3[idZ1] <- qgamma(Par2[idZ1], shape   = ParamInitZ[idZ1,6], rate   = ParamIni
 Par3[idZ2] <- qnorm( Par2[idZ2], mean    = ParamInitZ[idZ2,6], sd     = ParamInitZ[idZ2,7])
 P[ii] <- Par3
 P <- P
-# P["TunMubt"]<-1;
 # P["TunmuAg"]<-P["adj_ag1"]<-P["adj_ag11"]<-0
 # P[["pfast"]]<-.08
 # P[["rslowH"]]<-oldpar["rslowH"]*2
 # P[["rslow"]]<-oldpar["rslow"]*2
 
 # P["TunrslowAge"]<-oldpar["TunrslowAge"]
-# # p[[""]]
+# P[["rSlfCur"]]<-1
 # P[["ImmigVol"]]<-1;
-# P["RRtbprev"]<-1;
+# P["RRtbprev"]<-2;
 # P["TunLtbiTrend"]<-P["TunLtbiTrend"]*4
 # P[["TunNetMig"]]<-1
 # P[["TunMubt"]]<-.1
 # P[["pImAct"]]<-.1
 # P[["LtbiPar1"]]<-1
 # P[["LtbiPar2"]]<-1
-# P[["sigmaFb"]]<-.25
-# P[["sigmaHr"]]<-0
- # P[["RelCrHr"]]<-1
+# P[["sigmaFb"]]<-.5 #.9#P[["sigmaFb"]]*10
+# P[["sigmaHr"]]<-.5# .9#P[["sigmaHr"]]/10
+#  P[["RelCrHr"]]<-  P[["RelCrHr"]]/2
 
 
 prms <-list()
@@ -50,11 +49,11 @@ colnames(trans_mat_tot_ages) <-  rep(paste0(rep(paste0("p",0:3),each=4),"_",rep(
 if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
 zz <- cSim( nYrs       = 2020-1950         , nRes      = length(func_ResNam())  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
             Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]  ,
-            rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR_US       = prms[["p_HR_US"]] , p_HR_NUS       = prms[["p_HR_NUS"]]      , dist_gen = prms[["dist_gen"]]    ,
+            rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]] ,  dist_gen = prms[["dist_gen"]]    ,
             vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    ,
             HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat"]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst"]]    ,
             net_mig_usb = prms[["net_mig_usb"]], net_mig_nusb = prms[["net_mig_nusb"]],
-            mubt       = prms[["mubt"]]    , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
+            mubt       = prms[["mubt"]]    , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], RRcrAG = prms[["RRcrAG"]], Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
             TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
             LtDxPar_lt    = prms[["LtDxPar_lt"]]   , LtDxPar_nolt    = prms[["LtDxPar_nolt"]]   , rLtScrt   = prms[["rLtScrt"]]       , ttt_samp_dist   = prms[["ttt_sampling_dist"]] ,
             ttt_ag = prms[["ttt_ag"]], ttt_na = prms[["ttt_na"]], ttt_month = prms[["ttt_month"]], ttt_ltbi = prms[["ttt_ltbi"]], ttt_pop_scrn = prms[["ttt_pop_scrn"]], RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
@@ -73,7 +72,7 @@ zz <- cSim( nYrs       = 2020-1950         , nRes      = length(func_ResNam())  
     # print(pub_list)
     if (loc=="US"){
     calib_graphs(M, pub_list)
-    } else calib_graphs_st(M,loc, pub_list)
+    } else calib_graphs_st(M,loc, pub_list, pdf=pdf, cex.size = cex.size)
     return(M)
 }
 
