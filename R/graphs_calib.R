@@ -409,16 +409,34 @@ calib_graphs <- function(df, Par_list){
   #Age Distribution of TB Cases in Percentages
   #0-24 yrs, 25-44 yrs, 45-64 yrs, 65+ yrs
 
-  V   <- (df[59:69,136:146]+df[59:69,189:199])
-  V2  <- V[,-11]
-  V2[,10] <- V2[,10]+V[,11]
-  V3<-colSums(V2)
-  V4<-rep(NA,10)
-  for (i in 1:length(V3)){
-    V4[i]<-(V3[i]/sum(V3))*100
+  # V   <- (df[59:69,136:146]+df[59:69,189:199])
+  # V2  <- V[,-11]
+  # V2[,10] <- V2[,10]+V[,11]
+  # V3<-colSums(V2)
+  # V4<-rep(NA,10)
+  # for (i in 1:length(V3)){
+  #   V4[i]<-(V3[i]/sum(V3))*100
+  # }
+
+  Va   <- df[59:69,205:215]+df[59:69,216:226]
+  Vb   <-(df[59:69,136:146]+df[59:69,189:199]) - (df[59:69,205:215]+df[59:69,216:226])
+  Va2  <- Va[,-11]
+  Vb2  <- Vb[,-11]
+
+  Va2[,10] <- Va2[,10]+Va[,11]
+  Vb2[,10] <- Vb2[,10]+Vb[,11]
+
+  Va3<-colSums(Va2)
+  Vb3<-colSums(Vb2)
+
+  V4nusb<-V4usb<-rep(NA,10)
+
+  for (i in 1:length(Va3)){
+    V4usb[i]<-(Va3[i]/sum(Va3))*100
+    V4nusb[i]<-(Vb3[i]/sum(Vb3))*100
   }
   #format the plot
-  plot(0,0,ylim=c(0,max(range(V4))+5),xlim=c(0.6,10.4),xlab="",ylab="",axes=F,col=NA)
+  plot(0,0,ylim=c(0,max(range(V4usb,V4nusb))+5),xlim=c(0.6,10.4),xlab="",ylab="",axes=F,col=NA)
   axis(1,1:10,paste(c("0-4",paste(0:7*10+5,1:8*10+4,sep="-"),"85+"),"\nyears",sep=""),
        tick=F,cex.axis=0.6)
   axis(1,1:11-0.5,rep("",11))
@@ -426,12 +444,27 @@ calib_graphs <- function(df, Par_list){
   abline(h=axTicks(2),col="grey85")
 
   #plot the model data
-  for(i in 1:10) polygon(i+c(-.5,.5,.5,-.5),c(0,0,V4[i],V4[i]),border="white",col="lightblue")
+  for(i in 1:10) polygon(i+c(-.5,0,0,-.5),c(0,0,V4usb[i],V4usb[i]),border="white",col="lightblue")
+  for(i in 1:10) polygon(i+c(0,.5,.5,0),c(0,0,V4nusb[i],V4nusb[i]),border="white",col="pink")
+
+  # for(i in 1:10) polygon(i+c(-.5,.5,.5,-.5),c(0,0,V4[i],V4[i]),border="white",col="lightblue")
 
   #reported data for comparison
-  notif_age     <- colSums(CalibDat[["age_cases"]][16:26,-c(1,12)]*CalibDat[["age_cases"]][16:26,12])
-  # x<-notif_age/sum(notif_age)*100
-  points(1:10, notif_age/sum(notif_age)*100,pch=19,cex=1.2)
+  notif_age_us     <- colSums(CalibDat[["age_cases_us"]][16:26,-c(1,12)]*CalibDat[["age_cases"]][16:26,12])
+  notif_age_fb     <- colSums(CalibDat[["age_cases_fb"]][16:26,-c(1,12)]*CalibDat[["age_cases"]][16:26,12])
+  # notif_age        <- notif_age_us + notif_age_fb
+  # # x<-notif_age/sum(notif_age)*100
+  # points(1:10, notif_age/sum(notif_age)*100,pch=19,cex=1.2)
+
+
+
+  #reported data for comparison
+  #usb
+  us_x<-(1:10)-.25
+  points((1:10)-.25,(notif_age_us/sum(notif_age_us))*100,pch=19,cex=1.2, col="darkblue")
+  #nusb
+  nus_x<-(1:10)+.25
+  points((1:10)+.25,(notif_age_fb/sum(notif_age_fb))*100,pch=19,cex=1.2, col="darkred")
 
   #plot text
   mtext("Age Group",1,2.5,cex=1.2)
@@ -463,14 +496,33 @@ calib_graphs <- function(df, Par_list){
 
   ################################################################################
   ### ### ### CASES HR DISTRIBUTION 1993-2013  ### ### ### ### ### ###
-  V   <- (df[44:69,151]+df[44:69,204])/(df[44:69,151]+df[44:69,150]+df[44:69,204]+df[44:69,203])
+  V <-cbind(df[44:69,685]/(df[44:69,685]+df[44:69,684]),
+            df[44:69,687]/(df[44:69,687]+df[44:69,686]))
+  V2<-(df[44:69,685]+df[44:69,687])/(df[44:69,687]+df[44:69,686]+df[44:69,685]+df[44:69,684])
+  hr_dist_us<-CalibDat[["us_homeless_cases"]][,2]*CalibDat[["us_homeless_cases"]][,3]
+  hr_dist_tot<-CalibDat[["homeless_cases"]][,2]*CalibDat[["homeless_cases"]][,3]
+  #US, NUSB
+  # notif_hr<-cbind(hr_dist_us,(hr_dist_tot-hr_dist_us))
+  notif_hr_us<-CalibDat[["us_homeless_cases"]][,2]
+  notif_hr_nus<-(hr_dist_tot-hr_dist_us)/(CalibDat[["homeless_cases"]][,3]-CalibDat[["us_homeless_cases"]][,3])
+  # V   <- (df[44:69,151]+df[44:69,204])/(df[44:69,151]+df[44:69,150]+df[44:69,204]+df[44:69,203])
   notif_us_hr<-CalibDat$homeless_cases
-  plot(0,0,ylim=c(0,max(V,notif_us_hr[,2])*110),xlim=c(1993,2018),xlab="",ylab="",axes=F)
+
+  plot(0,0,ylim=c(0,max(V,CalibDat[["homeless_cases"]][,2])*110),xlim=c(1993,2018),xlab="",ylab="",axes=F)
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
-  points(1993:2018,notif_us_hr[,2]*100,pch=19,cex=0.6)
-  lines(1993:2018,notif_us_hr[,2]*100,lty=3)
-  lines(1993:2018,V*100,lwd=2,col=4)
+  points(1993:2018,CalibDat[["homeless_cases"]][,2]*100,pch=19,cex=0.6, col="black")
+  points(1993:2018,notif_hr_us*100,pch=19,cex=0.6, col="blue")
+  points(1993:2018,notif_hr_nus*100,pch=19,cex=0.6, col="red")
+
+  lines(1993:2018,CalibDat[["homeless_cases"]][,2]*100,lty=3, col="black")
+  lines(1993:2018,notif_hr_us*100,lty=3, col="blue")
+  lines(1993:2018,notif_hr_nus*100,lty=3, col="red")
+
+  lines(1993:2018,V2*100,lwd=2, col="grey")
+  lines(1993:2018,V[,1]*100,lwd=2, col="lightblue")
+  lines(1993:2018,V[,2]*100,lwd=2,col="pink")
+
   mtext("Year",1,2.5,cex=0.9)
   mtext("Percent of TB Cases Homeless in Past Yr",3,.8,font=2,cex=0.8)
   legend("topright",c("Reported data","Fitted model"),pch=c(19,NA),lwd=c(1,2),col=c(1,4),lty=c(3,1),bg="white",pt.cex=0.6)
@@ -488,7 +540,25 @@ calib_graphs <- function(df, Par_list){
   mtext("Fraction of Incident TB from Recent Infection (<2 years)",3,.8,font=2,cex=0.8)
 
   for(i in 1:16) lines(rep(i,2),c(0,Vall[i]),col="forestgreen",lwd=10,lend="butt")
+  rct_trans_dist<-CalibDat$recent_trans_cases[,1]/CalibDat$recent_trans_cases[,3]
+  points(1,rct_trans_dist[3],pch=19,cex=1.5, col="limegreen")
+  points(13,rct_trans_dist[1],pch=19,cex=1.5,col="limegreen")
+  points(14,rct_trans_dist[2],pch=19,cex=1.5,col="limegreen")
+
   text(1:16,Vall,format(round(Vall,2),nsmall=2),cex=0.7,pos=3)
+  text(c(13,14,1),rct_trans_dist,format(round(rct_trans_dist,2),nsmall=2),cex=0.7,col="black")
+
+  legend("topright",c("Reported data","Model"),pch=c(19,15),lwd=NA,
+         pt.cex=c(1,2),col=c("limegreen","forestgreen"),bg="white")
+
+  # ################################################################################
+  # #Recent Infection 4 year time trend by nativity
+  # Vus <- df[66:69,184]/df[66:69,168]
+  # Vnus <- rowSums(df[66:69,185:186])/rowSums(df[66:69,169:170])
+  # plot(0,0,ylim=c(0,max(Vnus,Vus)*110),xlim=c(2015,2018),xlab="",ylab="",axes=F)
+  # axis(1);axis(2,las=2);box()
+  # abline(h=axTicks(2),col="grey85")
+  # points(2016:2018,CalibDat[["homeless_cases"]][,2]*100,pch=19,cex=0.6, col="black")
   ################################################################################
   ### ### ### LTBI INITIATIONS 1993-2011 Distribution ### ### ### ### ### ###
   v13  <- df[43:65,153:154]/df[43:65,152]

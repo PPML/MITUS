@@ -1,4 +1,4 @@
-graphs_pub<-function(Par_list, loc="US"){
+graphs_pub<-function(Par_list, loc="US", cex.size=0.5){
   ##get data from the calibdat
   if (loc=="US"){
   datF         <- CalibDat[["ferebee_data"]]
@@ -39,11 +39,11 @@ lines(1:nrow(datF)-.5,datF[,3]/datF[,2]*1000,lwd=2)
 lines(1:nrow(datS)-.5,datS[,3]/datS[,2]*1000,lwd=2,lty=2)
 lines(1:n_yr_Z-.5,r2*1000,col=4,lwd=2)
 
-mtext("Years since infection",1,2.5,cex=0.9)
-mtext("Reactivation rate per 1000 PY",2,3,cex=0.8)
+mtext("Years since infection",1,2.5,cex=cex.size)
+mtext("Reactivation rate per 1000 PY",2,3,cex=cex.size)
 legend("topright",c("Ferebee 1970","Sutherland 1968","Fitted model"),
-       col=c(1,1,4),lty=c(1,2,1),lwd=2,cex=0.9)
-mtext("Reactivation rate vs. Ferebee, Sutherland estimates",3,0.8,cex=0.8,font=2)
+       col=c(1,1,4),lty=c(1,2,1),lwd=2,cex=cex.size*1.5)
+mtext("Reactivation rate vs. Ferebee, Sutherland estimates",3,0.3,cex=cex.size,font=2)
 
 ###################################### Plot 2
 n_yr_F       <- nrow(datF)
@@ -52,11 +52,11 @@ lines(1:nrow(datF)-.5,datF[,3]/datF[,2]*1000,lwd=2)
 lines(1:nrow(datS)-.5,datS[,3]/datS[,2]*1000,lwd=2,lty=2)
 lines(1:n_yr_Z-.5,r2*1000,col=4,lwd=2)
 
-mtext("Years since infection",1,2.5,cex=0.9)
-mtext("Reactivation rate per 1000 PY (log scale)",2,3,cex=0.8)
+mtext("Years since infection",1,2.5,cex=cex.size)
+mtext("Reactivation rate per 1000 PY (log scale)",2,3,cex=cex.size)
 legend("topright",c("Ferebee 1970","Sutherland 1968","Fitted model"),
-       col=c(1,1,4),lty=c(1,2,1),lwd=2,cex=0.9)
-mtext("Reactivation rate vs Ferebee & Sutherland estimates, log-scale",3,0.8,cex=0.8,font=2)
+       col=c(1,1,4),lty=c(1,2,1),lwd=2,cex=cex.size*1.5)
+mtext("Reactivation rate vs Ferebee & Sutherland estimates, log-scale",3,0.3,cex=cex.size,font=2)
 
 ###################################### Plot 3
 ##updated based on the calculations for the llikelihood function 2/5/19
@@ -80,13 +80,13 @@ p1 <- as.numeric(t(p0)%*%colSums(dist_gen))
 p <- 1-(1-p1)/(1-p1)[nrow(datB)]
 
 plot(datB[,1:2],type="l",lwd=1,lty=3,las=1,xlab="",ylab="")
-points(datB[,1:2],cex=0.8,pch=19)
+points(datB[,1:2],cex=cex.size,pch=19)
 lines(datB[,1],p,col=4,lwd=2)
 
-mtext("Years since infection",1,2.5,cex=0.9)
-mtext("Fraction without active TB",2,3,cex=0.8)
-legend("topright",c("Borgdorff 2011","Fitted model"), col=c(1,4),lwd=3,cex=0.9)
-mtext("Fraction without active TB (of those progressing <15yrs)",3,0.8,cex=0.8,font=2)
+mtext("Years since infection",1,2.5,cex=cex.size)
+mtext("Fraction without active TB",2,3,cex=cex.size)
+legend("topright",c("Borgdorff 2011","Fitted model"), col=c(1,4),lwd=3,cex=cex.size*1.5)
+mtext("Fraction without active TB (of those progressing <15yrs)",3,0.3,cex=cex.size,font=2)
 
 #################################### Plot 4
 
@@ -112,12 +112,12 @@ for(i in 1:(50*12)) {
 plot(-1,-1,col=0,las=1,ylim=c(0,(max(1-survM15)*1.25)*100),xlim=c(0,50),xlab="",ylab="")
 abline(h=axTicks(2),col="grey90");box()
 lines(seq(0,50*12)/12,c(0,(1-survM15)*100),col=4,lwd=2)
-mtext("Years since infection",1,2.5,cex=0.9)
-mtext("Cumulative incidence of active TB following M.tb infection at age 15 (%)",3,0.8,cex=0.8,font=2)
+mtext("Years since infection",1,2.5,cex=cex.size*1.5)
+mtext("Cumulative incidence of active TB following M.tb infection at age 15 (%)",3,0.3,cex=cex.size,font=2)
 survM15<-survM15[1:24]
 plot(-1,-1,col=0,las=1,ylim=c(0,(max(1-survM15)*1.25)*100),xlim=c(0,2),xlab="",ylab="")
 abline(h=axTicks(2),col="grey90");box()
 lines(seq(0,2*12)/12,c(0,(1-survM15)*100),col=4,lwd=2)
-mtext("Years since infection",1,2.5,cex=0.9)
-mtext("Cumulative incidence of active TB following M.tb infection at age 15 (%)",3,0.8,cex=0.8,font=2)
+mtext("Years since infection",1,2.5,cex=cex.size*1.5)
+mtext("Cumulative incidence of active TB following M.tb infection at age 15 (%)",3,0.3,cex=cex.size,font=2)
 }
