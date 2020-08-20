@@ -2180,9 +2180,13 @@ Rcpp::List cSim(
                 for(int rg=0; rg<2; rg++) {
                   for(int na=0; na<3; na++) {
       //number of additional tests hack need to be updated for custom interventions!!
-      Outputs[y][683] += (V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*rLtScrt[s];
+      if(na==0){
+      Outputs[y][683+ag] += (V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*rLtScrt[s];
+      } else {
+      Outputs[y][694+ag] += (V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*rLtScrt[s];
+      }
                   } } } } }
-        for(int i=683; i<684; i++) { Outputs[y][i] = Outputs[y][i]*12; } // annualize
+        for(int i=683; i<695; i++) { Outputs[y][i] = Outputs[y][i]*12; } // annualize
 
         } ////end of mid-year results bracket
       ///////////////////////////////////////////////////////////////////////////////////
