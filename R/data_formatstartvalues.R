@@ -11,7 +11,7 @@ gen_st_val <-function(n=10, samp="LHS"){
   if(identical(samp,"NORM")==TRUE) StartVal <-sample.prior1(n)
   if(identical(samp,"LHS") ==TRUE) StartVal <- sample.prior2(n)
   colnames(StartVal)<-rownames(ParamInitZ)
-  saveRDS(StartVal, file=paste("~/MITUS/inst/US/US_StartValdemo_", Sys.Date(),".rds", sep=""))
+  saveRDS(StartVal, file=paste("~/MITUS/inst/US/US_StartVal_", Sys.Date(),".rds", sep=""),version=2)
 
 }
 
@@ -26,7 +26,7 @@ gen_st_val_st <-function(n=10, samp="LHS"){
   if(identical(samp,"LHS") ==TRUE) StartVal <- sample.prior2(n)
   colnames(StartVal)<-rownames(ParamInitZ)
   StartVal_st<-StartVal
-  saveRDS(StartVal_st, file=paste("~/MITUS/inst/ST/ST_StartVal_", Sys.Date(),".rds", sep=""))
+  saveRDS(StartVal_st, file=paste("~/MITUS/inst/ST/ST_StartVal_", Sys.Date(),".rds", sep=""),version=2)
 
 }
 
@@ -58,7 +58,7 @@ gen_par_matrix<-function(startMat){
   P <- P
   parAll[i,]<-P
   }
-saveRDS(parAll,file=paste("parAll",nrow(startMat),"_",Sys.time(),".rds", sep=""))
+saveRDS(parAll,file=paste("parAll",nrow(startMat),"_",Sys.time(),".rds", sep=""), version=2)
   return(parAll)
 
 }

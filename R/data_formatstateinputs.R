@@ -42,7 +42,7 @@ state_input <- function() {
     Inputs$ImmigInputs<-ImmigInputs
 
     # assign(paste0(loc,"_Inputs"),Inputs)
-    saveRDS(Inputs, file=paste0("~/MITUS/inst/",loc,"/",loc,"_ModelInputs_07-03-19.rds"))
+    saveRDS(Inputs, file=paste0("~/MITUS/inst/",loc,"/",loc,"_ModelInputs_07-03-19.rds"),version=2)
   }
 
 }

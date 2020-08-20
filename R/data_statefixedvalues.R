@@ -12,7 +12,8 @@ fixed_vals<-function(samp_i, US_opt_all){
 #load the most up to date national optimized data set
 # and format the data back to their original distributions
 # US_opt_all<-readRDS(system.file("US/US_Optim_all_10_1031.rds", package="MITUS"))
-Par<-US_opt_all[samp_i,-(ncol(US_opt_all))]
+# Par<-US_opt_all[samp_i,-(ncol(US_opt_all))]
+  Par<-o7$par
 Par2 <- pnorm(Par,0,1)
 # uniform to true
 Par3 <- Par2
@@ -64,7 +65,9 @@ y<-rownames(US_opt) %in% fixed_national
 x<-rownames(newparaminitst) %in% fixed_national
 identical(US_opt[y,1],newparaminitst[x,1])
 
+#set TunNetMigration to be Calibrated
+newparaminitst["TunNetMig","Calib"]<-1
 ParamInit_st[,]<-newparaminitst[,]
-saveRDS(ParamInit_st,file=paste0("~/MITUS/inst/ST/ST_ParamInit_", Sys.Date() ,".rds"))
+saveRDS(ParamInit_st,file=paste0("~/MITUS/inst/ST/ST_ParamInit_", Sys.Date() ,".rds"),version=2)
 
 }
