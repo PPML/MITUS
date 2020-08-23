@@ -63,10 +63,10 @@ notif_fb_lLik <- function(V,rho=0.01) {
 #'@param V table of us notifications by age 1993-2013 (row=21 years, col=11 ages)
 #'@param rho correlation parameter
 #'@return likelihood
-notif_age_us_lLik <- function(V,rho=0.001) {
+notif_age_us_lLik <- function(V,rho=0.005) {
   notif_age_us      <- CalibDat[["age_cases_us"]][,-c(1,12)]*CalibDat[["age_cases_us"]][,12]
   #weighted sum across the years
-  adj_2a            <- sum(dDirMult(M=notif_age_us,n=notif_age_us,Rho=0.001)*wts[44:69])
+  adj_2a            <- sum(dDirMult(M=notif_age_us,n=notif_age_us,Rho=0.005)*wts[44:69])
   sum(dDirMult(M=V,n=notif_age_us,Rho=rho)*wts[44:69]) - adj_2a
 }
 
@@ -75,9 +75,9 @@ notif_age_us_lLik <- function(V,rho=0.001) {
 #'@param V table of fb notifications by age 1993-2013 (row=21 years, col=11 ages)
 #'@param rho correlation parameter
 #'@return likelihood
-notif_age_fb_lLik <- function(V,rho=0.001) {
+notif_age_fb_lLik <- function(V,rho=0.005) {
   notif_age_fb     <- CalibDat[["age_cases_fb"]][,-c(1,12)]*CalibDat[["age_cases_fb"]][,12]
-  adj_2b           <- sum(dDirMult(M=notif_age_fb,n=notif_age_fb,Rho=0.001)*wts[44:69])
+  adj_2b           <- sum(dDirMult(M=notif_age_fb,n=notif_age_fb,Rho=0.005)*wts[44:69])
   sum(dDirMult(M=V,n=notif_age_fb,Rho=rho)*wts[44:69]) - adj_2b
 }
 
