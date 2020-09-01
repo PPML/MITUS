@@ -140,7 +140,6 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
 
   ######################         IMMIGRATION             ########################
   ######################         OVERALL IMM.            ########################
-  # PV["ImmigVol"]<-1
   TotImmig0       <- (c(Inputs$ImmigInputs[[1]][1:151])+c(rep(0,71),cumsum(rep(PV["ImmigVolFut"],80))))/12*PV["ImmigVol"]
   TotImmAge0      <-matrix(0,151,11)
   for (i in 1:151){
@@ -160,7 +159,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   PrevTrend25_34_ls  <- SmoCurve(PrevTrend25_341l)
   PrevTrend25_34_ls <- PrevTrend25_34_ls/PrevTrend25_34_ls[(2011-1950)*12+6]
   ImmLat          <- matrix(NA,length(PrevTrend25_34_ls),11)
-  # for(i in 1:11) ImmLat[,i] <- (1-exp((-(c(2.5,1:9*10,100)/100)[i]*PV["LtbiPar1"]-(c(2.5,1:9*10,100)/100)[i]^2*PV["LtbiPar2"])*PrevTrend25_34_ls))*TotImmAge[,i]
+
   for(i in 1:11) ImmLat[,i] <- (1-exp((-(c(2.5,1:9*10,100)/100)[i]^PV["LtbiPar1"])*PrevTrend25_34_ls*PV["LtbiPar2"]))*TotImmAge[,i]
   ######################         ACTIVE TB IMM.           ########################
   # PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:69]^exp(PV["TunActTrend"])*ImmigInputs[["PrevTrend25_34"]][69]^exp((1-PV["TunActTrend"])),
@@ -237,7 +236,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
                     0.244200692,
                     0.244200692)
   RelInfRg     <- c(1.0,PV["RelCrHr"],1.0,PV["RelCrHr"])*CR
-  TunTbTransTx <- 0#PV["TunTbTransTx"]  # set to zero?
+  TunTbTransTx <- 0 #PV["TunTbTransTx"]  # set to zero?
   Vmix         <- 1-c(PV["sigmaHr"],PV["sigmaFb"])
   RelInf       <- rep(0,6)
   names(RelInf) <- c("Su","Sp","Ls","Lf","Ac","Tx")

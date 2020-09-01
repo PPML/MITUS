@@ -324,6 +324,7 @@ Rcpp::List cSim(
   ///////                  UPDATING TREATMENT METERS                        //////
   ////////     THIS DIFFERENT TO MAIN MODEL DUE TO SIMPLIFIED OUTCOMES      //////
   ////////////////////////////////////////////////////////////////////////////////
+  TxVecZ[0] =  TxVec[0];
   //////// TREATMENT EFFICACY UPDATED FOR TREATMENT QUALITY //////////////////////
   TxVecZ[1] = TxVec[1]*TxQualt[0];
   ///////// RATE OF TREATMENT EXIT TO CURE (LS) //////////////////////////////////
@@ -548,21 +549,25 @@ Rcpp::List cSim(
 
       // Step 3 (Infected/Total)
   for(int ag=0; ag<11; ag++) {
-      Vjaf[0][ag]  =( RelInfRg[0]*RRcrAG[ag]*VGjkl[0][0][ag] +        //low risk usb
-        RelInfRg[1]*RRcrAG[ag]*VGjkl[1][0][ag]*Vmix[0]+           //high risk usb
-        RelInfRg[2]*RRcrAG[ag]*VGjkl[0][1][ag]*Vmix[1]+           //low risk nusb
-        RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1][ag]*Vmix[1]*Vmix[0])   //high risk nusb
-        /
-           (RelInfRg[0]*RRcrAG[ag]*VNkl[0][0][ag] +
-            RelInfRg[1]*RRcrAG[ag]*VNkl[1][0][ag]*Vmix[0]+
-            RelInfRg[2]*RRcrAG[ag]*VNkl[0][1][ag]*Vmix[1]+
-            RelInfRg[3]*RRcrAG[ag]*VNkl[1][1][ag]*Vmix[1]*Vmix[0] + 1e-12);
+      Vjaf[0][ag]  =( RelInfRg[0]*RRcrAG[ag]*VGjkl[0][0][ag] +                  //low risk usb
+                      RelInfRg[1]*RRcrAG[ag]*VGjkl[1][0][ag]*Vmix[0]+           //high risk usb
+                      RelInfRg[2]*RRcrAG[ag]*VGjkl[0][1][ag]*Vmix[1]+           //low risk nusb
+                      RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1][ag]*Vmix[1]*Vmix[0])   //high risk nusb
+                      /
+                     (RelInfRg[0]*RRcrAG[ag]*VNkl[0][0][ag] +
+                      RelInfRg[1]*RRcrAG[ag]*VNkl[1][0][ag]*Vmix[0]+
+                      RelInfRg[2]*RRcrAG[ag]*VNkl[0][1][ag]*Vmix[1]+
+                      RelInfRg[3]*RRcrAG[ag]*VNkl[1][1][ag]*Vmix[1]*Vmix[0] + 1e-12);
 
-      Vjaf[1][ag] = ((RelInfRg[1]*RRcrAG[ag]*VGjkl[0][1][ag]) + ( RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1][ag]*Vmix[0])) /
-        ((RelInfRg[1]*RRcrAG[ag]*VNkl[0][1][ag])  +  (RelInfRg[3]*RRcrAG[ag]*VNkl[1][1][ag]*Vmix[0]) + 1e-12);
+      Vjaf[1][ag] = ((RelInfRg[1]*RRcrAG[ag]*VGjkl[0][1][ag]) +
+                     (RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1][ag]*Vmix[0])) /
+                    ((RelInfRg[1]*RRcrAG[ag]*VNkl[0][1][ag])  +
+                     (RelInfRg[3]*RRcrAG[ag]*VNkl[1][1][ag]*Vmix[0]) + 1e-12);
 
-      Vjaf[2][ag] = ((RelInfRg[2]*RRcrAG[ag]*VGjkl[1][0][ag]) +  (RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1][ag]*Vmix[1])) /
-        ((RelInfRg[2]*RRcrAG[ag]*VNkl[1][1][ag] ) +  (RelInfRg[3]*RRcrAG[ag]*VNkl[1][1][ag]*Vmix[1]) + 1e-12);
+      Vjaf[2][ag] = ((RelInfRg[2]*RRcrAG[ag]*VGjkl[1][0][ag]) +
+                     (RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1][ag]*Vmix[1])) /
+                    ((RelInfRg[2]*RRcrAG[ag]*VNkl[1][1][ag] ) +
+                     (RelInfRg[3]*RRcrAG[ag]*VNkl[1][1][ag]*Vmix[1]) + 1e-12);
 
       Vjaf[3][ag] = VGjkl[1][1][ag] / (VNkl[1][1][ag] + 1e-12);
 
@@ -852,10 +857,11 @@ Rcpp::List cSim(
       s = y*12+m;
       // Rcpp::Rcout << s <<"\n";
       /////////////////////////UPDATING TREATMENT PARAMETERS/////////////////////////
-      ///// TxMatZ: 0=completion rate, 1 = tx success, 2 = RATE OF EXIT TO CURE /////
+      ///// TxVecZ: 0=completion rate, 1 = tx success, 2 = RATE OF EXIT TO CURE /////
       ///// 3 = RATE OF EXIT TO ACTIVE TB, 4 = RATE OF EXIT TO RETREATMENT      /////
       ///// 5 = PROBABILITY OF TREATMENT COMPLETION                           ///////
       ///////////////////////////////////////////////////////////////////////////////
+      TxVecZ[0] = TxVec[0];
       //////// TREATMENT EFFICACY UPDATED FOR TREATMENT QUALITY //////////////////////
       TxVecZ[1] = TxVec[1]*TxQualt[s];
       ///////// RATE OF TREATMENT EXIT TO CURE (LS) //////////////////////////////////
@@ -1516,13 +1522,17 @@ Rcpp::List cSim(
                     Vdx[ag][4][lt][im][nm][rg][na]      = temp;
                   } } } } } }
         //////////////////////// TB TREATMENT OUTCOMES /////////////////////////////
+        ///// TxMatZ: 0=completion rate, 1 = tx success, 2 = RATE OF EXIT TO CURE /////
+        ///// 3 = RATE OF EXIT TO ACTIVE TB, 4 = RATE OF EXIT TO RETREATMENT      /////
+        ///// 5 = PROBABILITY OF TREATMENT COMPLETION                           ///////
+        ///////////////////////////////////////////////////////////////////////////////
         for(int ag=0; ag<11; ag++) {
           for(int lt=0; lt<2; lt++) {
             for(int im=0; im<4; im++) {
               for(int nm=0; nm<4; nm++) {
                 for(int rg=0; rg<2; rg++) {
                   for(int na=0; na<3; na++) {
-                    // Cures back to Ls state (should this actually be into partially immune state?)
+                    // Cures back to Ls state
                     temp=V0[ag][5][lt][im][nm][rg][na]*TxVecZ[2];
                     V1[ag][5][lt][im][nm][rg][na]  -= temp;
                     V1[ag][2][lt][im][nm][rg][na]  += temp;

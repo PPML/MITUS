@@ -5,7 +5,7 @@
 \title{US Cases Age Distribution 1993-2013
 Motivation: dirichlet-multinomial data with additional non-sampling biases}
 \usage{
-notif_age_us_lLik(V, rho = 0.001)
+notif_age_us_lLik(V, rho = 0.005)
 }
 \arguments{
 \item{V}{table of us notifications by age 1993-2013 (row=21 years, col=11 ages)}

@@ -5,7 +5,7 @@
 \title{FB CASES AGE DISTRIBUTION 1993-2013
 Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases}
 \usage{
-notif_age_fb_lLik(V, rho = 0.001)
+notif_age_fb_lLik(V, rho = 0.005)
 }
 \arguments{
 \item{V}{table of fb notifications by age 1993-2013 (row=21 years, col=11 ages)}
