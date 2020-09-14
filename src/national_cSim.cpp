@@ -30,6 +30,7 @@ using namespace Rcpp;
 //'@param mubt background mortality over time
 //'@param RelInf beta
 //'@param RelInfRg beta based off of risk group
+//'@param RRcrAG rate ratio for contact rate by ag
 //'@param Vmix 1-sigma
 //'@param rEmmigFB rate of emmigration in non-US born population
 //'@param TxVec vector of parameters for TB Tx
@@ -85,6 +86,7 @@ Rcpp::List national_cSim(
     Rcpp::NumericMatrix mubt,
     std::vector<double> RelInf,
     std::vector<double> RelInfRg,
+    std::vector<double> RRcrAG,
     std::vector<double> Vmix,
     std::vector<double> rEmmigFB,
     std::vector<double> TxVec,
@@ -147,30 +149,30 @@ Rcpp::List national_cSim(
   double        pop_scrn;
   double        rr_ltbi;
   double        Outputs[nYrs][nRes];
-  double  	V0[11][6][2][4][4][2][3];
-  double  	V1[11][6][2][4][4][2][3];
-  double  	VMort[11][6][2][4][4][2][3];
+  double  	    V0[11][6][2][4][4][2][3];
+  double  	    V1[11][6][2][4][4][2][3];
+  double  	    VMort[11][6][2][4][4][2][3];
   double        Vdx[11][6][2][4][4][2][3];
   double        VLdx[11][6][2][4][4][2][3];
-  double        VNkl[2][2];  ///HIGH AND LOW RISK, NATIVITY
-  double        VGjkl[2][2]; ///HIGH AND LOW RISK, NATIVITY
-  double        Vjaf[4];     ///BY NUMBER OF MIXING GROUPS
-  double        VLjkl[2][2];  ///HIGH AND LOW RISK, NATIVITY
+  double        VNkl[2][2][11];  ///HIGH AND LOW RISK, NATIVITY, AGE
+  double        VGjkl[2][2][11]; ///HIGH AND LOW RISK, NATIVITY,AGE
+  double        Vjaf[4][11];     ///BY NUMBER OF MIXING GROUPS, AGE
+  double        VLjkl[2][2][11];  ///HIGH AND LOW RISK, NATIVITY,AGE
   int           N;
   double        dist_genN[dist_gen.nrow()][dist_gen.ncol()];
   double        temp_vec[4];
   double        temp_mat[4][4];
-  double   	temp_mat2[4][4];
-  double   	ttt_dist[4][4];
-  double 	trans_mat_tot_agesN[trans_mat_tot_ages.nrow()][trans_mat_tot_ages.ncol()];
-  double ttt_diag_lf; double ttt_diag_ls;
+  double      	temp_mat2[4][4];
+  double   	    ttt_dist[4][4];
+  double 	      trans_mat_tot_agesN[trans_mat_tot_ages.nrow()][trans_mat_tot_ages.ncol()];
+  double        ttt_diag_lf; double ttt_diag_ls;
   double        mat_sum;
-  double temp_vec2[4];
+  double        temp_vec2[4];
   int reblnc; int tb_dyn; double base_diag;
   Rcpp::NumericMatrix Outputs2(nYrs,nRes);
   Rcpp::NumericMatrix dist_mat(4,4);
-  double RRmuRFN[4];
-  double mort_dist[4];
+  double        RRmuRFN[4];
+  double        mort_dist[4];
 
   ///////////////////////////////////////////////////////////////////////////////
   ///////                            INITIALIZE                             /////
@@ -265,16 +267,13 @@ Rcpp::List national_cSim(
 
   for(int i=0; i<2; i++) {
     for(int j=0; j<2; j++) {
-      VNkl[i][j] = 0;
-    } }
-  for(int i=0; i<2; i++) {
-    for(int j=0; j<2; j++) {
-      VGjkl[i][j] = 0;
-      VLjkl[i][j] = 0;
-    } }
+      for(int k=0; k<11; k++) {
+        VNkl[i][j][k] = 0;
+        VGjkl[i][j][k] = 0;
+        VLjkl[i][j][k] = 0;
+      } } }
   ///effective contact rates
   for(int i=0; i<4; i++) {
-    Vjaf[i]= 0;
     mort_dist[i]=0;
     temp_vec2[i]=0;
     temp_vec[i]=0;
@@ -284,7 +283,10 @@ Rcpp::List national_cSim(
     for(int im=0; im<4; im++) {
       temp4V[ag][im] = (1-pow(1-(MrslowN[ag][im])-rRecov,24.0))*(MrslowN[ag][im]);
     } }
-
+  for(int i=0; i<11; i++) {
+    for(int j=0; j<4; j++) {
+      Vjaf[j][i] = 0;
+    } }
   for(int i=0; i<trans_mat_tot_ages.nrow(); i++) {
     for(int j=0; j<trans_mat_tot_ages.ncol(); j++) {
       trans_mat_tot_agesN[i][j] = trans_mat_tot_ages(i,j);
@@ -487,9 +489,10 @@ Rcpp::List national_cSim(
       ////////////////////////////  TRANSMISSION RISK  ////////////////////////////////
       for(int i=0; i<2; i++) {
         for(int j=0; j<2; j++) {
-          VNkl [i][j] = 0;
-          VGjkl[i][j] = 0;   // set to zero
-        } }
+          for(int k=0; k<11; k++) {
+            VNkl [i][j][k]= 0;
+            VGjkl[i][j][k] = 0;   // set to zero
+          } } }
       // Step 1
       // take total population of mixing groups
       for(int ag=0; ag<11; ag++) {
@@ -497,16 +500,16 @@ Rcpp::List national_cSim(
           for(int im=0; im<4; im++) {
             for(int nm=0; nm<4; nm++) {
               // LOW RISK US BORN
-              VNkl[0][0]  += V0[ag][tb][0][im][nm][0][0];
+              VNkl[0][0][ag]  += V0[ag][tb][0][im][nm][0][0];
               ///////// HIGH RISK US BORN
               ///////// ranges under 1 every time step
-              VNkl[1][0]  += V0[ag][tb][0][im][nm][1][0];
+              VNkl[1][0][ag]  += V0[ag][tb][0][im][nm][1][0];
               ///////// LOW RISK NON US BORN
               ///////// ranges from .5 -10 people between time steps
-              VNkl[0][1]  += V0[ag][tb][0][im][nm][0][1] + V0[ag][tb][0][im][nm][0][2];
+              VNkl[0][1][ag]  += V0[ag][tb][0][im][nm][0][1] + V0[ag][tb][0][im][nm][0][2];
               ///////// also ranges from .5 -10 people between time steps
               ///////// HIGH RISK NON US BORN
-              VNkl[1][1]  += V0[ag][tb][0][im][nm][1][1] + V0[ag][tb][0][im][nm][1][2];
+              VNkl[1][1][ag]  += V0[ag][tb][0][im][nm][1][1] + V0[ag][tb][0][im][nm][1][2];
             } } } }
 
       // for (int i=0; i<2; i++){
@@ -521,13 +524,13 @@ Rcpp::List national_cSim(
           for(int im=0; im<4; im++) {
             for(int nm=0; nm<4; nm++) {
               /////////  LOW RISK US BORN
-              VGjkl[0][0]  +=  V0[ag][tb][0][im][nm][0][0]                               *RelInf[tb];
+              VGjkl[0][0][ag]  +=  V0[ag][tb][0][im][nm][0][0]                               *RelInf[tb];
               ///////// HIGH RISK US BORN
-              VGjkl[1][0]  +=  V0[ag][tb][0][im][nm][1][0]                               *RelInf[tb];
+              VGjkl[1][0][ag]  +=  V0[ag][tb][0][im][nm][1][0]                               *RelInf[tb];
               ///////// LOW RISK NON US BORN
-              VGjkl[0][1]  += (V0[ag][tb][0][im][nm][0][1] + V0[ag][tb][0][im][nm][0][2])*RelInf[tb];
+              VGjkl[0][1][ag]  += (V0[ag][tb][0][im][nm][0][1] + V0[ag][tb][0][im][nm][0][2])*RelInf[tb];
               /////////  HIGH RISK NON US BORN
-              VGjkl[1][1]  += (V0[ag][tb][0][im][nm][1][1] + V0[ag][tb][0][im][nm][1][2])*RelInf[tb];
+              VGjkl[1][1][ag]  += (V0[ag][tb][0][im][nm][1][1] + V0[ag][tb][0][im][nm][1][2])*RelInf[tb];
             } } } }
 
       // for (int i=0; i<2; i++){
@@ -539,39 +542,48 @@ Rcpp::List national_cSim(
       // No contribution to force of infection
 
       // Step 3
-      Vjaf[0]  =( RelInfRg[0]*VGjkl[0][0] +
-        RelInfRg[1]*VGjkl[1][0]*Vmix[0]+
-        RelInfRg[2]*VGjkl[0][1]*Vmix[1]+
-        RelInfRg[3]*VGjkl[1][1]*Vmix[1]*Vmix[0]) /
-          (RelInfRg[0]*VNkl[0][0] +
-            RelInfRg[1]*VNkl[1][0]*Vmix[0]+
-            RelInfRg[2]*VNkl[0][1]*Vmix[1]+
-            RelInfRg[3]*VNkl[1][1]*Vmix[1]*Vmix[0] + 1e-12);
+      for(int ag=0; ag<11; ag++) {
+        Vjaf[0][ag]  =( RelInfRg[0]*RRcrAG[ag]*VGjkl[0][0][ag] +                  //low risk usb
+          RelInfRg[1]*RRcrAG[ag]*VGjkl[1][0][ag]*Vmix[0]+           //high risk usb
+          RelInfRg[2]*RRcrAG[ag]*VGjkl[0][1][ag]*Vmix[1]+           //low risk nusb
+          RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1][ag]*Vmix[1]*Vmix[0])   //high risk nusb
+        /
+          (RelInfRg[0]*RRcrAG[ag]*VNkl[0][0][ag] +
+          RelInfRg[1]*RRcrAG[ag]*VNkl[1][0][ag]*Vmix[0]+
+          RelInfRg[2]*RRcrAG[ag]*VNkl[0][1][ag]*Vmix[1]+
+          RelInfRg[3]*RRcrAG[ag]*VNkl[1][1][ag]*Vmix[1]*Vmix[0] + 1e-12);
 
-      Vjaf[1] = ((RelInfRg[1]*VGjkl[0][1]) + ( RelInfRg[3]*VGjkl[1][1]*Vmix[0])) /
-        ((RelInfRg[1]*VNkl[0][1])  +  (RelInfRg[3]*VNkl[1][1]*Vmix[0]) + 1e-12);
+        Vjaf[1][ag] = ((RelInfRg[1]*RRcrAG[ag]*VGjkl[0][1][ag]) +
+          (RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1][ag]*Vmix[0])) /
+            ((RelInfRg[1]*RRcrAG[ag]*VNkl[0][1][ag])  +
+              (RelInfRg[3]*RRcrAG[ag]*VNkl[1][1][ag]*Vmix[0]) + 1e-12);
 
-      Vjaf[2] = ((RelInfRg[2]*VGjkl[1][0]) +  (RelInfRg[3]*VGjkl[1][1]*Vmix[1])) /
-        ((RelInfRg[2]*VNkl[1][1] ) +  (RelInfRg[3]*VNkl[1][1]*Vmix[1]) + 1e-12);
+        Vjaf[2][ag] = ((RelInfRg[2]*RRcrAG[ag]*VGjkl[1][0][ag]) +
+          (RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1][ag]*Vmix[1])) /
+            ((RelInfRg[2]*RRcrAG[ag]*VNkl[1][1][ag] ) +
+              (RelInfRg[3]*RRcrAG[ag]*VNkl[1][1][ag]*Vmix[1]) + 1e-12);
 
-      Vjaf[3] = VGjkl[1][1] / (VNkl[1][1] + 1e-12);
+        Vjaf[3][ag] = VGjkl[1][1][ag] / (VNkl[1][1][ag] + 1e-12);
 
+      }
 
       // for (int i=0; i<4; i++){
       //  Rcpp::Rcout << "Vjaf is "<<  Vjaf[i] << "\n";
       // }
 
       // Step 4
-      /// LOW RISK US BORN
-      VLjkl[0 ][0 ]  = (RelInfRg[0]*Vjaf[0]);
-      ///////// HIGH RISK US BORN
-      VLjkl[1 ][0 ]  = (RelInfRg[1]*Vjaf[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]);
-      ///////// LOW RISK NON US BORN
-      VLjkl[0 ][1 ]  = ((RelInfRg[2]*Vjaf[2]*(1-Vmix[1]) + RelInfRg[0]*Vjaf[0]*Vmix[1])) + ExogInf[0];
-      ///////// HIGH RISK NON US BORN
-      ///check the use of RelInfRg here as beta, might need to be a combo param but unclear check the old param file
-      VLjkl[1 ][1 ]  = ((RelInfRg[3]*Vjaf[3]*(1-Vmix[0])*(1-Vmix[1]) + RelInfRg[2]*Vjaf[2]*Vmix[0]*(1-Vmix[1]) + RelInfRg[1]*Vjaf[1]*Vmix[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]*Vmix[1])) + ExogInf[0];
+      for(int ag=0; ag<11; ag++) {
 
+        /// LOW RISK US BORN
+        VLjkl[0 ][0 ][ag]  = (RelInfRg[0]*RRcrAG[ag]*Vjaf[0][ag]);
+        ///////// HIGH RISK US BORN
+        VLjkl[1 ][0 ][ag]  = (RelInfRg[1]*RRcrAG[ag]*Vjaf[1][ag]*(1-Vmix[0]) + RelInfRg[0]*RRcrAG[ag]*Vjaf[0][ag]*Vmix[0]);
+        ///////// LOW RISK NON US BORN
+        VLjkl[0 ][1 ][ag]  = ((RelInfRg[2]*RRcrAG[ag]*Vjaf[2][ag]*(1-Vmix[1]) + RelInfRg[0]*RRcrAG[ag]*Vjaf[0][ag]*Vmix[1])) + ExogInf[0];
+        ///////// HIGH RISK NON US BORN
+        ///check the use of RelInfRg here as beta, might need to be a combo param but unclear check the old param file
+        VLjkl[1 ][1 ][ag]  = ((RelInfRg[3]*RRcrAG[ag]*Vjaf[3][ag]*(1-Vmix[0])*(1-Vmix[1]) + RelInfRg[2]*RRcrAG[ag]*Vjaf[2][ag]*Vmix[0]*(1-Vmix[1]) + RelInfRg[1]*RRcrAG[ag]*Vjaf[1][ag]*Vmix[1]*(1-Vmix[0]) + RelInfRg[0]*RRcrAG[ag]*Vjaf[0][ag]*Vmix[0]*Vmix[1])) + ExogInf[0];
+      }
       // for (int i=0; i<2; i++){
       //   for (int j=0; j<2; j++){
       //     Rcpp::Rcout <<"VLs are " <<  VLjkl[i][j] << "for i= " << i << " and j = " <<  j << "\n";
@@ -595,7 +607,7 @@ Rcpp::List national_cSim(
                 } else {n2=1;}
 
                 ///////////////////////////////   SUCEPTIBLE  /////™////////////////////////////
-                temp = V0[ag][0][0][im][nm][rg][na]*(VLjkl[rg][n2])*EarlyTrend[m];
+                temp = V0[ag][0][0][im][nm][rg][na]*(VLjkl[rg][n2][ag])*EarlyTrend[m];
                 //////////////////////////// REMOVE FROM SUSCEPTIBLE //////////////////////////
                 V1[ag][0][0][im][nm][rg][na]  -= temp;
                 // Rcpp::Rcout << "susceptible" << (V1[ag][0][0][im][nm][rg][na]  -= temp) << "age= " << ag << "na " << na << "rg " << rg << "\n";
@@ -611,14 +623,14 @@ Rcpp::List national_cSim(
                 ///////////////////////////////////////////////////////////////////////////////
 
                 /////////////////////////////// SUPER-INFECTION SP ////////////////////////////
-                temp = V0[ag][1][0][im][nm][rg][na]*(VLjkl[rg][n2]);
+                temp = V0[ag][1][0][im][nm][rg][na]*(VLjkl[rg][n2][ag]);
                 V1[ag][1][0][im][nm][rg][na] -= temp;
                 V1[ag][2][0][im][nm][rg][na] += temp*MpslowPIN[ag][im];
                 V1[ag][3][0][im][nm][rg][na] += temp*MpfastPIN[ag][im];
                 ///////////////////////////////////////////////////////////////////////////////
 
                 /////////////////////////////// SUPER-INFECTION LS ////////////////////////////
-                temp = V0[ag][2][0][im][nm][rg][na]*(VLjkl[rg][n2]);
+                temp = V0[ag][2][0][im][nm][rg][na]*(VLjkl[rg][n2][ag]);
                 V1[ag][2][0][im][nm][rg][na]  -= temp;
                 V1[ag][2][0][im][nm][rg][na]  += temp*MpslowPIN[ag][im];
                 V1[ag][3][0][im][nm][rg][na]  += temp*MpfastPIN[ag][im];
@@ -1108,11 +1120,13 @@ Rcpp::List national_cSim(
 
       if (tb_dyn==1){
         ////////////////////////////  TRANSMISSION RISK  ////////////////////////////////
+
         for(int i=0; i<2; i++) {
           for(int j=0; j<2; j++) {
-            VNkl [i][j] = 0;
-            VGjkl[i][j] = 0;   // set to zero
-          } }
+            for(int k=0; k<11; k++) {
+              VNkl [i][j][k] = 0;
+              VGjkl[i][j][k] = 0;   // set to zero
+            } } }
         // Step 1
         // take total population of mixing groups
         for(int ag=0; ag<11; ag++) {
@@ -1120,18 +1134,17 @@ Rcpp::List national_cSim(
             for(int lt=0; lt<2; lt++) {
               for(int im=0; im<4; im++) {
                 for(int nm=0; nm<4; nm++) {
-
                   // LOW RISK US BORN
-                  VNkl[0][0]  += V0[ag][tb][lt][im][nm][0][0];
+                  VNkl[0][0][ag]  += V0[ag][tb][lt][im][nm][0][0];
                   ///////// HIGH RISK US BORN
                   ///////// ranges under 1 every time step
-                  VNkl[1][0]  += V0[ag][tb][lt][im][nm][1][0];
+                  VNkl[1][0][ag]  += V0[ag][tb][lt][im][nm][1][0];
                   ///////// LOW RISK NON US BORN
                   ///////// ranges from .5 -10 people between time steps
-                  VNkl[0][1]  += V0[ag][tb][lt][im][nm][0][1] + V0[ag][tb][lt][im][nm][0][2];
+                  VNkl[0][1][ag]  += V0[ag][tb][lt][im][nm][0][1] + V0[ag][tb][lt][im][nm][0][2];
                   ///////// also ranges from .5 -10 people between time steps
                   ///////// HIGH RISK NON US BORN
-                  VNkl[1][1]  += V0[ag][tb][lt][im][nm][1][1] + V0[ag][tb][lt][im][nm][1][2];
+                  VNkl[1][1][ag]  += V0[ag][tb][lt][im][nm][1][1] + V0[ag][tb][lt][im][nm][1][2];
                 } } } } }
 
         // for (int i=0; i<2; i++){
@@ -1143,18 +1156,17 @@ Rcpp::List national_cSim(
         // Number of active cases* relative infectiousness
         for(int ag=0; ag<11; ag++) {
           for(int tb=0; tb<6; tb++) {
-            for(int im=0; im<4; im++) {
-              for(int nm=0; nm<4; nm++) {
-                for(int lt=0; lt<2; lt++) {
-
+            for(int lt=0; lt<2; lt++) {
+              for(int im=0; im<4; im++) {
+                for(int nm=0; nm<4; nm++) {
                   /////////  LOW RISK US BORN
-                  VGjkl[0][0]  +=  V0[ag][tb][lt][im][nm][0][0]                                *RelInf[tb];
+                  VGjkl[0][0][ag]  +=  V0[ag][tb][lt][im][nm][0][0]                                *RelInf[tb];
                   ///////// HIGH RISK US BORN
-                  VGjkl[1][0]  +=  V0[ag][tb][lt][im][nm][1][0]                                *RelInf[tb];
+                  VGjkl[1][0][ag]  +=  V0[ag][tb][lt][im][nm][1][0]                                *RelInf[tb];
                   ///////// LOW RISK NON US BORN
-                  VGjkl[0][1]  += (V0[ag][tb][lt][im][nm][0][1] + V0[ag][tb][lt][im][nm][0][2])*RelInf[tb];
+                  VGjkl[0][1][ag]  += (V0[ag][tb][lt][im][nm][0][1] + V0[ag][tb][lt][im][nm][0][2])*RelInf[tb];
                   /////////  HIGH RISK NON US BORN
-                  VGjkl[1][1]  += (V0[ag][tb][lt][im][nm][1][1] + V0[ag][tb][lt][im][nm][1][2])*RelInf[tb];
+                  VGjkl[1][1][ag]  += (V0[ag][tb][lt][im][nm][1][1] + V0[ag][tb][lt][im][nm][1][2])*RelInf[tb];
                 } } } } }
 
         // for (int i=0; i<2; i++){
@@ -1165,41 +1177,45 @@ Rcpp::List national_cSim(
         // Step 2 (treated TB)
         // No contribution to force of infection
 
-        // Step 3
-        Vjaf[0]  =( RelInfRg[0]*VGjkl[0][0] +
-          RelInfRg[1]*VGjkl[1][0]*Vmix[0]+
-          RelInfRg[2]*VGjkl[0][1]*Vmix[1]+
-          RelInfRg[3]*VGjkl[1][1]*Vmix[1]*Vmix[0]) /
-            ((RelInfRg[0]*VNkl[0][0] +
-              RelInfRg[1]*VNkl[1][0]*Vmix[0]+
-              RelInfRg[2]*VNkl[0][1]*Vmix[1]+
-              RelInfRg[3]*VNkl[1][1]*Vmix[1]*Vmix[0]) + 1e-12);
+        // Step 3 (Infected/Total)
+        for(int ag=0; ag<11; ag++) {
+          Vjaf[0][ag]  =(RelInfRg[0]*RRcrAG[ag]*VGjkl[0][0][ag] +        //low risk usb
+            RelInfRg[1]*RRcrAG[ag]*VGjkl[1][0][ag]*Vmix[0]+           //high risk usb
+            RelInfRg[2]*RRcrAG[ag]*VGjkl[0][1][ag]*Vmix[1]+           //low risk nusb
+            RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1][ag]*Vmix[1]*Vmix[0])   //high risk nusb
+          /
+            (RelInfRg[0]*RRcrAG[ag]*VNkl[0][0][ag] +
+            RelInfRg[1]*RRcrAG[ag]*VNkl[1][0][ag]*Vmix[0]+
+            RelInfRg[2]*RRcrAG[ag]*VNkl[0][1][ag]*Vmix[1]+
+            RelInfRg[3]*RRcrAG[ag]*VNkl[1][1][ag]*Vmix[1]*Vmix[0] + 1e-12);
 
-        Vjaf[1] = ((RelInfRg[1]*VGjkl[0][1]) + ( RelInfRg[3]*VGjkl[1][1]*Vmix[0])) /
-          ((RelInfRg[1]*VNkl[0][1])  +  (RelInfRg[3]*VNkl[1][1]*Vmix[0]) + 1e-12);
+          Vjaf[1][ag] = ((RelInfRg[1]*RRcrAG[ag]*VGjkl[0][1][ag]) + ( RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1][ag]*Vmix[0])) /
+            ((RelInfRg[1]*RRcrAG[ag]*VNkl[0][1][ag])  +  (RelInfRg[3]*RRcrAG[ag]*VNkl[1][1][ag]*Vmix[0]) + 1e-12);
 
-        Vjaf[2] = ((RelInfRg[2]*VGjkl[1][0]) +  (RelInfRg[3]*VGjkl[1][1]*Vmix[1])) /
-          ((RelInfRg[2]*VNkl[1][1] ) +  (RelInfRg[3]*VNkl[1][1]*Vmix[1]) + 1e-12);
+          Vjaf[2][ag] = ((RelInfRg[2]*RRcrAG[ag]*VGjkl[1][0][ag]) +  (RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1][ag]*Vmix[1])) /
+            ((RelInfRg[2]*RRcrAG[ag]*VNkl[1][1][ag] ) +  (RelInfRg[3]*RRcrAG[ag]*VNkl[1][1][ag]*Vmix[1]) + 1e-12);
 
-        Vjaf[3] = VGjkl[1][1] / (VNkl[1][1] + 1e-12);
+          Vjaf[3][ag] = VGjkl[1][1][ag] / (VNkl[1][1][ag] + 1e-12);
 
+        }
 
         // for (int i=0; i<4; i++){
-        //   Rcpp::Rcout << "Vjaf is "<<  Vjaf[i] << "\n";
+        //  Rcpp::Rcout << "Vjaf is "<<  Vjaf[i] << "\n";
         // }
 
         // Step 4
-        /// LOW RISK US BORN
-        VLjkl[0 ][0 ]  = (RelInfRg[0]*Vjaf[0]);
-        ///////// HIGH RISK US BORN
-        VLjkl[1 ][0 ]  = (RelInfRg[1]*Vjaf[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]);
-        ///////// LOW RISK NON US BORN
-        VLjkl[0 ][1 ]  = ((RelInfRg[2]*Vjaf[2]*(1-Vmix[1]) + RelInfRg[0]*Vjaf[0]*Vmix[1])) + ExogInf[s];
-        ///////// HIGH RISK NON US BORN
-        ///check the use of RelInfRg here as beta, might need to be a combo param but unclear check the old param file
-        VLjkl[1 ][1 ]  = ((RelInfRg[3]*Vjaf[3]*(1-Vmix[0])*(1-Vmix[1]) + RelInfRg[2]*Vjaf[2]*Vmix[0]*(1-Vmix[1]) + RelInfRg[1]*Vjaf[1]*Vmix[1]*(1-Vmix[0]) + RelInfRg[0]*Vjaf[0]*Vmix[0]*Vmix[1]) ) + ExogInf[s];
+        for(int ag=0; ag<11; ag++) {
 
-
+          /// LOW RISK US BORN
+          VLjkl[0 ][0 ][ag]  = (RelInfRg[0]*RRcrAG[ag]*Vjaf[0][ag]);
+          ///////// HIGH RISK US BORN
+          VLjkl[1 ][0 ][ag]  = (RelInfRg[1]*RRcrAG[ag]*Vjaf[1][ag]*(1-Vmix[0]) + RelInfRg[0]*RRcrAG[ag]*Vjaf[0][ag]*Vmix[0]);
+          ///////// LOW RISK NON US BORN
+          VLjkl[0 ][1 ][ag]  = ((RelInfRg[2]*RRcrAG[ag]*Vjaf[2][ag]*(1-Vmix[1]) + RelInfRg[0]*RRcrAG[ag]*Vjaf[0][ag]*Vmix[1])) + ExogInf[0];
+          ///////// HIGH RISK NON US BORN
+          ///check the use of RelInfRg here as beta, might need to be a combo param but unclear check the old param file
+          VLjkl[1 ][1 ][ag]  = ((RelInfRg[3]*RRcrAG[ag]*Vjaf[3][ag]*(1-Vmix[0])*(1-Vmix[1]) + RelInfRg[2]*RRcrAG[ag]*Vjaf[2][ag]*Vmix[0]*(1-Vmix[1]) + RelInfRg[1]*RRcrAG[ag]*Vjaf[1][ag]*Vmix[1]*(1-Vmix[0]) + RelInfRg[0]*RRcrAG[ag]*Vjaf[0][ag]*Vmix[0]*Vmix[1])) + ExogInf[0];
+        }
         ///////////////////////////////INFECTION///////////////////////////////////////
         ///////////////////////for all age groups, risk groups/////////////////////////
         ///////INFECTION IS CALCULATED WITH THE FORCE OF INFECTION BY RISK GROUP///////
@@ -1219,7 +1235,7 @@ Rcpp::List national_cSim(
                       n2=na;
                     } else {n2=1;}
                     ///////////////////////////////   SUCEPTIBLE  /////////////////////////////////
-                    temp = V0[ag][0][lt][im][nm][rg][na]*(VLjkl[rg][n2])*NixTrans[s];
+                    temp = V0[ag][0][lt][im][nm][rg][na]*(VLjkl[rg][n2][ag])*NixTrans[s];
                     //////////////////////////// REMOVE FROM SUSCEPTIBLE //////////////////////////
                     V1[ag][0][lt][im][nm][rg][na]  -= temp;
                     //////////////////////////////// LATENT TB SLOW ///////////////////////////////
@@ -1229,14 +1245,14 @@ Rcpp::List national_cSim(
                     ///////////////////////////////////////////////////////////////////////////////
 
                     /////////////////////////////// SUPER-INFECTION SP ////////////////////////////
-                    temp = V0[ag][1][lt][im][nm][rg][na]*(VLjkl[rg][n2])*NixTrans[s];
+                    temp = V0[ag][1][lt][im][nm][rg][na]*(VLjkl[rg][n2][ag])*NixTrans[s];
                     V1[ag][1][lt][im][nm][rg][na] -= temp;
                     V1[ag][2][lt][im][nm][rg][na] += temp*MpslowPIN[ag][im];
                     V1[ag][3][lt][im][nm][rg][na] += temp*MpfastPIN[ag][im];
                     ///////////////////////////////////////////////////////////////////////////////
 
                     /////////////////////////////// SUPER-INFECTION LS ////////////////////////////
-                    temp = V0[ag][2][lt][im][nm][rg][na]*(VLjkl[rg][n2])*NixTrans[s];
+                    temp = V0[ag][2][lt][im][nm][rg][na]*(VLjkl[rg][n2][ag])*NixTrans[s];
                     V1[ag][2][lt][im][nm][rg][na]  -= temp;
                     V1[ag][2][lt][im][nm][rg][na]  += temp*MpslowPIN[ag][im];
                     V1[ag][3][lt][im][nm][rg][na]  += temp*MpfastPIN[ag][im];
@@ -1457,11 +1473,11 @@ for(int rg=0; rg<2; rg++) {
               ttt_dist[l][c]=ttt_samp_distN[l][c];
             }
           }
-            ///// this is dichotomous variable for USB or nonUSB (ignore time since entry)
+///// this is dichotomous variable for USB or nonUSB (ignore time since entry)
             if (na<1){
-              int ni = 0;
+               ni = 0;
             } else {
-              ni=1;
+               ni=1;
             }
             ////////////// US BORN, LOW RISK   /////////////////
             if(rg==0 & na==0) {
@@ -2001,10 +2017,13 @@ for(int ag=0; ag<11; ag++) {
                         Outputs[y][242] += V1[ag][4][lt][im][nm][rg][na];
                       } } } } } } } }
         // Force of infection
-        Outputs[y][243] += VLjkl[0][0];
-        Outputs[y][244] += VLjkl[1][0];
-        Outputs[y][245] += VLjkl[0][1];
-        Outputs[y][246] += VLjkl[1][1];
+        for(int ag=0; ag<11; ag++) {
+
+          Outputs[y][243] += VLjkl[0][0][ag];
+          Outputs[y][244] += VLjkl[1][0][ag];
+          Outputs[y][245] += VLjkl[0][1][ag];
+          Outputs[y][246] += VLjkl[1][1][ag];
+        }
         ////////////     CREATE YEARLY VALUES FROM THE MONTH ESTIMATE     ////////////
         for(int i=243; i<247; i++) { Outputs[y][i] = Outputs[y][i]*12; }
 
@@ -2015,8 +2034,8 @@ for(int ag=0; ag<11; ag++) {
               for(int nm=0; nm<4 ; nm++) {
                 for(int rg=0; rg<2; rg++) {
                   for(int na=0; na<3; na++){
-                    Outputs[y][247+rg] += (V0[ag][0][lt][im][nm][rg][na]+V0[ag][1][lt][im][nm][rg][na]+V0[ag][2][lt][im][nm][rg][na])*VLjkl[rg][na]*NixTrans[s];
-                    Outputs[y][249+na] += (V0[ag][0][lt][im][nm][rg][na]+V0[ag][1][lt][im][nm][rg][na]+V0[ag][2][lt][im][nm][rg][na])*VLjkl[rg][na]*NixTrans[s];
+                    Outputs[y][247+rg] += (V0[ag][0][lt][im][nm][rg][na]+V0[ag][1][lt][im][nm][rg][na]+V0[ag][2][lt][im][nm][rg][na])*VLjkl[rg][na][ag]*NixTrans[s];
+                    Outputs[y][249+na] += (V0[ag][0][lt][im][nm][rg][na]+V0[ag][1][lt][im][nm][rg][na]+V0[ag][2][lt][im][nm][rg][na])*VLjkl[rg][na][ag]*NixTrans[s];
                   } } } } } }
         ////////////     CREATE YEARLY VALUES FROM THE MONTH ESTIMATE     ////////////
         for(int i=247; i<252; i++) { Outputs[y][i] = Outputs[y][i]*12; }
@@ -2140,9 +2159,9 @@ for(int ag=0; ag<11; ag++) {
                 for(int rg=0; rg<2; rg++) {
                   for(int na=0; na<3; na++){
                     if (na <1){
-                      Outputs[y][564+ag] += (V0[ag][0][lt][im][nm][rg][na]+V0[ag][1][lt][im][nm][rg][na]+V0[ag][2][lt][im][nm][rg][na])*VLjkl[rg][0]*NixTrans[s];
+                      Outputs[y][564+ag] += (V0[ag][0][lt][im][nm][rg][na]+V0[ag][1][lt][im][nm][rg][na]+V0[ag][2][lt][im][nm][rg][na])*VLjkl[rg][0][ag]*NixTrans[s];
                     } else {
-                      Outputs[y][575+ag] += (V0[ag][0][lt][im][nm][rg][na]+V0[ag][1][lt][im][nm][rg][na]+V0[ag][2][lt][im][nm][rg][na])*VLjkl[rg][1]*NixTrans[s];}
+                      Outputs[y][575+ag] += (V0[ag][0][lt][im][nm][rg][na]+V0[ag][1][lt][im][nm][rg][na]+V0[ag][2][lt][im][nm][rg][na])*VLjkl[rg][1][ag]*NixTrans[s];}
 
                   }
                 } } } } }
@@ -2169,6 +2188,8 @@ for(int ag=0; ag<11; ag++) {
                             for(int na=0; na<3; na++) {
                               Outputs[y][938] += V1[ag][tb][0][im][nm][rg][na];   //TREATMENT NAIVE
                             } } } } } }
+
+
                   } ////end of mid-year results bracket
                 ///////////////////////////////////////////////////////////////////////////////////
                 //////////////////////////////END MIDYEAR RESULTS//////////////////////////////////

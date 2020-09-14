@@ -3,22 +3,22 @@
 #'@param loc two letter postal abbreviation for states; US for national
 #'@return void
 model_load<-function(loc="US"){
-#' add loc as a global variable
-# loc<<-loc
+  #' add loc as a global variable
+  # loc<<-loc
   library(mnormt)
   library(parallel)
   library(lhs)
   library(Rcpp)
   library(MCMCpack)
   library(MASS)
-#'load necessary datasets
-#'Model Input
-if (loc=="US"){
-  CalibDat<<-readRDS(system.file("US/US_CalibDat_04-08-19.rds", package="MITUS"))
-  ParamInit<<-as.data.frame(readRDS(system.file("US/US_ParamInit_2019-09-09.rds", package="MITUS")))
-  StartVal<<-readRDS(system.file("US/US_StartVal_2019-09-09.rds", package="MITUS"))
-  Inputs<<-readRDS(system.file("US/US_Inputs_06-26-19.rds", package="MITUS"))
-  Par<<-readRDS(system.file("US/US_Param_all_10_1101.rds", package="MITUS"))
+  #'load necessary datasets
+  #'Model Input
+  if (loc=="US"){
+    CalibDat<<-readRDS(system.file("US/US_CalibDat_07-27-20.rds", package="MITUS"))
+    ParamInit<<-as.data.frame(readRDS(system.file("US/US_ParamInit_2020-08-20.rds", package="MITUS")))
+    StartVal<<-readRDS(system.file("US/US_StartVal_2020-08-20.rds", package="MITUS"))
+    Inputs<<-readRDS(system.file("US/US_Inputs_08-31-20.rds", package="MITUS"))
+    # Opt<<-readRDS(system.file("US/US_Optim_all_10_0709.rds", package="MITUS"))
 } else {
   CalibDat<<-CalibDatState<<-readRDS(system.file("ST/ST_CalibDat_07-15-19.rds", package="MITUS"))
   ParamInit_st<<-ParamInit<<-readRDS(system.file("ST/ST_ParamInit_2019-11-03.rds", package="MITUS"))

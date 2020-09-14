@@ -68,9 +68,9 @@ age_denom<-function(loc){
 
 
     for (i in 1:length(ltd)){
-    if (ltd[i]==0){
-      ltd[i]<-0.01980337
-    }}
+      if (ltd[i]==0){
+        ltd[i]<-0.01980337
+      }}
     #invert this for the aging rate
 
     ltd<-1/ltd
@@ -79,7 +79,7 @@ age_denom<-function(loc){
       td[i,1:841]<-SmoCurve_decade_month(as.numeric(ltd[i,]))
       td[i,842:1201]<-td[i,841]
     }
-  age_den<-t(td)*12
+    age_den<-t(td)*12
   } #end of else statement
   return(age_den)
 }
