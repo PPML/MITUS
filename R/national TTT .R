@@ -63,7 +63,7 @@ for (n in 1:2){
   rrmort<-RRmuRF/sum(RRmuRF*mort_dist)
   ##rate ratio of TB Progression
   #might need to check this bc current applied to odds then converted to probability
-  ORpfastRF  <- PV["ORpfastH"] ##riskfactor
+  ORpfastRF  <- 40#PV["ORpfastH"] ##riskfactor
   vORpfastRF  <-c(1,1,1,1)
   rrprog  <-(exp((0:3)/3*log(ORpfastRF)))
   #desired RR for the screening groups
@@ -80,11 +80,11 @@ for (n in 1:2){
   par = fit$par
 
   #5 calc transition rates for TTT
-  if(length(ttt_input)==1){
+  # if(length(ttt_input)==1){
   ttt_pop_yr =ttt_list[[3]]*ttt_list[[4]]*ifelse(n==1,ttt_list[[1]][a], ttt_list[[2]][a])
-  } else{
-  ttt_pop_yr = ttt_list[[10]]*ttt_list[[4]]*ifelse(n==1,ttt_list[[1]][a], ttt_list[[2]][a])
-  } # divide by 1e6 since model in millions
+  # } else{
+  # ttt_pop_yr = ttt_list[[10]]*ttt_list[[4]]*ifelse(n==1,ttt_list[[1]][a], ttt_list[[2]][a])
+  # } # divide by 1e6 since model in millions
   rr_samp <- (exp(par[1])^(0:3)) %*% t(exp(par[2])^(0:3))
   an_samp_rate <- rr_samp * ttt_pop_yr / sum(rr_samp*dist)
   for (i in 1:length(an_samp_rate)) an_samp_rate[i]<-min(an_samp_rate[i],1)

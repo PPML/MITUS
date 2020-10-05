@@ -4,28 +4,6 @@
 \alias{national_OutputsInt}
 \title{wrapper function for the above function}
 \usage{
-<<<<<<< Updated upstream
-national_OutputsInt(
-  loc,
-  ParMatrix,
-  n_cores = 1,
-  endyr = 2050,
-  Int1 = 0,
-  Int2 = 0,
-  Int3 = 0,
-  Int4 = 0,
-  Int5 = 0,
-  Scen1 = 0,
-  Scen2 = 0,
-  Scen3 = 0,
-  prg_chng,
-  ttt_list
-)
-||||||| merged common ancestors
-national_OutputsInt(loc, ParMatrix, n_cores = 1, endyr = 2050, Int1 = 0,
-  Int2 = 0, Int3 = 0, Int4 = 0, Int5 = 0, Scen1 = 0, Scen2 = 0,
-  Scen3 = 0, prg_chng, ttt_list)
-=======
 national_OutputsInt(
   loc,
   ParMatrix,
@@ -42,7 +20,6 @@ national_OutputsInt(
   prg_chng,
   ttt_input
 )
->>>>>>> Stashed changes
 }
 \arguments{
 \item{loc}{two-digit abbreviation for location}

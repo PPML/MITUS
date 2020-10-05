@@ -11,7 +11,7 @@ risk_pop_setup<-function(){
   Contact<-c(.2,1,1,8)
   load(system.file("US/US_results_1.rda", package="MITUS"))
   results<-out[1,,]
-  Immigrants<-c(sum(results[71,635:682]),1,1,1) #match tabby2
+  Migrants<-c(sum(results[71,31:32]),1,1,1) #match tabby2
   Healthcare<-c(18,1,1,5)
   Congregate<-c(4,1,3.4,5.3) #values are for homeless rn
   ################################################################################
@@ -120,17 +120,17 @@ risk_pop_setup<-function(){
   Contact_ttt_vec[[9]]<-Contact[4]
 
   ################################################################################
-  ####################              Immigrants            ####################
+  ####################              Migrants            ####################
   ################################################################################
-  Immigrants_ttt_vec<-def_ttt()
-  Immigrants_ttt_vec[[1]]<-"NUSB"
-  Immigrants_ttt_vec[[3]]<-Immigrants[1]
-  Immigrants_ttt_vec[[4]]<-1
-  Immigrants_ttt_vec[[5]]<-2020
-  Immigrants_ttt_vec[[6]]<-2020
-  Immigrants_ttt_vec[[7]]<-Immigrants[2]
-  Immigrants_ttt_vec[[8]]<-Immigrants[3]
-  Immigrants_ttt_vec[[9]]<-Immigrants[4]
+  Migrants_ttt_vec<-def_ttt()
+  Migrants_ttt_vec[[1]]<-"NUSB"
+  Migrants_ttt_vec[[3]]<-Migrants[1]
+  Migrants_ttt_vec[[4]]<-1
+  Migrants_ttt_vec[[5]]<-2020
+  Migrants_ttt_vec[[6]]<-2020
+  Migrants_ttt_vec[[7]]<-Migrants[2]
+  Migrants_ttt_vec[[8]]<-Migrants[3]
+  Migrants_ttt_vec[[9]]<-Migrants[4]
 
   ################################################################################
   ####################              Healthcare            ####################
@@ -165,11 +165,11 @@ risk_pop_setup<-function(){
                     Immunosup_ttt_vec,
                     abCXR_ttt_vec,
                     Contact_ttt_vec,
-                    Immigrants_ttt_vec,
+                    Migrants_ttt_vec,
                     Healthcare_ttt_vec,
                     Congregate_ttt_vec)
   names(all_pop_ttt)<-c("HIV", "Diabetes","Silicosis","CKD","Child5yr",
                         "PWID","ImmunosupTherapy","abCXR","Contact",
-                        "Immigrants","Healthcare","Congregate")
+                        "Migrants","Healthcare","Congregate")
   return(all_pop_ttt)
 }

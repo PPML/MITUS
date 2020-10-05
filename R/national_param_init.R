@@ -25,11 +25,11 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   ########## VARIABLES SHOULD BE
   month<-1213;
   intv_yr<-2020
-  intv_m<-((intv_yr-1949)*12)+1
+  intv_m<-((intv_yr-1950)*12)
   prg_yr <-prg_chng["start_yr"]
   prg_m  <-((prg_yr-1949)*12)+1
   ttt_month <-seq((ttt_input[[1]][["StartYr"]]-1950)*12,(ttt_input[[1]][["EndYr"]]-1949)*12,1) #passed to c++ so one less than r iterator
-  ttt_month <-ttt_month[-1]
+  # ttt_month <-ttt_month[-1]
   ################################################################################
   ##### INTERVENTION
   ################################################################################
@@ -367,7 +367,7 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   ###  if the population & fraction to be screened are non zero update values  ###
   if (ttt_input[[1]][[3]]!=0 & ttt_input[[1]][[4]]!=0){
     ###this is dependent on a basecase run so load in that data
-    load(system.file("US/US_longresults_1.rda", package="MITUS"))
+    load(system.file("US/US_results_1.rda", package="MITUS"))
     ttt_params<-create_ttt_mdist(ttt_input = ttt_input,
                                  results = out[3,,],
                                  PV = PV)

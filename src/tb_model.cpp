@@ -1486,11 +1486,11 @@ Rcpp::List cSim(
                   ///defaults are placed in tx naive because it is considered the same tb infection
                   V1[ag][2][0][im][nm][rg][na]  += (temp3+temp4); //latent tx default to latent slow
                 } } } } }
-        if (s == (ttt_month.back()+1)){
-          Rcpp::Rcout<< "total extra screening = " << temp8 << "\n";
-          Rcpp::Rcout<< "total extra screening in latent pop = " << temp9 << "\n";
-          Rcpp::Rcout<< "total extra LTBI diagnoses = " << temp10 << "\n";
-        }
+        // if (s == (ttt_month.back()+1)){
+        //   Rcpp::Rcout<< "total extra screening = " << temp8 << "\n";
+        //   Rcpp::Rcout<< "total extra screening in latent pop = " << temp9 << "\n";
+        //   Rcpp::Rcout<< "total extra LTBI diagnoses = " << temp10 << "\n";
+        // }
         temp7=0;
         if(std::find(std::begin(ttt_month), std::end(ttt_month), s) != std::end(ttt_month)){
           for(int ag=0; ag<11; ag++) {

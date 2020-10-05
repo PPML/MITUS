@@ -8,7 +8,7 @@ OutputsInt(
   loc,
   ParMatrix,
   n_cores = 1,
-  endyr = 2050,
+  endyr = 2051,
   startyr = 1950,
   Int1 = 0,
   Int2 = 0,

@@ -8,11 +8,13 @@ national_risk_pop_setup<-function(){
   PWID<-c(6.6,1,8.3,8.2)#values from linas paper, mort from https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.1002964
   Immunosup<-c(8.9,2,1,1) #value from linas paper, mort from Overall and cancer related mortality among patients with ocular inflammation treated with immunosuppressive drugs: retrospective cohort study
   Prisoners<-c(2.23, 1, 1, 5.9)
-  Homeless<-c(96100/1e6, 1, 3.4, 5.3)
+  Homeless<-c(567715/1e6, 1, 3.4, 5.3)
   load(system.file("US/US_results_1.rda", package="MITUS"))
-  results<-out[1,,]
-  Immigrants<-c(sum(results[71,635:682]),1,1,1) #match tabby2
+  results<-out[3,,]
+  Migrants<-c(sum(results[71,31:32]),1,1,1) #match tabby2
   Healthcare<-c(18,1,1,1)
+  Total<-c(results[71,2],1,1,1)
+
   # Congregate<-c(4,1,3.4,5.3) #values are for homeless rn
   ################################################################################
   ####################              HIV POPULATION            ####################
@@ -121,17 +123,18 @@ national_risk_pop_setup<-function(){
   Homeless_ttt_vec[[9]]<-Homeless[4]
 
   ################################################################################
-  ####################              Immigrants            ####################
+  ####################              Migrants            ####################
   ################################################################################
-  Immigrants_ttt_vec<-def_ttt_nat_ag()
-  Immigrants_ttt_vec[[1]]<-rep(0,11)
-  Immigrants_ttt_vec[[3]]<-Immigrants[1]
-  Immigrants_ttt_vec[[4]]<-1
-  Immigrants_ttt_vec[[5]]<-2020
-  Immigrants_ttt_vec[[6]]<-2020
-  Immigrants_ttt_vec[[7]]<-Immigrants[2]
-  Immigrants_ttt_vec[[8]]<-Immigrants[3]
-  Immigrants_ttt_vec[[9]]<-Immigrants[4]
+  Migrants_ttt_vec<-def_ttt_nat_ag()
+  Migrants_ttt_vec[[1]]<-rep(0,11)
+  Migrants_ttt_vec[[2]]<-Migrants_ttt_vec[[2]]/sum(Migrants_ttt_vec[[2]])
+  Migrants_ttt_vec[[3]]<-Migrants[1]
+  Migrants_ttt_vec[[4]]<-1
+  Migrants_ttt_vec[[5]]<-2020
+  Migrants_ttt_vec[[6]]<-2020
+  Migrants_ttt_vec[[7]]<-Migrants[2]
+  Migrants_ttt_vec[[8]]<-Migrants[3]
+  Migrants_ttt_vec[[9]]<-Migrants[4]
 
   ################################################################################
   ####################              Healthcare            ####################
@@ -157,6 +160,18 @@ national_risk_pop_setup<-function(){
   # Congregate_ttt_vec[[8]]<-Congregate[3]
   # Congregate_ttt_vec[[9]]<-Congregate[4]
 
+  ################################################################################
+  ####################              Total            ####################
+  ################################################################################
+  Total_ttt_vec<-def_ttt_nat_ag()
+  Total_ttt_vec[[3]]<-Total[1]
+  Total_ttt_vec[[4]]<-1
+  Total_ttt_vec[[5]]<-2020
+  Total_ttt_vec[[6]]<-2020
+  Total_ttt_vec[[7]]<-Total[2]
+  Total_ttt_vec[[8]]<-Total[3]
+  Total_ttt_vec[[9]]<-Total[4]
+
   all_pop_ttt<-list(HIV_ttt_vec,
                     Diab_ttt_vec,
                     Silica_ttt_vec,
@@ -166,11 +181,12 @@ national_risk_pop_setup<-function(){
                     Immunosup_ttt_vec,
                     Prisoners_ttt_vec,
                     Homeless_ttt_vec,
-                    Immigrants_ttt_vec,
-                    Healthcare_ttt_vec
+                    Migrants_ttt_vec,
+                    Healthcare_ttt_vec,
+                    Total_ttt_vec
                    )
   names(all_pop_ttt)<-c("HIV", "Diabetes","Silicosis","ESRD","Child5yr",
                         "PWID","ImmSup","Prisoners","Homeless",
-                        "Immigrants","Healthcare")
+                        "Migrants","Healthcare", "Total")
   return(all_pop_ttt)
 }
