@@ -9,7 +9,7 @@ calib_graphs_st_summary<-function(locvec,date){
     loc<-locvec[i] #assign loc
     st<-which(StateID$USPS==loc) #find numerical representation of this location
     model_load(loc) ##make sure to add our Opts into here
-    Opt<-readRDS(system.file(paste0(loc,"/",loc,"_Optim_all_10_0713.rds"), package="MITUS"))
+    Opt<-readRDS(system.file(paste0(loc,"/",loc,"_Optim_all_10_1006.rds"), package="MITUS"))
 
   #get the right run from the model
     posterior<-round(Opt[,ncol(Opt)],2); print(posterior)
@@ -42,7 +42,7 @@ calib_graphs_st_summary<-function(locvec,date){
                 rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
                 vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    ,
                 HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat"]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst"]]    ,
-                net_mig_usb = prms[["net_mig_usb"]], net_mig_nusb = prms[["net_mig_nusb"]],
+                net_mig_usb = prms[["net_mig_usb"]], net_mig_nusb = prms[["net_mig_nusb"]], RRcrAG = prms[["RRcrAG"]],
                 mubt       = prms[["mubt"]]    , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
                 TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
                 LtDxPar_lt    = prms[["LtDxPar_lt"]]   , LtDxPar_nolt    = prms[["LtDxPar_nolt"]]   , rLtScrt   = prms[["rLtScrt"]]       , ttt_samp_dist   = prms[["ttt_sampling_dist"]] ,
