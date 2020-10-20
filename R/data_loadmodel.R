@@ -27,11 +27,11 @@ if (loc=="US"){
   CalibDat<<-CalibDatState<<-readRDS(system.file("ST/ST_CalibDat_07-08-20.rds", package="MITUS"))
   ParamInit_st<<-ParamInit<<-readRDS(system.file("ST/ST_ParamInit_2020-09-04.rds", package="MITUS"))
   StartVal_st<<-StartVal<<-readRDS(system.file("ST/ST_StartVal_2020-09-04.rds", package="MITUS"))
-  Inputs<<-readRDS(system.file(paste0(loc,"/",loc,"_ModelInputs_06-09-20.rds"), package="MITUS"))
+  Inputs<<-readRDS(system.file(paste0(loc,"/",loc,"_ModelInputs_10-19-20.rds"), package="MITUS"))
 }
-  if (loc=="IN"){
-    Inputs<<-readRDS(system.file(paste0(loc,"/",loc,"_ModelInputs_07-14-20.rds"), package="MITUS"))
-  }
+  # if (loc=="IN"){
+  #   Inputs<<-readRDS(system.file(paste0(loc,"/",loc,"_ModelInputs_07-14-20.rds"), package="MITUS"))
+  # }
 if (loc=="US"){
   wts <<- CalibDat[["ImptWeights"]]
   P  <<- ParamInit[,1]

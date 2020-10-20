@@ -3,15 +3,11 @@
 #'for the calibration of the State Level TB model in tb_model.cpp
 #'These llikelihood functions are called in IMIS_functions.R
 #'takes in the outputs and calibration data and creates likelihood functions
-#
-# data("US_CalibDat_2018-09-01", package='MITUS')# ParamInit
-#  wts <- CalibDat[["ImptWeights"]]
 
 #'Total Diagnosed Cases 1953-2016
 #'Motivation: Normal, mean centered with CI = +/- 5% of the mean
 #'@param V vector of total notifications 1953-2014
 #'@return likelihood
-
 notif_tot_lik <- function(V) {
   notif_tot     <- CalibDat[["tot_cases"]][1:40,2]
   adj_1         <- sum(dnorm(notif_tot,notif_tot,notif_tot*0.05/1.96,log=T)*wts[4:43])
@@ -21,7 +17,6 @@ notif_tot_lik <- function(V) {
 #'Motivation: Normal, mean centered with CI = +/- 5% of the mean
 #'@param V vector of total notifications 1953-2014
 #'@return likelihood
-
 notif_fb_lik <- function(V) {
   notif_fb      <- CalibDat[["age_cases_fb"]][,12]
   adj_1         <- sum(dnorm(notif_fb,notif_fb,notif_fb*0.05/1.96,log=T)*wts[44:69])
