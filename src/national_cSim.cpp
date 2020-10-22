@@ -1485,7 +1485,7 @@ for(int rg=0; rg<2; rg++) {
             }
             ////////////// US BORN, HIGH RISK  /////////////////
             if(rg==1 & na==0) {
-              rTbP_norm=LtDxPar_ltN[1][s]/.924;
+              rTbP_norm=LtDxPar_ltN[1][s];///.924;
             }
             ////////////// Young NUS (under 5)  /////////////////
             if(rg==0 & na > 0 & ag==0) {
@@ -1497,7 +1497,7 @@ for(int rg=0; rg<2; rg++) {
             }
             ////////////// NON US BORN, HIGH RISK  /////////////////
             if(rg==1 & na >0) {
-              rTbP_norm=LtDxPar_ltN[4][s]/.924;
+              rTbP_norm=LtDxPar_ltN[4][s];///.924;
             }
             ///// second loop that iterates across all the populations being screened
             for (int i=0; i<rows; i++){
@@ -1537,12 +1537,12 @@ for(int rg=0; rg<2; rg++) {
               V1[ag][2][0][im][nm][rg][na]  += (temp3+temp4); //latent tx default to latent slow
           } } } } }
 // if (s == (ttt_month.back())){
-// if (s == ttt_month.front()){
-//   // Rcpp::Rcout<< "month = " << s << "\n";
-//   Rcpp::Rcout<< "total extra screening = " << temp8 << "\n";
-//   Rcpp::Rcout<< "total extra screening in latent pop = " << temp9 << "\n";
-//   Rcpp::Rcout<< "total extra LTBI diagnoses = " << temp10 << "\n";
-// }
+if (s == ttt_month.front()){
+  // Rcpp::Rcout<< "month = " << s << "\n";
+  Rcpp::Rcout<< "total extra screening = " << temp8 << "\n";
+  Rcpp::Rcout<< "total extra screening in latent pop = " << temp9 << "\n";
+  Rcpp::Rcout<< "total extra LTBI diagnoses = " << temp10 << "\n";
+}
 // temp7=0;
 // if(std::find(std::begin(ttt_month), std::end(ttt_month), s) != std::end(ttt_month)){
 //   for(int ag=0; ag<11; ag++) {

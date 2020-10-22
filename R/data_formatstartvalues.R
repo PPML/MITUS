@@ -58,7 +58,7 @@ gen_par_matrix<-function(startMat){
   P <- P
   parAll[i,]<-P
   }
-saveRDS(parAll,file=paste("parAll",nrow(startMat),"_",Sys.time(),".rds", sep=""))
+# saveRDS(parAll,file=paste("parAll",nrow(startMat),"_",Sys.time(),".rds", sep=""))
   return(parAll)
 
 }
