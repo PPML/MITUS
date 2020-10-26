@@ -7,7 +7,8 @@
 #'Total Diagnosed Cases 1953-2016
 #'Motivation: Normal, mean centered with CI = +/- 5% of the mean
 #'@name notif_tot_lLik_st
-#'@param V vector of total notifications 1953-2014
+#'@param V vector of total notifi
+#'cations 1953-2014
 #'@return likelihood
 notif_tot_lLik_st <- function(V,st) {
   notif_tot     <- CalibDatState[["cases_yr_st"]][[st]][,2];
@@ -33,10 +34,10 @@ notif_decline_lLik_st <- function(V, st=st) {
 #'@param V vector of total notifications 1953-2014
 #'@return likelihood
 US_notif_tot_lLik_st <- function(V,st) {
-  notif_tot     <- CalibDatState[["cases_yr_ag_nat_st"]][[st]][,12,"usb"]
-  adj_1         <- sum(dnorm(notif_tot,notif_tot,notif_tot*0.05/1.96,log=T)*wts[44:69])
+  notif_tot_us     <- (CalibDatState[["cases_yr_ag_nat_st"]][[st]][,12,"usb"])
+  adj_1         <- sum(dnorm(notif_tot_us,notif_tot_us,notif_tot_us*0.1/1.96,log=T)*wts[44:69])
   #notif tot is in real scale must scale outputs up
-  sum(dnorm(notif_tot,V*1e6,notif_tot*0.05/1.96,log=T)*wts[44:69]) - adj_1
+  sum(dnorm(notif_tot_us,V*1e6,notif_tot_us*0.1/1.96,log=T)*wts[44:69]) - adj_1
 }
 
 #'Total Diagnosed NUS Cases 1993-2017
@@ -45,10 +46,10 @@ US_notif_tot_lLik_st <- function(V,st) {
 #'@param V vector of total notifications 1953-2014
 #'@return likelihood
 NUS_notif_tot_lLik_st <- function(V,st) {
-  notif_tot     <- CalibDatState[["cases_yr_ag_nat_st"]][[st]][,12,"nusb"]
-  adj_1         <- sum(dnorm(notif_tot,notif_tot,notif_tot*0.05/1.96,log=T)*wts[44:69])
+  notif_tot_nus     <- CalibDatState[["cases_yr_ag_nat_st"]][[st]][,12,"nusb"]
+  adj_1         <- sum(dnorm(notif_tot_nus,notif_tot_nus,notif_tot_nus*0.1/1.96,log=T)*wts[44:69])
   #notif tot is in real scale must scale outputs up
-  sum(dnorm(notif_tot,V*1e6,notif_tot*0.05/1.96,log=T)*wts[44:69]) - adj_1
+  sum(dnorm(notif_tot_nus,V*1e6,notif_tot_nus*0.1/1.96,log=T)*wts[44:69]) - adj_1
 }
 ### ### ### ANN DECLINE IN CASES 1953-1994  ### ### ### ### ### ### D
 # notif_decline      <- CalibDatState[["cases_prop_change_53_94"]]
@@ -66,7 +67,19 @@ notif_age_us_lLik_st <- function(V,st,rho=0.01) { # V = table of us notification
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
   #scale does not matter for dirichlet llikelihood
   sum(dDirMult(M=V2,n=notif_age_us,Rho=rho)*wts[44:69]) - adj_2a
-  }
+}
+
+### ### ### US CASES AGE DISTRIBUTION 5yrs 1993-2016  ### ### ### ### ### ### D
+# Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
+notif_age_us_5yr_lLik_st <- function(V,st,rho=0.1) { # V = table of us notifications by age 1993-2016 (row=24 years, col=11 ages)
+  notif_age_us_5yr     <- CalibDatState$cases_yr_ag_nat_st_5yr[[st]][CalibDat$cases_yr_ag_nat_st_5yr[[st]][,4]==1,5:14]
+  adj_2a            <- sum(dDirMult(M=notif_age_us_5yr,n=notif_age_us_5yr,Rho=0.015)*wts[c(49,54,59,64,69)])
+  V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
+  V3<-matrix(0,5,10)
+  V3[1,]<-rowSums(V2[1:5,]);V3[2,]<-rowSums(V2[6:10,]);V3[3,]<-rowSums(V2[11:15,]); V3[4,]<-rowSums(V2[16:20,]); V3[5,]<-rowSums(V2[21:25,])
+  #scale does not matter for dirichlet llikelihood
+  sum(dDirMult(M=V3*1e6,n=notif_age_us_5yr,Rho=rho)*wts[c(49,54,59,64,69)]) - adj_2a
+}
 
 ### ### ### FB CASES AGE DISTRIBUTION 1993-2016  ### ### ### ### ### ### D
 # Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
@@ -79,6 +92,18 @@ notif_age_fb_lLik_st <- function(V,st,rho=0.01) { # V = table of fb notification
   #scale does not matter for dirichlet llikelihood
   sum(dDirMult(M=V2,n=notif_age_fb,Rho=rho)*wts[44:69]) - adj_2b
   }
+
+### ### ### NUS CASES AGE DISTRIBUTION 5yrs 1993-2016  ### ### ### ### ### ### D
+# Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
+notif_age_nus_5yr_lLik_st <- function(V,st,rho=0.1) { # V = table of us notifications by age 1993-2016 (row=24 years, col=11 ages)
+  notif_age_nus_5yr     <- CalibDatState$cases_yr_ag_nat_st_5yr[[st]][CalibDat$cases_yr_ag_nat_st_5yr[[st]][,4]==0,5:14]
+  adj_2a            <- sum(dDirMult(M=notif_age_nus_5yr,n=notif_age_nus_5yr,Rho=0.1)*wts[c(49,54,59,64,69)])
+  V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
+  V3<-matrix(0,5,10)
+  V3[1,]<-rowSums(V2[1:5,]);V3[2,]<-rowSums(V2[6:10,]);V3[3,]<-rowSums(V2[11:15,]); V3[4,]<-rowSums(V2[16:20,]); V3[5,]<-rowSums(V2[21:25,])
+  #scale does not matter for dirichlet llikelihood
+  sum(dDirMult(M=V3*1e6,n=notif_age_nus_5yr,Rho=rho)*wts[c(49,54,59,64,69)]) - adj_2a
+}
 
 ### ### ### CASES FB DISTRIBUTION 1993-2016  ### ### ### ### ### ###  D
 # Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
@@ -228,8 +253,8 @@ ltbi_fb_11_dp_lLik_st <- function(V) { # V = LTBI in FB pop 2011 (row=11 ages, c
 tbdeaths_lLik_st <- function(V,st) { # V = vector of total notifications 1999-2016
   tb_deaths <- CalibDatState[["tbdeaths"]][[st]][,3]
   V2<-rowSums(V)*1e6
-  adj_19    <- sum((dnorm(tb_deaths,tb_deaths,tb_deaths*0.2/1.96,log=T)*wts[50:67])[is.na(tb_deaths)==F])
-  sum((dnorm(tb_deaths,V2,tb_deaths*0.2/1.96,log=T)*wts[50:67])[is.na(tb_deaths)==F]) - adj_19
+  adj_19    <- sum((dnorm(tb_deaths,tb_deaths,tb_deaths*0.1/1.96,log=T)*wts[50:67])[is.na(tb_deaths)==F])
+  sum((dnorm(tb_deaths,V2,tb_deaths*0.1/1.96,log=T)*wts[50:67])[is.na(tb_deaths)==F]) - adj_19
 }
 ### ### ### ANN DECLINE IN TB DEATHS 1968-2015  ### ### ### ### ### ### D
 
@@ -242,9 +267,9 @@ tbdeaths_decline_lLik_st <- function(V) { # V = vector of tb deaths 1968-2015
 ### ### ### TB DEATHS AGE DISTRIBUTION 1999-2016  ### ### ### ### ### ### D
 # Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
 
-tb_dth_age_lLik_st <- function(V,rho=0.01) { # V = table of deaths by age 1999-2016 (row=18 years, col=11 ages)
+tb_dth_age_lLik_st <- function(V,rho=0.05) { # V = table of deaths by age 1999-2016 (row=18 years, col=11 ages)
   tb_deaths_age  <- CalibDatState[["tbdeaths_age_yr"]][,-1]
-  adj_19b        <- sum(dDirMult(M=tb_deaths_age+0.01,n=tb_deaths_age,Rho=rho)*wts[50:67])
+  adj_19b        <- sum(dDirMult(M=tb_deaths_age+0.05,n=tb_deaths_age,Rho=rho)*wts[50:67])
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
   #scale doesn't matter for dirchlet
   sum(dDirMult(M=V2,n=tb_deaths_age,Rho=rho)*wts[50:67]) - adj_19b

@@ -13,7 +13,8 @@ Motivation: Normal, mean centered with CI = +/- 5% of the mean}
 notif_tot_lLik_st(V, st)
 }
 \arguments{
-\item{V}{vector of total notifications 1953-2014}
+\item{V}{vector of total notifi
+cations 1953-2014}
 }
 \value{
 likelihood

@@ -67,27 +67,36 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
         addlik <- US_notif_tot_lLik_st(V=v1a,st=st); addlik
         lLik <- lLik + addlik
         # print(paste("3:", lLik))
-
         # ### ### ### NUS CASES 1993-2016  ### ### ### ### ### ### D
         v1c   <- rowSums((M[44:69,136:146]+M[44:69,189:199]) - (M[44:69,205:215]+M[44:69,216:226]))
         addlik <- NUS_notif_tot_lLik_st(V=v1c,st=st); addlik
         lLik <- lLik + addlik
         # print(paste("4:", lLik))
         ### ### ### US CASES AGE DISTRIBUTION 1993-2016  ### ### ### ### ### ### D
-        v2a   <- M[44:69,205:215]+M[44:69,216:226]
-        addlik <- notif_age_us_lLik_st(V=v2a,st=st); addlik
+        # v2a   <- M[44:69,205:215]+M[44:69,216:226]
+        # addlik <- notif_age_us_lLik_st(V=v2a,st=st); addlik
+        # lLik <- lLik + addlik
+        # # print(paste("5:", lLik))
+        # ### ### ### NUSB CASES AGE DISTRIBUTION 1993-2013  ### ### ### ### ### ### D
+        # v2b   <- (M[44:69,136:146]+M[44:69,189:199]) - (M[44:69,205:215]+M[44:69,216:226])
+        # addlik <- notif_age_fb_lLik_st(V=v2b,st=st); addlik
+        # lLik <- lLik + addlik
+        # # print(paste("6:", lLik))
+        ### ### ### US CASES AGE DISTRIBUTION 5year 1994-2016  ### ### ### ### ### ### D
+        v2a   <- M[45:69,205:215]+M[45:69,216:226]
+        addlik <- notif_age_us_5yr_lLik_st(V=v2a,st=st); addlik
         lLik <- lLik + addlik
         # print(paste("5:", lLik))
-        ### ### ### NUSB CASES AGE DISTRIBUTION 1993-2013  ### ### ### ### ### ### D
-        v2b   <- (M[44:69,136:146]+M[44:69,189:199]) - (M[44:69,205:215]+M[44:69,216:226])
-        addlik <- notif_age_fb_lLik_st(V=v2b,st=st); addlik
+        ### ### ### NUSB CASES AGE DISTRIBUTION 5year 1994-2013  ### ### ### ### ### ### D
+        v2b   <- (M[45:69,136:146]+M[45:69,189:199]) - (M[45:69,205:215]+M[45:69,216:226])
+        addlik <- notif_age_nus_5yr_lLik_st(V=v2b,st=st); addlik
         lLik <- lLik + addlik
         # print(paste("6:", lLik))
         ### ### ### CASES NUSB DISTRIBUTION 1993-2014  ### ### ### ### ### ### D
-        v3   <-  cbind(M[44:69,148]+M[44:69,149]+(M[44:69,201]+M[44:69,202]),
-                       M[44:69,147]+M[44:69,200])
-        addlik <- notif_fb_lLik_st(V=v3,st=st); addlik
-        lLik <- lLik + addlik
+        # v3   <-  cbind(M[44:69,148]+M[44:69,149]+(M[44:69,201]+M[44:69,202]),
+        #                M[44:69,147]+M[44:69,200])
+        # addlik <- notif_fb_lLik_st(V=v3,st=st); addlik
+        # lLik <- lLik + addlik
         # print(paste("7:", lLik))
         ### ### ### CASES NUSB, US 2010-2014  SLOPE ### ### ### ### ### ### D
         v4   <- cbind(M[65:69,148]+M[65:69,149]+(M[65:69,201]+M[65:69,202]),
