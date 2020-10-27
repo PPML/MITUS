@@ -39,6 +39,8 @@ using namespace Rcpp;
 //'@param TunTxMort Tuning parameter for mortality on TB Tx
 //'@param rDeft rate of default from TB treatment over time
 //'@param rLtScrt rate of latent screening over time
+//'@param rrTestHr RR of latent testing for HR
+//'@param rrTestNoTb RR of latent testing for those without TB
 //'@param ttt_samp_dist probabilities of screening for ttt intervention
 //'@param ttt_ag which age groups to apply ttt
 //'@param ttt_na which nativity groups to apply ttt
@@ -95,6 +97,8 @@ Rcpp::List cSim(
     double              TunTxMort,
     std::vector<double> rDeft,
     std::vector<double> rLtScrt,
+    std::vector<double>              rrTestHr,
+    std::vector<double>              rrTestLrNoTb,
     Rcpp::NumericMatrix LtTxPar,
     Rcpp::NumericMatrix ttt_samp_dist,
     std::vector<double> ttt_ag,
@@ -2175,20 +2179,44 @@ Rcpp::List cSim(
                   } } } } } }
 
         for(int ag=0; ag<11; ag++) {
-            for(int im=0; im<4; im++) {
-              for(int nm=0; nm<4; nm++) {
-                for(int rg=0; rg<2; rg++) {
-                  for(int na=0; na<3; na++) {
-      //number of additional tests hack need to be updated for custom interventions!!
-      if(na==0){
-      Outputs[y][683+ag] += (V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*rLtScrt[s];
-      } else {
-      Outputs[y][694+ag] += (V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*rLtScrt[s];
-      }
-                  } } } } }
-        for(int i=683; i<695; i++) { Outputs[y][i] = Outputs[y][i]*12; } // annualize
+          for(int im=0; im<4; im++) {
+            for(int nm=0; nm<4; nm++) {
+              for(int rg=0; rg<2; rg++) {
+                for(int na=0; na<3; na++) {
+                  //number of additional tests hack need to be updated for custom interventions!!
+                  if(na==0){
+                    Outputs[y][683+ag] += (V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*rLtScrt[s];
+                    Outputs[y][705+ag] += 1 ;
+                    Outputs[y][727+ag] += 2;
+                  } else {
+                    Outputs[y][694+ag] += (V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*rLtScrt[s];
+                    Outputs[y][716+ag] += 3;
+                    Outputs[y][738+ag] += 4;
+                  }
+                } } } } }
 
-        } ////end of mid-year results bracket
+        for(int i=683; i<739; i++) { Outputs[y][i] = Outputs[y][i]*12; } // annualize
+
+        Outputs[y][705+44]=1;
+        for(int ag=0; ag<11; ag++) {
+          for(int lt=0; lt<2; lt++) {
+          for(int im=0; im<4; im++) {
+            for(int nm=0; nm<4; nm++) {
+              for(int rg=0; rg<2; rg++) {
+                for(int na=0; na<3; na++) {
+                  if(na==0){
+                    Outputs[y][749+ag] += Vdx[ag][4][lt][im][nm][rg][na];
+                    Outputs[y][771+ag] += Vdx[ag][4][lt][im][nm][rg][na]*TxVec[0]; //check with TxVec[5]
+                  } else {
+                    Outputs[y][760+ag] += Vdx[ag][4][lt][im][nm][rg][na];
+                    Outputs[y][782+ag] += Vdx[ag][4][lt][im][nm][rg][na]*TxVec[0];
+
+                  }
+                } } } } } }
+
+        for(int i=683; i<815; i++) { Outputs[y][i] = Outputs[y][i]*12; } // annualize
+
+      } ////end of mid-year results bracket
       ///////////////////////////////////////////////////////////////////////////////////
       //////////////////////////////END MIDYEAR RESULTS//////////////////////////////////
       //////////////////////////////////////////////////////////////////////////////////

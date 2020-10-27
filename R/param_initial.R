@@ -633,6 +633,8 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   InputParams[["ttt_pop_scrn"]]<-ttt_pop_scrn/12
   InputParams[["ttt_ltbi"]]<-ttt_list[["RRPrev"]]
   InputParams[["rLtScrt"]]   = rLtScrt
+  InputParams[["rrTestHr"]]   <- c(1,rrTestHr)
+  InputParams[["rrTestNoTb"]] <- c(rrTestLrNoTb,1,1)
   InputParams[["RRdxAge"]]   = RRdxAge
   InputParams[["rRecov"]]    = rRecov
   InputParams[["pImmScen"]]  = pImmScen
@@ -642,7 +644,6 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   InputParams[["aging_denom"]] <-spl_den
   InputParams[["adj_fact"]] <- adj_fact
   InputParams[["NixTrans"]] <- NixTrans
-
   InputParams[["ResNam"]]    <- func_ResNam()
   return(InputParams)
 

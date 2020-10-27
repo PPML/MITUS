@@ -39,6 +39,8 @@ cSim(
   TunTxMort,
   rDeft,
   rLtScrt,
+  rrTestHr,
+  rrTestLrNoTb,
   LtTxPar,
   ttt_samp_dist,
   ttt_ag,
@@ -126,6 +128,8 @@ cSim(
 
 \item{rLtScrt}{rate of latent screening over time}
 
+\item{rrTestHr}{RR of latent testing for HR}
+
 \item{LtTxPar}{matrix of latent treatment parameters}
 
 \item{ttt_samp_dist}{probabilities of screening for ttt intervention}
@@ -159,6 +163,8 @@ cSim(
 \item{NixTrans}{reduction of transmission over time}
 
 \item{dist_gen}{general distribution across tb progression and mort}
+
+\item{rrTestNoTb}{RR of latent testing for those without TB}
 }
 \value{
 Outputs a list of outputs
