@@ -1877,8 +1877,27 @@ Rcpp::List cSim(
                       ((V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxParN[s][0]); } // high risk inits
 
                   Outputs[y][154] += (base_diag +  ((V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*rTbP_norm))*LtTxParN[s][0]; // inits with LTBI
-                } } } } }
-        for(int i=151; i<155; i++) { Outputs[y][i] = Outputs[y][i]*12; } // annualize
+                // } } } } }
+                 for(int i=151; i<155; i++) { Outputs[y][i] = Outputs[y][i]*12; } // annualize
+
+        // for(int ag=0; ag<11; ag++) {
+        //   for(int im=0; im<4; im++) {
+        //     for(int nm=0; nm<4; nm++) {
+        //       for(int rg=0; rg<2; rg++) {
+        //         for(int na=0; na<3; na++) {
+                  //number of additional tests hack need to be updated for custom interventions!!
+                  if(na==0){
+                    Outputs[y][683+ag] += (base_diag +((V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*rTbP_norm));
+                    Outputs[y][705+ag] += (base_diag +((V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*rTbP_norm))*LtTxParN[s][0];
+                    Outputs[y][727+ag] += (base_diag +((V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*rTbP_norm))*LtTxParN[s][0]*(1-LtTxParN[s][1]);
+                  } else {
+                    Outputs[y][694+ag] += (base_diag +((V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*rTbP_norm));
+                    Outputs[y][716+ag] += (base_diag +((V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*rTbP_norm))*LtTxParN[s][0];
+                    Outputs[y][738+ag] += (base_diag +((V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*rTbP_norm))*LtTxParN[s][0]*(1-LtTxParN[s][1]);
+                  }
+                 } } } } }
+
+        for(int i=683; i<739; i++) { Outputs[y][i] = Outputs[y][i]*12; }
 
 
         /// TB INCIDENCE, BY ALL VS RECENT  ///
@@ -2178,24 +2197,24 @@ Rcpp::List cSim(
                     Outputs[y][682] += V1[ag][tb][0][im][nm][rg][na];   //TREATMENT NAIVE
                   } } } } } }
 
-        for(int ag=0; ag<11; ag++) {
-          for(int im=0; im<4; im++) {
-            for(int nm=0; nm<4; nm++) {
-              for(int rg=0; rg<2; rg++) {
-                for(int na=0; na<3; na++) {
-                  //number of additional tests hack need to be updated for custom interventions!!
-                  if(na==0){
-                    Outputs[y][683+ag] += (V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*rLtScrt[s];
-                    Outputs[y][705+ag] += 1 ;
-                    Outputs[y][727+ag] += 2;
-                  } else {
-                    Outputs[y][694+ag] += (V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*rLtScrt[s];
-                    Outputs[y][716+ag] += 3;
-                    Outputs[y][738+ag] += 4;
-                  }
-                } } } } }
-
-        for(int i=683; i<739; i++) { Outputs[y][i] = Outputs[y][i]*12; } // annualize
+        // for(int ag=0; ag<11; ag++) {
+        //   for(int im=0; im<4; im++) {
+        //     for(int nm=0; nm<4; nm++) {
+        //       for(int rg=0; rg<2; rg++) {
+        //         for(int na=0; na<3; na++) {
+        //           //number of additional tests hack need to be updated for custom interventions!!
+        //           if(na==0){
+        //             Outputs[y][683+ag] += (V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*rLtScrt[s];
+        //             Outputs[y][705+ag] += 1 ;
+        //             Outputs[y][727+ag] += 2;
+        //           } else {
+        //             Outputs[y][694+ag] += (V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*rLtScrt[s];
+        //             Outputs[y][716+ag] += 3;
+        //             Outputs[y][738+ag] += 4;
+        //           }
+        //         } } } } }
+        //
+        // for(int i=683; i<739; i++) { Outputs[y][i] = Outputs[y][i]*12; } // annualize
 
         Outputs[y][705+44]=1;
         for(int ag=0; ag<11; ag++) {
@@ -2205,7 +2224,7 @@ Rcpp::List cSim(
               for(int rg=0; rg<2; rg++) {
                 for(int na=0; na<3; na++) {
                   if(na==0){
-                    Outputs[y][749+ag] += Vdx[ag][4][lt][im][nm][rg][na];
+                    Outputs[y][749+ag] += Vdx[ag][4][lt][im][nm][rg][na]; //how to handle TB tests among non-TB persons
                     Outputs[y][771+ag] += Vdx[ag][4][lt][im][nm][rg][na]*TxVec[0]; //check with TxVec[5]
                   } else {
                     Outputs[y][760+ag] += Vdx[ag][4][lt][im][nm][rg][na];
