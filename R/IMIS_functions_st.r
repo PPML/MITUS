@@ -148,7 +148,7 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
         Spec_IGRA <-c(.979,.979,.989,.985,.985)
         names(Sens_IGRA)<- names(Spec_IGRA)<-c("lrUS","hrUS","youngNUS","NUS","hrNUS")
         v15b <- outer(v15a[,1],c(Sens_IGRA[1],(1-Sens_IGRA[1])))+outer(v15a[,2],c((1-Spec_IGRA[1]),Spec_IGRA[1]))
-        addlik <- ltbi_us_11_lLik(V=v15b)*2; addlik
+        addlik <- ltbi_us_11_lLik_st(V=v15b)*2; addlik
         lLik <- lLik + addlik
         # print(paste("14:", lLik))
         #' LTBI PREVALENCE BY AGE 2011, NUSB - index updated

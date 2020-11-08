@@ -73,7 +73,7 @@ notif_age_us_lLik_st <- function(V,st,rho=0.01) { # V = table of us notification
 # Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
 notif_age_us_5yr_lLik_st <- function(V,st,rho=0.1) { # V = table of us notifications by age 1993-2016 (row=24 years, col=11 ages)
   notif_age_us_5yr     <- CalibDatState$cases_yr_ag_nat_st_5yr[[st]][CalibDat$cases_yr_ag_nat_st_5yr[[st]][,4]==1,5:14]
-  adj_2a            <- sum(dDirMult(M=notif_age_us_5yr,n=notif_age_us_5yr,Rho=0.015)*wts[c(49,54,59,64,69)])
+  adj_2a            <- sum(dDirMult(M=notif_age_us_5yr+0.01,n=notif_age_us_5yr,Rho=0.015)*wts[c(49,54,59,64,69)])
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
   V3<-matrix(0,5,10)
   V3[1,]<-rowSums(V2[1:5,]);V3[2,]<-rowSums(V2[6:10,]);V3[3,]<-rowSums(V2[11:15,]); V3[4,]<-rowSums(V2[16:20,]); V3[5,]<-rowSums(V2[21:25,])
@@ -97,12 +97,12 @@ notif_age_fb_lLik_st <- function(V,st,rho=0.01) { # V = table of fb notification
 # Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
 notif_age_nus_5yr_lLik_st <- function(V,st,rho=0.1) { # V = table of us notifications by age 1993-2016 (row=24 years, col=11 ages)
   notif_age_nus_5yr     <- CalibDatState$cases_yr_ag_nat_st_5yr[[st]][CalibDat$cases_yr_ag_nat_st_5yr[[st]][,4]==0,5:14]
-  adj_2a            <- sum(dDirMult(M=notif_age_nus_5yr,n=notif_age_nus_5yr,Rho=0.1)*wts[c(49,54,59,64,69)])
+  adj_2b                <- sum(dDirMult(M=notif_age_nus_5yr+0.01,n=notif_age_nus_5yr,Rho=0.015)*wts[c(49,54,59,64,69)]);adj_2b
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
   V3<-matrix(0,5,10)
   V3[1,]<-rowSums(V2[1:5,]);V3[2,]<-rowSums(V2[6:10,]);V3[3,]<-rowSums(V2[11:15,]); V3[4,]<-rowSums(V2[16:20,]); V3[5,]<-rowSums(V2[21:25,])
   #scale does not matter for dirichlet llikelihood
-  sum(dDirMult(M=V3*1e6,n=notif_age_nus_5yr,Rho=rho)*wts[c(49,54,59,64,69)]) - adj_2a
+  sum(dDirMult(M=V3,n=notif_age_nus_5yr,Rho=rho)*wts[c(49,54,59,64,69)]) - adj_2b
 }
 
 ### ### ### CASES FB DISTRIBUTION 1993-2016  ### ### ### ### ### ###  D

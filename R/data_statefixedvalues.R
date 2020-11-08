@@ -13,7 +13,9 @@ fixed_vals<-function(samp_i, US_opt_all){
 # and format the data back to their original distributions
 # US_opt_all<-readRDS(system.file("US/US_Optim_all_10_1031.rds", package="MITUS"))
 # Par<-US_opt_all[samp_i,-(ncol(US_opt_all))]
-  Par<-o7$par
+  # Par<-o7$par
+Opt <- readRDS("~/MITUS/inst/US/US_Optim_all_10_0901.rds")
+Par <-Opt[2,-58]
 Par2 <- pnorm(Par,0,1)
 # uniform to true
 Par3 <- Par2
