@@ -1,5 +1,6 @@
 #include <Rcpp.h>
 #include <math.h>
+#include <csignal>
 using namespace Rcpp;
 //'@name cSim
 //'@description runs a simulation of the tb model
@@ -13,7 +14,7 @@ using namespace Rcpp;
 //'@param MpfastPI Matrix of the probabilities of fast TB progression w/ partial immunity (age x TB prog risk group)
 //'@param Mrslow matrix of the rates of slow progression (age x TB prog risk group)
 //'@param rrSlowFB rate of fast TB progression
-//'@param RRcurDef Rate Ratio for cure given treatment defaul
+//'@param RRcurDef Rate Ratio for cure given treatment default
 //'@param rSlfCur rate of self cure from active TB
 //'@param p_HR probability of high risk population @ entry into the model
 //'@param vTMort vector of TB mortality rates
@@ -526,18 +527,19 @@ Rcpp::List cSim(
       // Step 2  (active TB)
       // Number of active cases* relative infectiousness
       for(int ag=0; ag<11; ag++) {
-        for(int tb=0; tb<6; tb++) {
+        // for(int tb=0; tb<6; tb++) { # currently only active TB contributes to disease so shut this loop off
           for(int im=0; im<4; im++) {
             for(int nm=0; nm<4; nm++) {
               /////////  LOW RISK US BORN
-              VGjkl[0][0][ag]  +=  V0[ag][tb][0][im][nm][0][0]                               *RelInf[tb];
+              VGjkl[0][0][ag]  +=  V0[ag][4][0][im][nm][0][0]                              *RelInf[4];
               ///////// HIGH RISK US BORN
-              VGjkl[1][0][ag]  +=  V0[ag][tb][0][im][nm][1][0]                               *RelInf[tb];
+              VGjkl[1][0][ag]  +=  V0[ag][4][0][im][nm][1][0]                              *RelInf[4];
               ///////// LOW RISK NON US BORN
-              VGjkl[0][1][ag]  += (V0[ag][tb][0][im][nm][0][1] + V0[ag][tb][0][im][nm][0][2])*RelInf[tb];
+              VGjkl[0][1][ag]  += (V0[ag][4][0][im][nm][0][1] + V0[ag][4][0][im][nm][0][2])*RelInf[4];
               /////////  HIGH RISK NON US BORN
-              VGjkl[1][1][ag]  += (V0[ag][tb][0][im][nm][1][1] + V0[ag][tb][0][im][nm][1][2])*RelInf[tb];
-            } } } }
+              VGjkl[1][1][ag]  += (V0[ag][4][0][im][nm][1][1] + V0[ag][4][0][im][nm][1][2])*RelInf[4];
+            } } }
+      // } for TB loop
 
       // for (int i=0; i<2; i++){
       //   for (int j=0; j<2; j++){
@@ -560,12 +562,14 @@ Rcpp::List cSim(
                       RelInfRg[3]*RRcrAG[ag]*VNkl[1][1][ag]*Vmix[1]*Vmix[0] + 1e-12);
 
       Vjaf[1][ag] = ((RelInfRg[1]*RRcrAG[ag]*VGjkl[0][1][ag]) +
-                     (RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1][ag]*Vmix[0])) /
+                     (RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1][ag]*Vmix[0]))
+                     /
                     ((RelInfRg[1]*RRcrAG[ag]*VNkl[0][1][ag])  +
                      (RelInfRg[3]*RRcrAG[ag]*VNkl[1][1][ag]*Vmix[0]) + 1e-12);
 
       Vjaf[2][ag] = ((RelInfRg[2]*RRcrAG[ag]*VGjkl[1][0][ag]) +
-                     (RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1][ag]*Vmix[1])) /
+                     (RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1][ag]*Vmix[1]))
+                     /
                     ((RelInfRg[2]*RRcrAG[ag]*VNkl[1][1][ag] ) +
                      (RelInfRg[3]*RRcrAG[ag]*VNkl[1][1][ag]*Vmix[1]) + 1e-12);
 
@@ -1152,12 +1156,13 @@ Rcpp::List cSim(
                 ///////// HIGH RISK NON US BORN
                 VNkl[1][1][ag]  += V0[ag][tb][lt][im][nm][1][1] + V0[ag][tb][lt][im][nm][1][2];
               } } } } }
-
+        // if (y==10){
+        // for(int ag=0; ag<11; ag++) {
         // for (int i=0; i<2; i++){
         //   for (int j=0; j<2; j++){
-        //     Rcpp::Rcout <<"sums are " <<  VNkl[i][j] << "for i= " << i << " and j = " <<  j << "\n";
-        //   }
-        // }
+        //     Rcpp::Rcout <<"VNs are " <<  VNkl[i][j][ag] << "for i= " << i << " and j = " <<  j << "and ag =" <<ag<<  "\n";
+        //   } }
+        // } }
         // Step 2  (active TB)
         // Number of active cases* relative infectiousness
         for(int ag=0; ag<11; ag++) {
@@ -1174,26 +1179,37 @@ Rcpp::List cSim(
                 /////////  HIGH RISK NON US BORN
                 VGjkl[1][1][ag]  += (V0[ag][tb][lt][im][nm][1][1] + V0[ag][tb][lt][im][nm][1][2])*RelInf[tb];
               } } } } }
-
-        // for (int i=0; i<2; i++){
-        //   for (int j=0; j<2; j++){
-        //     Rcpp::Rcout <<"VGs are " <<  VGjkl[i][j] << "for i= " << i << " and j = " <<  j << "\n";
-        //   }
-        // }
+// if (y==15 && m==1){
+//         for (int i=0; i<2; i++){
+//           for (int j=0; j<2; j++){
+//             for(int ag=0; ag<11; ag++) {
+//
+//             Rcpp::Rcout <<"VGs are " <<  VGjkl[i][j][ag] << "for i= " << i << " and j = " <<  j << "and ag =" <<ag<< "\n";
+//           }
+//           }}}
         // Step 2 (treated TB)
         // No contribution to force of infection
-
+        // for (int i=0; i<2; i++){
+        //   for (int j=0; j<2; j++){
+        //
+        //   for(int ag=0; ag<11; ag++) {
+        //     if(VGjkl[i][j][ag]>VNkl[i][j][ag]){
+        //       Rcpp::Rcout << "s = "<< s<< "and y =" <<y<< "\n";
+        //       // Rcpp::Rcout << VNkl[0][1][0]<<  "\n";
+        //       // Rcpp::Rcout << "Vjaf is "<<  Vjaf[i][ag] << "at ag = "<< ag << "and i = " << i << "\n";
+        //     } }
+        //   } }
         // Step 3 (Infected/Total)
         for(int ag=0; ag<11; ag++) {
-          Vjaf[0][ag]  =(RelInfRg[0]*RRcrAG[ag]*VGjkl[0][0][ag] +        //low risk usb
+          Vjaf[0][ag]  =(RelInfRg[0]*RRcrAG[ag]*VGjkl[0][0][ag] +     //low risk usb
             RelInfRg[1]*RRcrAG[ag]*VGjkl[1][0][ag]*Vmix[0]+           //high risk usb
             RelInfRg[2]*RRcrAG[ag]*VGjkl[0][1][ag]*Vmix[1]+           //low risk nusb
             RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1][ag]*Vmix[1]*Vmix[0])   //high risk nusb
           /
-            (RelInfRg[0]*RRcrAG[ag]*VNkl[0][0][ag] +
+            ((RelInfRg[0]*RRcrAG[ag]*VNkl[0][0][ag] +
             RelInfRg[1]*RRcrAG[ag]*VNkl[1][0][ag]*Vmix[0]+
             RelInfRg[2]*RRcrAG[ag]*VNkl[0][1][ag]*Vmix[1]+
-            RelInfRg[3]*RRcrAG[ag]*VNkl[1][1][ag]*Vmix[1]*Vmix[0] + 1e-12);
+            RelInfRg[3]*RRcrAG[ag]*VNkl[1][1][ag]*Vmix[1]*Vmix[0]) + 1e-12);
 
           Vjaf[1][ag] = ((RelInfRg[1]*RRcrAG[ag]*VGjkl[0][1][ag]) + ( RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1][ag]*Vmix[0])) /
             ((RelInfRg[1]*RRcrAG[ag]*VNkl[0][1][ag])  +  (RelInfRg[3]*RRcrAG[ag]*VNkl[1][1][ag]*Vmix[0]) + 1e-12);
@@ -1204,10 +1220,14 @@ Rcpp::List cSim(
           Vjaf[3][ag] = VGjkl[1][1][ag] / (VNkl[1][1][ag] + 1e-12);
 
         }
-
         // for (int i=0; i<4; i++){
-        //  Rcpp::Rcout << "Vjaf is "<<  Vjaf[i] << "\n";
+        //   for(int ag=0; ag<11; ag++) {
+        //     if((Vjaf[i][ag] >1) && (y<16)){
+        //       Rcpp::Rcout << "s = "<< s<< "and y =" <<y<< "\n";
+        //       Rcpp::Rcout << VNkl[0][1][0]<<  "\n";
+        //     // Rcpp::Rcout << "Vjaf is "<<  Vjaf[i][ag] << "at ag = "<< ag << "and i = " << i << "\n";
         // }
+        // } }
 
         // Step 4
         for(int ag=0; ag<11; ag++) {
@@ -1222,6 +1242,14 @@ Rcpp::List cSim(
           ///check the use of RelInfRg here as beta, might need to be a combo param but unclear check the old param file
           VLjkl[1 ][1 ][ag]  = ((RelInfRg[3]*RRcrAG[ag]*Vjaf[3][ag]*(1-Vmix[0])*(1-Vmix[1]) + RelInfRg[2]*RRcrAG[ag]*Vjaf[2][ag]*Vmix[0]*(1-Vmix[1]) + RelInfRg[1]*RRcrAG[ag]*Vjaf[1][ag]*Vmix[1]*(1-Vmix[0]) + RelInfRg[0]*RRcrAG[ag]*Vjaf[0][ag]*Vmix[0]*Vmix[1])) + ExogInf[0];
         }
+
+        // if(y==15&& m==1){
+        //   for (int i=0; i<2; i++){
+        //     for (int j=0; j<2; j++){
+        //     for(int ag=0; ag<11; ag++) {
+        //       Rcpp::Rcout << "VLjkl is "<<  VLjkl[i][j][ag] << "at ag = "<< ag << "and i = " << i << "and j= "<<j<< "\n";
+        //     }
+        //     } } }
         ///////////////////////////////INFECTION///////////////////////////////////////
         ///////////////////////for all age groups, risk groups/////////////////////////
         ///////INFECTION IS CALCULATED WITH THE FORCE OF INFECTION BY RISK GROUP///////

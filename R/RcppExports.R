@@ -317,7 +317,7 @@ reblncd <- function(mubt, can_go, RRmuHR, RRmuRF, HRdist, dist_gen_v, adj_fact) 
 #'@param MpfastPI Matrix of the probabilities of fast TB progression w/ partial immunity (age x TB prog risk group)
 #'@param Mrslow matrix of the rates of slow progression (age x TB prog risk group)
 #'@param rrSlowFB rate of fast TB progression
-#'@param RRcurDef Rate Ratio for cure given treatment defaul
+#'@param RRcurDef Rate Ratio for cure given treatment default
 #'@param rSlfCur rate of self cure from active TB
 #'@param p_HR probability of high risk population @ entry into the model
 #'@param vTMort vector of TB mortality rates
