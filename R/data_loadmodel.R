@@ -21,7 +21,7 @@ if (loc=="US"){
   # Inputs<<-readRDS(system.file("US/US_Inputs_06-26-19.rds", package="MITUS"))
   # TabOpt<<-readRDS(system.file("US/US_Optim_all_9_0609.rds", package="MITUS"))
    # Opt<<-readRDS(system.file("US/US_Optim_all_10_0709.rds", package="MITUS"))
-  Opt <- readRDS("~/MITUS/inst/US/US_Optim_all_10_0901.rds")
+  Opt <- readRDS(system.file("US/US_Optim_all_10_0901.rds", package="MITUS"))
 
 } else {
   CalibDat<<-CalibDatState<<-readRDS(system.file("ST/ST_CalibDat_10-26-20.rds", package="MITUS"))
