@@ -173,6 +173,7 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   ImmFst         <- outer(PrevTrend25_34a*exp(PV["RRtbprev"]),ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*(1-PV["pImmAct"])
 
   ImmNon         <- TotImmAge-ImmAct-ImmFst-ImmLat
+  SpImmNon       <- matrix(0,month, 11)
   ###################### TRUNCATE THESE VALS
   ImmAct<-ImmAct[1:month,];ImmFst<-ImmFst[1:month,]; ImmLat<-ImmLat[1:month,]; ImmNon<-ImmNon[1:month,]
   # ImmNon[1:6,]<- ImmAct[1:6,]<-ImmFst[1:6,]<-ImmLat[1:6,]<-0
@@ -180,11 +181,12 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   #### #### #### SCEN 2 #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
   if(Scen2==1) {
+    baseline_ImmNon<-ImmNon
     for(i in 1:11) ImmLat[,i] <- ImmLat[,i]*(1-LgtCurve(intv_yr,intv_yr+1,1))
     for(i in 1:11) ImmAct[,i] <- ImmAct[,i]*(1-LgtCurve(intv_yr,intv_yr+1,1))
     for(i in 1:11) ImmFst[,i] <- ImmFst[,i]*(1-LgtCurve(intv_yr,intv_yr+1,1))
     ImmNon        <- TotImmAge[1:month,]-ImmAct-ImmFst-ImmLat
-
+    SpImmNon<-baseline_ImmNon-ImmNon
   }
 
 
@@ -611,6 +613,7 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   InputParams[["Birthst"]]   = Birthst
   InputParams[["HrEntEx"]]   = HrEntEx
   InputParams[["ImmNon"]]    = ImmNon
+  InputParams[["SpImmNon"]]  = SpImmNon
   InputParams[["ImmLat"]]    = ImmLat
   InputParams[["ImmAct"]]    = ImmAct
   InputParams[["ImmFst"]]    = ImmFst
@@ -641,6 +644,8 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   InputParams[["aging_denom"]] <-spl_den
   InputParams[["adj_fact"]] <- adj_fact
   InputParams[["NixTrans"]] <- NixTrans
+  InputParams[["Scen2Bool"]]<-0
+  # if (Scen2==1) InputParams[["Scen2Bool"]]<-1
 
   InputParams[["ResNam"]]    <- func_ResNam()
   return(InputParams)

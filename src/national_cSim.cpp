@@ -81,6 +81,7 @@ Rcpp::List national_cSim(
     Rcpp::NumericMatrix ImmLat,
     Rcpp::NumericMatrix ImmAct,
     Rcpp::NumericMatrix ImmFst,
+    Rcpp::NumericMatrix SpImmNon,
     std::vector<double> net_mig_usb,
     std::vector<double> net_mig_nusb,
     Rcpp::NumericMatrix mubt,
@@ -126,6 +127,7 @@ Rcpp::List national_cSim(
   double        ag_denN[ag_den.nrow()][ag_den.ncol()];
   double        HrEntExN[HrEntEx.nrow()][HrEntEx.ncol()];
   double        ImmNonN[ImmNon.nrow()][ImmNon.ncol()];
+  double        SpImmNonN[ImmNon.nrow()][ImmNon.ncol()];
   double        ImmLatN[ImmLat.nrow()][ImmLat.ncol()];
   double        ImmFstN[ImmFst.nrow()][ImmFst.ncol()];
   double        ImmActN[ImmAct.nrow()][ImmAct.ncol()];
@@ -227,6 +229,10 @@ Rcpp::List national_cSim(
   for(int i=0; i<ImmAct.nrow(); i++) {
     for(int j=0; j<ImmAct.ncol(); j++) {
       ImmActN[i][j] = ImmAct(i,j);
+    } }
+  for(int i=0; i<SpImmNon.nrow(); i++) {
+    for(int j=0; j<SpImmNon.ncol(); j++) {
+      SpImmNonN[i][j] = SpImmNon(i,j);
     } }
   for(int i=0; i<mubt.nrow(); i++) {
     for(int j=0; j<mubt.ncol(); j++) {
@@ -897,6 +903,9 @@ Rcpp::List national_cSim(
             V1[ag][0][0][im][nm][0][1]   += ImmNonN[s][ag]*(1-p_HR)*dist_genN[nm][im];  // NO TB, low risk
             V1[ag][0][0][im][nm][1][1]   += ImmNonN[s][ag]*(p_HR)*dist_genN[nm][im];    // NO TB, high risk
 
+            V1[ag][1][0][im][nm][0][1]   += SpImmNonN[s][ag]*(1-p_HR)*dist_genN[nm][im];  // NO TB, low risk
+            V1[ag][1][0][im][nm][1][1]   += SpImmNonN[s][ag]*(p_HR)*dist_genN[nm][im];    // NO TB, high risk
+
             V1[ag][2][0][im][nm][0][1]   += ImmLatN[s][ag]*(1-p_HR)*dist_genN[nm][im]; // LATENT SLOW TB, low risk
             V1[ag][2][0][im][nm][1][1]   += ImmLatN[s][ag]*(p_HR)*dist_genN[nm][im];   // LATENT SLOW TB, high risk
 
@@ -1537,12 +1546,12 @@ for(int rg=0; rg<2; rg++) {
               V1[ag][2][0][im][nm][rg][na]  += (temp3+temp4); //latent tx default to latent slow
           } } } } }
 // if (s == (ttt_month.back())){
-if (s == ttt_month.front()){
-  // Rcpp::Rcout<< "month = " << s << "\n";
-  Rcpp::Rcout<< "total extra screening = " << temp8 << "\n";
-  Rcpp::Rcout<< "total extra screening in latent pop = " << temp9 << "\n";
-  Rcpp::Rcout<< "total extra LTBI diagnoses = " << temp10 << "\n";
-}
+// if (s == ttt_month.front()){
+//   // Rcpp::Rcout<< "month = " << s << "\n";
+//   Rcpp::Rcout<< "total extra screening = " << temp8 << "\n";
+//   Rcpp::Rcout<< "total extra screening in latent pop = " << temp9 << "\n";
+//   Rcpp::Rcout<< "total extra LTBI diagnoses = " << temp10 << "\n";
+// }
 // temp7=0;
 // if(std::find(std::begin(ttt_month), std::end(ttt_month), s) != std::end(ttt_month)){
 //   for(int ag=0; ag<11; ag++) {
