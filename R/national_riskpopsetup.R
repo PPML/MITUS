@@ -64,8 +64,8 @@ national_risk_pop_setup<-function(){
   ####################              Child5yr            ####################
   ################################################################################
   Child5yr_ttt_vec<-def_ttt_nat_ag()
-  Child5yr_ttt_vec[[1]]<- c(.9865639, rep(0,10))
-  Child5yr_ttt_vec[[2]]<- c(.1343614, rep(0,10))
+  Child5yr_ttt_vec[[1]]<- c(1, rep(0,10))
+  Child5yr_ttt_vec[[2]]<- rep(0,11)
   Child5yr_ttt_vec[[3]]<-Child5yr[1]
   Child5yr_ttt_vec[[4]]<-1
   Child5yr_ttt_vec[[5]]<-2020
@@ -172,21 +172,22 @@ national_risk_pop_setup<-function(){
   Total_ttt_vec[[8]]<-Total[3]
   Total_ttt_vec[[9]]<-Total[4]
 
-  all_pop_ttt<-list(HIV_ttt_vec,
+  all_pop_ttt<-list(
+                    HIV_ttt_vec,
                     Diab_ttt_vec,
                     Silica_ttt_vec,
                     ESRD_ttt_vec,
-                    Child5yr_ttt_vec,
                     PWID_ttt_vec,
                     Immunosup_ttt_vec,
                     Prisoners_ttt_vec,
                     Homeless_ttt_vec,
-                    Migrants_ttt_vec,
                     Healthcare_ttt_vec,
+                    Migrants_ttt_vec,
+                    Child5yr_ttt_vec,
                     Total_ttt_vec
                    )
-  names(all_pop_ttt)<-c("HIV", "Diabetes","Silicosis","ESRD","Child5yr",
+  names(all_pop_ttt)<-c("HIV", "Diabetes","Silicosis","ESRD",
                         "PWID","ImmSup","Prisoners","Homeless",
-                        "Migrants","Healthcare", "Total")
+                       "Healthcare", "Migrants", "Child5yr","Total")
   return(all_pop_ttt)
 }

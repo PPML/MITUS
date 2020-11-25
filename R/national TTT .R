@@ -26,13 +26,13 @@ def_ttt_nat_ag<-function(){
 
 #this function returns the sampling distribution for each age and nativity group
 create_ttt_mdist<-function(ttt_input,results,PV){
-
   all_samp_rates<-list()
   frc_of_pop<-rep(1,22)
   samp_dist<-matrix(1,22,17)
   x<-matrix(0,22,16)
   #for each of the ttt populations
 for (intv in 1:length(ttt_input)){
+  # print(paste("intv # =",intv))
   ttt_list<-ttt_input[[intv]]
   start_yr<-as.numeric(ttt_list[[5]])-1949
   # US_dist<-results[start_yr,33:43]
@@ -44,6 +44,9 @@ yo<-0
 for (n in 1:2){
   for (a in 1:11){
   y<-grep(paste(ag[a], na[n], sep = "_"), colnames(results))
+  # print(paste("age is", a))
+  # print(paste("nat is", n))
+
   dist<-rep(0,16)
   #need to format the start year
   # for (i in 1:length(y)){
@@ -53,6 +56,7 @@ for (n in 1:2){
   rownames(dist) <- paste0("p",0:3) # progresison
   if (intv>1){
   dist<-dist-matrix(x[((n-1)*11)+a,],4,4)}
+  # print(paste("dist is", dist))
   # print(paste0("dist=",dist))
   ##rate ratio for mortality
   mort_dist<-rowSums(dist_gen)
@@ -76,6 +80,7 @@ for (n in 1:2){
     (sum(colSums(dist_i)*rrprog)/sum(colSums(dist)*rrprog)-rrprog_i)^2 + (sum(rowSums(dist_i)*rrmort)/sum(rowSums(dist)*rrmort)-rrmort_i)^2 + diff(par)^2/100
   }
   #apply
+  if( sum(dist)!=0){
   fit <- optim(c(1,1),funcB,rrmort_i=rrmort_i,rrprog_i=rrprog_i,rrprog=rrprog,rrmort=rrmort,dist=dist)
   par = fit$par
 
@@ -87,6 +92,9 @@ for (n in 1:2){
   # } # divide by 1e6 since model in millions
   rr_samp <- (exp(par[1])^(0:3)) %*% t(exp(par[2])^(0:3))
   an_samp_rate <- rr_samp * ttt_pop_yr / sum(rr_samp*dist)
+  } else {
+    an_samp_rate<- matrix(0,4,4)
+  }
   for (i in 1:length(an_samp_rate)) an_samp_rate[i]<-min(an_samp_rate[i],1)
 
   #calculate the # of people sampled from each of the 22 subgroups
@@ -94,9 +102,10 @@ for (n in 1:2){
   #entering the next iteration of the loop
 
   x[((n-1)*11)+a,]<-x[((n-1)*11)+a,]+as.vector(dist *  an_samp_rate)
+  # print(paste("samp rate is ", an_samp_rate))
   yo<-(sum(dist * an_samp_rate))
   # print(intv)
-  # print(yo)
+  # print(paste("sum is ",yo))
   samp_dist[((n-1)*11)+a,1:16]<-as.vector(an_samp_rate)
   # print(paste(a,n,(ttt_list[["NRiskGrp"]]*ttt_list[["FrcScrn"]]*ifelse(n==1,US_dist[a], NUS_dist[a]))/results[start_yr,(((n-1)*11)+a)+32]))
   samp_dist[((n-1)*11)+a,17]<-ttt_list[["RRPrev"]]
