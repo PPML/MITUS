@@ -289,21 +289,22 @@ US_dth_tot_lLik <- function(V) {
 #'@param rho correlation parameter
 #'@return likelihood
 tot_dth_age_lLik <- function(V,rho=0.01) {
-  # death_age2 <-readRDS(system.file("US/US_MortalityCountsByAge.rds", package="MITUS"))[,68:69]
-  # death_agegrp<-matrix(NA,11,2)
-  # death_agegrp[1,]<-colSums(death_age2[1:5,])
-  # death_agegrp[2,]<-colSums(death_age2[6:15,])
-  # death_agegrp[3,]<-colSums(death_age2[16:25,])
-  # death_agegrp[4,]<-colSums(death_age2[26:35,])
-  # death_agegrp[5,]<-colSums(death_age2[36:45,])
-  # death_agegrp[6,]<-colSums(death_age2[46:55,])
-  # death_agegrp[7,]<-colSums(death_age2[56:65,])
-  # death_agegrp[8,]<-colSums(death_age2[66:75,])
-  # death_agegrp[9,]<-colSums(death_age2[76:85,])
-  # death_agegrp[10,]<-colSums(death_age2[86:95,])
-  # death_agegrp[11,]<-colSums(death_age2[96:111,])
-  # death_agegrp<-t(death_agegrp)
-  death_agegrp<-CalibDat$US_mort_age[68:69,-1]
+  death_age2 <-readRDS(system.file("US/US_MortalityCountsByAge.rds", package="MITUS"))[,69:70]
+  death_agegrp<-matrix(NA,11,2)
+  death_agegrp[1,]<-colSums(death_age2[1:5,])
+  death_agegrp[2,]<-colSums(death_age2[6:15,])
+  death_agegrp[3,]<-colSums(death_age2[16:25,])
+  death_agegrp[4,]<-colSums(death_age2[26:35,])
+  death_agegrp[5,]<-colSums(death_age2[36:45,])
+  death_agegrp[6,]<-colSums(death_age2[46:55,])
+  death_agegrp[7,]<-colSums(death_age2[56:65,])
+  death_agegrp[8,]<-colSums(death_age2[66:75,])
+  death_agegrp[9,]<-colSums(death_age2[76:85,])
+  death_agegrp[10,]<-colSums(death_age2[86:95,])
+  death_agegrp[11,]<-colSums(death_age2[96:111,])
+  death_agegrp<-t(death_agegrp)
+  # death_agegrp<-CalibDat$US_mort_age[68:69,-1]
+  # death_agegrp
   adj_20b        <- sum(dDirMult(M=death_agegrp,n=death_agegrp,Rho=rho)*wts[68:69])
   sum(dDirMult(M=V,n=death_agegrp,Rho=rho)*wts[68:69]) - adj_20b
 }
