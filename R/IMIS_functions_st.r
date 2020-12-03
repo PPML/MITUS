@@ -52,7 +52,7 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
       ### ### ### TB SPECIFIC LIKELIHOODS
       if(TB==1){
         ### ### ### TOTAL DIAGNOSED CASES 1993-2018  ### ### ### ### ### ### D
-        # v1   <- M[44:69,"NOTIF_ALL"]+M[44:69,"NOTIF_MORT_ALL"]
+        # v1   <- M[44:70,"NOTIF_ALL"]+M[44:70,"NOTIF_MORT_ALL"]
         # addlik <- notif_tot_lLik_st(V=v1,st=st); addlik
         # lLik <- lLik + addlik
         # print(paste("1:", lLik))
@@ -63,12 +63,12 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
         # print(paste("2:", lLik))
 
         ### ### ### US CASES 1993-2016  ### ### ### ### ### ### D
-        v1a   <- rowSums(M[44:69,205:215]+M[44:69,216:226])
+        v1a   <- rowSums(M[46:70,205:215]+M[46:70,216:226])
         addlik <- US_notif_tot_lLik_st(V=v1a,st=st); addlik
         lLik <- lLik + addlik
         # print(paste("3:", lLik))
         # ### ### ### NUS CASES 1993-2016  ### ### ### ### ### ### D
-        v1c   <- rowSums((M[44:69,136:146]+M[44:69,189:199]) - (M[44:69,205:215]+M[44:69,216:226]))
+        v1c   <- rowSums((M[46:70,136:146]+M[46:70,189:199]) - (M[46:70,205:215]+M[46:70,216:226]))
         addlik <- NUS_notif_tot_lLik_st(V=v1c,st=st); addlik
         lLik <- lLik + addlik
         # print(paste("4:", lLik))
@@ -83,12 +83,12 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
         # lLik <- lLik + addlik
         # # print(paste("6:", lLik))
         ### ### ### US CASES AGE DISTRIBUTION 5year 1994-2016  ### ### ### ### ### ### D
-        v2a   <- M[45:69,205:215]+M[45:69,216:226]
+        v2a   <- M[46:70,205:215]+M[46:70,216:226]
         addlik <- notif_age_us_5yr_lLik_st(V=v2a,st=st); addlik
         lLik <- lLik + addlik
         # print(paste("5:", lLik))
         ### ### ### NUSB CASES AGE DISTRIBUTION 5year 1994-2013  ### ### ### ### ### ### D
-        v2b   <- (M[45:69,136:146]+M[45:69,189:199]) - (M[45:69,205:215]+M[45:69,216:226])
+        v2b   <- (M[46:70,136:146]+M[46:70,189:199]) - (M[46:70,205:215]+M[46:70,216:226])
         addlik <- notif_age_nus_5yr_lLik_st(V=v2b,st=st); addlik
         lLik <- lLik + addlik
         # print(paste("6:", lLik))
@@ -99,13 +99,13 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
         # lLik <- lLik + addlik
         # print(paste("7:", lLik))
         ### ### ### CASES NUSB, US 2010-2014  SLOPE ### ### ### ### ### ### D
-        v4   <- cbind(M[65:69,148]+M[65:69,149]+(M[65:69,201]+M[65:69,202]),
-                      M[65:69,147]+M[65:69,200])
-        addlik <- notif_fbus_slp_lLik_st(V=v4,st=st); addlik
-        lLik <- lLik + addlik
+        # v4   <- cbind(M[65:69,148]+M[65:69,149]+(M[65:69,201]+M[65:69,202]),
+        #               M[65:69,147]+M[65:69,200])
+        # addlik <- notif_fbus_slp_lLik_st(V=v4,st=st); addlik
+        # lLik <- lLik + addlik
         # print(paste("8:", lLik))
         ### ### ### CASES HR DISTRIBUTION 1993-2014  ### ### ### ### ### ### D
-        v5   <- M[45:69,151] + M[45:69,204]
+        v5   <- M[46:70,151] + M[46:70,204]
         v5b  <- rbind(sum(v5[1:5]),sum(v5[6:10]), sum(v5[11:15]),
                       sum(v5[16:20]), sum(v5[21:25]))
         addlik <- notif_hr_lLik_st(V=v5b,st=st); addlik
@@ -163,7 +163,7 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
         lLik <- lLik + addlik
         # # print(paste("15:", lLik))
         # ### ### ### TOTAL DEATHS WITH TB 1999-2016 ### ### ### ### ### ###  D
-        v19  <- M[50:67,227:237]   ### THIS NOW ALL TB DEATHS
+        v19  <- M[50:69,227:237]   ### THIS NOW ALL TB DEATHS
         addlik <- tbdeaths_lLik_st(V=v19,st=st); addlik
         lLik <- lLik + addlik
         # # print(paste("16:", lLik))
