@@ -6,7 +6,7 @@
 \title{This script creates graphs that compare model simulations
 versus calibration data.}
 \usage{
-calib_graphs_st(df, loc, Par_list, pdf = TRUE, cex.size = 1)
+calib_graphs_st(df, loc, Par_list, pdf = TRUE, cex.size = 0.75)
 }
 \arguments{
 \item{df}{dataframe of results}

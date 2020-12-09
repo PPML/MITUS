@@ -19,9 +19,9 @@ rownames(opt_all)<-rnames
 month<-strsplit(date, "-")[[1]][1]
 day<-strsplit(date, "-")[[1]][2]
 for (i in batches){
-  load(paste("/Users/nis100/Desktop/US_112520_good/","Opt_", loc, "_r7_",i,"_2020-", date, ".rda", sep=""))
-  opt_all[i,1:nrow(ParamInitZ)] <- o7$par
-  opt_all[i,nrow(ParamInitZ)+1]<- o7$value
+  load(paste("/Users/nis100/Desktop/states_120320/","Opt_", loc, "_r9_",i,"_2020-", date, ".rda", sep=""))
+  opt_all[i,1:nrow(ParamInitZ)] <- o9$par
+  opt_all[i,nrow(ParamInitZ)+1]<- o9$value
 }
 saveRDS(opt_all, file=paste("~/MITUS/inst/", loc,"/", loc, "_Optim_all_", length(batches),"_", month, day,".rds", sep = ""))
 }
@@ -43,6 +43,6 @@ calib_plots_locs<-function(locs, simp.date, batches=10){
     if (mode>1e11){ print(paste(loc, "did not optimize. Check optim manually", sep = " ")); next }
     samp.i<-sample(which(posterior==mode), 1);print(samp.i)
     Opt<-Opt[,-ncol(Opt)]
-    calib(samp.i, Opt, loc)
+    calib(samp.i, Opt, loc, cex.size = .65)
   }
 }

@@ -5,7 +5,7 @@
 #'@param df dataframe of results
 #'@return .pdf of calibration graphs
 #'@export
-calib_graphs_st <- function(df,loc, Par_list,pdf=TRUE, cex.size=1){
+calib_graphs_st <- function(df,loc, Par_list,pdf=TRUE, cex.size=.75){
 
   library(MCMCpack)
   data("stateID",package="MITUS")
@@ -13,7 +13,7 @@ calib_graphs_st <- function(df,loc, Par_list,pdf=TRUE, cex.size=1){
   st<-which(StateID$USPS==loc)
   df<-as.data.frame(df)
   if (pdf==TRUE){
-  pdfname<-paste("MITUS_results/",loc,"_calib_graphs_",Sys.time(),".pdf",sep="")
+  pdfname<-paste("MITUS_results/",loc,"_calib_graphs_2020-12-03.pdf",sep="")
   pdf(file=pdfname, width = 11, height = 8.5)
   par(mfrow=c(2,2),mar=c(4,4.5,3,1))
 }
@@ -59,9 +59,9 @@ calib_graphs_st <- function(df,loc, Par_list,pdf=TRUE, cex.size=1){
   mtext("Year",1,2.5,cex=cex.size)
   mtext(paste("Population in: Total, US, and Non-US Born in",loc,"mil, log-scale)", sep = " "),3,.3,font=2,cex=cex.size)
 
-  legend("bottomleft",c("Total","US born","Non-US Born","Reported data","model"),cex=cex.size*1.5,
+  legend("bottomright",c("Total","US born","Non-US Born","Reported data","model"),cex=cex.size*1.5,
          pch=c(15,15,15,19,NA),lwd=c(NA,NA,NA,1,2),lty=c(NA,NA,NA,3,1),col=c("grey50",4,"red3",1,1),
-         bg="white",pt.cex=c(1.8,1.8,1.8,0.3,NA))
+         bg="white",pt.cex=c(1.8,1.8,1.8,0.3,NA), ncol=2)
 
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
   ### ### ### ### ### ### TOTAL POP AGE DISTRIBUTION 2014  ### ### ### ### ### ###
@@ -472,9 +472,9 @@ calib_graphs_st <- function(df,loc, Par_list,pdf=TRUE, cex.size=1){
   mtext(paste("TB Cases By Age in",loc,", 2008-16", sep = " "),3,.3,font=2,cex=cex.size)
   mtext("Year",1,2.5,cex=cex.size)
 
-  legend("topright",c("0-26 years","25-44 years","45-64 years","65+ years","Reported data","Model"),
+  legend("bottom",c("0-26 years","25-44 years","45-64 years","65+ years","Reported data","Model"),
          lwd=c(NA,NA,NA,NA,1,2),lty=c(NA,NA,NA,NA,3,1),col=c(cls,1,1),bg="white",
-         pt.cex=c(1.8,1.8,1.8,1.8,0.6,NA),pch=c(15,15,15,15,19,NA),cex=cex.size*1.5)
+         pt.cex=c(1.8,1.8,1.8,1.8,0.6,NA),pch=c(15,15,15,15,19,NA),cex=cex.size*1.5,ncol=2)
 
   ################################################################################
   #Age Distribution of TB Cases in Percentages
@@ -729,7 +729,7 @@ calib_graphs_st <- function(df,loc, Par_list,pdf=TRUE, cex.size=1){
   V3 <- colSums(V2)*1e6
 
   tb_deaths_dist  <- CalibDatState$tbdeaths_age_yr[,-1]/rowSums(CalibDatState$tbdeaths_age_yr[,-1])
-  tb_deaths      <- as.data.frame(CalibDatState$tbdeaths[[st]][,3]*tb_deaths_dist[,])
+  tb_deaths      <- as.data.frame(as.numeric(CalibDatState$tbdeaths[[st]][,3])*tb_deaths_dist[,])
   tb_deaths[is.na(tb_deaths)]<-0
 
   # for (i in length(tb_deaths)){ if(tb_deaths[i]=="NA"){ tb_deaths[i]<-0}}
@@ -755,7 +755,7 @@ calib_graphs_st <- function(df,loc, Par_list,pdf=TRUE, cex.size=1){
   # total tb deaths over time 1999-2016
   #tb deaths 2006-2016
   V   <- rowSums(df[57:67,227:237])*1e6
-  tb_death_tot<-CalibDatState$tbdeaths[[st]][8:18,3]
+  tb_death_tot<-as.numeric(CalibDatState$tbdeaths[[st]][8:18,3])
   tb_death_tot[is.na(tb_death_tot)]<-0
 
   #format the plot
