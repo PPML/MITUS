@@ -20,7 +20,8 @@ national_OutputsZint(
   Scen2 = 0,
   Scen3 = 0,
   prg_chng,
-  ttt_input
+  ttt_input,
+  care_cascade
 )
 }
 \arguments{

@@ -389,12 +389,12 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   ### because of the introduction of new time varying parameters, we will create 2 matrices to
   ### hold the three different sensitivity and specificity measures; one will be for those whose
   ### true LTBI status is positive and the other is for those whose true TB status is negative.
-  LtDxPar_nolt <- LtDxPar_lt <- matrix(NA,nrow(SensLt),month);
-  rownames(LtDxPar_lt) <- rownames(LtDxPar_nolt) <- c("US","HR.US","youngNUS","NUS","HR.NUS")
+  LtDxPar_nolt <- LtDxPar_lt <- matrix(1,nrow(SensLt)*2,month);
+  # rownames(LtDxPar_lt) <- rownames(LtDxPar_nolt) <- c("US","HR.US","youngNUS","NUS","HR.NUS")
 
   ##adjust for no latent
-  LtDxPar_lt   <-SensLt
-  LtDxPar_nolt <- 1-SpecLt
+  LtDxPar_lt[1:5,]   <-SensLt
+  LtDxPar_nolt[1:5,] <- 1-SpecLt
   #adjust for High Risk Populations
   LtDxPar_lt[2,]     <-rrTestHr*LtDxPar_lt[1,]
   LtDxPar_nolt[2,]   <-rrTestHr*LtDxPar_nolt[1,]
@@ -403,6 +403,17 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   LtDxPar_nolt[5,]   <-rrTestHr*LtDxPar_nolt[4,]
   #adjust for no latent
   LtDxPar_nolt[1,]   <-LtDxPar_nolt[1,]*rrTestLrNoTb
+
+  ###create values for perfect sensitivity and specificity
+  #adjust for High Risk Populations
+  LtDxPar_lt[7,]     <-rrTestHr
+  LtDxPar_nolt[7,]   <-rrTestHr
+  #High risk foriegn born
+  LtDxPar_lt[10,]     <-rrTestHr
+  LtDxPar_nolt[10,]   <-rrTestHr
+  #adjust for no latent
+  LtDxPar_nolt[6,]   <-rrTestLrNoTb
+
 
   #### #### #### INT 1 #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
   pctDoc <- (1-0.28)

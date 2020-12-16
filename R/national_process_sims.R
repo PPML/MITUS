@@ -16,9 +16,10 @@
 #'@param Scen3 boolean for scenario 3
 #'@param prg_chng vector of program change values
 #'@param ttt_input list of targeted testing and treatment values
+#'@param care_cascade
 #'@return results data frame of output
 #'@export
-national_OutputsZint <-  function(samp_i=1,ParMatrix,loc, startyr=1950, endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,prg_chng, ttt_input) {
+national_OutputsZint <-  function(samp_i=1,ParMatrix,loc, startyr=1950, endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,prg_chng, ttt_input, care_cascade) {
   if(min(dim(as.data.frame(ParMatrix)))==1) {
     Par1 <- as.numeric(ParMatrix);
     names(Par1) <- names(ParMatrix)
@@ -39,11 +40,11 @@ national_OutputsZint <-  function(samp_i=1,ParMatrix,loc, startyr=1950, endyr=20
 
   prms <- list()
   prms <- national_param_init(P,loc,Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3,prg_chng,ttt_input)
-
+  # print(prms$ttt_sampling_dist)
   trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
 
-   if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
-  m <- national_cSim( nYrs       = endyr-(startyr-1)         , nRes      = length(func3_ResNam())  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
+  if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
+  m <- temp_national_cSim( nYrs       = endyr-(startyr-1)         , nRes      = length(func3_ResNam())  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
                       Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]  ,
                       rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
                       vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    ,
@@ -52,7 +53,9 @@ national_OutputsZint <-  function(samp_i=1,ParMatrix,loc, startyr=1950, endyr=20
                       mubt       = prms[["mubt"]]    , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], RRcrAG = prms[["RRcrAG"]], Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
                       TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
                       LtDxPar_lt    = prms[["LtDxPar_lt"]]   , LtDxPar_nolt    = prms[["LtDxPar_nolt"]]   , rLtScrt   = prms[["rLtScrt"]]       , ttt_samp_dist   = prms[["ttt_sampling_dist"]] ,
-                      ttt_month = prms[["ttt_month"]], ttt_ltbi = prms[["ttt_ltbi"]], ttt_pop_scrn = prms[["ttt_pop_scrn"]], RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
+                      ttt_month = prms[["ttt_month"]], ttt_ltbi = prms[["ttt_ltbi"]], ttt_pop_scrn = prms[["ttt_pop_scrn"]],
+                      ttt_ltbi_init=care_cascade[1], ttt_ltbi_comp=care_cascade[2], ttt_ltbi_eff=care_cascade[3], ttt_ltbi_sens=care_cascade[4], ttt_ltbi_spec=care_cascade[5],
+                      RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
                       EarlyTrend = prms[["EarlyTrend"]], ag_den=prms[["aging_denom"]],  NixTrans = prms[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)$Outputs
   colnames(m) <- func3_ResNam();
   results<<-as.matrix(m)
