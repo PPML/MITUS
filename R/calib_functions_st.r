@@ -279,11 +279,10 @@ tbdeaths_decline_lLik_st <- function(V) { # V = vector of tb deaths 1968-2015
 ### ### ### TB DEATHS AGE DISTRIBUTION 1999-2016  ### ### ### ### ### ### D
 # Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
 
-tb_dth_age_lLik_st <- function(V,rho=0.05) { # V = table of deaths by age 1999-2016 (row=18 years, col=11 ages)
+tb_dth_age_lLik_st <- function(V,rho=0.005) { # V = table of deaths by age 1999-2016 (row=18 years, col=11 ages)
   tb_deaths_age  <- CalibDatState[["tbdeaths_age_yr"]][,-1]
-  adj_19b        <- sum(dDirMult(M=tb_deaths_age+0.05,n=tb_deaths_age,Rho=rho)*wts[50:69])
+  adj_19b        <- sum(dDirMult(M=tb_deaths_age+0.005,n=tb_deaths_age,Rho=rho)*wts[50:69])
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
-  #scale doesn't matter for dirchlet
   sum(dDirMult(M=V2,n=tb_deaths_age,Rho=rho)*wts[50:69]) - adj_19b
 }
 ### ### ### TOTAL POP EACH DECADE, FOR FB  ### ### ### ### ### ###  D
