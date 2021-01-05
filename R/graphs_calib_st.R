@@ -13,7 +13,7 @@ calib_graphs_st <- function(df,loc, Par_list,pdf=TRUE, cex.size=.75){
   st<-which(StateID$USPS==loc)
   df<-as.data.frame(df)
   if (pdf==TRUE){
-  pdfname<-paste("MITUS_results/",loc,"_calib_graphs_2020-12-03.pdf",sep="")
+  pdfname<-paste("MITUS_results/",loc,"_calib_graphs_2020-12-17.pdf",sep="")
   pdf(file=pdfname, width = 11, height = 8.5)
   par(mfrow=c(2,2),mar=c(4,4.5,3,1))
 }
@@ -307,36 +307,41 @@ calib_graphs_st <- function(df,loc, Par_list,pdf=TRUE, cex.size=.75){
   #   legend("bottomleft",colnames(V),cex=cex.size,
   #          pch=rep(15,i),lwd=rep(NA,i),lty=rep(NA,i),col=col,bg="white",pt.cex=rep(1.8,i))
   # }
-  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-  # graph of total diagnosed cases
+
+  # graph of total diagnosed cases 5 year bands
   # by total population, US born population, and non-US born population
   ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-  V0 <- df[44:69,"NOTIF_ALL"]+df[44:69,"NOTIF_MORT_ALL"] #total population
-  V1 <- df[44:69,"NOTIF_US"]+df[44:69,"NOTIF_MORT_US"]   #US born population
-  V2 <- df[44:69,"NOTIF_F1"]+df[44:69,"NOTIF_F2"]+df[44:69,"NOTIF_MORT_F1"]+df[44:69,"NOTIF_MORT_F2"]   #non-US born population
+  Va <- df[46:70,"NOTIF_ALL"]+df[46:70,"NOTIF_MORT_ALL"] #total population
+  Vu <- df[46:70,"NOTIF_US"]+df[46:70,"NOTIF_MORT_US"]   #US born population
+  Vn <- df[46:70,"NOTIF_F1"]+df[46:70,"NOTIF_F2"]+df[46:70,"NOTIF_MORT_F1"]+df[46:70,"NOTIF_MORT_F2"]   #non-US born population
+  #remove create the 85+ age band
+  Vn2<-Vu2<-Va2<-rep(0,5)
+  Va2[1]<-sum(Va[1:5]);Va2[2]<-sum(Va[6:10]);Va2[3]<-sum(Va[11:15]); Va2[4]<-sum(Va[16:20]); Va2[5]<-sum(Va[21:25])
+  Vu2[1]<-sum(Vu[1:5]);Vu2[2]<-sum(Vu[6:10]);Vu2[3]<-sum(Vu[11:15]); Vu2[4]<-sum(Vu[16:20]); Vu2[5]<-sum(Vu[21:25])
+  Vn2[1]<-sum(Vn[1:5]);Vn2[2]<-sum(Vn[6:10]);Vn2[3]<-sum(Vn[11:15]); Vn2[4]<-sum(Vn[16:20]); Vn2[5]<-sum(Vn[21:25])
 
-  tot_cases<-(CalibDatState$cases_yr_ag_nat_st[[st]][1:26,12,1]+CalibDatState$cases_yr_ag_nat_st[[st]][1:26,12,2])
+  tot_cases<-rowSums(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][1:5,5:14])+rowSums(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][6:10,5:14])
   # tot_cases<-tot_cases/100;
   #format the plot
-  plot(0,0,ylim=c(min(V2,V1)*.5*1e6,max(V0)*2*1e6),xlim=c(1993,2018),xlab="",ylab="",axes=F)
+  plot(0,0,ylim=c(min(Vu2,Vn2)*.5*1e6,max(Va2)*2*1e6),xlim=c(1999,2018),xlab="",ylab="",axes=F)
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
 
   #plot the model data
-  #multiply raw output by 1,000 to convert from millions to hundredscali
-  lines(1993:2018,V0*1e6,lwd=3,col="white"); lines(1993:2018,V0*1e6,lwd=2,col=1) #total population
-  lines(1993:2018,V1*1e6,lwd=3,col="white"); lines(1993:2018,V1*1e6,lwd=2,col=4) #US born population
-  lines(1993:2018,V2*1e6,lwd=3,col="white"); lines(1993:2018,V2*1e6,lwd=2,col=3) #non-US born population
+  #multiply raw output by 1,000 to convert from millions to hundredscale
+  lines(c(1999,2004,2009,2014,2019),Va2*1e6,lwd=3,col="white"); lines(c(1999,2004,2009,2014,2019),Va2*1e6,lwd=2,col=1) #total population
+  lines(c(1999,2004,2009,2014,2019),Vu2*1e6,lwd=3,col="white"); lines(c(1999,2004,2009,2014,2019),Vu2*1e6,lwd=2,col=4) #US born population
+  lines(c(1999,2004,2009,2014,2019),Vn2*1e6,lwd=3,col="white"); lines(c(1999,2004,2009,2014,2019),Vn2*1e6,lwd=2,col=3) #non-US born population
 
   #reported data for comparison
-  points(1993:2018,tot_cases,pch=19,cex=0.3) #total population
-  lines(1993:2018,tot_cases,lty=3,col=1)
+  points(c(1999,2004,2009,2014,2019),tot_cases,pch=19,cex=0.3) #total population
+  lines(c(1999,2004,2009,2014,2019),tot_cases,lty=3,col=1)
 
-  points(1993:2018,CalibDatState$cases_yr_ag_nat_st[[st]][1:26,12,"usb"],pch=19,cex=0.3,col=4) #US born population
-  lines(1993:2018,CalibDatState$cases_yr_ag_nat_st[[st]][1:26,12,"usb"],pch=19,lty=3,col=4)
+  points(c(1999,2004,2009,2014,2019),rowSums(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][1:5,5:14]),pch=19,cex=0.3,col=4) #US born population
+  lines(c(1999,2004,2009,2014,2019),rowSums(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][1:5,5:14]),pch=19,lty=3,col=4)
 
-  points(1993:2018,CalibDatState$cases_yr_ag_nat_st[[st]][1:26,12,"nusb"],pch=19,cex=0.3,col=3) #non-US born population
-  lines(1993:2018,CalibDatState$cases_yr_ag_nat_st[[st]][1:26,12,"nusb"],lty=3,col=3)
+  points(c(1999,2004,2009,2014,2019),rowSums(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][6:10,5:14]),pch=19,cex=0.3,col=3) #non-US born population
+  lines(c(1999,2004,2009,2014,2019),rowSums(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][6:10,5:14]),lty=3,col=3)
 
   #plot text
   mtext("Year",1,2.5,cex=cex.size)
@@ -344,87 +349,49 @@ calib_graphs_st <- function(df,loc, Par_list,pdf=TRUE, cex.size=.75){
   legend("topright",c("Reported data (all)","Reported data (US born)","Reported data (non-US born)",
                       "Model (all)","Model (US born)","Model (non-US born)"),
          pch=c(19,19,19,NA,NA,NA),lwd=c(1,1,1,2,2,2),lty=c(3,3,3,1,1,1),col=c(1,4,3,1,4,3),bg="white",ncol=2,cex=cex.size*1.5,pt.cex=0.4)
-  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-  # graph of total diagnosed cases 2008-2018
-  # by total population, US born population, and non-US born population
-  ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-  V0 <- df[59:69,"NOTIF_ALL"]+df[59:69,"NOTIF_MORT_ALL"] #total population
-  V1 <- df[59:69,"NOTIF_US"]+df[59:69,"NOTIF_MORT_US"]   #US born population
-  V2 <- df[59:69,"NOTIF_F1"]+df[59:69,"NOTIF_F2"]+df[59:69,"NOTIF_MORT_F1"]+df[59:69,"NOTIF_MORT_F2"]   #non-US born population
-
-  tot_cases<-(CalibDatState$cases_yr_ag_nat_st[[st]][16:26,12,"usb"]+CalibDatState$cases_yr_ag_nat_st[[st]][16:26,12,"nusb"])
-  # tot_cases<-tot_cases/100;
-  #format the plot
-  plot(0,0,ylim=c(min(V2,V1)*.5*1e6,max(V0)*2*1e6),xlim=c(2008,2018),xlab="",ylab="",axes=F)
-  axis(1);axis(2,las=2);box()
-  abline(h=axTicks(2),col="grey85")
-
-  #plot the model data
-  #multiply raw output by 1,000 to convert from millions to hundredscali
-  lines(2008:2018,V0*1e6,lwd=3,col="white"); lines(2008:2018,V0*1e6,lwd=2,col=1) #total population
-  lines(2008:2018,V1*1e6,lwd=3,col="white"); lines(2008:2018,V1*1e6,lwd=2,col=4) #US born population
-  lines(2008:2018,V2*1e6,lwd=3,col="white"); lines(2008:2018,V2*1e6,lwd=2,col=3) #non-US born population
-
-  #reported data for comparison
-  points(2008:2018,tot_cases,pch=19,cex=0.3) #total population
-  lines(2008:2018,tot_cases,lty=3,col=1)
-
-  points(2008:2018,CalibDatState$cases_yr_ag_nat_st[[st]][16:26,12,"usb"],pch=19,cex=0.3,col=4) #US born population
-  lines(2008:2018,CalibDatState$cases_yr_ag_nat_st[[st]][16:26,12,"usb"],pch=19,lty=3,col=4)
-
-  points(2008:2018,CalibDatState$cases_yr_ag_nat_st[[st]][16:26,12,"nusb"],pch=19,cex=0.3,col=3) #non-US born population
-  lines(2008:2018,CalibDatState$cases_yr_ag_nat_st[[st]][16:26,12,"nusb"],lty=3,col=3)
-
-  #plot text
-  mtext("Year",1,2.5,cex=cex.size)
-  mtext(paste("Total TB Cases Identified in",loc,", 2008-2018", sep = " "),3,.3,font=2,cex=cex.size)
-  legend("topright",c("Reported data (all)","Reported data (US born)","Reported data (non-US born)",
-                        "Model (all)","Model (US born)","Model (non-US born)"),
-         pch=c(19,19,19,NA,NA,NA),lwd=c(1,1,1,2,2,2),lty=c(3,3,3,1,1,1),col=c(1,4,3,1,4,3),bg="white",ncol=2,cex=cex.size*1.5,pt.cex=0.4)
 
   ################################################################################
   #Percent of Total Cases Non-US Born Population
-  V <- cbind(df[59:69,"NOTIF_US"]+df[59:69,"NOTIF_MORT_US"], #US born population
-             df[59:69,"NOTIF_F1"]+df[59:69,"NOTIF_F2"]+  #non-US born population
-               df[59:69,"NOTIF_MORT_F1"]+df[59:69,"NOTIF_MORT_F2"])
-  V <- V[,2]/rowSums(V)
+  #updated for 5 year data
+  V<-Vn2/Va2
 
   #format the plot
-  plot(0,0,ylim=c(min(V)*.5*100,min((V*2*100),100)),xlim=c(2008,2018),xlab="",ylab="",axes=F)
+  plot(0,0,ylim=c(min(V)*.5*100,min((V*2*100),100)),xlim=c(1999,2019),xlab="",ylab="",axes=F)
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
 
   #plot the model data
-  lines(2008:2018,V*100,lwd=2,col=4)
+  lines(c(1999,2004,2009,2014,2019),V*100,lwd=2,col=4)
 
   #reported data for comparison
-  points(2008:2018,CalibDatState$cases_yr_ag_nat_st[[st]][16:26,12,"nusb"]/tot_cases*100,pch=19,cex=0.6)
-  lines(2008:2018,CalibDatState$cases_yr_ag_nat_st[[st]][16:26,12,"nusb"]/tot_cases*100,lty=3)
+  points(c(1999,2004,2009,2014,2019),rowSums(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][6:10,5:14])/tot_cases*100,pch=19,cex=0.6)
+  lines(c(1999,2004,2009,2014,2019), rowSums(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][6:10,5:14])/tot_cases*100,lty=3)
 
   #plot text
   mtext("Year",1,2.5,cex=cex.size)
-  mtext(paste("Percent of TB Cases Non-US Born in",loc,", 2008-2018", sep = " "),3,.3,font=2,cex=cex.size)
+  mtext(paste("Percent of TB Cases Non-US Born in",loc,", 1995-2019", sep = " "),3,.3,font=2,cex=cex.size)
   legend("bottomright",c("Reported data","Model"),pch=c(19,NA),lwd=c(1,2),col=c(1,4),
          lty=c(3,1),bg="white",pt.cex=0.6,cex=cex.size*1.5)
 
   ################################################################################
   #Percent of Non-US Born Cases from Recent Immigrant Population
+  #updated for 5 year data
   #check this plot and otis
-  V <- cbind(df[58:69,"NOTIF_F1"]+df[58:69,"NOTIF_MORT_F1"],df[58:69,"NOTIF_F2"]+df[58:69,"NOTIF_MORT_F2"])
+  V <- cbind(df[59:70,"NOTIF_F1"]+df[59:70,"NOTIF_MORT_F1"],df[59:70,"NOTIF_F2"]+df[59:70,"NOTIF_MORT_F2"])
   V <- V[,1]/rowSums(V)*100
   #reported data for comparison
 
   notif_rec<-CalibDatState[["rt_fb_cases_sm"]][which(CalibDatState[["rt_fb_cases_sm"]][,1]==stateID[st,1]),9]
-  notif_time<-c(1998,2003,2008,2013,2018)
+  notif_time<-c(1999,2004,2009,2014,2019)
   notif_fb_rec<-cbind(notif_rec*100, notif_time)
   #format the plot
   # plot(0,0,ylim=c(min(V,notif_fb_rec[,1])*.25,min(max(V,notif_fb_rec[,1])*1.5,100)),xlim=c(2007,2017),xlab="",ylab="",axes=F)
-  plot(0,0,ylim=c(min(V,notif_fb_rec[,1])*.25,min(max(V,notif_fb_rec[,1])*1.5,100)),xlim=c(2007,2018),xlab="",ylab="",axes=F)
+  plot(0,0,ylim=c(min(V,notif_fb_rec[,1])*.25,min(max(V,notif_fb_rec[,1])*1.5,100)),xlim=c(2008,2019),xlab="",ylab="",axes=F)
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
 
   #plot the model data
-  lines(2007:2018,V,lwd=2,col=4)
+  lines(2008:2019,V,lwd=2,col=4)
 
   #reported data for comparison
   points(notif_fb_rec[,2],notif_fb_rec[,1],pch=19,cex=0.6)
@@ -439,37 +406,42 @@ calib_graphs_st <- function(df,loc, Par_list,pdf=TRUE, cex.size=.75){
   ################################################################################
   #Age distribution of Cases
   #0-24 yrs, 25-44 yrs, 45-64 yrs, 65+ yrs
-  V   <- (df[59:69,136:146]+df[59:69,189:199])*1e6
+  #updated for 5 year data
+  V   <- (df[46:70,136:146]+df[46:70,189:199])*1e6
   V2  <- V[,-11]
   V2[,10] <- V2[,10]+V[,11]
-  notif_age_us     <- CalibDatState$cases_yr_ag_nat_st[[st]][16:26,-c(1,12),1]*CalibDatState$cases_yr_ag_nat_st[[st]][16:26,12,1]
-  notif_age_nus    <- CalibDatState$cases_yr_ag_nat_st[[st]][16:26,-c(1,12),2]*CalibDatState$cases_yr_ag_nat_st[[st]][16:26,12,2]
+  #create 5 year bands
+  V3<-matrix(0,5,ncol(V2))
+  V3[1,]<-colSums(V2[1:5,]);V3[2,]<-colSums(V2[6:10,]);V3[3,]<-colSums(V2[11:15,]); V3[4,]<-colSums(V2[16:20,]); V3[5,]<-colSums(V2[21:25,])
+
+  notif_age_us     <- matrix(unlist(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][1:5,5:14]),5,10)
+  notif_age_nus    <- matrix(unlist(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][6:10,5:14]),5,10)
   notif_age<- notif_age_us+notif_age_nus
   #format the plot
   cls <- colorRampPalette(c("blue", "red"))( 4 )
-  plot(0,0,ylim=c(min(V2,notif_age)*.5,max(V2,notif_age)*2),xlim=c(2008,2018),xlab="",ylab="",axes=F)
+  plot(0,0,ylim=c(min(V3,notif_age)*.5,max(V3,notif_age)*2),xlim=c(1999,2019),xlab="",ylab="",axes=F)
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
 
   #plot the model data
-  lines(2008:2018,rowSums(V2[,1:3]),lwd=2,col=cls[1])    #0-26 yrs
-  lines(2008:2018,rowSums(V2[,4:5]),lwd=2,col=cls[2])    #25-44 yrs
-  lines(2008:2018,rowSums(V2[,6:7]),lwd=2,col=cls[3])    #45-64 yrs
-  lines(2008:2018,rowSums(V2[,8:10]),lwd=2,col=cls[4])   #65+ yrs
+  lines(c(1999,2004,2009,2014,2019),rowSums(V3[,1:3]),lwd=2,col=cls[1])    #0-26 yrs
+  lines(c(1999,2004,2009,2014,2019),rowSums(V3[,4:5]),lwd=2,col=cls[2])    #25-44 yrs
+  lines(c(1999,2004,2009,2014,2019),rowSums(V3[,6:7]),lwd=2,col=cls[3])    #45-64 yrs
+  lines(c(1999,2004,2009,2014,2019),rowSums(V3[,8:10]),lwd=2,col=cls[4])   #65+ yrs
 
   #reported data for comparison
 
-  points(2008:2018,rowSums(notif_age[,1:3]),pch=19,cex=0.6,col=cls[1]) #0-26 yrs
-  lines(2008:2018,rowSums(notif_age[,1:3]),col=cls[1],lty=3)
-  points(2008:2018,rowSums(notif_age[,4:5]),pch=19,cex=0.6,col=cls[2]) #25-44 yrs
-  lines(2008:2018,rowSums(notif_age[,4:5]),col=cls[2],lty=3)
-  points(2008:2018,rowSums(notif_age[,6:7]),pch=19,cex=0.6,col=cls[3]) #45-64 yrs
-  lines(2008:2018,rowSums(notif_age[,6:7]),col=cls[3],lty=3)
-  points(2008:2018,rowSums(notif_age[,8:10]),pch=19,cex=0.6,col=cls[4]) #65+ yrs
-  lines(2008:2018,rowSums(notif_age[,8:10]),col=cls[4],lty=3)
+  points(c(1999,2004,2009,2014,2019),rowSums(notif_age[,1:3]),pch=19,cex=0.6,col=cls[1]) #0-26 yrs
+  lines(c(1999,2004,2009,2014,2019),rowSums(notif_age[,1:3]),col=cls[1],lty=3)
+  points(c(1999,2004,2009,2014,2019),rowSums(notif_age[,4:5]),pch=19,cex=0.6,col=cls[2]) #25-44 yrs
+  lines(c(1999,2004,2009,2014,2019),rowSums(notif_age[,4:5]),col=cls[2],lty=3)
+  points(c(1999,2004,2009,2014,2019),rowSums(notif_age[,6:7]),pch=19,cex=0.6,col=cls[3]) #45-64 yrs
+  lines(c(1999,2004,2009,2014,2019),rowSums(notif_age[,6:7]),col=cls[3],lty=3)
+  points(c(1999,2004,2009,2014,2019),rowSums(notif_age[,8:10]),pch=19,cex=0.6,col=cls[4]) #65+ yrs
+  lines(c(1999,2004,2009,2014,2019),rowSums(notif_age[,8:10]),col=cls[4],lty=3)
 
   #plot text
-  mtext(paste("TB Cases By Age in",loc,", 2008-16", sep = " "),3,.3,font=2,cex=cex.size)
+  mtext(paste("TB Cases By Age in",loc,", 1995-2019", sep = " "),3,.3,font=2,cex=cex.size)
   mtext("Year",1,2.5,cex=cex.size)
 
   legend("bottom",c("0-26 years","25-44 years","45-64 years","65+ years","Reported data","Model"),
@@ -478,8 +450,9 @@ calib_graphs_st <- function(df,loc, Par_list,pdf=TRUE, cex.size=.75){
 
   ################################################################################
   #Age Distribution of TB Cases in Percentages
+  #updated for 5 year data
 
-    V   <- (df[59:69,136:146]+df[59:69,189:199])
+    V   <- (df[46:70,136:146]+df[46:70,189:199])*1e6
     V2  <- V[,-11]
     V2[,10] <- V2[,10]+V[,11]
     V2<-colSums(V2)
@@ -501,7 +474,7 @@ calib_graphs_st <- function(df,loc, Par_list,pdf=TRUE, cex.size=.75){
 
     #plot text
     mtext("Age Group",1,2.5,cex=cex.size)
-    mtext(paste("Age Distribution of TB Cases (%) in",loc,", 2008-16", sep = " "),3,.3,font=2,cex=cex.size)
+    mtext(paste("Age Distribution of TB Cases (%) in",loc,", 1995-19", sep = " "),3,.3,font=2,cex=cex.size)
     legend("topright",c("Reported data","Model"),pch=c(19,15),lwd=NA,
            pt.cex=c(1,2),col=c("black","lightblue"),bg="white",cex=cex.size*1.5)
 
@@ -530,23 +503,23 @@ calib_graphs_st <- function(df,loc, Par_list,pdf=TRUE, cex.size=.75){
     ################################################################################
     ### ### ### CASES HR DISTRIBUTION 1993-2013  ### ### ### ### ### ###
 
-    X   <- (df[49:69,151]+df[49:69,204])
-    # Xa  <- rbind(sum(X[1:5]),sum(X[6:10]), sum(X[11:15]),
-    #              sum(X[16:20]), sum(X[21:25]))
-    W<-(df[49:69,151]+df[49:69,150]+df[49:69,204]+df[49:69,203])
-    # Wa  <- rbind(sum(W[1:5]),sum(W[6:10]), sum(W[11:15]),
-    #              sum(W[16:20]), sum(W[21:25]))
+    X   <- (df[46:70,151]+df[46:70,204])
+    Xa  <- rbind(sum(X[1:5]),sum(X[6:10]), sum(X[11:15]),
+                 sum(X[16:20]), sum(X[21:25]))
+    W<-(df[46:70,151]+df[46:70,150]+df[46:70,204]+df[46:70,203])
+    Wa  <- rbind(sum(W[1:5]),sum(W[6:10]), sum(W[11:15]),
+                 sum(W[16:20]), sum(W[21:25]))
 
-    V<-X/W
+    V<-Xa/Wa
 
     notif_hr<-CalibDatState[["hr_cases_sm"]][which(CalibDatState[["hr_cases_sm"]][,1]==stateID[st,1]),7]
     notif_hr<-cbind(notif_time,notif_hr)
-    plot(0,0,ylim=c(0,max(V,notif_hr[,2])*110),xlim=c(1998,2018),xlab="",ylab="",axes=F)
+    plot(0,0,ylim=c(0,max(V,notif_hr[,2])*110),xlim=c(1999,2019),xlab="",ylab="",axes=F)
     axis(1);axis(2,las=2);box()
     abline(h=axTicks(2),col="grey85")
     points(notif_time,notif_hr[,2]*100,pch=19,cex=0.6)
     lines(notif_time,notif_hr[,2]*100,lty=3)
-    lines(1998:2018,V*100,lwd=2,col=4)
+    lines(notif_time,V*100,lwd=2,col=4)
     mtext("Year",1,2.5,cex=cex.size)
     mtext(paste("Percent of TB Cases Homeless in Past Yr in", loc, sep = " "),3,.3,font=2,cex=cex.size)
     legend("topright",c("Reported data","Fitted model"),pch=c(19,NA),lwd=c(1,2),col=c(1,4),
@@ -724,7 +697,7 @@ calib_graphs_st <- function(df,loc, Par_list,pdf=TRUE, cex.size=.75){
 
   ################################################################################
   # Age Distribution of TB Deaths 1999-2014
-  V  <- df[50:67,227:237]
+  V  <- df[50:68,227:237]
   V2 <- V[,-11]; V2[,10] <- V[,10]+V[,11]
   V3 <- colSums(V2)*1e6
 
@@ -747,33 +720,33 @@ calib_graphs_st <- function(df,loc, Par_list,pdf=TRUE, cex.size=.75){
 
   #plot text
   mtext("Age Group",1,2.5,cex=cex.size)
-  mtext(paste("Total TB Deaths by Age Group 1999-2016 in",loc,"[NATIONAL]", sep = " "),3,.3,font=2,cex=cex.size)
+  mtext(paste("Total TB Deaths by Age Group 1999-2018 in",loc,"[NATIONAL]", sep = " "),3,.3,font=2,cex=cex.size)
   legend("topleft",c("Reported data","Model"),pch=c(19,15),lwd=NA,
          pt.cex=c(1,2),col=c("black","lightblue"),bg="white",cex=cex.size*1.5)
 
   ################################################################################
   # total tb deaths over time 1999-2016
   #tb deaths 2006-2016
-  V   <- rowSums(df[57:67,227:237])*1e6
-  tb_death_tot<-as.numeric(CalibDatState$tbdeaths[[st]][8:18,3])
+  V   <- rowSums(df[59:69,227:237])*1e6
+  tb_death_tot<-as.numeric(CalibDatState$tbdeaths[[st]][10:20,3])
   tb_death_tot[is.na(tb_death_tot)]<-0
 
   #format the plot
-  plot(0,0,ylim=c(0,max(V,tb_death_tot)*1.5),xlim=c(2006,2016),xlab="",ylab="",axes=F)
+  plot(0,0,ylim=c(0,max(V,tb_death_tot)*1.5),xlim=c(2008,2018),xlab="",ylab="",axes=F)
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
 
   #plot the model data
-  lines(2006:2016,V,lwd=2,col="blue")
+  lines(2008:2018,V,lwd=2,col="blue")
 
   #reported data for comparison
-  points(2006:2016,tb_death_tot,pch=19,cex=0.6,col="black")
-  lines (2006:2016,tb_death_tot,lty=3,col="black")
+  points(2008:2018,tb_death_tot,pch=19,cex=0.6,col="black")
+  lines (2008:2018,tb_death_tot,lty=3,col="black")
 
   #plot text
 
   mtext("Year",1,2.5,cex=cex.size)
-  mtext(paste("Total TB Deaths by Year 2006-2016 in", loc, sep=" "),3,.3,font=2,cex=cex.size)
+  mtext(paste("Total TB Deaths by Year 2008-2018 in", loc, sep=" "),3,.3,font=2,cex=cex.size)
   legend("topright",c("Reported data","Model"),pch=c(19,NA),lwd=c(1,2),
          col=c("black","blue"),lty=c(3,1),bg="white",pt.cex=c(0.6,NA),cex=cex.size*1.5)
   ################################################################################
