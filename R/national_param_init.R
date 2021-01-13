@@ -16,11 +16,12 @@
 #'@param Scen1 boolean for scenario 1
 #'@param Scen2 boolean for scenario 2
 #'@param Scen3 boolean for scenario 3
+#'@param Scen4 boolean for scenario 3
 #'@param prg_chng vector of program change values
 #'@param ttt_input list of ttt changes
 #'@return InputParams list
 #'@export
-national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,prg_chng, ttt_input){
+national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,Scen4=0,prg_chng, ttt_input){
   ########## DEFINE A VARIABLE THAT WILL DETERMINE HOW LONG THE TIME DEPENDENT
   ########## VARIABLES SHOULD BE
   month<-1213;
@@ -189,6 +190,15 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
     SpImmNon<-baseline_ImmNon-ImmNon
   }
 
+  if(Scen2==2) {
+    baseline_ImmNon<-ImmNon
+    vec.change<-c(rep(1,intv_m), rep(0,month-intv_m))
+    for(i in 1:11) ImmLat[,i] <- ImmLat[,i]*vec.change
+    for(i in 1:11) ImmAct[,i] <- ImmAct[,i]*vec.change
+    for(i in 1:11) ImmFst[,i] <- ImmFst[,i]*vec.change
+    ImmNon        <- TotImmAge[1:month,]-ImmAct-ImmFst-ImmLat
+    SpImmNon<-baseline_ImmNon-ImmNon
+  }
 
   #### #### #### SCEN 3 #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
@@ -406,10 +416,10 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
 
   ###create values for perfect sensitivity and specificity
   #adjust for High Risk Populations
-  LtDxPar_lt[7,]     <-rrTestHr
+  # LtDxPar_lt[7,]     <-rrTestHr
   LtDxPar_nolt[7,]   <-rrTestHr
   #High risk foriegn born
-  LtDxPar_lt[10,]     <-rrTestHr
+  # LtDxPar_lt[10,]     <-rrTestHr
   LtDxPar_nolt[10,]   <-rrTestHr
   #adjust for no latent
   LtDxPar_nolt[6,]   <-rrTestLrNoTb
@@ -561,6 +571,7 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   TxVec[1]       <-  d1st
   TxVec[2]       <-  pCurPs
   NixTrans<- rep(1,month)
+  NixTb<- rep(0,month)
   #### #### #### INT 4 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
   if(Int4==1) {  rDeftH <- rDeftH*(1-LgtCurve(intv_yr,intv_yr+5,0.5))      }
@@ -588,8 +599,15 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
 
   NixTrans <- 1-LgtCurve(intv_yr,intv_yr+1,1)
   if(Scen1==0) {  NixTrans[] <- 1     }
+  if(Scen1==2) { Nixtrans<-c(rep(1,intv_m),rep(0,month-(intv_m)))}
 
   #### #### #### SCEN 1 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
+
+  #### #### #### SCEN 4 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
+
+  if (Scen4==1){NixTb<-c(rep(0,intv_m),1,rep(0,month-(intv_m-1)))}
+
+  #### #### #### SCEN 4 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
   ## Retreatment
   pReTx   <- LgtCurve(1985,2000,PV["pReTx"])   	# Probability Tx failure identified, patient initiated on tx experienced reg (may be same)
@@ -655,6 +673,7 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   InputParams[["aging_denom"]] <-spl_den
   InputParams[["adj_fact"]] <- adj_fact
   InputParams[["NixTrans"]] <- NixTrans
+  InputParams[["NixTb"]] <- NixTb
   InputParams[["Scen2Bool"]]<-0
   # if (Scen2==1) InputParams[["Scen2Bool"]]<-1
 

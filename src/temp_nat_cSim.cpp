@@ -56,6 +56,7 @@ using namespace Rcpp;
 //'@param pReTx probability of re-treatment for TB
 //'@param ag_den denominator used in the aging process
 //'@param NixTrans reduction of transmission over time
+//'@param NixTb reduction of all TB over time
 //'@param dist_gen general distribution across tb progression and mort
 //'@param trans_mat_tot_ages
 //'@param test_list
@@ -118,6 +119,7 @@ Rcpp::List temp_national_cSim(
     std::vector<double> pReTx,
     Rcpp::NumericMatrix ag_den,
     std::vector<double> NixTrans,
+    std::vector<double> NixTb,
     Rcpp::NumericMatrix dist_gen,
     Rcpp::NumericMatrix trans_mat_tot_ages
 ) {
@@ -1144,6 +1146,33 @@ Rcpp::List temp_national_cSim(
       //             } } } } } } } }
 
       if (tb_dyn==1){
+//first check if we're shutting off TB in model
+if(NixTb[s]==1){
+  // Rcout << "m="<<m << "\n";
+
+        for(int ag=0; ag<11; ag++) {
+          for(int lt=0; lt<2; lt++) {
+            for(int im=0; im<4; im++) {
+              for(int nm=0; nm<4; nm++) {
+                for(int rg=0; rg<2; rg++) {
+                  for (int na=0; na<3; na++){
+                    for (int tb=2; tb<6; tb++){
+                      temp=V0[ag][tb][lt][im][nm][rg][na]*NixTb[s];
+                      V0[ag][tb][lt][im][nm][rg][na] -= temp;
+                      V0[ag][1][lt][im][nm][rg][na]  += temp;
+                    }}}}}}}
+        for(int ag=0; ag<11; ag++) {
+          for(int lt=0; lt<2; lt++) {
+            for(int im=0; im<4; im++) {
+              for(int nm=0; nm<4; nm++) {
+                for(int rg=0; rg<2; rg++) {
+                  for (int na=0; na<3; na++){
+                    for (int tb=1; tb<6; tb++){
+                      V1[ag][tb][lt][im][nm][rg][na] =V0[ag][tb][lt][im][nm][rg][na];
+                      Vdx[ag][tb][lt][im][nm][rg][na]   = 0;
+                    }}}}}}}
+}else {
+
         ////////////////////////////  TRANSMISSION RISK  ////////////////////////////////
 
         for(int i=0; i<2; i++) {
@@ -1261,6 +1290,8 @@ Rcpp::List temp_national_cSim(
                     } else {n2=1;}
                     ///////////////////////////////   SUCEPTIBLE  /////////////////////////////////
                     temp = V0[ag][0][lt][im][nm][rg][na]*(VLjkl[rg][n2][ag])*NixTrans[s];
+                    // if (NixTb[s]==1){
+                    // Rcout<<"temp1 "<< temp << "\n";}
                     //////////////////////////// REMOVE FROM SUSCEPTIBLE //////////////////////////
                     V1[ag][0][lt][im][nm][rg][na]  -= temp;
                     //////////////////////////////// LATENT TB SLOW ///////////////////////////////
@@ -1373,6 +1404,24 @@ Rcpp::List temp_national_cSim(
         //
         //               }
         //             } } } } } } }
+        // for(int ag=0; ag<11; ag++) {
+        //   for(int tb=2; tb<6; tb++) {
+        //     for(int lt=0; lt<2; lt++){
+        //       for(int im=0; im<4; im++){
+        //         for(int nm=0; nm<4; nm++){
+        //           for(int rg=0; rg<2; rg++) {
+        //             for(int na=0; na<3; na++) {
+        // if(NixTb[s]==1){
+        //   if (V0[ag][tb][lt][im][nm][rg][na] > 0){
+        //     Rcout << "before ltbi screen V0"<<V0[ag][tb][lt][im][nm][rg][na] << "\n";
+        //   }
+        //   if (V1[ag][tb][lt][im][nm][rg][na] > 0){
+        //
+        //     Rcout << "before ltbi screen V1"<<V1[ag][tb][lt][im][nm][rg][na] << "\n";
+        //
+        //   }}
+        //             } } } } } } }
+
         ///////////////////  //////////////////  //////////////////  ///////////////////
         ///////////////////  LTBI SCREENING AND TLTBI INITIATION     ///////////////////
         ///////////////////  //////////////////  //////////////////  ///////////////////
@@ -1529,8 +1578,7 @@ Rcpp::List temp_national_cSim(
                       if(rg==1 & na >0) {
                         rTbP_norm=LtDxPar_ltN[9][s];///.924;
                       }
-                    }
-                    else{
+                    } else{
                     ////////////// US BORN, LOW RISK   /////////////////
                     if(rg==0 & na==0) {
                       rTbP_norm=LtDxPar_ltN[0][s];
@@ -1593,10 +1641,18 @@ Rcpp::List temp_national_cSim(
 
 
                       // if(s == ttt_month.front()){
-                      //   Rcpp::Rcout << "susc= "<< popsize_susc << " at ag= " << ag << " tb = "<< " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "\n";
-                      //   Rcpp::Rcout << "ls= "<< popsize_ls << " at ag= " << ag << " tb = "<< " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "\n";
-                      //   Rcpp::Rcout << "lf= "<< popsize_lf << " at ag= " << ag << " tb = "<< " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "\n";
-                      // // }
+                      //   // Rcpp::Rcout << "susc= "<< popsize_susc << " at ag= " << ag << " tb = "<< " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "\n";
+                    // Rcpp::Rcout << "ls= "<< popsize_ls << " at ag= " << ag << " tb = "<< " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "\n";
+                    // Rcpp::Rcout << "ls sr= "<< ttt_diag_ls << " at ag= " << ag << " tb = "<< " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "\n";
+                      //   //
+                    // Rcpp::Rcout << "lf= "<< popsize_lf << " at ag= " << ag << " tb = "<< " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "\n";
+                    // Rcpp::Rcout << "lfsc = "<< ttt_diag_lf << " at ag= " << ag << " tb = "<< " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "\n";
+                      //   Rcpp::Rcout << "ttt_ltbi_sens = "<< ttt_ltbi_sens << " at ag= " << ag << " tb = "<< " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "\n";
+                      //
+                        // Rcpp::Rcout << "rTBNorm = "<< rTbP_norm << " at ag= " << ag << " tb = "<< " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "\n";
+                      //   Rcpp::Rcout << "rr_ltbi = "<< rr_ltbi << " at ag= " << ag << " tb = "<< " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "\n";
+                      //
+                       // }
                     }//END THE POP SCREEN LOOP
 
                     if (ttt_ltbi_init==1){
@@ -1624,13 +1680,14 @@ Rcpp::List temp_national_cSim(
 
                   temp3 =(base_diag*LtTxParN[s][0]*LtTxParN[s][1])+
                         (VLdx[ag][2][0][im][nm][rg][na]*ttt_ltbi_initN*(1-ttt_ltbi_compN)); // default
-
+                  // temp8+=(VLdx[ag][2][0][im][nm][rg][na]+base_diag);
                   base_diag=V0[ag][3][0][im][nm][rg][na]*rTbP;
                   temp2 =(base_diag*LtTxParN[s][0]*(1-LtTxParN[s][1]))+
                     (VLdx[ag][3][0][im][nm][rg][na]*ttt_ltbi_initN*ttt_ltbi_compN); // tx completion
 
                   temp4 =(base_diag*LtTxParN[s][0]*LtTxParN[s][1])+
                     (VLdx[ag][3][0][im][nm][rg][na]*ttt_ltbi_initN*(1-ttt_ltbi_compN)); // default
+                  // temp9+=(VLdx[ag][3][0][im][nm][rg][na]+base_diag);
 
                   // if(s == ttt_month.front()){
                   // // Rcpp::Rcout << "temp= "<< (ttt_diag_ls*ttt_ltbi_initN*ttt_ltbi_compN) <<"\n";
@@ -1650,13 +1707,15 @@ Rcpp::List temp_national_cSim(
                   V1[ag][2][1][im][nm][rg][na]  += (temp+temp2)*(1-LtTxParN[s][2]); //*(1-EffLt0[s]) //tx comp fail to latent slow
                   ///defaults are placed in tx naive because it is considered the same tb infection
                   V1[ag][2][0][im][nm][rg][na]  += (temp3+temp4); //latent tx default to latent slow
+
                 } } } } }
         // if (s == (ttt_month.back())){
+        // temp10=temp8+temp9;
         // if (s == ttt_month.front()){
-        //   // Rcpp::Rcout<< "month = " << s << "\n";
-        //   Rcpp::Rcout<< "total extra screening = " << temp8 << "\n";
-        //   Rcpp::Rcout<< "total extra screening in latent pop = " << temp9 << "\n";
-        //   Rcpp::Rcout<< "total extra LTBI diagnoses = " << temp10 << "\n";
+          // Rcpp::Rcout<< "month = " << s << "\n";
+          // Rcpp::Rcout<< "total extra screening = " << temp8 << "\n";
+          // Rcpp::Rcout<< "total extra screening in latent pop = " << temp9 << "\n";
+          // Rcpp::Rcout<< "total extra LTBI diagnoses = " << temp10 << "\n";
         // }
         // temp7=0;
         // if(std::find(std::begin(ttt_month), std::end(ttt_month), s) != std::end(ttt_month)){
@@ -1675,7 +1734,23 @@ Rcpp::List temp_national_cSim(
         //   // Rcpp::Rcout << "after tltbi pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
         //   // Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
         // }
-
+        // for(int ag=0; ag<11; ag++) {
+        //   for(int tb=2; tb<6; tb++) {
+        //     for(int lt=0; lt<2; lt++){
+        //       for(int im=0; im<4; im++){
+        //         for(int nm=0; nm<4; nm++){
+        //           for(int rg=0; rg<2; rg++) {
+        //             for(int na=0; na<3; na++) {
+        //               if(NixTb[s]==1){
+        //                 if (V0[ag][tb][lt][im][nm][rg][na] > 0){
+        //                   Rcout << "after ltbi screen V0"<<V0[ag][tb][lt][im][nm][rg][na] << "\n";
+        //                 }
+        //                 if (V1[ag][tb][lt][im][nm][rg][na] > 0){
+        //
+        //                   Rcout << "after ltbi screen V1"<<V1[ag][tb][lt][im][nm][rg][na] << "\n";
+        //
+        //                 }}
+        //             } } } } } } }
         ///////////////////// TB DIAGNOSIS AND TX INITIATION  /////////////////////////
         for(int ag=0; ag<11; ag++) {
           for(int lt=0; lt<2; lt++) {
@@ -1722,6 +1797,7 @@ Rcpp::List temp_national_cSim(
         //
         //               }
         //             } } } } } } }
+} //end of the else loop
       }//end of TB loop
       //
       // // temp=0;
@@ -1750,7 +1826,41 @@ Rcpp::List temp_national_cSim(
       // //   Rcpp::Rcout << "at m= "<< m<< "population total: "<< temp2 << "\n";
       // //
       // //   Rcpp::Rcout << "at m= "<< m<< "number of susceptibles: "<< temp << "\n";
+      // for(int ag=0; ag<11; ag++) {
+      //   for(int tb=2; tb<6; tb++) {
+      //     for(int lt=0; lt<2; lt++){
+      //       for(int im=0; im<4; im++){
+      //         for(int nm=0; nm<4; nm++){
+      //           for(int rg=0; rg<2; rg++) {
+      //             for(int na=0; na<3; na++) {
+      //               if(NixTb[s]==1){
+      //                 if (V0[ag][tb][lt][im][nm][rg][na] > 0){
+      //                   Rcout << "final V0"<<V0[ag][tb][lt][im][nm][rg][na] << "\n";
+      //                 }
+      //                 if (V1[ag][tb][lt][im][nm][rg][na] > 0){
+      //
+      //                   Rcout << "final V1"<<V1[ag][tb][lt][im][nm][rg][na] << "\n";
+      //
+      //                 }}
+      //             } } } } } } }
 
+      // for(int ag=0; ag<11; ag++) {
+      //   for(int tb=2; tb<6; tb++) {
+      //     for(int lt=0; lt<2; lt++){
+      //       for(int im=0; im<4; im++){
+      //         for(int nm=0; nm<4; nm++){
+      //           for(int rg=0; rg<2; rg++) {
+      //             for(int na=0; na<3; na++) {
+      //               if(NixTb[s]==1){
+      //                 if (V0[ag][tb][lt][im][nm][rg][na] > 0){
+      //                   Rcout << "after all screen V0"<<V0[ag][tb][lt][im][nm][rg][na] << "\n";
+      //                 }
+      //                 if (V1[ag][tb][lt][im][nm][rg][na] > 0){
+      //
+      //                   Rcout << "after all screen V1"<<V1[ag][tb][lt][im][nm][rg][na] << "\n";
+      //
+      //                 }}
+      //             } } } } } } }
       ///////////////////////////////////////////////////////////////////////////////
       /////////////////////////    FILL RESULTS TABLE    ////////////////////////////
       ///////////////////////////////////////////////////////////////////////////////
@@ -1768,6 +1878,14 @@ Rcpp::List temp_national_cSim(
                       Outputs[y][1    ] += V1[ag][tb][lt][im][nm][rg][na];   // N_ALL
                       Outputs[y][2 +ag] += V1[ag][tb][lt][im][nm][rg][na];   // N_ by age (11)
                       Outputs[y][13+tb] += V1[ag][tb][lt][im][nm][rg][na];   // N_ by tb (6)
+                      // if(NixTb[s]==1){
+                      //
+                      // if (V1[ag][tb][lt][im][nm][rg][na] > 0){
+                      //   Rcout << "m="<<m << "\n";
+                      //
+                      //   Rcout << "after all screen V1"<<V1[ag][tb][lt][im][nm][rg][na] << "\n";
+                      //
+                      // }}
                       Outputs[y][19+im] += V1[ag][tb][lt][im][nm][rg][na];   // N_ by im (4)
                       Outputs[y][23+nm] += V1[ag][tb][lt][im][nm][rg][na];   // N_ by nm (4)
                       Outputs[y][27+rg] += V1[ag][tb][lt][im][nm][rg][na];   // N_ by rg (2)
@@ -1995,7 +2113,9 @@ Rcpp::List temp_national_cSim(
                       Outputs[y][153] +=  ((base_diag + VLdx[ag][2][0][im][nm][rg][na]+VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0]) +
                         ((V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*12*rTbN*LtTxParN[s][0]); } // high risk inits
 
-                    Outputs[y][154] += (base_diag) *LtTxParN[s][0]; // inits with LTBI
+                    Outputs[y][154] += (base_diag+ VLdx[ag][2][0][im][nm][rg][na]+VLdx[ag][3][0][im][nm][rg][na]) *LtTxParN[s][0]; // inits with LTBI
+                    Outputs[y][939] += (base_diag+ VLdx[ag][2][0][im][nm][rg][na]+VLdx[ag][3][0][im][nm][rg][na]) *LtTxParN[s][0]; // inits with LTBI
+
                   } else {
                     Outputs[y][151] += ((base_diag)*LtTxParN[s][0]) +
                       ((V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*12*rTbN*LtTxParN[s][0]);//all inits
@@ -2006,7 +2126,7 @@ Rcpp::List temp_national_cSim(
                       Outputs[y][153] +=  ((base_diag)*LtTxParN[s][0]) +
                         ((V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*12*rTbN*LtTxParN[s][0]); } // high risk inits
 
-                    Outputs[y][154] += (base_diag ) *LtTxParN[s][0]; // inits with LTBI
+                    Outputs[y][939] += (base_diag ); // inits with LTBI
                   }
                 } } } } }
         ////////////     CREATE YEARLY VALUES FROM THE MONTH ESTIMATE     ////////////
@@ -2303,7 +2423,7 @@ Rcpp::List temp_national_cSim(
                   for(int na=0; na<3; na++) {
                     Outputs[y][938] += V1[ag][tb][0][im][nm][rg][na];   //TREATMENT NAIVE
                   } } } } } }
-
+        ///added in a count of true latent test positives above (939)
 
       } ////end of mid-year results bracket
       ///////////////////////////////////////////////////////////////////////////////////

@@ -15,6 +15,7 @@ national_param_init(
   Scen1 = 0,
   Scen2 = 0,
   Scen3 = 0,
+  Scen4 = 0,
   prg_chng,
   ttt_input
 )
@@ -39,6 +40,8 @@ national_param_init(
 \item{Scen2}{boolean for scenario 2}
 
 \item{Scen3}{boolean for scenario 3}
+
+\item{Scen4}{boolean for scenario 3}
 
 \item{prg_chng}{vector of program change values}
 

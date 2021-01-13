@@ -304,7 +304,10 @@ func3_ResNam<-function(){
               paste("95p","NUS","NM1",StatList[[4]],sep="_"),
               paste("95p","NUS","NM2",StatList[[4]],sep="_"),
               paste("95p","NUS","NM3",StatList[[4]],sep="_"),
-              paste("95p","NUS","NM4",StatList[[4]],sep="_")
+              paste("95p","NUS","NM4",StatList[[4]],sep="_"),
+
+              "TX_NAIVE_TOT",
+              "LTBI_TEST_TP"
 
 
   )

@@ -17,6 +17,7 @@ national_OutputsInt(
   Scen1 = 0,
   Scen2 = 0,
   Scen3 = 0,
+  Scen4 = 0,
   prg_chng,
   ttt_input
 )
