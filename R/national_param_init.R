@@ -674,8 +674,6 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   InputParams[["adj_fact"]] <- adj_fact
   InputParams[["NixTrans"]] <- NixTrans
   InputParams[["NixTb"]] <- NixTb
-  InputParams[["Scen2Bool"]]<-0
-  # if (Scen2==1) InputParams[["Scen2Bool"]]<-1
 
   InputParams[["ResNam"]]    <- func_ResNam()
   return(InputParams)

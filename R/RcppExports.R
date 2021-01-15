@@ -154,6 +154,7 @@ cSim_noTB <- function(nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, Mpfas
 #'@param ImmLat Immigration with Latent TB
 #'@param ImmAct Immigration with Active TB
 #'@param ImmFst Immigration with Fast Progressing TB
+#'@param SpImmNon Immigration input for special curing of TB
 #'@param net_mig_usb net internal migration usb
 #'@param net_mig_nusb net internal migration nusb
 #'@param mubt background mortality over time
@@ -182,7 +183,6 @@ cSim_noTB <- function(nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, Mpfas
 #'@param NixTrans reduction of transmission over time
 #'@param dist_gen general distribution across tb progression and mort
 #'@param trans_mat_tot_ages
-#'@param test_list
 #'@return Outputs a list of outputs
 national_cSim <- function(nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow, rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, SpImmNon, net_mig_usb, net_mig_nusb, mubt, RelInf, RelInfRg, RRcrAG, Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, ttt_samp_dist, ttt_month, ttt_pop_scrn, ttt_ltbi, LtTxPar, LtDxPar_lt, LtDxPar_nolt, RRdxAge, rRecov, pImmScen, EarlyTrend, pReTx, ag_den, NixTrans, dist_gen, trans_mat_tot_ages) {
     .Call('_MITUS_national_cSim', PACKAGE = 'MITUS', nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow, rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, SpImmNon, net_mig_usb, net_mig_nusb, mubt, RelInf, RelInfRg, RRcrAG, Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, ttt_samp_dist, ttt_month, ttt_pop_scrn, ttt_ltbi, LtTxPar, LtDxPar_lt, LtDxPar_nolt, RRdxAge, rRecov, pImmScen, EarlyTrend, pReTx, ag_den, NixTrans, dist_gen, trans_mat_tot_ages)
@@ -708,6 +708,7 @@ cSim_rblnc <- function(nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, Mpfa
 #'@param ImmLat Immigration with Latent TB
 #'@param ImmAct Immigration with Active TB
 #'@param ImmFst Immigration with Fast Progressing TB
+#'@param SpImmNon Immigration with cured TB -- Scen 4 only
 #'@param net_mig_usb net internal migration usb
 #'@param net_mig_nusb net internal migration nusb
 #'@param mubt background mortality over time

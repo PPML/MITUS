@@ -14,49 +14,58 @@ model_load<-function(loc="US"){
   #'load necessary datasets
   #'Model Input
   if (loc=="US"){
-    CalibDat<<-readRDS(system.file("US/US_CalibDat_07-27-20.rds", package="MITUS"))
+    CalibDat<<-readRDS(system.file("US/US_CalibDat_2020-11-25.rds", package="MITUS"))
     ParamInit<<-as.data.frame(readRDS(system.file("US/US_ParamInit_2020-08-20.rds", package="MITUS")))
     StartVal<<-readRDS(system.file("US/US_StartVal_2020-08-20.rds", package="MITUS"))
     Inputs<<-readRDS(system.file("US/US_Inputs_08-31-20.rds", package="MITUS"))
+    # Inputs<<-readRDS(system.file("US/US_Inputs_06-26-19.rds", package="MITUS"))
+    # TabOpt<<-readRDS(system.file("US/US_Optim_all_9_0609.rds", package="MITUS"))
     # Opt<<-readRDS(system.file("US/US_Optim_all_10_0709.rds", package="MITUS"))
-} else {
-  CalibDat<<-CalibDatState<<-readRDS(system.file("ST/ST_CalibDat_07-15-19.rds", package="MITUS"))
-  ParamInit_st<<-ParamInit<<-readRDS(system.file("ST/ST_ParamInit_2019-11-03.rds", package="MITUS"))
-  StartVal_st<<-StartVal<<-readRDS(system.file("ST/ST_StartVal_2019-11-03.rds", package="MITUS"))
-  Inputs<<-readRDS(system.file(paste0(loc,"/",loc,"_ModelInputs_08-05-19.rds"), package="MITUS"))
-}
+    Opt <- readRDS(system.file("US/US_Optim_all_10_0901.rds", package="MITUS"))
 
-if (loc=="US"){
-  wts <<- CalibDat[["ImptWeights"]]
-  P  <<- ParamInit[,1]
-  names(P) <<- rownames(ParamInit)
+  } else {
+    CalibDat<<-CalibDatState<<-readRDS(system.file("ST/ST_CalibDat_2020-12-03.rds", package="MITUS"))
+    ParamInit_st<<-ParamInit<<-readRDS(system.file("ST/ST_ParamInit_111620.rds", package="MITUS"))
+    # ParamInit_st<<-ParamInit<<-readRDS(system.file("ST/ST_ParamInit_2020-07-31.rds", package="MITUS"))
 
-  ii <<-  ParamInit[,5]==1
-  ParamInitZ <<- ParamInit[ParamInit$Calib==1,]
-  idZ0 <<- ParamInitZ[,4]==0
-  idZ1 <<- ParamInitZ[,4]==1
-  idZ2 <<- ParamInitZ[,4]==2
-} else {
-  wts <<- CalibDatState[["ImptWeights"]]
-  W <- wts[44:69];  W["2016"] <- 4
-  wtZ <<-W
+    StartVal_st<<-StartVal<<-readRDS(system.file("ST/ST_StartVal_2020-11-16.rds", package="MITUS"))
+    Inputs<<-readRDS(system.file(paste0(loc,"/",loc,"_ModelInputs_10-19-20.rds"), package="MITUS"))
+    #last input change was to update the RR active TB by age in immigrants
+  }
+  # if (loc=="IN"){
+  #   Inputs<<-readRDS(system.file(paste0(loc,"/",loc,"_ModelInputs_07-14-20.rds"), package="MITUS"))
+  # }
+  if (loc=="US"){
+    wts <<- CalibDat[["ImptWeights"]]
+    P  <<- ParamInit[,1]
+    names(P) <<- rownames(ParamInit)
 
-  #creation of background parameters
-  #elements of P will be replaced from either the StartVals in the case
-  #of optimization or the user inputted dataset
+    ii <<-  ParamInit[,5]==1
+    ParamInitZ <<- ParamInit[ParamInit$Calib==1,]
+    idZ0 <<- ParamInitZ[,4]==0
+    idZ1 <<- ParamInitZ[,4]==1
+    idZ2 <<- ParamInitZ[,4]==2
+  } else {
+    wts <<- CalibDatState[["ImptWeights"]]
+    W <- wts[44:69];  W["2016"] <- 4
+    wtZ <<-W
 
-  P  <<- ParamInit_st[,1]
-  names(P) <<- rownames(ParamInit_st)
-  ii <<-  ParamInit_st[,5]==1
-  ParamInitZ <<- ParamInit_st[ParamInit_st$Calib==1,]
-  idZ0 <<- ParamInitZ[,4]==0
-  idZ1 <<- ParamInitZ[,4]==1
-  idZ2 <<- ParamInitZ[,4]==2
-  ParamInit<<-ParamInit_st
-}
+    #creation of background parameters
+    #elements of P will be replaced from either the StartVals in the case
+    #of optimization or the user inputted dataset
+
+    P  <<- ParamInit_st[,1]
+    names(P) <<- rownames(ParamInit_st)
+    ii <<-  ParamInit_st[,5]==1
+    ParamInitZ <<- ParamInit_st[ParamInit_st$Calib==1,]
+    idZ0 <<- ParamInitZ[,4]==0
+    idZ1 <<- ParamInitZ[,4]==1
+    idZ2 <<- ParamInitZ[,4]==2
+    ParamInit<<-ParamInit_st
+  }
   prgchng<<-def_prgchng(P)
 
-return(invisible(NULL))
+  return(invisible(NULL))
 }
 
 #'loads data for the geography of interest
@@ -93,9 +102,6 @@ model_load_demo<-function(loc="US"){
 
   } else {
     wts <<- CalibDatState[["ImptWeights"]]
-    wtZ <- wts[44:67];  wtZ["2016"] <- 4
-    wtZ<<-wtZ
-
   }
   #'creation of background parameters
   #'elements of P will be replaced from either the StartVals in the case

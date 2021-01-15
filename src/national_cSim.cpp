@@ -25,6 +25,7 @@ using namespace Rcpp;
 //'@param ImmLat Immigration with Latent TB
 //'@param ImmAct Immigration with Active TB
 //'@param ImmFst Immigration with Fast Progressing TB
+//'@param SpImmNon Immigration input for special curing of TB
 //'@param net_mig_usb net internal migration usb
 //'@param net_mig_nusb net internal migration nusb
 //'@param mubt background mortality over time
@@ -53,7 +54,6 @@ using namespace Rcpp;
 //'@param NixTrans reduction of transmission over time
 //'@param dist_gen general distribution across tb progression and mort
 //'@param trans_mat_tot_ages
-//'@param test_list
 //'@return Outputs a list of outputs
 //[[Rcpp::export]]
 
