@@ -448,7 +448,7 @@ calib_graphs_st <- function(df,loc, Par_list,pdf=TRUE, cex.size=.75){
   mtext(paste("TB Cases By Age in",loc,", 1995-2019", sep = " "),3,.3,font=2,cex=cex.size)
   mtext("Year",1,2.5,cex=cex.size)
 
-  legend("bottom",c("0-26 years","25-44 years","45-64 years","65+ years","Reported data","Model"),
+  legend("topright",c("0-26 years","25-44 years","45-64 years","65+ years","Reported data","Model"),
          lwd=c(NA,NA,NA,NA,1,2),lty=c(NA,NA,NA,NA,3,1),col=c(cls,1,1),bg="white",
          pt.cex=c(1.8,1.8,1.8,1.8,0.6,NA),pch=c(15,15,15,15,19,NA),cex=cex.size*1.5,ncol=2)
 

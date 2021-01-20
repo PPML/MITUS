@@ -21,14 +21,14 @@ if (loc=="US"){
   # Inputs<<-readRDS(system.file("US/US_Inputs_06-26-19.rds", package="MITUS"))
   # TabOpt<<-readRDS(system.file("US/US_Optim_all_9_0609.rds", package="MITUS"))
    # Opt<<-readRDS(system.file("US/US_Optim_all_10_0709.rds", package="MITUS"))
-  Opt <- readRDS(system.file("US/US_Optim_all_10_0901.rds", package="MITUS"))
+  Opt <- readRDS(system.file("US/US_Optim_all_10_1201.rds", package="MITUS"))
 
 } else {
   CalibDat<<-CalibDatState<<-readRDS(system.file("ST/ST_CalibDat_2020-12-03.rds", package="MITUS"))
-  ParamInit_st<<-ParamInit<<-readRDS(system.file("ST/ST_ParamInit_111620.rds", package="MITUS"))
+  ParamInit_st<<-ParamInit<<-readRDS(system.file("ST/ST_ParamInit_2021-01-19.rds", package="MITUS"))
   # ParamInit_st<<-ParamInit<<-readRDS(system.file("ST/ST_ParamInit_2020-07-31.rds", package="MITUS"))
 
-  StartVal_st<<-StartVal<<-readRDS(system.file("ST/ST_StartVal_2020-11-16.rds", package="MITUS"))
+  StartVal_st<<-StartVal<<-readRDS(system.file("ST/ST_StartVal_2021-01-19.rds", package="MITUS"))
   Inputs<<-readRDS(system.file(paste0(loc,"/",loc,"_ModelInputs_10-19-20.rds"), package="MITUS"))
   #last input change was to update the RR active TB by age in immigrants
 }

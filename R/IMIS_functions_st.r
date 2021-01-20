@@ -91,6 +91,7 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
         v2b   <- (M[46:70,136:146]+M[46:70,189:199]) - (M[46:70,205:215]+M[46:70,216:226])
         addlik <- notif_age_nus_5yr_lLik_st(V=v2b,st=st); addlik
         lLik <- lLik + addlik
+        # print(addlik)
         # print(paste("6:", lLik))
         ### ### ### CASES NUSB DISTRIBUTION 1993-2014  ### ### ### ### ### ### D
         # v3   <-  cbind(M[44:69,148]+M[44:69,149]+(M[44:69,201]+M[44:69,202]),
