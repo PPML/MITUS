@@ -1,17 +1,18 @@
 # ####yearly update to the CalibDat
 # year<-2019
-# ##### OTIS DATA
+# # ##### OTIS DATA
 # total_cases<-8916
 # us_cases<-2541
 # percent_nus_cases<-71.38
-# age_cases_us<- c(2.18,1.10, 2.85, 2.58, 3.17, 3.72, 5.04, 3.52, 2.16, 1.17)
-# age_cases_nus<-c(.23,.61, 6.67, 12.16, 10.37, 9.90, 11.16, 10.07, 7.25, 2.96)
+# # make sure that each of these sum to 100
+# age_cases_us<- c(2.09+5.59,3.86,10.00,12.55,11.14,13.07,17.67,12.36,7.60,4.09)
+# age_cases_nus<-c(.08+.24,.85,9.35,17.03,14.53,13.87,15.63,14.11,10.15,4.15)
 # age_cases<-((age_cases_us/100*(1-percent_nus_cases/100)*total_cases)+(age_cases_nus/100*percent_nus_cases/100*total_cases))/total_cases
 #
 # # percent_recent_nus_cases
 # percent_recent_nus<-25.54252
 # percent_homeless_cases<-4.41
-# percent_us_homeless_cases<-2.65
+# percent_us_homeless_cases<-9.29
 #
 # #fb recent entry cases
 # # percent_nus_recent_cases<-
@@ -26,7 +27,7 @@
 #
 # ##### load in the current calibration data
 #   # model_load()
-#   newCalibDat<-CalibDat
+  # newCalibDat<-CalibDat
 #   #replace with new values
 #
 #   ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
@@ -43,14 +44,14 @@
 #                                  age_cases,
 #                                  total_cases))
 #
-#   newCalibDat$age_cases_fb<-rbind(newCalibDat$age_cases_fb,
-#                                   c(year,
-#                                   age_cases_nus/100,
-#                                   total_cases*(percent_nus_cases/100)))
-#   newCalibDat$age_cases_us<-rbind(newCalibDat$age_cases_us,
-#                                   c(year,
-#                                   age_cases_us/100,
-#                                   total_cases*(1-(percent_nus_cases/100))))
+  # newCalibDat$age_cases_fb<-rbind(newCalibDat$age_cases_fb,
+  #                                 c(year,
+  #                                 age_cases_nus/100,
+  #                                 total_cases*(percent_nus_cases/100)))
+  # newCalibDat$age_cases_us<-rbind(newCalibDat$age_cases_us,
+  #                                 c(year,
+  #                                 age_cases_us/100,
+  #                                 total_cases*(1-(percent_nus_cases/100))))
 #   ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
 #   ##### ##### ##### ##### NUS RECENT CASES    ##### ##### ##### ##### ##### ##### ##### ##### ###
 #   ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
@@ -61,12 +62,12 @@
 #   ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
 #   ##### ##### ##### ##### HOMELESS CASES    ##### ##### ##### ##### ##### ##### ##### ##### #####
 #   ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
-#   newCalibDat$homeless_cases<-rbind(newCalibDat$homeless_cases,c(year,percent_homeless_cases))
+  # newCalibDat$homeless_cases<-rbind(newCalibDat$homeless_cases,c(year,percent_homeless_cases/100,total_cases))
 #
-#   newCalibDat$us_homeless_cases<-rbind(newCalibDat$us_homeless_cases,
-#                                        c(year,percent_us_homeless_cases/100,
-#                                          us_cases
-#                                          ))
+  # newCalibDat$us_homeless_cases<-rbind(newCalibDat$us_homeless_cases,
+  #                                      c(year,percent_us_homeless_cases/100,
+  #                                        us_cases
+  #                                        ))
 #
 #   ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
 #   ##### ##### ##### ##### TB DEATHS   ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
