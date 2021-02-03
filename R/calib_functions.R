@@ -20,7 +20,7 @@ notif_tot_lik <- function(V) {
 notif_fb_lik <- function(V) {
   notif_fb      <- CalibDat[["age_cases_fb"]][,12]
   adj_1         <- sum(dnorm(notif_fb,notif_fb,notif_fb*0.05/1.96,log=T)*wts[44:70])
-  (sum(dnorm(notif_fb,V,notif_fb*0.1/1.96,log=T)*wts[44:70]) - adj_1)
+  (sum(dnorm(notif_fb,V,notif_fb*0.05/1.96,log=T)*wts[44:70]) - adj_1)
 }
 
 #'US Diagnosed Cases 1953-2016
@@ -31,7 +31,7 @@ notif_fb_lik <- function(V) {
 notif_us_lik <- function(V) {
   notif_us     <- CalibDat[["age_cases_us"]][1:27,12]
   adj_1         <- sum(dnorm(notif_us,notif_us,notif_us*0.05/1.96,log=T)*wts[44:70])
-  (sum(dnorm(notif_us,V,notif_us*0.1/1.96,log=T)*wts[44:70]) - adj_1)
+  (sum(dnorm(notif_us,V,notif_us*0.05/1.96,log=T)*wts[44:70]) - adj_1)
 }
 
 #' DISTRIBUTION OF CASES RECENT TRANSMISSION VS NO RECENT TRANSMISSION
@@ -39,8 +39,8 @@ notif_us_lik <- function(V) {
 #'@return likelihood
 recent_trans_dist_lLik  <- function(V) {
   rct_trans_dist        <- CalibDat[["recent_trans_cases"]][1:2,1]/CalibDat[["recent_trans_cases"]][1:2,3]
-  adj_13          <- sum(dbeta(rct_trans_dist,rct_trans_dist*10,(1-rct_trans_dist)*100,log=T) )
-  (sum(dbeta(rct_trans_dist,V[,1]*100,V[,2]*100,log=T) ) - adj_13)
+  adj_13          <- sum(dbeta(rct_trans_dist,rct_trans_dist*10,(1-rct_trans_dist)*1000,log=T) )
+  (sum(dbeta(rct_trans_dist,V[,1]*100,V[,2]*1000,log=T) ) - adj_13)
   }
 
 #' CASES FB DISTRIBUTION 1993-2014
