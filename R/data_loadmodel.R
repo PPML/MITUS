@@ -25,10 +25,10 @@ if (loc=="US"){
 
 } else {
   CalibDat<<-CalibDatState<<-readRDS(system.file("ST/ST_CalibDat_2020-12-03.rds", package="MITUS"))
-  ParamInit_st<<-ParamInit<<-readRDS(system.file("ST/ST_ParamInit_2021-01-19.rds", package="MITUS"))
+  ParamInit_st<<-ParamInit<<-readRDS(system.file("ST/ST_ParamInit_2021-02-06.rds", package="MITUS"))
   # ParamInit_st<<-ParamInit<<-readRDS(system.file("ST/ST_ParamInit_2020-07-31.rds", package="MITUS"))
 
-  StartVal_st<<-StartVal<<-readRDS(system.file("ST/ST_StartVal_2021-01-19.rds", package="MITUS"))
+  StartVal_st<<-StartVal<<-readRDS(system.file("ST/ST_StartVal_2021-02-06.rds", package="MITUS"))
   Inputs<<-readRDS(system.file(paste0(loc,"/",loc,"_ModelInputs_10-19-20.rds"), package="MITUS"))
   #last input change was to update the RR active TB by age in immigrants
 }

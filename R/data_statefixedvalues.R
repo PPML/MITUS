@@ -14,8 +14,8 @@ fixed_vals<-function(samp_i, US_opt_all){
 # US_opt_all<-readRDS(system.file("US/US_Optim_all_10_1031.rds", package="MITUS"))
 # Par<-US_opt_all[samp_i,-(ncol(US_opt_all))]
   # Par<-o7$par
-Opt <- readRDS("~/MITUS/inst/US/US_Optim_all_10_1201.rds")
-Par <-Opt[4,-ncol(Opt)]
+Opt <- readRDS("~/MITUS/inst/US/US_Optim_all_10_0204.rds")
+Par <-Opt[5,-ncol(Opt)]
 Par2 <- pnorm(Par,0,1)
 # uniform to true
 Par3 <- Par2
