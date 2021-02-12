@@ -158,7 +158,7 @@ Rcpp::List cSim(
   double  	    VMort[11][6][2][4][4][2][3];
   double        Vdx[11][6][2][4][4][2][3];
   double        VLdx[11][6][2][4][4][2][3];
-  double        VNkl[2][2][11];  ///HIGH AND LOW RISK, NATIVITY, AGE
+  double        VNkl[2][2];  ///HIGH AND LOW RISK, NATIVITY, AGE
   double        VGjkl[2][2][11]; ///HIGH AND LOW RISK, NATIVITY,AGE
   double        Vjaf[4][11];     ///BY NUMBER OF MIXING GROUPS, AGE
   double        VLjkl[2][2][11];  ///HIGH AND LOW RISK, NATIVITY,AGE
@@ -268,8 +268,8 @@ Rcpp::List cSim(
 
   for(int i=0; i<2; i++) {
     for(int j=0; j<2; j++) {
+      VNkl[i][j] = 0;
       for(int k=0; k<11; k++) {
-      VNkl[i][j][k] = 0;
         VGjkl[i][j][k] = 0;
         VLjkl[i][j][k] = 0;
 } } }
@@ -497,7 +497,7 @@ Rcpp::List cSim(
       for(int i=0; i<2; i++) {
         for(int j=0; j<2; j++) {
           for(int k=0; k<11; k++) {
-          VNkl [i][j][k]= 0;
+          VNkl [i][j]= 0;
           VGjkl[i][j][k] = 0;   // set to zero
           } } }
       // Step 1
@@ -507,16 +507,16 @@ Rcpp::List cSim(
           for(int im=0; im<4; im++) {
             for(int nm=0; nm<4; nm++) {
               // LOW RISK US BORN
-              VNkl[0][0][ag]  += V0[ag][tb][0][im][nm][0][0];
+              VNkl[0][0] += V0[ag][tb][0][im][nm][0][0];
               ///////// HIGH RISK US BORN
               ///////// ranges under 1 every time step
-              VNkl[1][0][ag]  += V0[ag][tb][0][im][nm][1][0];
+              VNkl[1][0] += V0[ag][tb][0][im][nm][1][0];
               ///////// LOW RISK NON US BORN
               ///////// ranges from .5 -10 people between time steps
-              VNkl[0][1][ag]  += V0[ag][tb][0][im][nm][0][1] + V0[ag][tb][0][im][nm][0][2];
+              VNkl[0][1] += V0[ag][tb][0][im][nm][0][1] + V0[ag][tb][0][im][nm][0][2];
               ///////// also ranges from .5 -10 people between time steps
               ///////// HIGH RISK NON US BORN
-              VNkl[1][1][ag]  += V0[ag][tb][0][im][nm][1][1] + V0[ag][tb][0][im][nm][1][2];
+              VNkl[1][1] += V0[ag][tb][0][im][nm][1][1] + V0[ag][tb][0][im][nm][1][2];
             } } } }
 
       // for (int i=0; i<2; i++){
@@ -556,24 +556,24 @@ Rcpp::List cSim(
                       RelInfRg[2]*RRcrAG[ag]*VGjkl[0][1][ag]*Vmix[1]+           //low risk nusb
                       RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1][ag]*Vmix[1]*Vmix[0])   //high risk nusb
                       /
-                     (RelInfRg[0]*RRcrAG[ag]*VNkl[0][0][ag] +
-                      RelInfRg[1]*RRcrAG[ag]*VNkl[1][0][ag]*Vmix[0]+
-                      RelInfRg[2]*RRcrAG[ag]*VNkl[0][1][ag]*Vmix[1]+
-                      RelInfRg[3]*RRcrAG[ag]*VNkl[1][1][ag]*Vmix[1]*Vmix[0] + 1e-12);
+                     (RelInfRg[0]*RRcrAG[ag]*VNkl[0][0]+
+                      RelInfRg[1]*RRcrAG[ag]*VNkl[1][0]*Vmix[0]+
+                      RelInfRg[2]*RRcrAG[ag]*VNkl[0][1]*Vmix[1]+
+                      RelInfRg[3]*RRcrAG[ag]*VNkl[1][1]*Vmix[1]*Vmix[0] + 1e-12);
 
       Vjaf[1][ag] = ((RelInfRg[1]*RRcrAG[ag]*VGjkl[0][1][ag]) +
                      (RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1][ag]*Vmix[0]))
                      /
-                    ((RelInfRg[1]*RRcrAG[ag]*VNkl[0][1][ag])  +
-                     (RelInfRg[3]*RRcrAG[ag]*VNkl[1][1][ag]*Vmix[0]) + 1e-12);
+                    ((RelInfRg[1]*RRcrAG[ag]*VNkl[0][1])  +
+                     (RelInfRg[3]*RRcrAG[ag]*VNkl[1][1]*Vmix[0]) + 1e-12);
 
       Vjaf[2][ag] = ((RelInfRg[2]*RRcrAG[ag]*VGjkl[1][0][ag]) +
                      (RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1][ag]*Vmix[1]))
                      /
-                    ((RelInfRg[2]*RRcrAG[ag]*VNkl[1][1][ag] ) +
-                     (RelInfRg[3]*RRcrAG[ag]*VNkl[1][1][ag]*Vmix[1]) + 1e-12);
+                    ((RelInfRg[2]*RRcrAG[ag]*VNkl[1][1]) +
+                     (RelInfRg[3]*RRcrAG[ag]*VNkl[1][1]*Vmix[1]) + 1e-12);
 
-      Vjaf[3][ag] = VGjkl[1][1][ag] / (VNkl[1][1][ag] + 1e-12);
+      Vjaf[3][ag] = VGjkl[1][1][ag] / (VNkl[1][1]+ 1e-12);
 
   }
 
@@ -607,45 +607,45 @@ Rcpp::List cSim(
       ///////    PEOPLE ARE REMOVED FROM SUSCEPTIBLE, PARTIALLY IMMUNE &      ///////
       ///////                   LATENT SLOW STATES                            ///////
       ///////////////////////////////////////////////////////////////////////////////
-      for(int ag=0; ag<11; ag++) {
-        for(int im=0; im<4; im++) {
-          for(int nm=0; nm<4; nm++) {
-            for(int rg=0; rg<2; rg++) {
-              for (int na=0; na<3; na++){
-                if (na==0){
-                  n2=na;
-                } else {n2=1;}
-
-                ///////////////////////////////   SUCEPTIBLE  /////™////////////////////////////
-                temp = V0[ag][0][0][im][nm][rg][na]*(VLjkl[rg][n2][ag])*EarlyTrend[m];
-                //////////////////////////// REMOVE FROM SUSCEPTIBLE //////////////////////////
-                V1[ag][0][0][im][nm][rg][na]  -= temp;
-                // Rcpp::Rcout << "susceptible" << (V1[ag][0][0][im][nm][rg][na]  -= temp) << "age= " << ag << "na " << na << "rg " << rg << "\n";
-
-                //////////////////////////////// LATENT TB SLOW ///////////////////////////////
-                V1[ag][2][0][im][nm][rg][na]  += temp*MpslowN[ag][im];
-                // Rcpp::Rcout << "latent slow" << (V1[ag][2][0][im][nm][rg][na]  += temp*MpslowN[ag][im]) << "age= " << ag << "na " << na << "rg " << rg << "\n";
-
-                //////////////////////////////// LATENT TB FAST ///////////////////////////////
-                V1[ag][3][0][im][nm][rg][na]  += temp*MpfastN[ag][im];
-                // Rcpp::Rcout << "latent fast" << (V1[ag][3][0][im][nm][rg][na]  += temp*MpfastN[ag][im]) << "age= " << ag << "na " << na << "rg " << rg << "\n";
-
-                ///////////////////////////////////////////////////////////////////////////////
-
-                /////////////////////////////// SUPER-INFECTION SP ////////////////////////////
-                temp = V0[ag][1][0][im][nm][rg][na]*(VLjkl[rg][n2][ag]);
-                V1[ag][1][0][im][nm][rg][na] -= temp;
-                V1[ag][2][0][im][nm][rg][na] += temp*MpslowPIN[ag][im];
-                V1[ag][3][0][im][nm][rg][na] += temp*MpfastPIN[ag][im];
-                ///////////////////////////////////////////////////////////////////////////////
-
-                /////////////////////////////// SUPER-INFECTION LS ////////////////////////////
-                temp = V0[ag][2][0][im][nm][rg][na]*(VLjkl[rg][n2][ag]);
-                V1[ag][2][0][im][nm][rg][na]  -= temp;
-                V1[ag][2][0][im][nm][rg][na]  += temp*MpslowPIN[ag][im];
-                V1[ag][3][0][im][nm][rg][na]  += temp*MpfastPIN[ag][im];
-
-              } } } } }
+      // for(int ag=0; ag<11; ag++) {
+      //   for(int im=0; im<4; im++) {
+      //     for(int nm=0; nm<4; nm++) {
+      //       for(int rg=0; rg<2; rg++) {
+      //         for (int na=0; na<3; na++){
+      //           if (na==0){
+      //             n2=na;
+      //           } else {n2=1;}
+      //
+      //           ///////////////////////////////   SUCEPTIBLE  /////™////////////////////////////
+      //           temp = V0[ag][0][0][im][nm][rg][na]*(VLjkl[rg][n2][ag])*EarlyTrend[m];
+      //           //////////////////////////// REMOVE FROM SUSCEPTIBLE //////////////////////////
+      //           V1[ag][0][0][im][nm][rg][na]  -= temp;
+      //           // Rcpp::Rcout << "susceptible" << (V1[ag][0][0][im][nm][rg][na]  -= temp) << "age= " << ag << "na " << na << "rg " << rg << "\n";
+      //
+      //           //////////////////////////////// LATENT TB SLOW ///////////////////////////////
+      //           V1[ag][2][0][im][nm][rg][na]  += temp*MpslowN[ag][im];
+      //           // Rcpp::Rcout << "latent slow" << (V1[ag][2][0][im][nm][rg][na]  += temp*MpslowN[ag][im]) << "age= " << ag << "na " << na << "rg " << rg << "\n";
+      //
+      //           //////////////////////////////// LATENT TB FAST ///////////////////////////////
+      //           V1[ag][3][0][im][nm][rg][na]  += temp*MpfastN[ag][im];
+      //           // Rcpp::Rcout << "latent fast" << (V1[ag][3][0][im][nm][rg][na]  += temp*MpfastN[ag][im]) << "age= " << ag << "na " << na << "rg " << rg << "\n";
+      //
+      //           ///////////////////////////////////////////////////////////////////////////////
+      //
+      //           /////////////////////////////// SUPER-INFECTION SP ////////////////////////////
+      //           temp = V0[ag][1][0][im][nm][rg][na]*(VLjkl[rg][n2][ag]);
+      //           V1[ag][1][0][im][nm][rg][na] -= temp;
+      //           V1[ag][2][0][im][nm][rg][na] += temp*MpslowPIN[ag][im];
+      //           V1[ag][3][0][im][nm][rg][na] += temp*MpfastPIN[ag][im];
+      //           ///////////////////////////////////////////////////////////////////////////////
+      //
+      //           /////////////////////////////// SUPER-INFECTION LS ////////////////////////////
+      //           temp = V0[ag][2][0][im][nm][rg][na]*(VLjkl[rg][n2][ag]);
+      //           V1[ag][2][0][im][nm][rg][na]  -= temp;
+      //           V1[ag][2][0][im][nm][rg][na]  += temp*MpslowPIN[ag][im];
+      //           V1[ag][3][0][im][nm][rg][na]  += temp*MpfastPIN[ag][im];
+      //
+      //         } } } } }
 
       // temp=0;
       // for(int ag=0; ag<11; ag++) {
@@ -894,9 +894,12 @@ Rcpp::List cSim(
       //           for(int rg=0; rg<2; rg++) {
       //             for(int na=0; na<3; na++) {
       //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
-      //                 Rcpp::Rcout << "After Births pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+      //                 Rcpp::Rcout << "After Births pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na <<" y= "<< y<< "/n";
       //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-      //
+      //                 return
+      //                   Rcpp::List::create(
+      //                     Rcpp::Named("Outputs") = Outputs2
+      //                   );
       //               }
       //             } } } } } } }
 
@@ -925,9 +928,12 @@ Rcpp::List cSim(
       //           for(int rg=0; rg<2; rg++) {
       //             for(int na=0; na<3; na++) {
       //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
-      //                 Rcpp::Rcout << "after immigration pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+      //                 Rcpp::Rcout << "after immigration pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na <<" y= "<< y<< "/n";
       //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-      //
+      //                 return
+      //                   Rcpp::List::create(
+      //                     Rcpp::Named("Outputs") = Outputs2
+      //                   );
       //               }
       //             } } } } } } }
       /////////////////////////////////  EMMIGRATION ///////////////////////////////////
@@ -948,9 +954,12 @@ Rcpp::List cSim(
       //           for(int rg=0; rg<2; rg++) {
       //             for(int na=0; na<3; na++) {
       //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
-      //                 Rcpp::Rcout << "after emigration pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+      //                 Rcpp::Rcout << "after emigration pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << " y= "<< y<<"/n";
       //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-      //
+      //                 return
+      //                   Rcpp::List::create(
+      //                     Rcpp::Named("Outputs") = Outputs2
+      //                   );
       //               }
       //             } } } } } } }
       /////////////////////////////////  NET INTERNAL MIGRATION  ///////////////////////////////////
@@ -1030,9 +1039,12 @@ Rcpp::List cSim(
       //           for(int rg=0; rg<2; rg++) {
       //             for(int na=0; na<3; na++) {
       //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
-      //                 Rcpp::Rcout << "after mort pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+      //                 Rcpp::Rcout << "after mort pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << " y= "<< y<< "/n";
       //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-      //
+      //                 return
+      //                   Rcpp::List::create(
+      //                     Rcpp::Named("Outputs") = Outputs2
+      //                   );
       //               }
       //             } } } } } } }
       /////////////////////////////////////AGING///////////////////////////////////////
@@ -1062,9 +1074,12 @@ Rcpp::List cSim(
       //           for(int rg=0; rg<2; rg++) {
       //             for(int na=0; na<3; na++) {
       //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
-      //                 Rcpp::Rcout << "after aging pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+      //                 Rcpp::Rcout << "after aging pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << " y= "<< y<<"/n";
       //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-      //
+      //                 return
+      //                   Rcpp::List::create(
+      //                     Rcpp::Named("Outputs") = Outputs2
+      //                   );
       //               }
       //             } } } } } } }
       ///////////////////////// NEW FB -> ESTABLISHED FB ///////////////////////////////
@@ -1086,9 +1101,12 @@ Rcpp::List cSim(
       //           for(int rg=0; rg<2; rg++) {
       //             for(int na=0; na<3; na++) {
       //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
-      //                 Rcpp::Rcout << "after fb trans pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+      //                 Rcpp::Rcout << "after fb trans pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "y= "<< y<<"/n";
       //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-      //
+      //                 return
+      //                   Rcpp::List::create(
+      //                     Rcpp::Named("Outputs") = Outputs2
+      //                   );
       //               }
       //             } } } } } } }
       //////////////////////////// HIGH-RISK ENTRY/EXIT ////////////////////////////////
@@ -1112,21 +1130,14 @@ Rcpp::List cSim(
       //           for(int rg=0; rg<2; rg++) {
       //             for(int na=0; na<3; na++) {
       //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
-      //                 Rcpp::Rcout << "after hrentex pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+      //                 Rcpp::Rcout << "after hrentex pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "y= "<< y<< "/n";
       //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-      //
+      //                 return
+      //                   Rcpp::List::create(
+      //                     Rcpp::Named("Outputs") = Outputs2
+      //                   );
       //               }
       //             } } } } } } }
-      // for(int ag=0; ag<11; ag++) {
-      // for(int tb=0; tb<6; tb++) {
-      //   for(int im=0; im<4; im++) {
-      //     for(int lt=0; lt<2; lt++){
-      //       for(int na=0; na<3; na++){
-      //         for(int nm=0; nm<4; nm++){
-      //           for(int rg=0; rg<2; rg++){
-      //             if (V1[ag][tb][lt][im][nm][rg][na]<0){
-      //               Rcout<< "V1 is neg @ na " << na << "ag = " << ag << "tb="<< tb << "rg = " << rg << "nm = "<<nm<< "im = "<< im<< "\n";
-      //             } } } } } } } }
 
       if (tb_dyn==1){
         ////////////////////////////  TRANSMISSION RISK  ////////////////////////////////
@@ -1134,7 +1145,7 @@ Rcpp::List cSim(
         for(int i=0; i<2; i++) {
           for(int j=0; j<2; j++) {
             for(int k=0; k<11; k++) {
-            VNkl [i][j][k] = 0;
+            VNkl [i][j] = 0;
             VGjkl[i][j][k] = 0;   // set to zero
             } } }
         // Step 1
@@ -1145,24 +1156,30 @@ Rcpp::List cSim(
             for(int im=0; im<4; im++) {
               for(int nm=0; nm<4; nm++) {
                 // LOW RISK US BORN
-                VNkl[0][0][ag]  += V0[ag][tb][lt][im][nm][0][0];
+                VNkl[0][0] += V0[ag][tb][lt][im][nm][0][0];
                 ///////// HIGH RISK US BORN
                 ///////// ranges under 1 every time step
-                VNkl[1][0][ag]  += V0[ag][tb][lt][im][nm][1][0];
+                VNkl[1][0] += V0[ag][tb][lt][im][nm][1][0];
                 ///////// LOW RISK NON US BORN
                 ///////// ranges from .5 -10 people between time steps
-                VNkl[0][1][ag]  += V0[ag][tb][lt][im][nm][0][1] + V0[ag][tb][lt][im][nm][0][2];
+                VNkl[0][1] += V0[ag][tb][lt][im][nm][0][1] + V0[ag][tb][lt][im][nm][0][2];
                 ///////// also ranges from .5 -10 people between time steps
                 ///////// HIGH RISK NON US BORN
-                VNkl[1][1][ag]  += V0[ag][tb][lt][im][nm][1][1] + V0[ag][tb][lt][im][nm][1][2];
+                VNkl[1][1] += V0[ag][tb][lt][im][nm][1][1] + V0[ag][tb][lt][im][nm][1][2];
               } } } } }
-        // if (y==10){
+        // if (y==20){
         // for(int ag=0; ag<11; ag++) {
         // for (int i=0; i<2; i++){
         //   for (int j=0; j<2; j++){
-        //     Rcpp::Rcout <<"VNs are " <<  VNkl[i][j][ag] << "for i= " << i << " and j = " <<  j << "and ag =" <<ag<<  "\n";
-        //   } }
-        // } }
+        //     if(VNkl[i][j] < 0){
+        //     Rcpp::Rcout <<"VNs are " <<  VNkl[i][j] << "for i= " << i << " and j = " <<  j << "and ag =" <<ag<< " at y="<<y<< "\n";
+        //       return
+        //         Rcpp::List::create(
+        //           Rcpp::Named("Outputs") = Outputs2
+        //         );
+        // } } }
+        // }
+        // }
         // Step 2  (active TB)
         // Number of active cases* relative infectiousness
         for(int ag=0; ag<11; ag++) {
@@ -1180,20 +1197,26 @@ Rcpp::List cSim(
                 VGjkl[1][1][ag]  += (V0[ag][tb][lt][im][nm][1][1] + V0[ag][tb][lt][im][nm][1][2])*RelInf[tb];
               } } } } }
 // if (y==15 && m==1){
-//         for (int i=0; i<2; i++){
-//           for (int j=0; j<2; j++){
-//             for(int ag=0; ag<11; ag++) {
-//
-//             Rcpp::Rcout <<"VGs are " <<  VGjkl[i][j][ag] << "for i= " << i << " and j = " <<  j << "and ag =" <<ag<< "\n";
-//           }
-//           }}}
+        // for (int i=0; i<2; i++){
+        //   for (int j=0; j<2; j++){
+        //     for(int ag=0; ag<11; ag++) {
+        //       if(VGjkl[i][j][ag] < 0){
+        //
+        //     Rcpp::Rcout <<"VGs are " <<  VGjkl[i][j][ag] << "for i= " << i << " and j = " <<  j << "and ag =" <<ag<< " at y="<<y<<"\n";
+        //         return
+        //           Rcpp::List::create(
+        //             Rcpp::Named("Outputs") = Outputs2
+        //           );
+        //   }
+        //   }}}
+// }
         // Step 2 (treated TB)
         // No contribution to force of infection
         // for (int i=0; i<2; i++){
         //   for (int j=0; j<2; j++){
         //
         //   for(int ag=0; ag<11; ag++) {
-        //     if(VGjkl[i][j][ag]>VNkl[i][j][ag]){
+        //     if(VGjkl[i][j][ag]>VNkl[i][j]){
         //       Rcpp::Rcout << "s = "<< s<< "and y =" <<y<< "\n";
         //       // Rcpp::Rcout << VNkl[0][1][0]<<  "\n";
         //       // Rcpp::Rcout << "Vjaf is "<<  Vjaf[i][ag] << "at ag = "<< ag << "and i = " << i << "\n";
@@ -1206,18 +1229,18 @@ Rcpp::List cSim(
             RelInfRg[2]*RRcrAG[ag]*VGjkl[0][1][ag]*Vmix[1]+           //low risk nusb
             RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1][ag]*Vmix[1]*Vmix[0])   //high risk nusb
           /
-            ((RelInfRg[0]*RRcrAG[ag]*VNkl[0][0][ag] +
-            RelInfRg[1]*RRcrAG[ag]*VNkl[1][0][ag]*Vmix[0]+
-            RelInfRg[2]*RRcrAG[ag]*VNkl[0][1][ag]*Vmix[1]+
-            RelInfRg[3]*RRcrAG[ag]*VNkl[1][1][ag]*Vmix[1]*Vmix[0]) + 1e-12);
+            ((RelInfRg[0]*RRcrAG[ag]*VNkl[0][0]+
+            RelInfRg[1]*RRcrAG[ag]*VNkl[1][0]*Vmix[0]+
+            RelInfRg[2]*RRcrAG[ag]*VNkl[0][1]*Vmix[1]+
+            RelInfRg[3]*RRcrAG[ag]*VNkl[1][1]*Vmix[1]*Vmix[0]) + 1e-12);
 
           Vjaf[1][ag] = ((RelInfRg[1]*RRcrAG[ag]*VGjkl[0][1][ag]) + ( RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1][ag]*Vmix[0])) /
-            ((RelInfRg[1]*RRcrAG[ag]*VNkl[0][1][ag])  +  (RelInfRg[3]*RRcrAG[ag]*VNkl[1][1][ag]*Vmix[0]) + 1e-12);
+            ((RelInfRg[1]*RRcrAG[ag]*VNkl[0][1])  +  (RelInfRg[3]*RRcrAG[ag]*VNkl[1][1]*Vmix[0]) + 1e-12);
 
           Vjaf[2][ag] = ((RelInfRg[2]*RRcrAG[ag]*VGjkl[1][0][ag]) +  (RelInfRg[3]*RRcrAG[ag]*VGjkl[1][1][ag]*Vmix[1])) /
-            ((RelInfRg[2]*RRcrAG[ag]*VNkl[1][1][ag] ) +  (RelInfRg[3]*RRcrAG[ag]*VNkl[1][1][ag]*Vmix[1]) + 1e-12);
+            ((RelInfRg[2]*RRcrAG[ag]*VNkl[1][1]) +  (RelInfRg[3]*RRcrAG[ag]*VNkl[1][1]*Vmix[1]) + 1e-12);
 
-          Vjaf[3][ag] = VGjkl[1][1][ag] / (VNkl[1][1][ag] + 1e-12);
+          Vjaf[3][ag] = VGjkl[1][1][ag] / (VNkl[1][1]+ 1e-12);
 
         }
         // for (int i=0; i<4; i++){
@@ -1244,12 +1267,28 @@ Rcpp::List cSim(
         }
 
         // if(y==15&& m==1){
-        //   for (int i=0; i<2; i++){
-        //     for (int j=0; j<2; j++){
-        //     for(int ag=0; ag<11; ag++) {
-        //       Rcpp::Rcout << "VLjkl is "<<  VLjkl[i][j][ag] << "at ag = "<< ag << "and i = " << i << "and j= "<<j<< "\n";
-        //     }
-        //     } } }
+          // for (int i=0; i<2; i++){
+          //   for (int j=0; j<2; j++){
+          //   for(int ag=0; ag<11; ag++) {
+          //     if(VLjkl[i][j][ag] < 0){
+          //
+          //     Rcpp::Rcout << "VLjkl is "<<  VLjkl[i][j][ag] << "at ag = "<< ag << "and i = " << i << "and j= "<<j<<" at y="<<y<< "\n";
+          //     return
+          //         Rcpp::List::create(
+          //           Rcpp::Named("Outputs") = Outputs2
+          //         );
+          //     }
+          //     if(VLjkl[i][j][ag] > 1){
+          //
+          //       Rcpp::Rcout << "VLjkl is "<<  VLjkl[i][j][ag] << "at ag = "<< ag << "and i = " << i << "and j= "<<j<<" at y="<<y<< "\n";
+          //       return
+          //         Rcpp::List::create(
+          //           Rcpp::Named("Outputs") = Outputs2
+          //         );
+          //     }
+          //   }
+          //   } }
+          // }
         ///////////////////////////////INFECTION///////////////////////////////////////
         ///////////////////////for all age groups, risk groups/////////////////////////
         ///////INFECTION IS CALCULATED WITH THE FORCE OF INFECTION BY RISK GROUP///////
@@ -1280,6 +1319,16 @@ Rcpp::List cSim(
 
                     /////////////////////////////// SUPER-INFECTION SP ////////////////////////////
                     temp = V0[ag][1][lt][im][nm][rg][na]*(VLjkl[rg][n2][ag])*NixTrans[s];
+                          // if((V0[ag][1][lt][im][nm][rg][na]*VLjkl[rg][n2][ag]*NixTrans[s]) > V1[ag][1][lt][im][nm][rg][na] ){
+                          //
+                          //   Rcpp::Rcout << "sum is "<<  (V0[ag][1][lt][im][nm][rg][na]*VLjkl[rg][n2][ag]*NixTrans[s]) << "at ag = " << ag  << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+                          //   Rcpp::Rcout << "sum is "<<  V1[ag][1][lt][im][nm][rg][na] << "at ag = " << ag <<  "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+                          //
+                          //   return
+                          //     Rcpp::List::create(
+                          //       Rcpp::Named("Outputs") = Outputs2
+                          //     );
+                          // }
                     V1[ag][1][lt][im][nm][rg][na] -= temp;
                     V1[ag][2][lt][im][nm][rg][na] += temp*MpslowPIN[ag][im];
                     V1[ag][3][lt][im][nm][rg][na] += temp*MpfastPIN[ag][im];
@@ -1303,7 +1352,10 @@ Rcpp::List cSim(
         //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
         //                 Rcpp::Rcout << "after infection pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
         //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-        //
+        //                 return
+        //                   Rcpp::List::create(
+        //                     Rcpp::Named("Outputs") = Outputs2
+        //                   );
         //               }
         //             } } } } } } }
         ///////////////////////////////////BREAKDOWN///////////////////////////////////
@@ -1331,7 +1383,10 @@ Rcpp::List cSim(
         //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
         //                 Rcpp::Rcout << "after breakdown pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
         //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-        //
+        //                 return
+        //                   Rcpp::List::create(
+        //                     Rcpp::Named("Outputs") = Outputs2
+        //                   );
         //               }
         //             } } } } } } }
         ///////////////////////////   LATENT SLOW TO SAFE   /////////////////////////////
@@ -1355,7 +1410,10 @@ Rcpp::List cSim(
         //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
         //                 Rcpp::Rcout << "after lsts pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
         //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-        //
+        //                 return
+        //                   Rcpp::List::create(
+        //                     Rcpp::Named("Outputs") = Outputs2
+        //                   );
         //               }
         //             } } } } } } }
         ////////////////////////////////// SELF CURE/////////////////////////////////////
@@ -1379,7 +1437,10 @@ Rcpp::List cSim(
         //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
         //                 Rcpp::Rcout << "after slfcur pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
         //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-        //
+        //                 return
+        //                   Rcpp::List::create(
+        //                     Rcpp::Named("Outputs") = Outputs2
+        //                   );
         //               }
         //             } } } } } } }
 
@@ -1514,11 +1575,11 @@ Rcpp::List cSim(
                   ///defaults are placed in tx naive because it is considered the same tb infection
                   V1[ag][2][0][im][nm][rg][na]  += (temp3+temp4); //latent tx default to latent slow
                 } } } } }
-        if (s == (ttt_month.back()+1)){
-          Rcpp::Rcout<< "total extra screening = " << temp8 << "\n";
-          Rcpp::Rcout<< "total extra screening in latent pop = " << temp9 << "\n";
-          Rcpp::Rcout<< "total extra LTBI diagnoses = " << temp10 << "\n";
-        }
+        // if (s == (ttt_month.back()+1)){
+        //   Rcpp::Rcout<< "total extra screening = " << temp8 << "\n";
+        //   Rcpp::Rcout<< "total extra screening in latent pop = " << temp9 << "\n";
+        //   Rcpp::Rcout<< "total extra LTBI diagnoses = " << temp10 << "\n";
+        // }
         temp7=0;
         if(std::find(std::begin(ttt_month), std::end(ttt_month), s) != std::end(ttt_month)){
           for(int ag=0; ag<11; ag++) {
@@ -1536,6 +1597,23 @@ Rcpp::List cSim(
           // Rcpp::Rcout << "after tltbi pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
           // Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
         }
+
+        // for(int ag=0; ag<11; ag++) {
+        //   for(int tb=0; tb<6; tb++) {
+        //     for(int lt=0; lt<2; lt++){
+        //       for(int im=0; im<4; im++){
+        //         for(int nm=0; nm<4; nm++){
+        //           for(int rg=0; rg<2; rg++) {
+        //             for(int na=0; na<3; na++) {
+        //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
+        //                 Rcpp::Rcout << "after ltbi pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+        //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+        //                 return
+        //                   Rcpp::List::create(
+        //                     Rcpp::Named("Outputs") = Outputs2
+        //                   );
+        //               }
+        //             } } } } } } }
         // } } } } } } } }
         ///////////////////// TB DIAGNOSIS AND TX INITIATION  /////////////////////////
         for(int ag=0; ag<11; ag++) {
@@ -1549,6 +1627,23 @@ Rcpp::List cSim(
                     V1[ag][5][lt][im][nm][rg][na]      += temp;
                     Vdx[ag][4][lt][im][nm][rg][na]      = temp;
                   } } } } } }
+
+        // for(int ag=0; ag<11; ag++) {
+        //   for(int tb=0; tb<6; tb++) {
+        //     for(int lt=0; lt<2; lt++){
+        //       for(int im=0; im<4; im++){
+        //         for(int nm=0; nm<4; nm++){
+        //           for(int rg=0; rg<2; rg++) {
+        //             for(int na=0; na<3; na++) {
+        //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
+        //                 Rcpp::Rcout << "after tbdiagnosis pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+        //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
+        //                 return
+        //                   Rcpp::List::create(
+        //                     Rcpp::Named("Outputs") = Outputs2
+        //                   );
+        //               }
+        //             } } } } } } }
         //////////////////////// TB TREATMENT OUTCOMES /////////////////////////////
         ///// TxMatZ: 0=completion rate, 1 = tx success, 2 = RATE OF EXIT TO CURE /////
         ///// 3 = RATE OF EXIT TO ACTIVE TB, 4 = RATE OF EXIT TO RETREATMENT      /////
@@ -1583,7 +1678,10 @@ Rcpp::List cSim(
         //               if (V1[ag][tb][lt][im][nm][rg][na]<0){
         //                 Rcpp::Rcout << "after txout pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
         //                 Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-        //
+        //                 return
+        //                   Rcpp::List::create(
+        //                     Rcpp::Named("Outputs") = Outputs2
+        //                   );
         //               }
         //             } } } } } } }
       }//end of TB loop
