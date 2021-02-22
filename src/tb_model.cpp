@@ -553,17 +553,16 @@ Rcpp::List cSim(
         /// LOW RISK US BORN
         VLkla[0 ][0 ][ag]  = RelInfRg[0] * RRcrAG[ag] * Vjaf[0] ;
         ///////// HIGH RISK US BORN
-        VLkla[1 ][0 ][ag]  = RelInfRg[1] * RRcrAG[ag] *
-          (Vjaf[1]*(1-Vmix[0]) * Vjaf[0]*Vmix[0]);
+        VLkla[1 ][0 ][ag]  = (RelInfRg[1] * RRcrAG[ag] * Vjaf[1]*(1-Vmix[0])) + (Vjaf[0]*Vmix[0]);
         ///////// LOW RISK NON US BORN
-        VLkla[0 ][1 ][ag]  = RelInfRg[2] * RRcrAG[ag] * (Vjaf[2]*(1-Vmix[1]) + Vjaf[0]*Vmix[1]) + ExogInf[0];
+        VLkla[0 ][1 ][ag]  = (RelInfRg[2] * RRcrAG[ag] * (Vjaf[2]*(1-Vmix[1])) + (Vjaf[0]*Vmix[1])) + ExogInf[0];
           ///////// HIGH RISK NON US BORN
           ///check the use of RelInfRg here as beta, might need to be a combo param but unclear check the old param file
-          VLkla[1 ][1 ][ag]  = RelInfRg[3] * RRcrAG[ag] *
-            (Vjaf[3] * (1-Vmix[0]) * (1-Vmix[1]) +
-            Vjaf[2] *    Vmix[0]  * (1-Vmix[1]) +
-            Vjaf[1] * (1-Vmix[0]) *    Vmix[1]  +
-            Vjaf[0] *    Vmix[0]  *    Vmix[1]  ) + ExogInf[0];
+          VLkla[1 ][1 ][ag]  = (RelInfRg[3] * RRcrAG[ag]) *
+            ((Vjaf[3] * (1-Vmix[0]) * (1-Vmix[1])) +
+            (Vjaf[2] *    Vmix[0]  * (1-Vmix[1])) +
+            (Vjaf[1] * (1-Vmix[0]) *    Vmix[1])  +
+            (Vjaf[0] *    Vmix[0]  *    Vmix[1])  ) + ExogInf[0];
       }
       ///////////////////////////////INFECTION///////////////////////////////////////
       ///////////////////////for all age groups, risk groups/////////////////////////
@@ -1149,16 +1148,16 @@ Rcpp::List cSim(
         // each nativity and risk group contributes to that mixing group
         // 0 = common pool; 1 = exclusive nusb, 2 = exclusive hr, 3 = exclusive nusb-hr
         //
-        Vjaf[0] = (VGkl[0][0]         + VGkl[1][0]*Vmix[0] +
-                  VGkl[0][1]*Vmix[1] + VGkl[1][1]*Vmix[1]*Vmix[0]) /
-                  (VNkl[0][0]         + VNkl[1][0]*Vmix[0] +
-                  VNkl[0][1]*Vmix[1] + VNkl[1][1]*Vmix[1]*Vmix[0] + 1e-12);
+        Vjaf[0] = (VGkl[0][0]         + (VGkl[1][0]*Vmix[0]) +
+                  (VGkl[0][1]*Vmix[1]) + (VGkl[1][1]*Vmix[1]*Vmix[0])) /
+                  (VNkl[0][0]         + (VNkl[1][0]*Vmix[0]) +
+                 (VNkl[0][1]*Vmix[1]) +(VNkl[1][1]*Vmix[1]*Vmix[0]) + 1e-12);
 
-        Vjaf[1] = (VGkl[0][1] + VGkl[1][1]*Vmix[0]) /
-          ((VNkl[0][1] + VNkl[1][1]*Vmix[0]) + 1e-12);
+        Vjaf[1] = (VGkl[0][1] +( VGkl[1][1]*Vmix[0])) /
+          ((VNkl[0][1] + (VNkl[1][1]*Vmix[0])) + 1e-12);
 
-        Vjaf[2] = (VGkl[1][0] + VGkl[1][1]*Vmix[1])/
-          (VNkl[1][1] + VNkl[1][1]*Vmix[1] + 1e-12);
+        Vjaf[2] = (VGkl[1][0] +( VGkl[1][1]*Vmix[1]))/
+          (VNkl[1][1] + (VNkl[1][1]*Vmix[1]) + 1e-12);
 
         Vjaf[3] = VGkl[1][1] / (VNkl[1][1] + 1e-12);
 
@@ -1169,18 +1168,18 @@ Rcpp::List cSim(
           /// LOW RISK US BORN
           VLkla[0 ][0 ][ag]  = RelInfRg[0] * RRcrAG[ag] * Vjaf[0] ;
           ///////// HIGH RISK US BORN
-          VLkla[1 ][0 ][ag]  = RelInfRg[1] * RRcrAG[ag] *
-            (Vjaf[1]*(1-Vmix[0]) * Vjaf[0]*Vmix[0]);
+          VLkla[1 ][0 ][ag]  = (RelInfRg[1] * RRcrAG[ag] * Vjaf[1]*(1-Vmix[0])) + (Vjaf[0]*Vmix[0]);
           ///////// LOW RISK NON US BORN
-          VLkla[0 ][1 ][ag]  = RelInfRg[2] * RRcrAG[ag] *
-            (Vjaf[2]*(1-Vmix[1]) + Vjaf[0]*Vmix[1]) + ExogInf[0];
-            ///////// HIGH RISK NON US BORN
-            VLkla[1 ][1 ][ag]  = RelInfRg[3] * RRcrAG[ag] *
-              (Vjaf[3] * (1-Vmix[0]) * (1-Vmix[1]) +
-              Vjaf[2] *    Vmix[0]  * (1-Vmix[1]) +
-              Vjaf[1] * (1-Vmix[0]) *    Vmix[1]  +
-              Vjaf[0] *    Vmix[0]  *    Vmix[1]  ) + ExogInf[0];
+          VLkla[0 ][1 ][ag]  = (RelInfRg[2] * RRcrAG[ag] * (Vjaf[2]*(1-Vmix[1])) + (Vjaf[0]*Vmix[1])) + ExogInf[0];
+          ///////// HIGH RISK NON US BORN
+          ///check the use of RelInfRg here as beta, might need to be a combo param but unclear check the old param file
+          VLkla[1 ][1 ][ag]  = (RelInfRg[3] * RRcrAG[ag]) *
+            ((Vjaf[3] * (1-Vmix[0]) * (1-Vmix[1])) +
+            (Vjaf[2] *    Vmix[0]  * (1-Vmix[1])) +
+            (Vjaf[1] * (1-Vmix[0]) *    Vmix[1])  +
+            (Vjaf[0] *    Vmix[0]  *    Vmix[1])  ) + ExogInf[0];
         }
+
         ///////////////////////////////INFECTION///////////////////////////////////////
         ///////////////////////for all age groups, risk groups/////////////////////////
         ///////INFECTION IS CALCULATED WITH THE FORCE OF INFECTION BY RISK GROUP///////
