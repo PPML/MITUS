@@ -575,45 +575,45 @@ Rcpp::List cSim(
       ///////    PEOPLE ARE REMOVED FROM SUSCEPTIBLE, PARTIALLY IMMUNE &      ///////
       ///////                   LATENT SLOW STATES                            ///////
       ///////////////////////////////////////////////////////////////////////////////
-      // for(int ag=0; ag<11; ag++) {
-      //   for(int im=0; im<4; im++) {
-      //     for(int nm=0; nm<4; nm++) {
-      //       for(int rg=0; rg<2; rg++) {
-      //         for (int na=0; na<3; na++){
-      //           if (na==0){
-      //             n2=na;
-      //           } else {n2=1;}
-      //
-      //           ///////////////////////////////   SUCEPTIBLE  /////™////////////////////////////
-      //           temp = V0[ag][0][0][im][nm][rg][na]*(VLkla[rg][n2][ag])*EarlyTrend[m];
-      //           //////////////////////////// REMOVE FROM SUSCEPTIBLE //////////////////////////
-      //           V1[ag][0][0][im][nm][rg][na]  -= temp;
-      //           // Rcpp::Rcout << "susceptible" << (V1[ag][0][0][im][nm][rg][na]  -= temp) << "age= " << ag << "na " << na << "rg " << rg << "\n";
-      //
-      //           //////////////////////////////// LATENT TB SLOW ///////////////////////////////
-      //           V1[ag][2][0][im][nm][rg][na]  += temp*MpslowN[ag][im];
-      //           // Rcpp::Rcout << "latent slow" << (V1[ag][2][0][im][nm][rg][na]  += temp*MpslowN[ag][im]) << "age= " << ag << "na " << na << "rg " << rg << "\n";
-      //
-      //           //////////////////////////////// LATENT TB FAST ///////////////////////////////
-      //           V1[ag][3][0][im][nm][rg][na]  += temp*MpfastN[ag][im];
-      //           // Rcpp::Rcout << "latent fast" << (V1[ag][3][0][im][nm][rg][na]  += temp*MpfastN[ag][im]) << "age= " << ag << "na " << na << "rg " << rg << "\n";
-      //
-      //           ///////////////////////////////////////////////////////////////////////////////
-      //
-      //           /////////////////////////////// SUPER-INFECTION SP ////////////////////////////
-      //           temp = V0[ag][1][0][im][nm][rg][na]*(VLkla[rg][n2][ag]);
-      //           V1[ag][1][0][im][nm][rg][na] -= temp;
-      //           V1[ag][2][0][im][nm][rg][na] += temp*MpslowPIN[ag][im];
-      //           V1[ag][3][0][im][nm][rg][na] += temp*MpfastPIN[ag][im];
-      //           ///////////////////////////////////////////////////////////////////////////////
-      //
-      //           /////////////////////////////// SUPER-INFECTION LS ////////////////////////////
-      //           temp = V0[ag][2][0][im][nm][rg][na]*(VLkla[rg][n2][ag]);
-      //           V1[ag][2][0][im][nm][rg][na]  -= temp;
-      //           V1[ag][2][0][im][nm][rg][na]  += temp*MpslowPIN[ag][im];
-      //           V1[ag][3][0][im][nm][rg][na]  += temp*MpfastPIN[ag][im];
-      //
-      //         } } } } }
+      for(int ag=0; ag<11; ag++) {
+        for(int im=0; im<4; im++) {
+          for(int nm=0; nm<4; nm++) {
+            for(int rg=0; rg<2; rg++) {
+              for (int na=0; na<3; na++){
+                if (na==0){
+                  n2=na;
+                } else {n2=1;}
+
+                ///////////////////////////////   SUCEPTIBLE  /////™////////////////////////////
+                temp = V0[ag][0][0][im][nm][rg][na]*(VLkla[rg][n2][ag])*EarlyTrend[m];
+                //////////////////////////// REMOVE FROM SUSCEPTIBLE //////////////////////////
+                V1[ag][0][0][im][nm][rg][na]  -= temp;
+                // Rcpp::Rcout << "susceptible" << (V1[ag][0][0][im][nm][rg][na]  -= temp) << "age= " << ag << "na " << na << "rg " << rg << "\n";
+
+                //////////////////////////////// LATENT TB SLOW ///////////////////////////////
+                V1[ag][2][0][im][nm][rg][na]  += temp*MpslowN[ag][im];
+                // Rcpp::Rcout << "latent slow" << (V1[ag][2][0][im][nm][rg][na]  += temp*MpslowN[ag][im]) << "age= " << ag << "na " << na << "rg " << rg << "\n";
+
+                //////////////////////////////// LATENT TB FAST ///////////////////////////////
+                V1[ag][3][0][im][nm][rg][na]  += temp*MpfastN[ag][im];
+                // Rcpp::Rcout << "latent fast" << (V1[ag][3][0][im][nm][rg][na]  += temp*MpfastN[ag][im]) << "age= " << ag << "na " << na << "rg " << rg << "\n";
+
+                ///////////////////////////////////////////////////////////////////////////////
+
+                /////////////////////////////// SUPER-INFECTION SP ////////////////////////////
+                temp = V0[ag][1][0][im][nm][rg][na]*(VLkla[rg][n2][ag]);
+                V1[ag][1][0][im][nm][rg][na] -= temp;
+                V1[ag][2][0][im][nm][rg][na] += temp*MpslowPIN[ag][im];
+                V1[ag][3][0][im][nm][rg][na] += temp*MpfastPIN[ag][im];
+                ///////////////////////////////////////////////////////////////////////////////
+
+                /////////////////////////////// SUPER-INFECTION LS ////////////////////////////
+                temp = V0[ag][2][0][im][nm][rg][na]*(VLkla[rg][n2][ag]);
+                V1[ag][2][0][im][nm][rg][na]  -= temp;
+                V1[ag][2][0][im][nm][rg][na]  += temp*MpslowPIN[ag][im];
+                V1[ag][3][0][im][nm][rg][na]  += temp*MpfastPIN[ag][im];
+
+              } } } } }
 
       // temp=0;
       // for(int ag=0; ag<11; ag++) {
