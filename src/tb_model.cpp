@@ -540,10 +540,12 @@ Rcpp::List cSim(
         VLkla[0 ][1 ][ag]  = RelInfRg[2] * RRcrAG[ag] * Vjaf[2]*(1-Vmix[1]) +
                              RelInfRg[0] * RRcrAG[ag] * Vjaf[0]*Vmix[1] + ExogInf[0];
         ///////// HIGH RISK NON US BORN
-        VLkla[1 ][1 ][ag]  = RelInfRg[3] * RRcrAG[ag] * (Vjaf[3] * (1-Vmix[0]) * (1-Vmix[1]) +
-          RelInfRg[2] * RRcrAG[ag]* Vjaf[2] *    Vmix[0]  * (1-Vmix[1]) +
-          RelInfRg[1] * RRcrAG[ag]* Vjaf[1] * (1-Vmix[0]) *    Vmix[1]  +
-          RelInfRg[0] * RRcrAG[ag]*Vjaf[0] *    Vmix[0]  *    Vmix[1])  + ExogInf[0];
+        VLkla[1 ][1 ][ag]  = RelInfRg[3] * RRcrAG[ag] *
+          ((Vjaf[3] * (1-Vmix[0]) * (1-Vmix[1]) +
+          Vjaf[2] *    Vmix[0]  * (1-Vmix[1]) +
+          Vjaf[1] * (1-Vmix[0]) *    Vmix[1]  +
+          Vjaf[0] *    Vmix[0]  *    Vmix[1]))  +
+          ExogInf[0];
       }
       ///////////////////////////////INFECTION///////////////////////////////////////
       ///////////////////////for all age groups, risk groups/////////////////////////
@@ -1162,10 +1164,12 @@ Rcpp::List cSim(
           VLkla[0 ][1 ][ag]  = RelInfRg[2] * RRcrAG[ag] * Vjaf[2]*(1-Vmix[1]) +
             RelInfRg[0] * RRcrAG[ag] * Vjaf[0]*Vmix[1] + ExogInf[s];
           ///////// HIGH RISK NON US BORN
-          VLkla[1 ][1 ][ag]  =  RelInfRg[3] * RRcrAG[ag] * Vjaf[3] * (1-Vmix[0]) * (1-Vmix[1]) +
-            RelInfRg[2] * RRcrAG[ag]* Vjaf[2] *    Vmix[0]  * (1-Vmix[1]) +
-            RelInfRg[1] * RRcrAG[ag]* Vjaf[1] * (1-Vmix[0]) *    Vmix[1]  +
-            RelInfRg[0] * RRcrAG[ag]*Vjaf[0] *    Vmix[0]  *    Vmix[1]  + ExogInf[s];
+          VLkla[1 ][1 ][ag]  =  VLkla[1 ][1 ][ag]  = RelInfRg[3] * RRcrAG[ag] *
+            ((Vjaf[3] * (1-Vmix[0]) * (1-Vmix[1]) +
+            Vjaf[2] *    Vmix[0]  * (1-Vmix[1]) +
+            Vjaf[1] * (1-Vmix[0]) *    Vmix[1]  +
+            Vjaf[0] *    Vmix[0]  *    Vmix[1]))  +
+            ExogInf[s];
         }
 
         ///////////////////////////////INFECTION///////////////////////////////////////
@@ -1911,9 +1915,9 @@ Rcpp::List cSim(
         for(int rg=0; rg<2; rg++) {
           for(int ag=0; ag<11; ag++) {
             for(int im=0; im<4; im++) {
-              temp4V[ag][im][rg] = (1-pow(1-(MrslowN[ag][im])-rRecov,24.0-rDxtN[s][rg]))*(MrslowN[ag][im]);
+              temp4V[ag][im][rg] = (1-pow(1-(MrslowN[ag][im])-rRecov,24.0-(1.0/rDxtN[s][rg])))*(MrslowN[ag][im]);
             } }
-              temp3V[rg] = (1-pow(1-rfast,24.0-rDxtN[s][rg]))*rfast;
+              temp3V[rg] = (1-pow(1-rfast,24.0-(1.0/rDxtN[s][rg])))*rfast;
         }
         for(int ag=0; ag<11; ag++) {
           for(int lt=0; lt<2; lt++) {
