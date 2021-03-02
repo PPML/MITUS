@@ -369,7 +369,7 @@ Rcpp::List cSim(
             } } } } } }
 
   ////////////////////////RUN THE MODEL FOR 3000 MONTHS /////////////////////////
-  for(int m=0; m<1201; m++) {
+  for(int m=0; m<1200; m++) {
     // Rcpp::Rcout << m << "\n";
     /////////////////////////////////START BURN IN//////////////////////////////////
     ////////////////////////////////////BIRTHS//////////////////////////////////////
@@ -410,33 +410,6 @@ Rcpp::List cSim(
               V1[ag][tb][0][im][nm][rg][2]  -= V0[ag][tb][0][im][nm][rg][2]*rEmmigFB[1];   // FB2
             } } } } }
     ////////////////////////////////MORTALITY//////////////////////////////////////
-    // for (int i=0; i<4; i++){
-    //   temp_vec2[i]=0; }
-    // mat_sum=0;
-    // ////make a count of # of ppl in each mortality group
-    // for(int ag=0; ag<11; ag++) {
-    //   for(int tb=0; tb<6; tb++) {
-    //     for(int im=0; im<4; im++) {
-    //       for(int nm=0; nm<4; nm++){
-    //         for(int rg=0; rg<2; rg++){
-    //           for(int na=0; na<3; na++){
-    //             temp_vec2[nm] += V1[ag][tb][0][im][nm][rg][na];
-    //           } } } } } }
-    // ////create a population total at this time point
-    // for(int nm=0; nm<4; nm++){
-    //   mat_sum+=temp_vec2[nm];}
-    // ///calculate the mortality
-    // for(int nm=0; nm<4; nm++){
-    //   mort_dist[nm] = temp_vec2[nm]/mat_sum; }
-    // // Rcpp::Rcout << "mort dist is" << mort_dist[nm] << "@m= "<< m<< "for age = "<<ag<<"\n";}
-    // temp=0;
-    // for(int nm=0; nm<4; nm++){
-    //   temp+=(RRmuRF[nm]*mort_dist[nm]);}
-    // mat_sum=0;
-    // for(int nm=0; nm<4; nm++){
-    //   RRmuRFN[nm]=RRmuRF[nm]/temp;
-    //   // Rcpp::Rcout << "RRmuRF is" << RRmuRFN[nm] << "@m= "<< m<< "\n";
-    // }
     temp=0;
     for(int ag=0; ag<11; ag++) {
       for(int im=0; im<4; im++) {
@@ -461,13 +434,6 @@ Rcpp::List cSim(
           for(int nm=0; nm<4; nm++) {
             for(int rg=0; rg<2; rg++) {
               for(int na=0; na<3; na++) {
-                // /////          IF AGE > 4, IT TAKES 120 MONTHS TO LEAVE AGE GROUP          /////
-                // if(ag>0) {
-                //   temp2 = 120;
-                //   /////          IF AGE < 4, IT TAKES 60 MONTHS TO LEAVE AGE GROUP           /////
-                // } else {
-                //   temp2 = 60;
-                // }
                 temp = V0[ag][tb][0][im][nm][rg][na]/ag_denN[0][ag];
                 V1[ag  ][tb][0][im][nm][rg][na]  -= temp;
                 V1[ag+1][tb][0][im][nm][rg][na]  += temp;
@@ -497,6 +463,12 @@ Rcpp::List cSim(
             } } } } }
     if (tb_dyn==1){
       ////////////////////////////  TRANSMISSION RISK  ////////////////////////////////
+      for(int i=0; i<2; i++){
+        for(int j=0; j<2; j++){
+          VNkl[i][j]=0;
+          VGkl[i][j]=0;
+        }
+      }
       // Step 1 & 2
       // take total population of mixing groups
       // mixing groups are only risk group and nativity
@@ -529,26 +501,31 @@ Rcpp::List cSim(
                 * RRcrAG[ag] * RelInfRg[3] * RelInf[tb];
             } } } }
 
-
       // Step 3 (Infected/Total)
       //probability of infection  -- maybe not stratified by age either?
       //for each mixing group
       // calculated as the a weighted average based on the number of effective contacts
       // each nativity and risk group contributes to that mixing group
       // 0 = common pool; 1 = exclusive nusb, 2 = exclusive hr, 3 = exclusive nusb-hr
-      //
-      Vjaf[0] = (VGkl[0][0]         + VGkl[1][0]*Vmix[0] +
-        VGkl[0][1]*Vmix[1] + VGkl[1][1]*Vmix[1]*Vmix[0]) /
-          (VNkl[0][0]         + VNkl[1][0]*Vmix[0] +
-            VNkl[0][1]*Vmix[1] + VNkl[1][1]*Vmix[1]*Vmix[0] + 1e-12);
+      // 0 = common pool; 1 = exclusive hr, 2= exclusive nusb , 3 = exclusive nusb-hr
+
+      //Vmix[0] is HR ; Vmix[1] is NUSB
+      Vjaf[0] = (VGkl[0][0]         +
+                 VGkl[1][0]*Vmix[0] +
+                 VGkl[0][1]*Vmix[1] +
+                 VGkl[1][1]*Vmix[1]*Vmix[0]) /
+                 (VNkl[0][0]         +
+                  VNkl[1][0]*Vmix[0] +
+                  VNkl[0][1]*Vmix[1] +
+                  VNkl[1][1]*Vmix[1]*Vmix[0] + 1e-12);
 
       Vjaf[1] = (VGkl[0][1] + VGkl[1][1]*Vmix[0]) /
-        ((VNkl[0][1] + VNkl[1][1]*Vmix[0]) + 1e-12);
+        (VNkl[0][1] + VNkl[1][1]*Vmix[0] + 1e-12);  //exclusive HR
 
-      Vjaf[2] = (VGkl[1][0] + VGkl[1][1]*Vmix[1])/
-        (VNkl[1][1] + VNkl[1][1]*Vmix[1] + 1e-12);
+      Vjaf[2] = (VGkl[1][0] + VGkl[1][1]*Vmix[1])/ //exclusive NUSB
+        (VNkl[1][0] + VNkl[1][1]*Vmix[1] + 1e-12);
 
-      Vjaf[3] = VGkl[1][1] / (VNkl[1][1] + 1e-12);
+      Vjaf[3] = VGkl[1][1] / (VNkl[1][1] + 1e-12); //exclusive HR NUSB
 
       // Step 4
       // calculate force of infection
@@ -557,17 +534,19 @@ Rcpp::List cSim(
         /// LOW RISK US BORN
         VLkla[0 ][0 ][ag]  = RelInfRg[0] * RRcrAG[ag] * Vjaf[0] ;
         ///////// HIGH RISK US BORN
-        VLkla[1 ][0 ][ag]  = RelInfRg[1] * RRcrAG[ag] * (Vjaf[1]*(1-Vmix[0]) + Vjaf[0]*Vmix[0]);
+        VLkla[1 ][0 ][ag]  = RelInfRg[1] * RRcrAG[ag] * Vjaf[1]*(1-Vmix[0]) +
+                             RelInfRg[0] * RRcrAG[ag] *  Vjaf[0]*Vmix[0];
         ///////// LOW RISK NON US BORN
-        VLkla[0 ][1 ][ag]  = RelInfRg[2] * RRcrAG[ag] * (Vjaf[2]*(1-Vmix[1]) + Vjaf[0]*Vmix[1]) + ExogInf[0];
+        VLkla[0 ][1 ][ag]  = RelInfRg[2] * RRcrAG[ag] * Vjaf[2]*(1-Vmix[1]) +
+                             RelInfRg[0] * RRcrAG[ag] * Vjaf[0]*Vmix[1] + ExogInf[0];
         ///////// HIGH RISK NON US BORN
-        ///check the use of RelInfRg here as beta, might need to be a combo param but unclear check the old param file
         VLkla[1 ][1 ][ag]  = RelInfRg[3] * RRcrAG[ag] *
           (Vjaf[3] * (1-Vmix[0]) * (1-Vmix[1]) +
           Vjaf[2] *    Vmix[0]  * (1-Vmix[1]) +
           Vjaf[1] * (1-Vmix[0]) *    Vmix[1]  +
           Vjaf[0] *    Vmix[0]  *    Vmix[1])  + ExogInf[0];
-      }      ///////////////////////////////INFECTION///////////////////////////////////////
+      }
+      ///////////////////////////////INFECTION///////////////////////////////////////
       ///////////////////////for all age groups, risk groups/////////////////////////
       ///////INFECTION IS CALCULATED WITH THE FORCE OF INFECTION BY RISK GROUP///////
       /////// THE TOTAL NUMBER OF INFECTED THEN ENTER BOTH THE LATENT SLOW &  ///////
@@ -584,8 +563,8 @@ Rcpp::List cSim(
                   n2=na;
                 } else {n2=1;}
 
-                ///////////////////////////////   SUCEPTIBLE  /////™////////////////////////////
-                temp = V0[ag][0][0][im][nm][rg][na]*(VLkla[rg][n2][ag])*EarlyTrend[m];
+                ///////////////////////////////   SUCEPTIBLE  /////////////////////////////////
+                temp = V0[ag][0][0][im][nm][rg][na]*VLkla[rg][n2][ag]*EarlyTrend[m];
                 //////////////////////////// REMOVE FROM SUSCEPTIBLE //////////////////////////
                 V1[ag][0][0][im][nm][rg][na]  -= temp;
                 // Rcpp::Rcout << "susceptible" << (V1[ag][0][0][im][nm][rg][na]  -= temp) << "age= " << ag << "na " << na << "rg " << rg << "\n";
@@ -601,14 +580,14 @@ Rcpp::List cSim(
                 ///////////////////////////////////////////////////////////////////////////////
 
                 /////////////////////////////// SUPER-INFECTION SP ////////////////////////////
-                temp = V0[ag][1][0][im][nm][rg][na]*(VLkla[rg][n2][ag]);
+                temp = V0[ag][1][0][im][nm][rg][na]*VLkla[rg][n2][ag];
                 V1[ag][1][0][im][nm][rg][na] -= temp;
                 V1[ag][2][0][im][nm][rg][na] += temp*MpslowPIN[ag][im];
                 V1[ag][3][0][im][nm][rg][na] += temp*MpfastPIN[ag][im];
                 ///////////////////////////////////////////////////////////////////////////////
 
                 /////////////////////////////// SUPER-INFECTION LS ////////////////////////////
-                temp = V0[ag][2][0][im][nm][rg][na]*(VLkla[rg][n2][ag]);
+                temp = V0[ag][2][0][im][nm][rg][na]*VLkla[rg][n2][ag];
                 V1[ag][2][0][im][nm][rg][na]  -= temp;
                 V1[ag][2][0][im][nm][rg][na]  += temp*MpslowPIN[ag][im];
                 V1[ag][3][0][im][nm][rg][na]  += temp*MpfastPIN[ag][im];
@@ -1116,6 +1095,13 @@ Rcpp::List cSim(
         // we do not need to stratify by age here because we are only allowing the number of contacts
         // of infectious persons to vary as a constant across all mixing groups; no assortative mixing  RRcrAG[ag]
         // by age.
+
+        for(int i=0; i<2; i++){
+          for(int j=0; j<2; j++){
+            VNkl[i][j]=0;
+            VGkl[i][j]=0;
+          }
+        }
         for(int ag=0; ag<11; ag++) {
           for(int tb=0; tb<6; tb++) {
             for(int lt=0; lt<2; lt++) {
@@ -1150,17 +1136,17 @@ Rcpp::List cSim(
         // calculated as the a weighted average based on the number of effective contacts
         // each nativity and risk group contributes to that mixing group
         // 0 = common pool; 1 = exclusive nusb, 2 = exclusive hr, 3 = exclusive nusb-hr
-        //
-        Vjaf[0] = (VGkl[0][0]         + (VGkl[1][0]*Vmix[0]) +
-          (VGkl[0][1]*Vmix[1]) + (VGkl[1][1]*Vmix[1]*Vmix[0])) /
-            (VNkl[0][0]         + (VNkl[1][0]*Vmix[0]) +
-              (VNkl[0][1]*Vmix[1]) +(VNkl[1][1]*Vmix[1]*Vmix[0]) + 1e-12);
 
-        Vjaf[1] = (VGkl[0][1] +( VGkl[1][1]*Vmix[0])) /
-          ((VNkl[0][1] + (VNkl[1][1]*Vmix[0])) + 1e-12);
+        Vjaf[0] = (VGkl[0][0]         + VGkl[1][0]*Vmix[0] +
+                   VGkl[0][1]*Vmix[1] + VGkl[1][1]*Vmix[1]*Vmix[0]) /
+                  (VNkl[0][0]         + VNkl[1][0]*Vmix[0]+
+                   VNkl[0][1]*Vmix[1] + VNkl[1][1]*Vmix[1]*Vmix[0] + 1e-12);
 
-        Vjaf[2] = (VGkl[1][0] +( VGkl[1][1]*Vmix[1]))/
-          (VNkl[1][1] + (VNkl[1][1]*Vmix[1]) + 1e-12);
+        Vjaf[1] = (VGkl[0][1] + VGkl[1][1]*Vmix[0]) /
+          (VNkl[0][1] + VNkl[1][1]*Vmix[0] + 1e-12);
+
+        Vjaf[2] = (VGkl[1][0] + VGkl[1][1]*Vmix[1])/
+          (VNkl[1][0] + VNkl[1][1]*Vmix[1] + 1e-12);
 
         Vjaf[3] = VGkl[1][1] / (VNkl[1][1] + 1e-12);
 
@@ -1171,11 +1157,12 @@ Rcpp::List cSim(
           /// LOW RISK US BORN
           VLkla[0 ][0 ][ag]  = RelInfRg[0] * RRcrAG[ag] * Vjaf[0] ;
           ///////// HIGH RISK US BORN
-          VLkla[1 ][0 ][ag]  = RelInfRg[1] * RRcrAG[ag] * (Vjaf[1]*(1-Vmix[0]) + Vjaf[0]*Vmix[0]);
+          VLkla[1 ][0 ][ag]  = RelInfRg[1] * RRcrAG[ag] * Vjaf[1]*(1-Vmix[0]) +
+            RelInfRg[0] * RRcrAG[ag] *  Vjaf[0]*Vmix[0];
           ///////// LOW RISK NON US BORN
-          VLkla[0 ][1 ][ag]  = RelInfRg[2] * RRcrAG[ag] * (Vjaf[2]*(1-Vmix[1]) + Vjaf[0]*Vmix[1]) + ExogInf[s];
+          VLkla[0 ][1 ][ag]  = RelInfRg[2] * RRcrAG[ag] * Vjaf[2]*(1-Vmix[1]) +
+            RelInfRg[0] * RRcrAG[ag] * Vjaf[0]*Vmix[1] + ExogInf[s];
           ///////// HIGH RISK NON US BORN
-          ///check the use of RelInfRg here as beta, might need to be a combo param but unclear check the old param file
           VLkla[1 ][1 ][ag]  = RelInfRg[3] * RRcrAG[ag] *
             (Vjaf[3] * (1-Vmix[0]) * (1-Vmix[1]) +
             Vjaf[2] *    Vmix[0]  * (1-Vmix[1]) +
@@ -1685,7 +1672,6 @@ Rcpp::List cSim(
                   } } } } } }
         ////////////     CREATE YEARLY VALUES FROM THE MONTH ESTIMATE     ////////////
         for(int i=87; i<109; i++) { Outputs[y][i] = Outputs[y][i]*12; }
-
         ///////////////////////  RISK FACTOR MORTALITY BY AGE /////////////////////////
 
         ///this is horribly wrong, using it as a place holder
