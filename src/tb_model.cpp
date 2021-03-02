@@ -540,11 +540,10 @@ Rcpp::List cSim(
         VLkla[0 ][1 ][ag]  = RelInfRg[2] * RRcrAG[ag] * Vjaf[2]*(1-Vmix[1]) +
                              RelInfRg[0] * RRcrAG[ag] * Vjaf[0]*Vmix[1] + ExogInf[0];
         ///////// HIGH RISK NON US BORN
-        VLkla[1 ][1 ][ag]  = RelInfRg[3] * RRcrAG[ag] *
-          (Vjaf[3] * (1-Vmix[0]) * (1-Vmix[1]) +
-          Vjaf[2] *    Vmix[0]  * (1-Vmix[1]) +
-          Vjaf[1] * (1-Vmix[0]) *    Vmix[1]  +
-          Vjaf[0] *    Vmix[0]  *    Vmix[1])  + ExogInf[0];
+        VLkla[1 ][1 ][ag]  = RelInfRg[3] * RRcrAG[ag] * (Vjaf[3] * (1-Vmix[0]) * (1-Vmix[1]) +
+          RelInfRg[2] * RRcrAG[ag]* Vjaf[2] *    Vmix[0]  * (1-Vmix[1]) +
+          RelInfRg[1] * RRcrAG[ag]* Vjaf[1] * (1-Vmix[0]) *    Vmix[1]  +
+          RelInfRg[0] * RRcrAG[ag]*Vjaf[0] *    Vmix[0]  *    Vmix[1])  + ExogInf[0];
       }
       ///////////////////////////////INFECTION///////////////////////////////////////
       ///////////////////////for all age groups, risk groups/////////////////////////
@@ -1163,11 +1162,10 @@ Rcpp::List cSim(
           VLkla[0 ][1 ][ag]  = RelInfRg[2] * RRcrAG[ag] * Vjaf[2]*(1-Vmix[1]) +
             RelInfRg[0] * RRcrAG[ag] * Vjaf[0]*Vmix[1] + ExogInf[s];
           ///////// HIGH RISK NON US BORN
-          VLkla[1 ][1 ][ag]  = RelInfRg[3] * RRcrAG[ag] *
-            (Vjaf[3] * (1-Vmix[0]) * (1-Vmix[1]) +
-            Vjaf[2] *    Vmix[0]  * (1-Vmix[1]) +
-            Vjaf[1] * (1-Vmix[0]) *    Vmix[1]  +
-            Vjaf[0] *    Vmix[0]  *    Vmix[1])  + ExogInf[s];
+          VLkla[1 ][1 ][ag]  =  RelInfRg[3] * RRcrAG[ag] * Vjaf[3] * (1-Vmix[0]) * (1-Vmix[1]) +
+            RelInfRg[2] * RRcrAG[ag]* Vjaf[2] *    Vmix[0]  * (1-Vmix[1]) +
+            RelInfRg[1] * RRcrAG[ag]* Vjaf[1] * (1-Vmix[0]) *    Vmix[1]  +
+            RelInfRg[0] * RRcrAG[ag]*Vjaf[0] *    Vmix[0]  *    Vmix[1]  + ExogInf[s];
         }
 
         ///////////////////////////////INFECTION///////////////////////////////////////
@@ -1667,8 +1665,8 @@ Rcpp::List cSim(
                     // } else { temp = 0;
                     // }
                     temp=0;
-                    Outputs[y][87+ag+ti]  += V0[ag][4 ][lt][im][nm][rg][na]*(vTMortN[ag][4 ]+temp);
-                    Outputs[y][87+ag+ti]  += V0[ag][5 ][lt][im][nm][rg][na]*(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort); //last term is approx .6
+                    Outputs[y][87+ag+ti]  += VMort[ag][4 ][lt][im][nm][rg][na];
+                    Outputs[y][87+ag+ti]  += VMort[ag][5 ][lt][im][nm][rg][na];
                   } } } } } }
         ////////////     CREATE YEARLY VALUES FROM THE MONTH ESTIMATE     ////////////
         for(int i=87; i<109; i++) { Outputs[y][i] = Outputs[y][i]*12; }
@@ -2065,8 +2063,8 @@ Rcpp::List cSim(
                     // if(im > 2) { temp = muTbRF;
                     // } else { temp = 0; }
                     temp=0;
-                    Outputs[y][252+ti]  += V0[ag][4][lt][im][nm][rg][na]*(vTMortN[ag][4 ]+temp);
-                    Outputs[y][252+ti]  += V0[ag][5][lt][im][nm][rg][na]*(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort); //check the TxMatZ portion
+                    Outputs[y][252+ti]  += VMort[ag][4][lt][im][nm][rg][na];
+                    Outputs[y][252+ti]  += VMort[ag][5][lt][im][nm][rg][na];
                   } } } } } }
         ////////////     CREATE YEARLY VALUES FROM THE MONTH ESTIMATE     ////////////
         for(int i=252; i<254; i++) { Outputs[y][i] = Outputs[y][i]*12; }
