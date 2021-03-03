@@ -159,6 +159,7 @@ Rcpp::List cSim(
   double  	    VMort[11][6][2][4][4][2][3];
   double        Vdx[11][6][2][4][4][2][3];
   double        VLdx[11][6][2][4][4][2][3];
+  double        Vinf[11][2][4][4][2][3];
   double        VNkl[2][2];  ///HIGH AND LOW RISK, NATIVITY, AGE
   double        VGkl[2][2]; ///HIGH AND LOW RISK, NATIVITY,AGE
   double        Vjaf[4];     ///BY NUMBER OF MIXING GROUPS, AGE
@@ -256,16 +257,18 @@ Rcpp::List cSim(
   for(int ag=0; ag<11; ag++) {
     for(int im=0; im<4; im++){
       for(int nm=0; nm<4; nm++){
-        for(int tb=0; tb<6; tb++) {
           for(int rg=0; rg<2; rg++) {
             for(int lt=0; lt<2; lt++){
               for(int na=0; na<3; na++){
+                for(int tb=0; tb<6; tb++) {
                 V0[ag][tb][lt][im][nm][rg][na]    = 0;
                 V1[ag][tb][lt][im][nm][rg][na]    = 0;
                 VMort[ag][tb][lt][im][nm][rg][na] = 0;
                 Vdx[ag][tb][lt][im][nm][rg][na]   = 0;
                 VLdx[ag][tb][lt][im][nm][rg][na]  = 0;
-              } } } } } } }
+              }
+              Vinf[ag][lt][im][nm][rg][na]  = 0;
+              } } } } } }
 
   for(int i=0; i<2; i++) {
     for(int j=0; j<2; j++) {
@@ -1192,6 +1195,7 @@ Rcpp::List cSim(
                     } else {n2=1;}
                     ///////////////////////////////   SUCEPTIBLE  /////////////////////////////////
                     temp = V0[ag][0][lt][im][nm][rg][na]*(VLkla[rg][n2][ag])*NixTrans[s];
+                    Vinf[ag][lt][im][nm][rg][na]=V0[ag][0][lt][im][nm][rg][na]*(VLkla[rg][n2][ag])*NixTrans[s];
                     //////////////////////////// REMOVE FROM SUSCEPTIBLE //////////////////////////
                     V1[ag][0][lt][im][nm][rg][na]  -= temp;
                     //////////////////////////////// LATENT TB SLOW ///////////////////////////////
@@ -1925,7 +1929,13 @@ Rcpp::List cSim(
               for(int nm=0; nm<4; nm++) {
                 for(int rg=0; rg<2; rg++) {
                   for(int na=0; na<3; na++) {
-                    temp2 = V0[ag][2 ][lt][im][nm][rg][na]*temp4V[ag][im][rg]  + V0[ag][3 ][lt][im][nm][rg][na]*temp3V[rg];// Progression from recent infection
+                    temp2 = (Vinf[ag][lt][im][nm][rg][na])*((MpfastN[ag][im]*(1-pow(1-rfast,24.0)) + (1-MpfastN[ag][im])*(1-pow(1-MrslowN[ag][im],24.0))));// Progression from recent infection
+
+//                     if(y==68){
+//                     Rcpp::Rcout<< "ag = "<< ag << " and im = "<<im<<"\n";
+//                     Rcpp::Rcout<<((MpfastN[ag][im]*(1-pow(1-rfast,24.0)) + (1-MpfastN[ag][im])*(1-pow(1-MrslowN[ag][im],24.0))))<<"\n";// Progression from recent infection
+// }
+                    // temp2 = V0[ag][2 ][lt][im][nm][rg][na]*temp4V[ag][im][rg]  + V0[ag][3 ][lt][im][nm][rg][na]*temp3V[rg];// Progression from recent infection
                     temp =  V0[ag][2 ][lt][im][nm][rg][na]*(MrslowN[ag][im]) + V0[ag][3 ][lt][im][nm][rg][na]*rfast; // All progression
                     Outputs[y][155      ] += temp ;   // all incidence
                     Outputs[y][155+16   ] += temp2;   // all incidence, recent infection
