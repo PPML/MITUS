@@ -469,8 +469,9 @@ calib_graphs <- function(df, Par_list){
   #plot text
   mtext("Age Group",1,2.5,cex=1.2)
   mtext("Age Distribution of TB Cases (%), 2009-19",3,.8,font=2,cex=1.2)
-  legend("topright",c("Reported data","Model"),pch=c(19,15),lwd=NA,
-         pt.cex=c(1,2),col=c("black","lightblue"),bg="white")
+  legend("topright",c("US born","Non-US Born","Reported data"),cex=1,
+         pch=c(15,15,19),lwd=c(NA,NA,1),lty=c(NA,NA,3),col=c("lightblue","pink",1),bg="white",pt.cex=c(1.8,1.8,0.3))
+
 
   ################################################################################
   #Average Age of TB Cases
@@ -525,7 +526,8 @@ calib_graphs <- function(df, Par_list){
 
   mtext("Year",1,2.5,cex=0.9)
   mtext("Percent of TB Cases Homeless in Past Yr",3,.8,font=2,cex=0.8)
-  legend("topright",c("Reported data","Fitted model"),pch=c(19,NA),lwd=c(1,2),col=c(1,4),lty=c(3,1),bg="white",pt.cex=0.6)
+  legend("bottomleft",c("Total","US born","Non-US Born","Reported data","model"),cex=1,
+         pch=c(15,15,15,19,NA),lwd=c(NA,NA,NA,1,2),lty=c(NA,NA,NA,3,1),col=c("grey50",4,"red3",1,1),bg="white",pt.cex=c(1.8,1.8,1.8,0.3,NA))
   ################################################################################
   ### Recent infection
   #colnames(M)

@@ -526,7 +526,7 @@ calib_graphs_st <- function(df,loc, Par_list,pdf=TRUE, cex.size=.75){
     lines(notif_time,V*100,lwd=2,col=4)
     mtext("Year",1,2.5,cex=cex.size)
     mtext(paste("Percent of TB Cases Homeless in Past Yr in", loc, sep = " "),3,.3,font=2,cex=cex.size)
-    legend("topright",c("Reported data","Fitted model"),pch=c(19,NA),lwd=c(1,2),col=c(1,4),
+    legend("bottomright",c("Reported data","Fitted model"),pch=c(19,NA),lwd=c(1,2),col=c(1,4),
            lty=c(3,1),bg="white",pt.cex=0.6,cex=cex.size*1.5)
   ###############################################################################
     ### Recent infection
