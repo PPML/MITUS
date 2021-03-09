@@ -95,9 +95,9 @@ calib_graphs_st_summary<-function(locvec,date){
     lines(1950:2017,V[,1],lwd=2,col="blue")
     lines(1950:2017,rowSums(V),lwd=2,col="grey50")
 
-    mtext("Year",1,2.5,cex=1.2)
-    mtext(paste("Population: Total, US, and Non-US Born (mil, log-scale) in", loc, sep=" "),3,.8,font=2,cex=1)
-    legend("bottomleft",c("Total","US born","Non-US Born","Reported data","model"),cex=1,
+    mtext("Year",1,2.5,cex=cex.size)
+    mtext(paste("Population: Total, US, and Non-US Born (mil, log-scale) in", loc, sep=" "),3,.8,font=2,cex=cex.size)
+    legend("bottomleft",c("Total","US born","Non-US Born","Reported data","model"),cex=cex.size,
            pch=c(15,15,15,19,NA),lwd=c(NA,NA,NA,1,2),lty=c(NA,NA,NA,3,1),col=c("grey50",4,"red3",1,1),bg="white",pt.cex=c(1.8,1.8,1.8,0.3,NA))
 
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -126,7 +126,7 @@ calib_graphs_st_summary<-function(locvec,date){
     mtext("Age Group",1,2.5,cex=cex.size)
     box()
     mtext(paste("Total Population in by Age Group 2017 in",loc,"(mil,log-scale)", sep = " "),3,.3,font=2,cex=cex.size)
-    legend("bottom",c("US born","Non-US Born","Reported data"),cex=cex.size*1.5,
+    legend("bottom",c("US born","Non-US Born","Reported data"),cex=cex.size,
            pch=c(15,15,19),lwd=c(NA,NA,1),lty=c(NA,NA,3),col=c("lightblue","pink",1),bg="white",pt.cex=c(1.8,1.8,0.3))
 
     # graph of total diagnosed cases 5 year bands
@@ -137,7 +137,7 @@ calib_graphs_st_summary<-function(locvec,date){
     # tot_cases<-rowSums(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][1:5,5:14])+rowSums(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][6:10,5:14])
     tot_cases<-CalibDatState[["cases_yr_st"]][[st]][,2]
     #format the plot
-    plot(0,0,ylim=c(min(Va)*.5*1e6,max(Va)*1.25*1e6),xlim=c(1993,2019),xlab="",ylab="",axes=F)
+    plot(0,0,ylim=c(0,max(Va)*1.25*1e6),xlim=c(1993,2019),xlab="",ylab="",axes=F)
     axis(1);axis(2,las=2);box()
     abline(h=axTicks(2),col="grey85")
 
@@ -169,7 +169,7 @@ calib_graphs_st_summary<-function(locvec,date){
 
     # tot_cases<-rowSums(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][1:5,5:14])+rowSums(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][6:10,5:14])
     #format the plot
-    plot(0,0,ylim=c(min(Vn2,Vu2)*.5*1e6,max(Vn2,Vu2)*1.25*1e6),xlim=c(1995,2020),xlab="",ylab="",axes=F)
+    plot(0,0,ylim=c(0,max(Vn2,Vu2)*1.75*1e6),xlim=c(1995,2020),xlab="",ylab="",axes=F)
     axis(1);axis(2,las=2);box()
     abline(h=axTicks(2),col="grey85")
 
@@ -223,7 +223,7 @@ calib_graphs_st_summary<-function(locvec,date){
     mtext("Age Group",1,2.5,cex=cex.size)
     mtext(paste("Age Distribution of TB Cases (%) in",loc,", 1995-19", sep = " "),3,.3,font=2,cex=cex.size)
     legend("topright",c("Reported data","Model"),pch=c(19,15),lwd=NA,
-           pt.cex=c(1,2),col=c("black","lightblue"),bg="white",cex=cex.size*1.5)
+           pt.cex=c(1,2),col=c("black","lightblue"),bg="white",cex=cex.size)
 
     ################################################################################
     ### Recent infection
@@ -310,10 +310,10 @@ calib_graphs_st_summary<-function(locvec,date){
     for(i in 1:8) lines(nus_x[c(i,i)],qbeta(c(1,39)/40,ltbi_fb_11[i,2],ltbi_fb_11[i,3])*100,pch=19,cex=.8)
 
     #plot text
-    mtext("Age Group",1,2.5,cex=1.2)
-    mtext(paste("IGRA+ LTBI % in 2011 by Age, Stratified by Nativity in", loc,"[NATIONAL DATA]"),3,.8,font=2,cex=.8)
+    mtext("Age Group",1,2.5,cex=cex.size)
+    mtext(paste("IGRA+ LTBI % in 2011 by Age, Stratified by Nativity in", loc,"[NATIONAL DATA]"),3,.8,font=2,cex=cex.size)
     legend("topleft",c("Reported data","USB (model)", "NUSB (model)"),pch=c(19,15,15),lwd=c(0,NA,NA),
-           pt.cex=c(1,2,2),col=c("black","lightblue", "pink"),bg="white")
+           pt.cex=c(1,2,2),col=c("black","lightblue", "pink"),bg="white",cex=cex.size)
 
     ################################################################################
     # Age Distribution of TB Deaths 1999-2014
@@ -340,9 +340,9 @@ calib_graphs_st_summary<-function(locvec,date){
 
     #plot text
     mtext("Age Group",1,2.5,cex=cex.size)
-    mtext(paste("Total TB Deaths by Age Group 1999-2018 in",loc,"[NATIONAL]", sep = " "),3,.3,font=2,cex=cex.size)
+    mtext(paste("Total TB Deaths by Age Group 1999-2018 in",loc, sep = " "),3,.3,font=2,cex=cex.size)
     legend("topleft",c("Reported data","Model"),pch=c(19,15),lwd=NA,
-           pt.cex=c(1,2),col=c("black","lightblue"),bg="white",cex=cex.size*1.5)
+           pt.cex=c(1,2),col=c("black","lightblue"),bg="white",cex=cex.size)
   }
   dev.off()
 }
