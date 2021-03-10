@@ -140,7 +140,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
 
   ######################         IMMIGRATION             ########################
   ######################         OVERALL IMM.            ########################
-  TotImmig0       <- (c(Inputs$ImmigInputs[[1]][1:151])+c(rep(0,67),cumsum(rep(PV["ImmigVolFut"],84))))/12*PV["ImmigVol"]
+  TotImmig0       <- (c(Inputs$ImmigInputs[[1]][1:151])+c(rep(0,71),cumsum(rep(PV["ImmigVolFut"],80))))/12*PV["ImmigVol"]
   TotImmAge0      <-matrix(0,151,11)
   for (i in 1:151){
     for (j in 1:11){
@@ -153,29 +153,24 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   }
   # }
   ######################           LTBI IMM.             ########################
-  PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:67]^(exp(PV["TunLtbiTrend"]))*ImmigInputs[["PrevTrend25_34"]][67]^(1-exp(PV["TunLtbiTrend"])),
-                        ImmigInputs[["PrevTrend25_34"]][68:151]*(PV["ImmigPrevFutLat"]/0.99)^(1:84))
+  PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:71]^(exp(PV["TunLtbiTrend"]))*ImmigInputs[["PrevTrend25_34"]][71]^(1-exp(PV["TunLtbiTrend"])),
+                        ImmigInputs[["PrevTrend25_34"]][72:151]*(PV["ImmigPrevFutLat"]/0.99)^(1:80))
   PrevTrend25_341l <-   PrevTrend25_340l
-  PrevTrend25_34l  <- SmoCurve(PrevTrend25_341l)
-  PrevTrend25_34_ls <- (PrevTrend25_34l);
+  PrevTrend25_34_ls  <- SmoCurve(PrevTrend25_341l)
   PrevTrend25_34_ls <- PrevTrend25_34_ls/PrevTrend25_34_ls[(2011-1950)*12+6]
   ImmLat          <- matrix(NA,length(PrevTrend25_34_ls),11)
-  for(i in 1:11) ImmLat[,i] <- (1-exp((-(c(2.5,1:9*10,100)/100)[i]*PV["LtbiPar1"]-(c(2.5,1:9*10,100)/100)[i]^2*PV["LtbiPar2"])*PrevTrend25_34_ls))*TotImmAge[,i]
 
+  for(i in 1:11) ImmLat[,i] <- (1-exp((-(c(2.5,1:9*10,100)/100)[i]^PV["LtbiPar1"])*PrevTrend25_34_ls*PV["LtbiPar2"]))*TotImmAge[,i]
   ######################         ACTIVE TB IMM.           ########################
   # PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:69]^exp(PV["TunActTrend"])*ImmigInputs[["PrevTrend25_34"]][69]^exp((1-PV["TunActTrend"])),
 
-  PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:67]^(exp(PV["TunActTrend"]))*ImmigInputs[["PrevTrend25_34"]][67]^(1-exp(PV["TunActTrend"])),
-                        ImmigInputs[["PrevTrend25_34"]][68:151]*(PV["ImmigPrevFutAct"]/0.99)^(1:84))
+  PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:71]^(exp(PV["TunActTrend"]))*ImmigInputs[["PrevTrend25_34"]][71]^(1-exp(PV["TunActTrend"])),
+                        ImmigInputs[["PrevTrend25_34"]][72:151]*(PV["ImmigPrevFutAct"]/0.99)^(1:80))
 
   PrevTrend25_34a  <- SmoCurve(PrevTrend25_340a)
-  act_prob<-rep(0,1801)
-  for (t in 1:1801){
-    act_prob[t]<-((PV[["pImActSlp"]]*t)/1801)+PV[["pImActIntc"]]
-  }
 
-  ImmAct         <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*act_prob
-  ImmFst         <- outer(PrevTrend25_34a*PV["RRtbprev"],ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*(1-act_prob)
+  ImmAct         <- outer(PrevTrend25_34a*exp(PV["RRtbprev"]),ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*PV["pImmAct"]
+  ImmFst         <- outer(PrevTrend25_34a*exp(PV["RRtbprev"]),ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*(1-PV["pImmAct"])
 
   ImmNon         <- TotImmAge-ImmAct-ImmFst-ImmLat
   ###################### TRUNCATE THESE VALS
@@ -206,7 +201,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   ######################   EXOGENEOUS INFECTION RISK      ########################
 
   ExogInf        <- matrix(NA,length(PrevTrend25_34a),5)
-  ExogInf        <- PV["ExogInf"]*PrevTrend25_34a/PrevTrend25_340a["2013"]/12
+  ExogInf        <- PV["ExogInf"]*PrevTrend25_34a/PrevTrend25_340a["2020"]/12
   ExogInf        <- ExogInf[1:month]
   #removed *(ImmigInputs[[7]][4]*DrN[,i]+(1-ImmigInputs[[7]][4])*DrE[,i])
 
@@ -229,8 +224,19 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   ######################       TB TRANSMISSION           #######################
 
   CR           <- PV["CR"]/12
+  RRcrAG       <- c(0.517233655,
+                    0.77454377,
+                    1,
+                    0.765666833,
+                    0.783155643,
+                    0.754892753,
+                    0.581666584,
+                    0.321227236,
+                    0.244200692,
+                    0.244200692,
+                    0.244200692)
   RelInfRg     <- c(1.0,PV["RelCrHr"],1.0,PV["RelCrHr"])*CR
-  TunTbTransTx <- 0#PV["TunTbTransTx"]  # set to zero?
+  TunTbTransTx <- 0 #PV["TunTbTransTx"]  # set to zero?
   Vmix         <- 1-c(PV["sigmaHr"],PV["sigmaFb"])
   RelInf       <- rep(0,6)
   names(RelInf) <- c("Su","Sp","Ls","Lf","Ac","Tx")
@@ -248,7 +254,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   pfast      <- PV["pfast"]
   ORpfast1   <- PV["ORpfast1"] ## age group 1
   ORpfast2   <- PV["ORpfast2"] ## age group 2
-  ORpfastRF  <- 20#PV["ORpfastH"] ##riskfactor
+  ORpfastRF  <- 40 ##riskfactor
   ORpfastPI  <- PV["ORpfastPI"]
 
   ##############            ORIGINAL Mpfast[ag][hv]             ################
@@ -267,7 +273,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   #vector of ORpfastRF
   vORpfastPIRF<-vORpfastRF  <-c(1,1,1,1)
   vORpfastRF  <-(exp((0:3)/3*log(ORpfastRF)))
-  vORpfastRF<-vORpfastRF/sum(vORpfastRF*mort_dist)
+  vORpfastRF  <-vORpfastRF/sum(vORpfastRF*mort_dist)
 
   vORpfastPIRF  <- vORpfastRF*ORpfastPI
 
@@ -289,9 +295,9 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   MpfastPI[,]  <- MpfastPI[,]/(1+MpfastPI[,]);
 
   rslow      <- PV["rslow"]/12
-  rslowRF    <- PV["rslowH"]/12
+  rrslowRF    <- 40 #PV["rslowH"]/12
 
-  RRrslowRF  <- exp((0:3)/3*log(20))
+  RRrslowRF  <- exp((0:3)/3*log(rrslowRF))
   RRrslowRF<-RRrslowRF/sum(RRrslowRF*mort_dist)
   rfast      <- PV["rfast"]/12
   #rrSlowFB0  <- PV["rrSlowFB"] #removed
@@ -347,11 +353,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
 
   ### ADJUST THIS FOR THE FOREIGN BORN
   ######################        SCREENING RATES          ######################
-  rLtScrt       <- LgtCurve(1985,2015,PV["rLtScr"])/12
-
-  #### #### #### INT 2 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
-  ### HOW TO ADD PROGRAM CHANGE HERE?
-  if(Int2==1) { rLtScrt     <- rLtScrt  + LgtCurve(intv_yr,intv_yr+5,1)*rLtScrt*1}
+  rLtScrt       <- LgtCurve(1985,2015,(PV["rLtScr"]))/12
   ######################  SCREENING RATE PROGRAM CHANGE ########################
   if (prg_chng["scrn_cov"] !=1) {
     rLtScrt[prg_m:length(rLtScrt)]<-rLtScrt[prg_m:length(rLtScrt)]*prg_chng["scrn_cov"];
@@ -384,7 +386,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
                    "NUSB"=1:2
     )
   }
-  ######################          LTBI DIAGNOSIS           ########################
+
   ###adjustments to the screening rates dependent on risk and TB status
   rrTestHr      <- PV["rrTestHr"] # RR of LTBI screening for HIV and HR as cmpared to general
   rrTestLrNoTb  <- PV["rrTestLrNoTb"] # RR of LTBI screening for individuals with no risk factors
@@ -406,21 +408,13 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   #adjust for no latent
   LtDxPar_nolt[1,]   <-LtDxPar_nolt[1,]*rrTestLrNoTb
 
-  #### #### #### INT 1 #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
-  pctDoc <- (1-0.28)
-  if(Int1==1) {
-    for(i in 1:11) ImmLat[,i] <- ImmLat[,i]*(1-LgtCurve(intv_yr,intv_yr+5,1)*SensLt[4,1]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
-    for(i in 1:11) ImmAct[,i] <- ImmAct[,i]*(1-LgtCurve(intv_yr,intv_yr+5,1)*SensLt[4,1]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
-    for(i in 1:11) ImmFst[,i] <- ImmFst[,i]*(1-LgtCurve(intv_yr,intv_yr+5,1)*SensLt[4,1]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
-    ImmNon      <- TotImmAge[1:month,]-ImmAct-ImmFst-ImmLat
-  }
-
   ### PROBABILITY OF LATENT TREATMENT INTIATION
-  pTlInt        <- rep(.775,month)
+  pTlInt        <- rep(.72,month)
   ###################### LTBI TX INITIATION PROGRAM CHANGE ########################
   if (prg_chng["ltbi_init_frc"] !=pTlInt[prg_m]){
     pTlInt[prg_m:length(pTlInt)] <- prg_chng["ltbi_init_frc"];
   }
+
 
   ##### ##### TREATMENT COMPLETION RATE AND TREATMENT EFFECTIVENESS ARE DEPENDENT ON
   ##### ##### PROGRAM CHANGE VALUES; NEED TO CREATE A CHECK FOR WHEN THESE VALUES ARE
@@ -448,26 +442,36 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   ##### ##### LTBI TREATMENT EFFECTIVENESS
   ########################################################################################
   if (prg_chng[["frc_3hp"]] != default_pc[["frc_3hp"]] | prg_chng[["frc_3hr"]] != default_pc[["frc_3hr"]] |
-      prg_chng[["frc_4r"]] != default_pc[["frc_4r"]]){
+      prg_chng[["frc_4r"]] != default_pc[["frc_4r"]] |
+      prg_chng[["comp_3hp"]] != default_pc[["comp_3hp"]] | prg_chng[["comp_3hr"]] != default_pc[["comp_3hr"]] |
+      prg_chng[["comp_4r"]] != default_pc[["comp_4r"]]){
     #calculate the weighted treatment effectiveness
-    effectiveness<-(prg_chng[["frc_3hp"]]*.93+prg_chng[["frc_3hr"]]*.93+ prg_chng[["frc_4r"]]*.93)/3
-     EffLt         <- c(rep(PV["EffLt"],prg_m-1),rep(effectiveness,1+month-prg_m))
+    effectiveness<-(prg_chng[["frc_3hp"]]*prg_chng[["comp_3hp"]]+prg_chng[["frc_3hr"]]*prg_chng[["comp_3hr"]]+ prg_chng[["frc_4r"]]*prg_chng[["comp_4r"]])/3
+    EffLt         <- c(rep(PV["EffLt"],prg_m-1),rep(effectiveness,1+month-prg_m))
   } else {
     EffLt         <- rep(PV["EffLt"],month)
   }
-  ########################################################################################
-  # ######################    LTBI TREATMENT DEFAULT          ######################
-  # pDefLt<-rep(comprate,month)   ### PROBABILITY OF LATENT TREATMENT DEFAULT
-  # ###################### LTBI TREATMENT COMPLETION PROGRAM CHANGE ######################
-  # if (prg_chng["ltbi_comp_frc"] != 1-(round(pDefLt[prg_m], 2))){
-  #   pDefLt[prg_m:length(pDefLt)]<-(1-prg_chng["ltbi_comp_frc"])
-  # }
+
+  #### #### #### INT 1 #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
+  pctDoc <- (1-0.28)
+  if(Int1==1) {
+    for(i in 1:11) ImmLat[,i] <- ImmLat[,i]*(1-LgtCurve(intv_yr,intv_yr+5,1)*SensLt[4,1]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
+    for(i in 1:11) ImmAct[,i] <- ImmAct[,i]*(1-LgtCurve(intv_yr,intv_yr+5,1)*SensLt[4,1]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
+    for(i in 1:11) ImmFst[,i] <- ImmFst[,i]*(1-LgtCurve(intv_yr,intv_yr+5,1)*SensLt[4,1]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
+    ImmNon      <- TotImmAge[1:month,]-ImmAct-ImmFst-ImmLat
+  }
   ### because of the introduction of new time varying parameters, we will create a matrix to
   ### hold the latent treatment parameters
   LtTxPar       <- matrix(NA,3,month)
   LtTxPar       <- cbind(pTlInt,pDefLt,EffLt)
 
   pImmScen    <- PV["pImmScen"] # lack of reactivitiy to IGRA for Sp
+
+
+  #### #### #### INT 2 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
+  ### HOW TO ADD PROGRAM CHANGE HERE?
+  if(Int2==1) { rLtScrt     <- rLtScrt  + LgtCurve(intv_yr,intv_yr+5,1)*rLtScrt*1}
+  pImmScen   <- PV["pImmScen"] # lack of reactivitiy to IGRA for Sp
 
   ################################################################################
   #######################         TB DIAGNOSIS            ########################
@@ -642,6 +646,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   InputParams[["mubt"]]      = mubt
   InputParams[["RelInf"]]    = RelInf
   InputParams[["RelInfRg"]]  = RelInfRg
+  InputParams[["RRcrAG"]]    = RRcrAG
   InputParams[["Vmix"]]      = Vmix
   InputParams[["rEmmigFB"]]  = rEmmigFB
   InputParams[["TxVec"]]     = TxVec
@@ -658,8 +663,6 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   InputParams[["ttt_pop_scrn"]]<-ttt_pop_scrn/12
   InputParams[["ttt_ltbi"]]<-ttt_list[["RRPrev"]]
   InputParams[["rLtScrt"]]   = rLtScrt
-  InputParams[["rrTestHr"]]   <- c(1,rrTestHr)
-  InputParams[["rrTestNoTb"]] <- c(rrTestLrNoTb,1,1)
   InputParams[["RRdxAge"]]   = RRdxAge
   InputParams[["rRecov"]]    = rRecov
   InputParams[["pImmScen"]]  = pImmScen
@@ -669,6 +672,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   InputParams[["aging_denom"]] <-spl_den
   InputParams[["adj_fact"]] <- adj_fact
   InputParams[["NixTrans"]] <- NixTrans
+
   InputParams[["ResNam"]]    <- func_ResNam()
   return(InputParams)
 

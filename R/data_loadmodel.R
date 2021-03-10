@@ -14,19 +14,23 @@ model_load<-function(loc="US"){
 #'load necessary datasets
 #'Model Input
 if (loc=="US"){
-  CalibDat<<-readRDS(system.file("US/US_CalibDat_03-06-19.rds", package="MITUS"))
-  ParamInit<<-as.data.frame(readRDS(system.file("US/US_ParamInit_2019-09-09.rds", package="MITUS")))
-  StartVal<<-readRDS(system.file("US/US_StartVal_2019-09-09.rds", package="MITUS"))
-  Inputs<<-readRDS(system.file("US/US_Inputs_06-26-19.rds", package="MITUS"))
-  Opt<<-readRDS(system.file("US/US_Optim_all_10_1031.rds", package = "MITUS"))
-  Par<<-readRDS(system.file("US/US_Param_all_10_1101.rds", package = "MITUS"))
+  CalibDat<<-readRDS(system.file("US/US_CalibDat_2021-01-28.rds", package="MITUS"))
+  ParamInit<<-as.data.frame(readRDS(system.file("US/US_ParamInit_2020-08-20.rds", package="MITUS")))
+  StartVal<<-readRDS(system.file("US/US_StartVal_2021-03-02.rds", package="MITUS"))
+  Inputs<<-readRDS(system.file("US/US_Inputs_08-31-20.rds", package="MITUS"))
+  #Opt and Par created from the 03032021 optim run
+  Opt <<- readRDS(system.file("US/US_Optim_all_10_0309.rds", package="MITUS"))
+  Par <<- readRDS(system.file("US/US_Param_all_10_0309.rds", package="MITUS"))
+
 } else {
-  CalibDat<<-CalibDatState<<-readRDS(system.file("ST/ST_CalibDat_07-15-19.rds", package="MITUS"))
-  ParamInit_st<<-ParamInit<<-readRDS(system.file("ST/ST_ParamInit_2019-11-03.rds", package="MITUS"))
-  StartVal_st<<-StartVal<<-readRDS(system.file("ST/ST_StartVal_2019-11-03.rds", package="MITUS"))
-  Inputs<<-readRDS(system.file(paste0(loc,"/",loc,"_ModelInputs_08-05-19.rds"), package="MITUS"))
-  Opt<<-readRDS(system.file(paste0(loc,"/",loc,"_Optim_all_10_0201.rds"), package = "MITUS"))
-  Par<<-readRDS(system.file(paste0(loc,"/",loc,"_Param_all_10_0201.rds"), package = "MITUS"))
+  CalibDat<<-CalibDatState<<-readRDS(system.file("ST/ST_CalibDat_2020-12-03.rds", package="MITUS"))
+  ParamInit_st<<-ParamInit<<-readRDS(system.file("ST/ST_ParamInit_2021-03-04.rds", package="MITUS"))
+  StartVal_st<<-StartVal<<-readRDS(system.file("ST/ST_StartVal_2021-03-04.rds", package="MITUS"))
+  Inputs<<-readRDS(system.file(paste0(loc,"/",loc,"_ModelInputs_10-19-20.rds"), package="MITUS"))
+  #last input change was to update the RR active TB by age in immigrants
+  #top 25 state optims are from the 0304 state optims based on the 0303 US optim run
+  Opt<<-readRDS(system.file(paste0(loc,"/",loc,"_Optim_all_10_0309.rds"), package = "MITUS"))
+  Par<<-readRDS(system.file(paste0(loc,"/",loc,"_Param_all_10_0309.rds"), package = "MITUS"))
 }
 
 if (loc=="US"){
@@ -57,6 +61,7 @@ if (loc=="US"){
   idZ2 <<- ParamInitZ[,4]==2
   ParamInit<<-ParamInit_st
 }
+  prgchng<<-def_prgchng(P)
 
 return(invisible(NULL))
 }
@@ -95,9 +100,6 @@ model_load_demo<-function(loc="US"){
 
   } else {
     wts <<- CalibDatState[["ImptWeights"]]
-    wtZ <- wts[44:67];  wtZ["2016"] <- 4
-    wtZ<<-wtZ
-
   }
   #'creation of background parameters
   #'elements of P will be replaced from either the StartVals in the case

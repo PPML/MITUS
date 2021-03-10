@@ -177,7 +177,6 @@ reblncd <- function(mubt, can_go, RRmuHR, RRmuRF, HRdist, dist_gen_v, adj_fact) 
     .Call('_MITUS_reblncd', PACKAGE = 'MITUS', mubt, can_go, RRmuHR, RRmuRF, HRdist, dist_gen_v, adj_fact)
 }
 
-#'@title This is the simulation model code.
 #'@name cSim
 #'@description runs a simulation of the tb model
 #'@param nYrs number of years to run the model.
@@ -190,7 +189,7 @@ reblncd <- function(mubt, can_go, RRmuHR, RRmuRF, HRdist, dist_gen_v, adj_fact) 
 #'@param MpfastPI Matrix of the probabilities of fast TB progression w/ partial immunity (age x TB prog risk group)
 #'@param Mrslow matrix of the rates of slow progression (age x TB prog risk group)
 #'@param rrSlowFB rate of fast TB progression
-#'@param RRcurDef Rate Ratio for cure given treatment defaul
+#'@param RRcurDef Rate Ratio for cure given treatment default
 #'@param rSlfCur rate of self cure from active TB
 #'@param p_HR probability of high risk population @ entry into the model
 #'@param vTMort vector of TB mortality rates
@@ -207,20 +206,19 @@ reblncd <- function(mubt, can_go, RRmuHR, RRmuRF, HRdist, dist_gen_v, adj_fact) 
 #'@param mubt background mortality over time
 #'@param RelInf beta
 #'@param RelInfRg beta based off of risk group
+#'@param RRcrAG rate ratio for contact rate by ag
 #'@param Vmix 1-sigma
 #'@param rEmmigFB rate of emmigration in non-US born population
 #'@param TxVec vector of parameters for TB Tx
 #'@param TunTxMort Tuning parameter for mortality on TB Tx
 #'@param rDeft rate of default from TB treatment over time
 #'@param rLtScrt rate of latent screening over time
-#'@param rrTestHr RR of latent testing for HR
-#'@param rrTestNoTb RR of latent testing for those without TB
 #'@param ttt_samp_dist probabilities of screening for ttt intervention
 #'@param ttt_ag which age groups to apply ttt
 #'@param ttt_na which nativity groups to apply ttt
 #'@param ttt_ltbi how much to increase ltbi
 #'@param ttt_month when to apply ttt interventions
-#'@param ttt_pop_frc population size to apply the ltbi prev to
+#'@param ttt_pop_scrn population size to apply the ltbi prev to
 #'@param LtDxPar_lt matrix of latent diagnosis parameters
 #'@param LtDxPar_nolt matrix of latent diagnosis parameters
 #'@param LtTxPar matrix of latent treatment parameters
@@ -234,7 +232,7 @@ reblncd <- function(mubt, can_go, RRmuHR, RRmuRF, HRdist, dist_gen_v, adj_fact) 
 #'@param dist_gen general distribution across tb progression and mort
 #'@param trans_mat_tot_ages
 #'@return Outputs a list of outputs
-cSim <- function(nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow, rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, net_mig_usb, net_mig_nusb, mubt, RelInf, RelInfRg, Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, rrTestHr, rrTestLrNoTb, LtTxPar, ttt_samp_dist, ttt_ag, ttt_na, ttt_month, ttt_pop_frc, ttt_ltbi, LtDxPar_lt, LtDxPar_nolt, RRdxAge, rRecov, pImmScen, EarlyTrend, pReTx, ag_den, NixTrans, dist_gen, trans_mat_tot_ages) {
-    .Call('_MITUS_cSim', PACKAGE = 'MITUS', nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow, rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, net_mig_usb, net_mig_nusb, mubt, RelInf, RelInfRg, Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, rrTestHr, rrTestLrNoTb, LtTxPar, ttt_samp_dist, ttt_ag, ttt_na, ttt_month, ttt_pop_frc, ttt_ltbi, LtDxPar_lt, LtDxPar_nolt, RRdxAge, rRecov, pImmScen, EarlyTrend, pReTx, ag_den, NixTrans, dist_gen, trans_mat_tot_ages)
+cSim <- function(nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow, rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, net_mig_usb, net_mig_nusb, mubt, RelInf, RelInfRg, RRcrAG, Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, ttt_samp_dist, ttt_ag, ttt_na, ttt_month, ttt_pop_scrn, ttt_ltbi, LtTxPar, LtDxPar_lt, LtDxPar_nolt, RRdxAge, rRecov, pImmScen, EarlyTrend, pReTx, ag_den, NixTrans, dist_gen, trans_mat_tot_ages) {
+    .Call('_MITUS_cSim', PACKAGE = 'MITUS', nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow, rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, net_mig_usb, net_mig_nusb, mubt, RelInf, RelInfRg, RRcrAG, Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, ttt_samp_dist, ttt_ag, ttt_na, ttt_month, ttt_pop_scrn, ttt_ltbi, LtTxPar, LtDxPar_lt, LtDxPar_nolt, RRdxAge, rRecov, pImmScen, EarlyTrend, pReTx, ag_den, NixTrans, dist_gen, trans_mat_tot_ages)
 }
 
