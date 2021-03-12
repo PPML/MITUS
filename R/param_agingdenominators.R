@@ -5,7 +5,7 @@
 
 #'@name age_denom
 #' @param loc two digit mailing abbreviation of state
-#' @return age_den matrix of denominators 10x1201
+#' @return age_den matrix of denominators 10x1213
 #' @export
 
 age_denom<-function(loc){
@@ -31,10 +31,10 @@ age_denom<-function(loc){
     #invert this for the aging rate
     ltd<-1/ltd
 
-    td<-matrix(NA,10,1201)
+    td<-matrix(NA,10,1213)
     for (i in 1:10){
       td[i,1:817]<-SmoCurve(as.numeric(ltd[i,]))
-      td[i,818:1201]<-td[i,817]
+      td[i,818:1213]<-td[i,817]
     }
 
     age_den<-t(td)*12
@@ -74,10 +74,10 @@ age_denom<-function(loc){
     #invert this for the aging rate
 
     ltd<-1/ltd
-    td<-matrix(NA,10,1201)
+    td<-matrix(NA,10,1213)
     for (i in 1:10){
       td[i,1:841]<-SmoCurve_decade_month(as.numeric(ltd[i,]))
-      td[i,842:1201]<-td[i,841]
+      td[i,842:1213]<-td[i,841]
     }
   age_den<-t(td)*12
   } #end of else statement
