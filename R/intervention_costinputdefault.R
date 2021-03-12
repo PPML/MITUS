@@ -16,9 +16,9 @@ def_costinputs<-function(){
   DefcostinputsVec['IGRACost']<-61.98
   DefcostinputsVec['NoTBCost']<-52.38
 
-  DefcostinputsVec['3HPCost']<-675
-  DefcostinputsVec['4RCost']<-360
-  DefcostinputsVec['3HRCost']<-355
+  DefcostinputsVec['3HPCost']<-407.64
+  DefcostinputsVec['4RCost']<-350.64
+  DefcostinputsVec['3HRCost']<-349.42
 
   DefcostinputsVec['TBIdCost']<-0
   #TST,XRAY,Sputum culture, & susceptibility
