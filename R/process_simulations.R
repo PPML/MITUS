@@ -18,7 +18,7 @@
 #'@param ttt_list list of targeted testing and treatment values
 #'@return results data frame of output
 #'@export
-OutputsZint <-  function(samp_i=1,ParMatrix,loc, startyr=1950, endyr=2051,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,prg_chng, ttt_list) {
+OutputsZint <-  function(samp_i=1,ParMatrix,loc, startyr=1950, endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,prg_chng, ttt_list) {
   if(min(dim(as.data.frame(ParMatrix)))==1) {
     Par1 <- as.numeric(ParMatrix);
     names(Par1) <- names(ParMatrix)
@@ -85,7 +85,7 @@ OutputsZint <-  function(samp_i=1,ParMatrix,loc, startyr=1950, endyr=2051,Int1=0
 #'@param ttt_list list of targeted testing and treatment values
 #'@return out outputs
 #'@export
-OutputsInt <- function(loc,ParMatrix,n_cores=1,endyr=2051,startyr=1950,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0, prg_chng, ttt_list) {
+OutputsInt <- function(loc,ParMatrix,n_cores=1,endyr=2050,startyr=1950,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0, prg_chng, ttt_list) {
   if(min(dim(as.data.frame(ParMatrix)))==1) {
     out <- OutputsZint(samp_i=1,ParMatrix=ParMatrix,loc=loc,endyr=endyr,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3, prg_chng=prg_chng, ttt_list=ttt_list)
   } else {
@@ -103,6 +103,6 @@ OutputsInt <- function(loc,ParMatrix,n_cores=1,endyr=2051,startyr=1950,Int1=0,In
   if(Int4==1) intv<-5; if(Int5==1) intv<-6; if(Scen1==1) intv<-7;
   if(Scen2==1) intv<-8;if(Scen3==1) intv<-9;
   # saveRDS(out, file=paste("~MITUS/",loc,"_results_",intv,".rds",sep=""))
-  save(out,file=paste("/Users/nis100/MITUS/",loc,"_results_",intv,".rda",sep=""))
+  # save(out,file=paste("/Users/nis100/MITUS/",loc,"_results_",intv,".rda",sep=""))
   return(out)
 }

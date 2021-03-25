@@ -86,12 +86,12 @@ national_OutputsZint <-  function(samp_i=1,ParMatrix,loc, startyr=1950, endyr=20
 #'@param ttt_input list of targeted testing and treatment values
 #'@return out outputs
 #'@export
-national_OutputsInt <- function(loc,ParMatrix,n_cores=1,endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,Scen4=0,prg_chng, ttt_input) {
+national_OutputsInt <- function(loc,ParMatrix,n_cores=1,endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,Scen4=0,prg_chng, ttt_input, care_cascade) {
   if(min(dim(as.data.frame(ParMatrix)))==1) {
-    out <- national_OutputsZint(samp_i=1,ParMatrix=ParMatrix,loc=loc,endyr=endyr,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3,Scen4=Scen4, prg_chng=prg_chng, ttt_input=ttt_input)
+    out <- national_OutputsZint(samp_i=1,ParMatrix=ParMatrix,loc=loc,endyr=endyr,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3,Scen4=Scen4, prg_chng=prg_chng, ttt_input=ttt_input, care_cascade = care_cascade)
   } else {
     out0 <- mclapply(X=1:nrow(ParMatrix),FUN=national_OutputsZint,mc.cores=n_cores,
-                     ParMatrix=ParMatrix, loc=loc,endyr=endyr,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3,Scen4=Scen4,prg_chng=prg_chng,ttt_input= ttt_input)
+                     ParMatrix=ParMatrix, loc=loc,endyr=endyr,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3,Scen4=Scen4,prg_chng=prg_chng,ttt_input= ttt_input, care_cascade=care_cascade)
     out <- array(NA,dim=c(length(out0),endyr-(startyr-1),length(func3_ResNam())))
 
     for(i in 1:length(out0)){

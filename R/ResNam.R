@@ -229,7 +229,13 @@ func_ResNam<-function(){
               paste("65+","NUS","NM1",StatList[[4]],sep="_"),
               paste("65+","NUS","NM2",StatList[[4]],sep="_"),
               paste("65+","NUS","NM3",StatList[[4]],sep="_"),
-              paste("65+","NUS","NM4",StatList[[4]],sep="_")
+              paste("65+","NUS","NM4",StatList[[4]],sep="_"),
+
+              "N_Tx_Naive",
+
+              paste("NOTIF_US",StatList[[6]],sep="_"),           # notif by nat & rg cat
+              paste("NOTIF_NUS",StatList[[6]],sep="_")           # notif by nat & rg cat
+
 
 
   )
