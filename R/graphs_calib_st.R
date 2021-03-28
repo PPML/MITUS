@@ -13,7 +13,7 @@ calib_graphs_st <- function(df,loc, Par_list,pdf=TRUE, cex.size=.75){
   st<-which(StateID$USPS==loc)
   df<-as.data.frame(df)
   if (pdf==TRUE){
-  pdfname<-paste("MITUS_results/",loc,"_calib_graphs_2020-12-17.pdf",sep="")
+  pdfname<-paste("MITUS_results/",loc,"_calib_graphs_2021-03-27.pdf",sep="")
   pdf(file=pdfname, width = 11, height = 8.5)
   par(mfrow=c(2,2),mar=c(4,4.5,3,1))
 }
@@ -726,17 +726,18 @@ calib_graphs_st <- function(df,loc, Par_list,pdf=TRUE, cex.size=.75){
 
   ################################################################################
   # Age Distribution of TB Deaths 1999-2014
-  V  <- df[50:68,227:237]
+  V  <- df[50:69,227:237]
   V2 <- V[,-11]; V2[,10] <- V[,10]+V[,11]
   V3 <- colSums(V2)*1e6
+  V3 <- V3/sum(V3)*100
 
-  tb_deaths_dist  <- CalibDatState$tbdeaths_age_yr[,-1]/rowSums(CalibDatState$tbdeaths_age_yr[,-1])
-  tb_deaths      <- as.data.frame(as.numeric(CalibDatState$tbdeaths[[st]][,3])*tb_deaths_dist[,])
-  tb_deaths[is.na(tb_deaths)]<-0
+  tb_deaths_dist  <- colSums(CalibDatState$tbdeaths_age_yr[,-1])/sum(CalibDatState$tbdeaths_age_yr[,-1])*100
+  # tb_deaths      <- as.data.frame(as.numeric(CalibDatState$tbdeaths[[st]][,3])*tb_deaths_dist[,])
+  # tb_deaths[is.na(tb_deaths)]<-0
 
   # for (i in length(tb_deaths)){ if(tb_deaths[i]=="NA"){ tb_deaths[i]<-0}}
   #format the plot
-  plot(0,0,ylim=c(0,max(colSums(tb_deaths),V3)*1.5),xlim=c(0.6,10.4),xlab="",ylab="",axes=F)
+  plot(0,0,ylim=c(0,max(tb_deaths_dist,V3)*1.5),xlim=c(0.6,10.4),xlab="",ylab="",axes=F)
   axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
   axis(1,1:10,paste(c("0-4","5-14","15-24","25-34","35-44","45-54","55-64","65-74","75-84","85+"),"\nyears",sep=""),tick=F,cex.axis=0.75)
@@ -745,13 +746,13 @@ calib_graphs_st <- function(df,loc, Par_list,pdf=TRUE, cex.size=.75){
   for(i in 1:10) polygon(i+c(-.5,.5,.5,-.5),c(0,0,V3[i],V3[i]),border="white",col="lightblue")
 
   #reported data for comparison
-  points(1:10,colSums(tb_deaths),pch=19,cex=cex.size,col="black")
+  points(1:10,tb_deaths_dist,pch=19,cex=cex.size,col="black")
 
   #plot text
   mtext("Age Group",1,2.5,cex=cex.size)
-  mtext(paste("Total TB Deaths by Age Group 1999-2018 in",loc,"[NATIONAL]", sep = " "),3,.3,font=2,cex=cex.size)
+  mtext(paste("Total TB Deaths by Age Group 1999-2018 in",loc," (%) [NATIONAL]", sep = " "),3,.3,font=2,cex=cex.size)
   legend("topleft",c("Reported data","Model"),pch=c(19,15),lwd=NA,
-         pt.cex=c(1,2),col=c("black","lightblue"),bg="white",cex=cex.size*1.5)
+         pt.cex=c(1,2),col=c("black","lightblue"),bg="white",cex=cex.size)
 
   ################################################################################
   # total tb deaths over time 1999-2016
@@ -777,7 +778,7 @@ calib_graphs_st <- function(df,loc, Par_list,pdf=TRUE, cex.size=.75){
   mtext("Year",1,2.5,cex=cex.size)
   mtext(paste("Total TB Deaths by Year 2008-2018 in", loc, sep=" "),3,.3,font=2,cex=cex.size)
   legend("topright",c("Reported data","Model"),pch=c(19,NA),lwd=c(1,2),
-         col=c("black","blue"),lty=c(3,1),bg="white",pt.cex=c(0.6,NA),cex=cex.size*1.5)
+         col=c("black","blue"),lty=c(3,1),bg="white",pt.cex=c(0.6,NA),cex=cex.size)
   ################################################################################
   graphs_pub(Par_list=Par_list)
 if (pdf==TRUE) {dev.off()}
