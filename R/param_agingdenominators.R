@@ -53,6 +53,16 @@ age_denom<-function(loc){
     rownames(popdist)<-pop[,2]
     popdist<-as.matrix(popdist)
 
+    if (loc %in% c("AK","HI")){
+      years<-c(2017,2010,2000,1990,1980,1970,1960)
+      for (i in 1:nrow(popdist)){
+        pop2<-rev(popdist[i,-1])
+        coeff<-lm(pop2~years)$coefficients
+        estim<-round((coeff[2]*1950)+coeff[1])
+        if (estim<0) estim<-0
+        popdist[i,1]<-estim
+      }}
+
     #calculate the percentage of the total age band in each single year age
     ltd<-matrix(NA,10,8)
     ltd[1,]<-popdist[5,]/colSums(popdist[1:5,])
@@ -66,6 +76,7 @@ age_denom<-function(loc){
     ltd[9,]<-popdist[85,]/colSums(popdist[76:85,])
     ltd[10,]<-popdist[95,]/colSums(popdist[86:95,])
 
+    for (i in 1:length(ltd)) if(is.na(ltd[i])) ltd[i]<-0
 
     for (i in 1:length(ltd)){
     if (ltd[i]==0){
