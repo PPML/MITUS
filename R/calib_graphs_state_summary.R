@@ -10,7 +10,7 @@ calib_graphs_st_summary<-function(locvec,date){
     print(loc)
     st<-which(StateID$USPS==loc) #find numerical representation of this location
     model_load(loc) ##make sure to add our Opts into here
-    Opt<-readRDS(system.file(paste0(loc,"/",loc,"_Optim_all_10_0304.rds"), package="MITUS"))
+    Opt<-readRDS(system.file(paste0(loc,"/",loc,"_Optim_all_10_0305.rds"), package="MITUS"))
 
   #get the right run from the model
     posterior<-round(Opt[,ncol(Opt)],2); print(posterior)
@@ -316,33 +316,30 @@ calib_graphs_st_summary<-function(locvec,date){
            pt.cex=c(1,2,2),col=c("black","lightblue", "pink"),bg="white",cex=cex.size)
 
     ################################################################################
-    # Age Distribution of TB Deaths 1999-2014
-    V  <- df[50:68,227:237]
-    V2 <- V[,-11]; V2[,10] <- V[,10]+V[,11]
-    V3 <- colSums(V2)*1e6
+    # total tb deaths over time 1999-2016
+    #tb deaths 2006-2016
+    V   <- rowSums(df[59:69,227:237])*1e6
+    tb_death_tot<-as.numeric(CalibDatState$tbdeaths[[st]][10:20,3])
+    tb_death_tot[is.na(tb_death_tot)]<-0
 
-    tb_deaths_dist  <- CalibDatState$tbdeaths_age_yr[,-1]/rowSums(CalibDatState$tbdeaths_age_yr[,-1])
-    tb_deaths      <- as.data.frame(as.numeric(CalibDatState$tbdeaths[[st]][,3])*tb_deaths_dist[,])
-    tb_deaths[is.na(tb_deaths)]<-0
-
-    # for (i in length(tb_deaths)){ if(tb_deaths[i]=="NA"){ tb_deaths[i]<-0}}
     #format the plot
-    plot(0,0,ylim=c(0,max(colSums(tb_deaths),V3)*1.5),xlim=c(0.6,10.4),xlab="",ylab="",axes=F)
-    axis(2,las=2);box()
+    plot(0,0,ylim=c(0,max(V,tb_death_tot)*1.5),xlim=c(2008,2018),xlab="",ylab="",axes=F)
+    axis(1);axis(2,las=2);box()
     abline(h=axTicks(2),col="grey85")
-    axis(1,1:10,paste(c("0-4","5-14","15-24","25-34","35-44","45-54","55-64","65-74","75-84","85+"),"\nyears",sep=""),tick=F,cex.axis=0.75)
 
     #plot the model data
-    for(i in 1:10) polygon(i+c(-.5,.5,.5,-.5),c(0,0,V3[i],V3[i]),border="white",col="lightblue")
+    lines(2008:2018,V,lwd=2,col="blue")
 
     #reported data for comparison
-    points(1:10,colSums(tb_deaths),pch=19,cex=cex.size,col="black")
+    points(2008:2018,tb_death_tot,pch=19,cex=0.6,col="black")
+    lines (2008:2018,tb_death_tot,lty=3,col="black")
 
     #plot text
-    mtext("Age Group",1,2.5,cex=cex.size)
-    mtext(paste("Total TB Deaths by Age Group 1999-2018 in",loc, sep = " "),3,.3,font=2,cex=cex.size)
-    legend("topleft",c("Reported data","Model"),pch=c(19,15),lwd=NA,
-           pt.cex=c(1,2),col=c("black","lightblue"),bg="white",cex=cex.size)
+
+    mtext("Year",1,2.5,cex=cex.size)
+    mtext(paste("Total TB Deaths by Year 2008-2018 in", loc, sep=" "),3,.3,font=2,cex=cex.size)
+    legend("topright",c("Reported data","Model"),pch=c(19,NA),lwd=c(1,2),
+           col=c("black","blue"),lty=c(3,1),bg="white",pt.cex=c(0.6,NA),cex=cex.size)
   }
   dev.off()
 }
