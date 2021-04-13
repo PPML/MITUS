@@ -1823,16 +1823,16 @@ Rcpp::List cSim(
 
                   base_diag=(V0[ag][2][0][im][nm][rg][na] + V0[ag][3][0][im][nm][rg][na])*rTbP;
 
-                  Outputs[y][151] += (base_diag + ((V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*rTbP_norm))*LtTxParN[s][0] +
+                  Outputs[y][151] += (base_diag + VLdx[ag][2][0][im][nm][rg][na]+VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0] +
                     ((V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxParN[s][0]);//all inits (((1- pop_frc)*rTbN) + (pop_frc*(1-(rTbP*rr_ltbi))))*LtTxParN[s][0]; //all init
                   if(na>0) {
-                    Outputs[y][152] += (base_diag +  ((V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*rTbP_norm))*LtTxParN[s][0] +
+                    Outputs[y][152] += (base_diag + VLdx[ag][2][0][im][nm][rg][na]+VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0] +
                       ((V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxParN[s][0]);} // FB inits
                   if(rg==1) {
-                    Outputs[y][153] +=  (base_diag + ((V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*rTbP_norm))*LtTxParN[s][0] +
+                    Outputs[y][153] +=  (base_diag + VLdx[ag][2][0][im][nm][rg][na]+VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0] +
                       ((V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxParN[s][0]); } // high risk inits
 
-                  Outputs[y][154] += (base_diag +  ((V0[ag][2][0][im][nm][rg][na]+V0[ag][3][0][im][nm][rg][na])*rTbP_norm))*LtTxParN[s][0]; // inits with LTBI
+                  Outputs[y][154] += (base_diag + VLdx[ag][2][0][im][nm][rg][na]+VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0]; // inits with LTBI
                   // } } } } }
                   for(int i=151; i<155; i++) { Outputs[y][i] = Outputs[y][i]*12; } // annualize
 
