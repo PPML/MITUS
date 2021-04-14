@@ -20,6 +20,8 @@ national_OutputsZint(
   Scen2 = 0,
   Scen3 = 0,
   Scen4 = 0,
+  Scen5 = 0,
+  Scen6 = 0,
   prg_chng,
   ttt_input,
   care_cascade

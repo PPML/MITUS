@@ -1,5 +1,5 @@
 # ###Taking the TB burden data to PrevTrend form
-crude_rate<-function(Inputs, loc){
+crude_rate<-function(Inputs, loc,r_decline){
 # totcase<-Inputs$ImmigInputs$TBBurdenImmig*(90/1e5)*(Inputs$ImmigInputs$TotByYear[1:69]*1e6)
 
 #RR of TB prevalence across age groups
@@ -30,9 +30,9 @@ crude_rate<-function(Inputs, loc){
 # }
 cruderatepast<-Inputs$ImmigInputs$TBBurdenImmig*(90/1e5)
 cruderatefuture<-rep(NA,151-69)
-cruderatefuture[1]<-cruderatepast[69]*0.985 #decline at 1.5 percent each year
+cruderatefuture[1]<-cruderatepast[69]*(1-r_decline)
 for (i in 2:length(cruderatefuture)){
-  cruderatefuture[i]<-cruderatefuture[i-1]*0.985
+  cruderatefuture[i]<-cruderatefuture[i-1]*(1-r_decline)
 }
 #combine past and future
 cruderate<-c(cruderatepast,cruderatefuture)

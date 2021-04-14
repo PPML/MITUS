@@ -16,12 +16,14 @@
 #'@param Scen1 boolean for scenario 1
 #'@param Scen2 boolean for scenario 2
 #'@param Scen3 boolean for scenario 3
-#'@param Scen4 boolean for scenario 3
+#'@param Scen4 boolean for scenario 4
+#'@param Scen5 boolean for scenario 5
+#'@param Scen6 boolean for scenario 6
 #'@param prg_chng vector of program change values
 #'@param ttt_input list of ttt changes
 #'@return InputParams list
 #'@export
-national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,Scen4=0,prg_chng, ttt_input){
+national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,Scen4=0,Scen5=0, Scen6=0,prg_chng, ttt_input){
   ########## DEFINE A VARIABLE THAT WILL DETERMINE HOW LONG THE TIME DEPENDENT
   ########## VARIABLES SHOULD BE
   month<-1213;
@@ -68,7 +70,17 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   InitPop          <- Inputs[["InitPop"]]
   Births           <- Inputs[["Births"]]
   ImmigInputs      <- Inputs[["ImmigInputs"]]
-  ImmigInputs$PrevTrend25_34<-crude_rate(Inputs,loc)
+
+  ##################### CHECK FOR SCENARIO 5             ########################
+  ##################### CHANGES IMMIGRATION VOLUME       ########################
+  if(Scen6==1){
+    r_decline=.03
+  } else if (Scen6==2){
+    r_decline=0
+  } else {
+    r_decline=0.015
+  }
+  ImmigInputs$PrevTrend25_34<-crude_rate(Inputs,loc,r_decline)
   TxInputs         <- Inputs[["TxInputs"]]
   NetMig           <- Inputs[["NetMigrState"]]
 
@@ -141,6 +153,22 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
 
   ######################         IMMIGRATION             ########################
   ######################         OVERALL IMM.            ########################
+
+  ##################### CHECK FOR SCENARIO 5             ########################
+  ##################### CHANGES IMMIGRATION VOLUME       ########################
+  if(Scen5==0){
+    Inputs$ImmigInputs[["TotByYear"]]<-Inputs$ImmigInputs[["TotByYear"]]
+  } else if(Scen5==1){
+    low_immig<-base_immig<-Inputs$ImmigInputs[["TotByYear"]]
+    low_immig[69:151]<-exp(log(base_immig[69:151])-(log(base_immig[69:151]*1.5)-log(base_immig[69:151])))
+    Inputs$ImmigInputs[["TotByYear"]] <-low_immig
+    #high immigration
+  } else if (Scen5==2){
+    high_immig<-Inputs$ImmigInputs[["TotByYear"]]
+    high_immig[69:151]<-Inputs$ImmigInputs[["TotByYear"]][69:151]*1.5
+    Inputs$ImmigInputs[["TotByYear"]] <-high_immig
+  }
+  ####################### calculate the age immigration #######################
   TotImmig0       <- (c(Inputs$ImmigInputs[[1]][1:151])+c(rep(0,71),cumsum(rep(PV["ImmigVolFut"],80))))/12*PV["ImmigVol"]
   TotImmAge0      <-matrix(0,151,11)
   for (i in 1:151){
@@ -189,7 +217,7 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
     ImmNon        <- TotImmAge[1:month,]-ImmAct-ImmFst-ImmLat
     SpImmNon<-baseline_ImmNon-ImmNon
   }
-
+#no immigration immediately at 2020
   if(Scen2==2) {
     baseline_ImmNon<-ImmNon
     vec.change<-c(rep(1,intv_m), rep(0,month-intv_m))
@@ -511,10 +539,10 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   rDxt           <- 1/(1/rDxt1+DelaySp)*SensSp
   rDxt[,2]       <- (rDxt[,1]-min(rDxt[,1]))/PV["rrDxH"]+min(rDxt[,1]) #check this with Nick
   colnames(rDxt) <- c("Active","Active_HighRisk")
-
   #### #### #### INT 3 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
-  if(Int3==1) { for(i in 1:2) { rDxt[,i] <- rDxt[,i]+ rDxt[,i]*LgtCurve(intv_yr,intv_yr+5,1)     }   }
+  if(Int3==1) { for(i in 1:2) { rDxt[,i] <- rDxt[,i]+ rDxt[,i]*LgtCurve(intv_yr,intv_yr+5,.5)     }   }
+  if(Int3==2) { for(i in 1:2) { rDxt[,i] <- rDxt[,i]- rDxt[,i]*LgtCurve(intv_yr,intv_yr+5,.1)     }   }
 
   #### #### #### INT 3 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 

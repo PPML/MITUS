@@ -15,12 +15,16 @@
 #'@param Scen2 boolean for scenario 2
 #'@param Scen3 boolean for scenario 3
 #'@param Scen4 boolean for scenario 4
+#'@param Scen5 boolean for scenario 3
+#'@param Scen6 boolean for scenario 4
 #'@param prg_chng vector of program change values
 #'@param ttt_input list of targeted testing and treatment values
 #'@param care_cascade
 #'@return results data frame of output
 #'@export
-national_OutputsZint <-  function(samp_i=1,ParMatrix,loc, startyr=1950, endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,Scen4=0,prg_chng, ttt_input, care_cascade) {
+national_OutputsZint <-  function(samp_i=1,ParMatrix,loc, startyr=1950, endyr=2050,
+                                  Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,Scen4=0,Scen5=0,Scen6=0,
+                                  prg_chng, ttt_input, care_cascade) {
   if(min(dim(as.data.frame(ParMatrix)))==1) {
     Par1 <- as.numeric(ParMatrix);
     names(Par1) <- names(ParMatrix)
@@ -38,11 +42,13 @@ national_OutputsZint <-  function(samp_i=1,ParMatrix,loc, startyr=1950, endyr=20
   Scen2 <<- Scen2;
   Scen3 <<- Scen3;
   Scen4 <<- Scen4;
+  Scen5 <<- Scen5;
+  Scen6 <<- Scen6;
 
 
 
   prms <- list()
-  prms <- national_param_init(P,loc,Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3,Scen4,prg_chng,ttt_input)
+  prms <- national_param_init(P,loc,Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3,Scen4,Scen5,Scen6,prg_chng,ttt_input)
   # print(prms$ttt_sampling_dist)
   trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
 
@@ -86,12 +92,12 @@ national_OutputsZint <-  function(samp_i=1,ParMatrix,loc, startyr=1950, endyr=20
 #'@param ttt_input list of targeted testing and treatment values
 #'@return out outputs
 #'@export
-national_OutputsInt <- function(loc,ParMatrix,n_cores=1,endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,Scen4=0,prg_chng, ttt_input, care_cascade) {
+national_OutputsInt <- function(loc,ParMatrix,n_cores=1,endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,Scen4=0,Scen5=0,Scen6=0,prg_chng, ttt_input, care_cascade) {
   if(min(dim(as.data.frame(ParMatrix)))==1) {
-    out <- national_OutputsZint(samp_i=1,ParMatrix=ParMatrix,loc=loc,endyr=endyr,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3,Scen4=Scen4, prg_chng=prg_chng, ttt_input=ttt_input, care_cascade = care_cascade)
+    out <- national_OutputsZint(samp_i=1,ParMatrix=ParMatrix,loc=loc,endyr=endyr,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3,Scen4=Scen4,Scen5=Scen5,Scen6=Scen6, prg_chng=prg_chng, ttt_input=ttt_input, care_cascade = care_cascade)
   } else {
     out0 <- mclapply(X=1:nrow(ParMatrix),FUN=national_OutputsZint,mc.cores=n_cores,
-                     ParMatrix=ParMatrix, loc=loc,endyr=endyr,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3,Scen4=Scen4,prg_chng=prg_chng,ttt_input= ttt_input, care_cascade=care_cascade)
+                     ParMatrix=ParMatrix, loc=loc,endyr=endyr,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3,Scen4=Scen4,Scen5=Scen5,Scen6=Scen6,prg_chng=prg_chng,ttt_input= ttt_input, care_cascade=care_cascade)
     out <- array(NA,dim=c(length(out0),endyr-(startyr-1),length(func3_ResNam())))
 
     for(i in 1:length(out0)){

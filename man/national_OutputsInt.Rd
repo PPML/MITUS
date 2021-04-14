@@ -18,8 +18,11 @@ national_OutputsInt(
   Scen2 = 0,
   Scen3 = 0,
   Scen4 = 0,
+  Scen5 = 0,
+  Scen6 = 0,
   prg_chng,
-  ttt_input
+  ttt_input,
+  care_cascade
 )
 }
 \arguments{
