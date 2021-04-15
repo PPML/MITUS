@@ -1,4 +1,4 @@
-﻿,BcValue,Lower,Upper,B0_G1_N2,Calib
+,BcValue,Lower,Upper,B0_G1_N2,Calib
 TunBirths,1,0.9,1.1,1,0
 TunMubt,1,0.85,1.15,1,1
 TunmuAg,0,-0.2,0.2,2,1
@@ -7,6 +7,11 @@ TunmuTbAg,0.5,0.2,0.8,1,0
 RRmuHR,3.4,2.3,4.8,1,1
 ImmigVol,1,0.5,1.7,1,1
 ImmigVolFut,0,-0.01,0.01,2,0
+TB1,0,-1,1,2,1
+TB2,0,-1,1,2,1
+TB3,0,-1,1,2,1
+TB4,0,-1,1,2,1
+TB5,0,-1,1,2,1
 RRtbprev,0,-0.2,1.25,2,1
 LtbiPar1,1.5,0.5,3,2,1
 LtbiPar2,1.5,0.5,3,2,1
