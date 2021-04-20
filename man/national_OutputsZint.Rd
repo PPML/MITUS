@@ -56,6 +56,10 @@ national_OutputsZint(
 
 \item{Scen4}{boolean for scenario 4}
 
+\item{Scen5}{boolean for scenario 3}
+
+\item{Scen6}{boolean for scenario 4}
+
 \item{prg_chng}{vector of program change values}
 
 \item{ttt_input}{list of targeted testing and treatment values}
