@@ -133,3 +133,18 @@ getmode <- function(v) {
   uniqv <- unique(v)
   uniqv[which.max(tabulate(match(v, uniqv)))]
 }
+
+### LIST OF LOCATION VECTORS IN TERMS OF ABSOLUTE INCIDENCE OTIS
+ordered_locs<-c(
+  "CA", "TX", "NY", "FL", "IL",
+  "NJ", "GA", "PA", "MD", "VA",
+  "MA", "NC", "WA", "AZ", "OH",
+  "MN", "TN", "HI", "IN", "MI",
+  "LA", "AL", "SC", "MO", "OR", #25
+  "MS", "AR", "OK", "NV", "KY",
+  "CO", "AK", "CT", "IA", "WI",
+  "NM", "DC", "KS", "NE", "DE",
+  "RI", "UT", "ID", "ME", "ND",
+  "NH", "SD", "WV", "MT", "VT",
+  "WY"
+)
