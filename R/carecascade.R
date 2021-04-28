@@ -1,11 +1,12 @@
 def_care_cascade<-function(){
-  care_cascade<-rep(0,5)
+  care_cascade<-rep(0,6)
   names(care_cascade)<-c(
   "ttt_ltbi_init",
   "ttt_ltbi_comp",
   "ttt_ltbi_eff",
   "ttt_ltbi_sens",
-  "ttt_ltbi_spec"
+  "ttt_ltbi_spec",
+  "ttt_ltbi_accept"
   )
   return(care_cascade)
   }

@@ -49,9 +49,7 @@ national_OutputsZint <-  function(samp_i=1,ParMatrix,loc, startyr=1950, endyr=20
 
   prms <- list()
   prms <- national_param_init(P,loc,Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3,Scen4,Scen5,Scen6,prg_chng,ttt_input)
-  # print(prms$ttt_sampling_dist)
   trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
-
   if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
   m <- temp_national_cSim( nYrs       = endyr-(startyr-1)         , nRes      = length(func3_ResNam())  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
                       Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]  ,
@@ -63,7 +61,7 @@ national_OutputsZint <-  function(samp_i=1,ParMatrix,loc, startyr=1950, endyr=20
                       TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
                       LtDxPar_lt    = prms[["LtDxPar_lt"]]   , LtDxPar_nolt    = prms[["LtDxPar_nolt"]]   , rLtScrt   = prms[["rLtScrt"]]       , ttt_samp_dist   = prms[["ttt_sampling_dist"]] ,
                       ttt_month = prms[["ttt_month"]], ttt_ltbi = prms[["ttt_ltbi"]], ttt_pop_scrn = prms[["ttt_pop_scrn"]],
-                      ttt_ltbi_init=care_cascade[1], ttt_ltbi_comp=care_cascade[2], ttt_ltbi_eff=care_cascade[3], ttt_ltbi_sens=care_cascade[4], ttt_ltbi_spec=care_cascade[5],
+                      ttt_ltbi_init=care_cascade[1], ttt_ltbi_comp=care_cascade[2], ttt_ltbi_eff=care_cascade[3], ttt_ltbi_sens=care_cascade[4], ttt_ltbi_spec=care_cascade[5], ttt_ltbi_accept=care_cascade[6],
                       RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
                       EarlyTrend = prms[["EarlyTrend"]], ag_den=prms[["aging_denom"]],  NixTrans = prms[["NixTrans"]], NixTb = prms[["NixTb"]],   trans_mat_tot_ages = trans_mat_tot_ages)$Outputs
   colnames(m) <- func3_ResNam();
