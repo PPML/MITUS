@@ -11,7 +11,7 @@ risk_pop_setup<-function(){
   Contact<-c(.2,1,1,8)
   load(system.file("US/US_results_1.rda", package="MITUS"))
   results<-out[1,,]
-  Immigrants<-c(sum(results[71,635:682]),1,1,1) #match tabby2
+  Migrants<-c(sum(results[71,31:32]),1,1,1) #match tabby2
   Healthcare<-c(18,1,1,5)
   Congregate<-c(4,1,3.4,5.3) #values are for homeless rn
   ################################################################################
@@ -21,7 +21,7 @@ risk_pop_setup<-function(){
   HIV_ttt_vec[[3]]<-HIV[1]
   HIV_ttt_vec[[4]]<-1
   HIV_ttt_vec[[5]]<-2020
-  HIV_ttt_vec[[6]]<-2021
+  HIV_ttt_vec[[6]]<-2020
   HIV_ttt_vec[[7]]<-HIV[2]
   HIV_ttt_vec[[8]]<-HIV[3]
   HIV_ttt_vec[[9]]<-HIV[4]
@@ -32,7 +32,7 @@ risk_pop_setup<-function(){
   Diab_ttt_vec[[3]]<-Diab[1]
   Diab_ttt_vec[[4]]<-1
   Diab_ttt_vec[[5]]<-2020
-  Diab_ttt_vec[[6]]<-2021
+  Diab_ttt_vec[[6]]<-2020
   Diab_ttt_vec[[7]]<-Diab[2]
   Diab_ttt_vec[[8]]<-Diab[3]
   Diab_ttt_vec[[9]]<-Diab[4]
@@ -43,7 +43,7 @@ risk_pop_setup<-function(){
   Silica_ttt_vec[[3]]<-Silica[1]
   Silica_ttt_vec[[4]]<-1
   Silica_ttt_vec[[5]]<-2020
-  Silica_ttt_vec[[6]]<-2021
+  Silica_ttt_vec[[6]]<-2020
   Silica_ttt_vec[[7]]<-Silica[2]
   Silica_ttt_vec[[8]]<-Silica[3]
   Silica_ttt_vec[[9]]<-Silica[4]
@@ -54,7 +54,7 @@ risk_pop_setup<-function(){
   CKD_ttt_vec[[3]]<-CKD[1]
   CKD_ttt_vec[[4]]<-1
   CKD_ttt_vec[[5]]<-2020
-  CKD_ttt_vec[[6]]<-2021
+  CKD_ttt_vec[[6]]<-2020
   CKD_ttt_vec[[7]]<-CKD[2]
   CKD_ttt_vec[[8]]<-CKD[3]
   CKD_ttt_vec[[9]]<-CKD[4]
@@ -66,7 +66,7 @@ risk_pop_setup<-function(){
   Child5yr_ttt_vec[[3]]<-Child5yr[1]
   Child5yr_ttt_vec[[4]]<-1
   Child5yr_ttt_vec[[5]]<-2020
-  Child5yr_ttt_vec[[6]]<-2021
+  Child5yr_ttt_vec[[6]]<-2020
   Child5yr_ttt_vec[[7]]<-Child5yr[2]
   Child5yr_ttt_vec[[8]]<-Child5yr[3]
   Child5yr_ttt_vec[[9]]<-Child5yr[4]
@@ -78,7 +78,7 @@ risk_pop_setup<-function(){
   PWID_ttt_vec[[3]]<-PWID[1]
   PWID_ttt_vec[[4]]<-1
   PWID_ttt_vec[[5]]<-2020
-  PWID_ttt_vec[[6]]<-2021
+  PWID_ttt_vec[[6]]<-2020
   PWID_ttt_vec[[7]]<-PWID[2]
   PWID_ttt_vec[[8]]<-PWID[3]
   PWID_ttt_vec[[9]]<-PWID[4]
@@ -90,7 +90,7 @@ risk_pop_setup<-function(){
   Immunosup_ttt_vec[[3]]<-Immunosup[1]
   Immunosup_ttt_vec[[4]]<-1
   Immunosup_ttt_vec[[5]]<-2020
-  Immunosup_ttt_vec[[6]]<-2021
+  Immunosup_ttt_vec[[6]]<-2020
   Immunosup_ttt_vec[[7]]<-Immunosup[2]
   Immunosup_ttt_vec[[8]]<-Immunosup[3]
   Immunosup_ttt_vec[[9]]<-Immunosup[4]
@@ -102,7 +102,7 @@ risk_pop_setup<-function(){
   abCXR_ttt_vec[[3]]<-abCXR[1]
   abCXR_ttt_vec[[4]]<-1
   abCXR_ttt_vec[[5]]<-2020
-  abCXR_ttt_vec[[6]]<-2021
+  abCXR_ttt_vec[[6]]<-2020
   abCXR_ttt_vec[[7]]<-abCXR[2]
   abCXR_ttt_vec[[8]]<-abCXR[3]
   abCXR_ttt_vec[[9]]<-abCXR[4]
@@ -114,23 +114,23 @@ risk_pop_setup<-function(){
   Contact_ttt_vec[[3]]<-Contact[1]
   Contact_ttt_vec[[4]]<-1
   Contact_ttt_vec[[5]]<-2020
-  Contact_ttt_vec[[6]]<-2021
+  Contact_ttt_vec[[6]]<-2020
   Contact_ttt_vec[[7]]<-Contact[2]
   Contact_ttt_vec[[8]]<-Contact[3]
   Contact_ttt_vec[[9]]<-Contact[4]
 
   ################################################################################
-  ####################              Immigrants            ####################
+  ####################              Migrants            ####################
   ################################################################################
-  Immigrants_ttt_vec<-def_ttt()
-  Immigrants_ttt_vec[[1]]<-"NUSB"
-  Immigrants_ttt_vec[[3]]<-Immigrants[1]
-  Immigrants_ttt_vec[[4]]<-1
-  Immigrants_ttt_vec[[5]]<-2020
-  Immigrants_ttt_vec[[6]]<-2021
-  Immigrants_ttt_vec[[7]]<-Immigrants[2]
-  Immigrants_ttt_vec[[8]]<-Immigrants[3]
-  Immigrants_ttt_vec[[9]]<-Immigrants[4]
+  Migrants_ttt_vec<-def_ttt()
+  Migrants_ttt_vec[[1]]<-"NUSB"
+  Migrants_ttt_vec[[3]]<-Migrants[1]
+  Migrants_ttt_vec[[4]]<-1
+  Migrants_ttt_vec[[5]]<-2020
+  Migrants_ttt_vec[[6]]<-2020
+  Migrants_ttt_vec[[7]]<-Migrants[2]
+  Migrants_ttt_vec[[8]]<-Migrants[3]
+  Migrants_ttt_vec[[9]]<-Migrants[4]
 
   ################################################################################
   ####################              Healthcare            ####################
@@ -139,7 +139,7 @@ risk_pop_setup<-function(){
   Healthcare_ttt_vec[[3]]<-Healthcare[1]
   Healthcare_ttt_vec[[4]]<-1
   Healthcare_ttt_vec[[5]]<-2020
-  Healthcare_ttt_vec[[6]]<-2021
+  Healthcare_ttt_vec[[6]]<-2020
   Healthcare_ttt_vec[[7]]<-Healthcare[2]
   Healthcare_ttt_vec[[8]]<-Healthcare[3]
   Healthcare_ttt_vec[[9]]<-Healthcare[4]
@@ -151,7 +151,7 @@ risk_pop_setup<-function(){
   Congregate_ttt_vec[[3]]<-Congregate[1]
   Congregate_ttt_vec[[4]]<-1
   Congregate_ttt_vec[[5]]<-2020
-  Congregate_ttt_vec[[6]]<-2021
+  Congregate_ttt_vec[[6]]<-2020
   Congregate_ttt_vec[[7]]<-Congregate[2]
   Congregate_ttt_vec[[8]]<-Congregate[3]
   Congregate_ttt_vec[[9]]<-Congregate[4]
@@ -165,11 +165,11 @@ risk_pop_setup<-function(){
                     Immunosup_ttt_vec,
                     abCXR_ttt_vec,
                     Contact_ttt_vec,
-                    Immigrants_ttt_vec,
+                    Migrants_ttt_vec,
                     Healthcare_ttt_vec,
                     Congregate_ttt_vec)
   names(all_pop_ttt)<-c("HIV", "Diabetes","Silicosis","CKD","Child5yr",
                         "PWID","ImmunosupTherapy","abCXR","Contact",
-                        "Immigrants","Healthcare","Congregate")
+                        "Migrants","Healthcare","Congregate")
   return(all_pop_ttt)
 }

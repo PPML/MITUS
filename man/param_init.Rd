@@ -15,6 +15,9 @@ param_init(
   Scen1 = 0,
   Scen2 = 0,
   Scen3 = 0,
+  Scen4 = 0,
+  Scen5 = 0,
+  Scen6 = 0,
   prg_chng,
   ttt_list
 )
@@ -39,6 +42,12 @@ param_init(
 \item{Scen2}{boolean for scenario 2}
 
 \item{Scen3}{boolean for scenario 3}
+
+\item{Scen4}{boolean for scenario 4}
+
+\item{Scen5}{boolean for scenario 5}
+
+\item{Scen6}{boolean for scenario 6}
 
 \item{prg_chng}{vector of program change values}
 

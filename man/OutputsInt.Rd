@@ -8,8 +8,8 @@ OutputsInt(
   loc,
   ParMatrix,
   n_cores = 1,
-  endyr = 2050,
   startyr = 1950,
+  endyr = 2050,
   Int1 = 0,
   Int2 = 0,
   Int3 = 0,
@@ -18,6 +18,9 @@ OutputsInt(
   Scen1 = 0,
   Scen2 = 0,
   Scen3 = 0,
+  Scen4 = 0,
+  Scen5 = 0,
+  Scen6 = 0,
   prg_chng,
   ttt_list
 )
@@ -29,9 +32,9 @@ OutputsInt(
 
 \item{n_cores}{how many cores to use}
 
-\item{endyr}{year to end the simulation}
-
 \item{startyr}{year to start the simulation}
+
+\item{endyr}{year to end the simulation}
 
 \item{Int1}{boolean for intervention 1}
 

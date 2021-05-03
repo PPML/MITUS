@@ -67,7 +67,7 @@ Rcpp::NumericMatrix reblncd(
 
   //'Open the Age Loop to Calculate Age Specific Transition Matrices
   for(int ag=0; ag<11; ag++){
-    // ' reset the appropriate age specific variables
+  // ' reset the appropriate age specific variables
     for(int i=0;i<16;i++){
       dist_i_v[i]=0; //distribution that is updated in each iteration
       temp_vec[i]=0; //used in calculations
@@ -75,21 +75,21 @@ Rcpp::NumericMatrix reblncd(
         did_go[i][j]=0;
         trans_mat_tot[i][j]=0;
         trans_mat[i][j]=0;
-      } }
+    } }
     mat_sum=0;
     sum=0;
     //
 
     for (int nm=0; nm<4; nm++){
       for (int im=0; im<4; im++){
-        if ((ag<9) | (mubtN[ag]*RRmuRF[nm]<.5)){
-          temp = mubtN[ag]*RRmuRF[nm]; }
-        else { temp = .5; }
-        temp_vec[nm+im*4]=dist_gen_v[nm+im*4]*(1-temp);
-        //the mortality dimension is distributed as follows:
-        //nm=0 is 0,4,8,12 =1 is 1,5,9,12, etc.
-        // Rcpp::Rcout <<"index= "<< nm << "and index = "<< im << " is "<<nm+im*4  << "\n";
-        // temp_vec[nm+im*4]=dist_gen_v[nm+im*4]*(1-(mubtN[ag]*RRmuRF[nm]));
+            if ((ag<9) | (mubtN[ag]*RRmuRF[nm]<.5)){
+              temp = mubtN[ag]*RRmuRF[nm]; }
+            else { temp = .5; }
+              temp_vec[nm+im*4]=dist_gen_v[nm+im*4]*(1-temp);
+      //the mortality dimension is distributed as follows:
+      //nm=0 is 0,4,8,12 =1 is 1,5,9,12, etc.
+         // Rcpp::Rcout <<"index= "<< nm << "and index = "<< im << " is "<<nm+im*4  << "\n";
+          // temp_vec[nm+im*4]=dist_gen_v[nm+im*4]*(1-(mubtN[ag]*RRmuRF[nm]));
 
       }
     }
@@ -169,9 +169,9 @@ Rcpp::NumericMatrix reblncd(
         } }
       for(int i=0; i<16; i++){
 
-        if (row_sum[i]>1) {
-          Rcpp::Rcout<<"row sum0 is too large at ag = " << ag<< " and i = "<< i <<" and n = "<< n <<"rowsum is = " << row_sum[i]<<"\n";
-        }}
+      if (row_sum[i]>1) {
+        Rcpp::Rcout<<"row sum0 is too large at ag = " << ag<< " and i = "<< i <<" and n = "<< n <<"rowsum is = " << row_sum[i]<<"\n";
+      }}
 
 
       //this step is what causes the negative

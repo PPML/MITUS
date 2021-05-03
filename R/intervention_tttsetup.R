@@ -61,8 +61,8 @@ rownames(dist) <- paste0("m",0:3) # mortality
   rrmort<-RRmuRF/sum(RRmuRF*mort_dist)
 ##rate ratio of TB Progression
   #might need to check this bc current applied to odds then converted to probability
-  ORpfastRF  <- PV["ORpfastH"] ##riskfactor
-  vORpfastRF  <-c(1,1,1,1)
+  ORpfastRF  <- 40 ##riskfactor
+  # vORpfastRF  <-c(1,1,1,1)
   rrprog  <-(exp((0:3)/3*log(ORpfastRF)))
 #desired RR for the screening groups
   rrprog_i <- ttt_list[[7]]

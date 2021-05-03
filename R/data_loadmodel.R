@@ -13,26 +13,28 @@ model_load<-function(loc="US"){
   library(MASS)
 #'load necessary datasets
 #'Model Input
-if (loc=="US"){
-  CalibDat<<-readRDS(system.file("US/US_CalibDat_2021-01-28.rds", package="MITUS"))
-  ParamInit<<-as.data.frame(readRDS(system.file("US/US_ParamInit_2020-08-20.rds", package="MITUS")))
-  StartVal<<-readRDS(system.file("US/US_StartVal_2021-03-02.rds", package="MITUS"))
-  Inputs<<-readRDS(system.file("US/US_Inputs_08-31-20.rds", package="MITUS"))
-  #Opt and Par created from the 03032021 optim run
-  Opt <<- readRDS(system.file("US/US_Optim_all_10_0309.rds", package="MITUS"))
-  Par <<- readRDS(system.file("US/US_Param_all_10_0309.rds", package="MITUS"))
+  if (loc=="US"){
+    CalibDat<<-readRDS(system.file("US/US_CalibDat_2021-01-28.rds", package="MITUS"))
+    ParamInit<<-as.data.frame(readRDS(system.file("US/US_ParamInit_2020-08-20.rds", package="MITUS")))
+    StartVal<<-readRDS(system.file("US/US_StartVal_2021-03-02.rds", package="MITUS"))
+    Inputs<<-readRDS(system.file("US/US_Inputs_08-31-20.rds", package="MITUS"))
+    #Opt and Par created from the 03032021 optim run
+    Opt <<- readRDS(system.file("US/US_Optim_all_10_0309.rds", package="MITUS"))
+    Par <<- readRDS(system.file("US/US_Param_all_10_0309.rds", package="MITUS"))
 
-} else {
-  CalibDat<<-CalibDatState<<-readRDS(system.file("ST/ST_CalibDat_2020-12-03.rds", package="MITUS"))
-  ParamInit_st<<-ParamInit<<-readRDS(system.file("ST/ST_ParamInit_2021-03-04.rds", package="MITUS"))
-  StartVal_st<<-StartVal<<-readRDS(system.file("ST/ST_StartVal_2021-03-04.rds", package="MITUS"))
-  Inputs<<-readRDS(system.file(paste0(loc,"/",loc,"_ModelInputs_10-19-20.rds"), package="MITUS"))
-  #last input change was to update the RR active TB by age in immigrants
-  #top 25 state optims are from the 0304 state optims based on the 0303 US optim run
-  Opt<<-readRDS(system.file(paste0(loc,"/",loc,"_Optim_all_10_0309.rds"), package = "MITUS"))
-  Par<<-readRDS(system.file(paste0(loc,"/",loc,"_Param_all_10_0309.rds"), package = "MITUS"))
-}
-
+  } else {
+    CalibDat<<-CalibDatState<<-readRDS(system.file("ST/ST_CalibDat_2020-12-03.rds", package="MITUS"))
+    ParamInit_st<<-ParamInit<<-readRDS(system.file("ST/ST_ParamInit_2021-03-04.rds", package="MITUS"))
+    StartVal_st<<-StartVal<<-readRDS(system.file("ST/ST_StartVal_2021-03-04.rds", package="MITUS"))
+    Inputs<<-readRDS(system.file(paste0(loc,"/",loc,"_ModelInputs_10-19-20.rds"), package="MITUS"))
+    #last input change was to update the RR active TB by age in immigrants
+    #top 25 state optims are from the 0304 state optims based on the 0303 US optim run
+    Opt<<-readRDS(system.file(paste0(loc,"/",loc,"_Optim_all_10_0309.rds"), package = "MITUS"))
+    Par<<-readRDS(system.file(paste0(loc,"/",loc,"_Param_all_10_0309.rds"), package = "MITUS"))
+  }
+  # if (loc=="IN"){
+  #   Inputs<<-readRDS(system.file(paste0(loc,"/",loc,"_ModelInputs_07-14-20.rds"), package="MITUS"))
+  # }
 if (loc=="US"){
   wts <<- CalibDat[["ImptWeights"]]
   P  <<- ParamInit[,1]
