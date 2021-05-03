@@ -72,7 +72,7 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   ImmigInputs      <- Inputs[["ImmigInputs"]]
 
   ##################### CHECK FOR SCENARIO 5             ########################
-  ##################### CHANGES IMMIGRATION VOLUME       ########################
+  ##################### CHANGES IMMIGRATION BURDEN       ########################
   if(Scen6==1){
     r_decline=.03
   } else if (Scen6==2){
@@ -541,7 +541,7 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   colnames(rDxt) <- c("Active","Active_HighRisk")
   #### #### #### INT 3 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
-  if(Int3==1) { for(i in 1:2) { rDxt[,i] <- rDxt[,i]+ rDxt[,i]*LgtCurve(intv_yr,intv_yr+5,.5)     }   }
+  if(Int3==1) { for(i in 1:2) { rDxt[,i] <- rDxt[,i]+ rDxt[,i]*LgtCurve(intv_yr,intv_yr+5,.1)     }   }
   if(Int3==2) { for(i in 1:2) { rDxt[,i] <- rDxt[,i]- rDxt[,i]*LgtCurve(intv_yr,intv_yr+5,.1)     }   }
 
   #### #### #### INT 3 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
