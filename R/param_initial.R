@@ -472,24 +472,43 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   }
 
   ######################          LTBI DIAGNOSIS           ########################
-  ###################### LTBI TX EFFECTIVENESS PROGRAM CHANGE ########################
-  if (prg_chng["ltbi_eff_frc"] != round(PV["EffLt"], 2)){
-    EffLt         <- c(rep(PV["EffLt"],prg_m-1),rep(prg_chng["ltbi_eff_frc"],1+month-prg_m))
+  ### PROBABILITY OF LATENT TREATMENT INTIATION
+  pTlInt        <- rep(.72,month)
+
+  ##### ##### TREATMENT COMPLETION RATE AND TREATMENT EFFECTIVENESS ARE DEPENDENT ON
+  ##### ##### PROGRAM CHANGE VALUES; NEED TO CREATE A CHECK FOR WHEN THESE VALUES ARE
+  ##### ##### CHANGED FROM THE DEFAULT VALUES
+  ##read in the default program change values
+  default_pc<-def_prgchng(PV)
+  ########################################################################################
+  ##### ##### LTBI TREATMENT COMPLETION RATE
+  ########################################################################################
+  bccomprate<-(default_pc[["frc_3hp"]]*default_pc[["comp_3hp"]]+default_pc[["frc_3hr"]]*default_pc[["comp_3hr"]]+
+                 default_pc[["frc_4r"]]*default_pc[["comp_4r"]])/3
+
+  if (prg_chng[["frc_3hp"]] != default_pc[["frc_3hp"]] | prg_chng[["comp_3hp"]] != default_pc[["comp_3hp"]] |
+      prg_chng[["frc_3hr"]] != default_pc[["frc_3hr"]] | prg_chng[["comp_3hr"]] != default_pc[["comp_3hr"]] |
+      prg_chng[["frc_4r"]] != default_pc[["frc_4r"]] | prg_chng[["comp_4r"]] != default_pc[["comp_4r"]]){
+    #calculate the weighted treatment completion rate
+
+    comprate<-(prg_chng[["frc_3hp"]]*prg_chng[["comp_3hp"]]+prg_chng[["frc_3hr"]]*prg_chng[["comp_3hr"]]+
+                 prg_chng[["frc_4r"]]*prg_chng[["comp_4r"]])/3
+    pDefLt         <- c(rep(1-bccomprate,prg_m-1),rep(1-comprate,1+month-prg_m))
+  } else {
+    pDefLt         <- rep(1-bccomprate,month)
+  }
+  ########################################################################################
+  ##### ##### LTBI TREATMENT EFFECTIVENESS
+  ########################################################################################
+  if (prg_chng[["frc_3hp"]] != default_pc[["frc_3hp"]] | prg_chng[["frc_3hr"]] != default_pc[["frc_3hr"]] |
+      prg_chng[["frc_4r"]] != default_pc[["frc_4r"]] |
+      prg_chng[["comp_3hp"]] != default_pc[["comp_3hp"]] | prg_chng[["comp_3hr"]] != default_pc[["comp_3hr"]] |
+      prg_chng[["comp_4r"]] != default_pc[["comp_4r"]]){
+    #calculate the weighted treatment effectiveness
+    effectiveness<-(prg_chng[["frc_3hp"]]*prg_chng[["comp_3hp"]]+prg_chng[["frc_3hr"]]*prg_chng[["comp_3hr"]]+ prg_chng[["frc_4r"]]*prg_chng[["comp_4r"]])/3
+    EffLt         <- c(rep(PV["EffLt"],prg_m-1),rep(effectiveness,1+month-prg_m))
   } else {
     EffLt         <- rep(PV["EffLt"],month)
-  }
-
-  ### PROBABILITY OF LATENT TREATMENT INTIATION
-  pTlInt        <- rep(.8,month)
-  ###################### LTBI TX INITIATION PROGRAM CHANGE ########################
-  if (prg_chng["ltbi_init_frc"] !=pTlInt[prg_m]){
-    pTlInt[prg_m:length(pTlInt)] <- prg_chng["ltbi_init_frc"];
-  }
-  ######################    LTBI TREATMENT DEFAULT          ######################
-  pDefLt<-rep(PV["pDefLt"],month)   ### PROBABILITY OF LATENT TREATMENT DEFAULT
-  ###################### LTBI TREATMENT COMPLETION PROGRAM CHANGE ######################
-  if (prg_chng["ltbi_comp_frc"] != 1-(round(pDefLt[prg_m], 2))){
-    pDefLt[prg_m:length(pDefLt)]<-(1-prg_chng["ltbi_comp_frc"])
   }
   ### because of the introduction of new time varying parameters, we will create a matrix to
   ### hold the latent treatment parameters
