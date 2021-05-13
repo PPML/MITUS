@@ -481,23 +481,6 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   ##read in the default program change values
   default_pc<-def_prgchng(PV)
   ########################################################################################
-  ##### ##### LTBI TREATMENT COMPLETION RATE
-  ########################################################################################
-  bccomprate<-(default_pc[["frc_3hp"]]*default_pc[["comp_3hp"]]+default_pc[["frc_3hr"]]*default_pc[["comp_3hr"]]+
-                 default_pc[["frc_4r"]]*default_pc[["comp_4r"]])/3
-
-  if (prg_chng[["frc_3hp"]] != default_pc[["frc_3hp"]] | prg_chng[["comp_3hp"]] != default_pc[["comp_3hp"]] |
-      prg_chng[["frc_3hr"]] != default_pc[["frc_3hr"]] | prg_chng[["comp_3hr"]] != default_pc[["comp_3hr"]] |
-      prg_chng[["frc_4r"]] != default_pc[["frc_4r"]] | prg_chng[["comp_4r"]] != default_pc[["comp_4r"]]){
-    #calculate the weighted treatment completion rate
-
-    comprate<-(prg_chng[["frc_3hp"]]*prg_chng[["comp_3hp"]]+prg_chng[["frc_3hr"]]*prg_chng[["comp_3hr"]]+
-                 prg_chng[["frc_4r"]]*prg_chng[["comp_4r"]])/3
-    pDefLt         <- c(rep(1-bccomprate,prg_m-1),rep(1-comprate,1+month-prg_m))
-  } else {
-    pDefLt         <- rep(1-bccomprate,month)
-  }
-  ########################################################################################
   ##### ##### LTBI TREATMENT EFFECTIVENESS
   ########################################################################################
   if (prg_chng[["frc_3hp"]] != default_pc[["frc_3hp"]] | prg_chng[["frc_3hr"]] != default_pc[["frc_3hr"]] |
@@ -510,6 +493,25 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   } else {
     EffLt         <- rep(PV["EffLt"],month)
   }
+
+  ########################################################################################
+  ##### ##### LTBI TREATMENT COMPLETION RATE
+  ########################################################################################
+  bccomprate<-((default_pc[["frc_3hp"]]*default_pc[["comp_3hp"]])+(default_pc[["frc_3hr"]]*default_pc[["comp_3hr"]])+
+                 (default_pc[["frc_4r"]]*default_pc[["comp_4r"]]))
+
+  if (prg_chng[["frc_3hp"]] != default_pc[["frc_3hp"]] | prg_chng[["comp_3hp"]] != default_pc[["comp_3hp"]] |
+      prg_chng[["frc_3hr"]] != default_pc[["frc_3hr"]] | prg_chng[["comp_3hr"]] != default_pc[["comp_3hr"]] |
+      prg_chng[["frc_4r"]] != default_pc[["frc_4r"]] | prg_chng[["comp_4r"]] != default_pc[["comp_4r"]]){
+    #calculate the weighted treatment completion rate
+
+    comprate<-(prg_chng[["frc_3hp"]]*prg_chng[["comp_3hp"]]+prg_chng[["frc_3hr"]]*prg_chng[["comp_3hr"]]+
+                 prg_chng[["frc_4r"]]*prg_chng[["comp_4r"]])/3
+    pDefLt         <- c(rep(1-bccomprate,prg_m-1),rep(1-comprate,1+month-prg_m))
+  } else {
+    pDefLt         <- rep(1-bccomprate,month)
+  }
+
   ### because of the introduction of new time varying parameters, we will create a matrix to
   ### hold the latent treatment parameters
   LtTxPar       <- matrix(NA,3,month)
