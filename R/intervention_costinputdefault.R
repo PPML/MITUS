@@ -12,9 +12,9 @@ def_costinputs<-function(){
                   'TBtx', 'Discount', 'EndYear')
 
   DefcostinputsVec['LTBIIdCost']<-0
-  DefcostinputsVec['TSTCost']<-9.38
-  DefcostinputsVec['IGRACost']<-61.98
-  DefcostinputsVec['NoTBCost']<-52.38
+  DefcostinputsVec['TSTCost']<-8.65
+  DefcostinputsVec['IGRACost']<-68.87
+  DefcostinputsVec['NoTBCost']<-32.08
 
   DefcostinputsVec['3HPCost']<-407.64
   DefcostinputsVec['4RCost']<-350.64
@@ -23,7 +23,7 @@ def_costinputs<-function(){
   DefcostinputsVec['TBIdCost']<-0
   #TST,XRAY,Sputum culture, & susceptibility
   #9.38+33.20+20.05+7
-  DefcostinputsVec['TBtest']<-52.38
+  DefcostinputsVec['TBtest']<-0
   DefcostinputsVec['TBtx']<-19630
 
   DefcostinputsVec['Discount']<-3
