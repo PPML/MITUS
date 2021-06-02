@@ -1538,7 +1538,8 @@ Rcpp::List cSim(
                     ///// open a loop to initiate ttt when the month iterator falls within the
                     ///// designated range
                     ///////////////////  //////////////////  //////////////////  ///////////////////
-                    if(s == ttt_month.front()){
+                    // if(s == ttt_month.front()){
+                    if(std::find(std::begin(ttt_month), std::end(ttt_month), s) != std::end(ttt_month)){
                       for (int i=0; i<agi; i++){
                         for (int j=0; j<nai; j++){
                           if (ag==ttt_ag[i] & na==ttt_na[j]){
@@ -1672,14 +1673,14 @@ Rcpp::List cSim(
                   } } } } }
           // if (s == (ttt_month.back())){
           // temp10=temp8+temp9;
-          if (s == ttt_month.front()){
-            Rcpp::Rcout<< "month = " << s << "\n";
-            // Rcpp::Rcout<< "total extra screening 1 = " << temp7 << "\n";
-
-            Rcpp::Rcout<< "total extra screening = " << temp8 << "\n";
-            Rcpp::Rcout<< "total extra screening in latent pop = " << temp9 << "\n";
-            Rcpp::Rcout<< "total extra LTBI diagnoses = " << temp10 << "\n";
-          }
+          // if (s == ttt_month.front()){
+          //   Rcpp::Rcout<< "month = " << s << "\n";
+          //   // Rcpp::Rcout<< "total extra screening 1 = " << temp7 << "\n";
+          //
+          //   Rcpp::Rcout<< "total extra screening = " << temp8 << "\n";
+          //   Rcpp::Rcout<< "total extra screening in latent pop = " << temp9 << "\n";
+          //   Rcpp::Rcout<< "total extra LTBI diagnoses = " << temp10 << "\n";
+          // }
           // temp7=0;temp8=0;temp9=0;temp10=0;
           // if(std::find(std::begin(ttt_month), std::end(ttt_month), s) != std::end(ttt_month)){
           //   for(int ag=0; ag<11; ag++) {
