@@ -470,29 +470,26 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
     for(i in 1:11) ImmFst[,i] <- ImmFst[,i]*(1-LgtCurve(intv_yr,intv_yr+5,1)*SensLt[4,1]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
     ImmNon      <- TotImmAge[1:month,]-ImmAct-ImmFst-ImmLat
   }
-
-  ######################          LTBI DIAGNOSIS           ########################
-  ### PROBABILITY OF LATENT TREATMENT INTIATION
-  pTlInt        <- rep(.72,month)
-
   ##### ##### TREATMENT COMPLETION RATE AND TREATMENT EFFECTIVENESS ARE DEPENDENT ON
   ##### ##### PROGRAM CHANGE VALUES; NEED TO CREATE A CHECK FOR WHEN THESE VALUES ARE
   ##### ##### CHANGED FROM THE DEFAULT VALUES
   ##read in the default program change values
   default_pc<-def_prgchng(PV)
+
+  ######################          LTBI DIAGNOSIS           ########################
+  ### PROBABILITY OF LATENT TREATMENT INTIATION
+  pTlInt        <- rep(default_pc[["ltbi_init_frc"]],month)
+  ###################### LTBI TX INITIATION PROGRAM CHANGE ########################
+  if (prg_chng["ltbi_init_frc"] !=pTlInt[prg_m]){
+    pTlInt[prg_m:length(pTlInt)] <- prg_chng["ltbi_init_frc"];
+  }
+
   ########################################################################################
   ##### ##### LTBI TREATMENT EFFECTIVENESS
   ########################################################################################
-  if (prg_chng[["frc_3hp"]] != default_pc[["frc_3hp"]] | prg_chng[["frc_3hr"]] != default_pc[["frc_3hr"]] |
-      prg_chng[["frc_4r"]] != default_pc[["frc_4r"]] |
-      prg_chng[["comp_3hp"]] != default_pc[["comp_3hp"]] | prg_chng[["comp_3hr"]] != default_pc[["comp_3hr"]] |
-      prg_chng[["comp_4r"]] != default_pc[["comp_4r"]]){
-    #calculate the weighted treatment effectiveness
-    effectiveness<-(prg_chng[["frc_3hp"]]*prg_chng[["comp_3hp"]]+prg_chng[["frc_3hr"]]*prg_chng[["comp_3hr"]]+ prg_chng[["frc_4r"]]*prg_chng[["comp_4r"]])/3
-    EffLt         <- c(rep(PV["EffLt"],prg_m-1),rep(effectiveness,1+month-prg_m))
-  } else {
+
     EffLt         <- rep(PV["EffLt"],month)
-  }
+
 
   ########################################################################################
   ##### ##### LTBI TREATMENT COMPLETION RATE
@@ -506,7 +503,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
     #calculate the weighted treatment completion rate
 
     comprate<-(prg_chng[["frc_3hp"]]*prg_chng[["comp_3hp"]]+prg_chng[["frc_3hr"]]*prg_chng[["comp_3hr"]]+
-                 prg_chng[["frc_4r"]]*prg_chng[["comp_4r"]])/3
+                 prg_chng[["frc_4r"]]*prg_chng[["comp_4r"]])/1
     pDefLt         <- c(rep(1-bccomprate,prg_m-1),rep(1-comprate,1+month-prg_m))
   } else {
     pDefLt         <- rep(1-bccomprate,month)
