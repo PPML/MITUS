@@ -160,15 +160,14 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   #calculate the basis of the spline
   x1    <- seq(1,n_Stps);
   k1    <- seq(min(x1),max(x1),length=n_Spln-dif_pen)
-  dk1   <- k1[2]-k1[1] ;
-
-  k1    <- c(k1[1]-dk1*((dif_pen+1):1),
-             k1,
-             k1[n_Spln-dif_pen]+dk1*(1:(dif_pen+1)))
-
   #redistribute the knots using this function
   func2 <- function(x,z=3){ seq(0,(max(x)-min(x))^z,length.out=length(x))^(1/z) + min(x) }
   k1 <- func2(k1)
+  dk1   <- k1[2]-k1[1];
+ #extend knots two elements in each direction
+  k1    <- c(k1[1]-dk1*((dif_pen+1):1),
+             k1,
+             k1[n_Spln-dif_pen]+dk1*(1:(dif_pen+1)))
 
   SpMat <- matrix(NA,nrow=n_Stps,ncol=n_Spln);
 
