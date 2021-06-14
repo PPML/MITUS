@@ -76,8 +76,8 @@ notif_age_fb_lLik <- function(V,rho=0.005) {
   sum(dDirMult(M=V,n=notif_age_fb,Rho=rho)*wts[44:70]) - adj_2b
 }
 
-#' CASES FB DISTRIBUTION SLOPES OVER PAST 4 year
-#'@param V table of notifications by fb 1993-2014 (row=22 years, col=fb then us)
+#' CASES FB DISTRIBUTION SLOPES OVER PAST 5 year
+#'@param V table of notifications by fb 2015-2019 (row=22 years, col=fb then us)
 #'@return likelihood
 notif_fbus_slp_lLik <- function(V) {
   notif_age_fb0     <- CalibDat[["age_cases_fb"]][23:27,12]
@@ -86,9 +86,10 @@ notif_fbus_slp_lLik <- function(V) {
   # calculate the slopes
   notif_fbus_slp5<-apply(log(tot_case_nat[,]),2,function(x) lm(x~I(1:5))$coef[2])
   # notif_fbus_slp5<-CalibDat$fbus_cases_slope5
-  adj_3a         <- sum(dnorm(notif_fbus_slp5,notif_fbus_slp5,0.05,log=T))
+  adj_3a         <- sum(dnorm(notif_fbus_slp5,notif_fbus_slp5,0.001,log=T))
   V2 <- apply(log(V),2,function(x) lm(x~I(1:5))$coef[2])
-  sum(dnorm(notif_fbus_slp5,V2,0.05,log=T)) - adj_3a  }
+  sum(dnorm(notif_fbus_slp5,V2,0.001,log=T)) - adj_3a
+  }
 
 #' CASES HR DISTRIBUTION 1993-2014
 #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
