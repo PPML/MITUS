@@ -67,6 +67,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   InitPop          <- Inputs[["InitPop"]]
   Births           <- Inputs[["Births"]]
   ImmigInputs      <- Inputs[["ImmigInputs"]]
+  ImmigInputs$PrevTrend25_34<-crude_rate(Inputs,loc)
   TxInputs         <- Inputs[["TxInputs"]]
   NetMig           <- Inputs[["NetMigrState"]]
 
@@ -151,38 +152,6 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
     TotImmAge[,j]        <- SmoCurve(TotImmAge0[,j])
   }
   # }
-
-  ################## CALCULATE THE BURDEN OF TB AMONG MIGRANTS ##################
-  # #spline...
-  n_Spln   <- 5;
-  n_Stps   <- 2020-1950+1;
-  dif_pen   <- 1 # quadratic spline
-  #calculate the basis of the spline
-  x1    <- seq(1,n_Stps);
-  k1    <- seq(min(x1),max(x1),length=n_Spln-dif_pen)
-  #redistribute the knots using this function
-  func2 <- function(x,z=3){ seq(0,(max(x)-min(x))^z,length.out=length(x))^(1/z) + min(x) }
-  k1 <- func2(k1)
-  dk1   <- k1[2]-k1[1];
- #extend knots two elements in each direction
-  k1    <- c(k1[1]-dk1*((dif_pen+1):1),
-             k1,
-             k1[n_Spln-dif_pen]+dk1*(1:(dif_pen+1)))
-
-  SpMat <- matrix(NA,nrow=n_Stps,ncol=n_Spln);
-
-  for(i in 1:n_Spln){
-    SpMat[,i] <- bspline(x=x1,k=k1,m=dif_pen,i=i)
-  }
-
-  orig_burden<-c((Inputs$ImmigInputs$TBBurdenImmig/12)*(90/1e5),72:151)
-  for (i in 70:151) orig_burden[i]   <- orig_burden[i-1]*.985
-
-  TBburden           <- orig_burden*exp(c(SpMat%*%(c(PV["TB1"],PV["TB2"],PV["TB3"],PV["TB4"],PV["TB5"])),72:151))
-  for (j in 72:151) TBburden[j]   <- TBburden[j-1]*.985
-
-  ImmigInputs$PrevTrend25_34<-TBburden
-
   ######################           LTBI IMM.             ########################
   PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:71]^(exp(PV["TunLtbiTrend"]))*ImmigInputs[["PrevTrend25_34"]][71]^(1-exp(PV["TunLtbiTrend"])),
                         ImmigInputs[["PrevTrend25_34"]][72:151]*(PV["ImmigPrevFutLat"]/0.99)^(1:80))
@@ -232,8 +201,9 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   ######################   EXOGENEOUS INFECTION RISK      ########################
 
   ExogInf        <- matrix(NA,length(PrevTrend25_34a),5)
-  ExogInf        <- PV["ExogInf"]*PrevTrend25_34a/PrevTrend25_340a[71]/12
+  ExogInf        <- PV["ExogInf"]*PrevTrend25_34a/PrevTrend25_340a["2020"]/12
   ExogInf        <- ExogInf[1:month]
+  #removed *(ImmigInputs[[7]][4]*DrN[,i]+(1-ImmigInputs[[7]][4])*DrE[,i])
 
   ######################             EMIGRATION          #########################
 
