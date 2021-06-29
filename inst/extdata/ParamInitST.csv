@@ -1,4 +1,4 @@
-﻿,BcValue,Lower,Upper,B0_G1_N2,Calib
+,BcValue,Lower,Upper,B0_G1_N2,Calib
 TunBirths,1,0.9,1.1,1,0
 TunMubt,1,0.85,1.15,1,1
 TunmuAg,0,-0.2,0.2,2,1
@@ -38,7 +38,7 @@ rSlfCur,0.2,0.15,0.35,1,0
 rLtScr,0.025,0.01,0.1,1,1
 rrTestHr,3,1.5,6,1,1
 rrTestLrNoTb,0.2,0.1,0.4,1,1
-pDefLt,0.225,0.29,0.37,0,1
+pDefLt,0.128,0.10,0.16,0,0
 EffLt,0.93,0.8,0.95,0,0
 SensSp,0.995,0.99,1,0,0
 pImmScen,0.5,0.35,0.65,0,1

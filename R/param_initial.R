@@ -20,7 +20,7 @@
 #'@param ttt_list list of ttt changes
 #'@return InputParams list
 #'@export
-param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,prg_chng, ttt_list){
+param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,prg_chng, ttt_list,delay=0){
   ########## DEFINE A VARIABLE THAT WILL DETERMINE HOW LONG THE TIME DEPENDENT
   ########## VARIABLES SHOULD BE
   month<-1213;
@@ -328,7 +328,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   ####numbers from Stout paper
   Sens_IGRA <-c(.780,.675,.712,.789,.591)
   Spec_IGRA <-c(.979,.958,.989,.985,.931)
-  IGRA_frc<-.33
+  IGRA_frc<-.50 #updated to 50% on 6/29/2021 per Suzanne
   Sens_TST <-c(.726,.540,.691,.807,.570)
   Spec_TST <-c(.921,.965,.739,.70,.885)
   names(Sens_TST)<- names(Spec_TST)<-names(Sens_IGRA)<- names(Spec_IGRA)<-c("US","hivUS","youngNUS","NUS","hivNUS")
@@ -426,7 +426,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   }
 
   ### PROBABILITY OF LATENT TREATMENT INTIATION
-  pTlInt        <- rep(.72,month)
+  pTlInt        <- rep(.773,month)
   ###################### LTBI TX INITIATION PROGRAM CHANGE ########################
   if (prg_chng["ltbi_init_frc"] !=pTlInt[prg_m]){
     pTlInt[prg_m:length(pTlInt)] <- prg_chng["ltbi_init_frc"];
@@ -458,6 +458,11 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
 
   ######################           PROVIDER DELAY         ########################
   DelaySp    <- rep(PV["DelaySp"],month)
+
+  #add in a temporary change to provider delay
+  if (delay == 1){
+    DelaySp[841:859]<-8*DelaySp[841:859]
+  }
 
   if (prg_chng["tb_tim2tx_frc"] !=100){
     DelaySp[prg_m:length(DelaySp)] <- PV["DelaySp"]*(prg_chng["tb_tim2tx_frc"])/100;

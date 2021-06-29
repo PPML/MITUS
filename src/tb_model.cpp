@@ -1478,8 +1478,8 @@ Rcpp::List cSim(
                       for(int na=0; na<3; na++) {
                         if (V1[ag][tb][lt][im][nm][rg][na]<0){
                           temp7+=1; }}}}}}}}
-          if (temp7 > 0 ){
-            Rcpp::Rcout << "The selected characteristics of the screened population cannot be modeled."<< "\n";}
+          // if (temp7 > 0 ){
+          //   Rcpp::Rcout << "The selected characteristics of the screened population cannot be modeled."<< "\n";}
           // Rcpp::Rcout << "s = " << s << "\n";
           // Rcpp::Rcout << "after tltbi pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
           // Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
