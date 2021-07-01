@@ -86,9 +86,9 @@ notif_fbus_slp_lLik <- function(V) {
   # calculate the slopes
   notif_fbus_slp5<-apply(log(tot_case_nat[,]),2,function(x) lm(x~I(1:5))$coef[2])
   # notif_fbus_slp5<-CalibDat$fbus_cases_slope5
-  adj_3a         <- sum(dnorm(notif_fbus_slp5,notif_fbus_slp5,0.001,log=T))
+  adj_3a         <- sum(dnorm(notif_fbus_slp5,notif_fbus_slp5,0.01,log=T))
   V2 <- apply(log(V),2,function(x) lm(x~I(1:5))$coef[2])
-  sum(dnorm(notif_fbus_slp5,V2,0.001,log=T)) - adj_3a
+  sum(dnorm(notif_fbus_slp5,V2,0.01,log=T)) - adj_3a
   }
 
 #' CASES HR DISTRIBUTION 1993-2014
