@@ -16,7 +16,9 @@ param_init(
   Scen2 = 0,
   Scen3 = 0,
   prg_chng,
-  ttt_list
+  ttt_list,
+  delay = 0,
+  immig = 1
 )
 }
 \arguments{

@@ -31,7 +31,7 @@ notif_fb_lik <- function(V) {
 notif_us_lik <- function(V) {
   notif_us     <- CalibDat[["age_cases_us"]][1:27,12]
   adj_1         <- sum(dnorm(notif_us,notif_us,notif_us*0.05/1.96,log=T)*wts[44:70])
-  (sum(dnorm(notif_us,V,notif_us*0.05/1.96,log=T)*wts[44:70]) - adj_1)
+  (sum(dnorm(notif_us,V,notif_us*0.1/1.96,log=T)*wts[44:70]) - adj_1)
 }
 
 #' DISTRIBUTION OF CASES RECENT TRANSMISSION VS NO RECENT TRANSMISSION

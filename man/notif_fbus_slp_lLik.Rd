@@ -2,16 +2,16 @@
 % Please edit documentation in R/calib_functions.R
 \name{notif_fbus_slp_lLik}
 \alias{notif_fbus_slp_lLik}
-\title{CASES FB DISTRIBUTION SLOPES OVER PAST 4 year}
+\title{CASES FB DISTRIBUTION SLOPES OVER PAST 5 year}
 \usage{
 notif_fbus_slp_lLik(V)
 }
 \arguments{
-\item{V}{table of notifications by fb 1993-2014 (row=22 years, col=fb then us)}
+\item{V}{table of notifications by fb 2015-2019 (row=22 years, col=fb then us)}
 }
 \value{
 likelihood
 }
 \description{
-CASES FB DISTRIBUTION SLOPES OVER PAST 4 year
+CASES FB DISTRIBUTION SLOPES OVER PAST 5 year
 }
