@@ -64,7 +64,7 @@ llikelihoodZ <-  function(samp_i, start_mat, TB=1) {
       # TOTAL FB DIAGNOSED CASES 1953-2016 - index is same
       v1a   <- M[44:70,148]+M[44:70,149]+(M[44:70,201]+M[44:70,202])
       addlik <- notif_fb_lik(V=v1a*1e6); addlik
-      calLik <- lLik + addlik
+      lLik <- lLik + addlik
       #' TOTAL US DIAGNOSED CASES 1953-2016 - index is same
       v1b   <-  M[44:70,147]+M[44:70,200]
       addlik <- notif_us_lik(V=v1b*1e6); addlik
