@@ -23,10 +23,10 @@ def_prgchng<-function(ParVec){
   DefPrgChngVec[2]<-1
   #the default IGRA fraction is a constant that is not calibrated or calculated
   #once this is set it should not be changed
-  DefPrgChngVec[3]<-.33
+  DefPrgChngVec[3]<-.33 # should be updated 7/9 per Suzanne
   #Treatment Initiation Fraction is a constant that is not calibrated or calculated
   #once this is set it should not be changed
-  DefPrgChngVec[4]<-.8
+  DefPrgChngVec[4]<-.773 #updated 7/9 after parameter review
   #LTBI treatment completion fraction
   DefPrgChngVec[5]<- 1-ParVec["pDefLt"]
   #LTBI Efficacy

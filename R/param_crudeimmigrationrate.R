@@ -1,5 +1,5 @@
 # ###Taking the TB burden data to PrevTrend form
-crude_rate<-function(Inputs, loc,r_decline){
+crude_rate<-function(Inputs, loc,r_decline=0.015){
 # totcase<-Inputs$ImmigInputs$TBBurdenImmig*(90/1e5)*(Inputs$ImmigInputs$TotByYear[1:69]*1e6)
 
 #RR of TB prevalence across age groups

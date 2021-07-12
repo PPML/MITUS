@@ -27,7 +27,7 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   ########## DEFINE A VARIABLE THAT WILL DETERMINE HOW LONG THE TIME DEPENDENT
   ########## VARIABLES SHOULD BE
   month<-1213;
-  intv_yr<-2020
+  intv_yr<-2022
   intv_m<-((intv_yr-1950)*12)
   prg_yr <-prg_chng["start_yr"]
   prg_m  <-((prg_yr-1949)*12)+1
@@ -368,7 +368,7 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   ####numbers from Stout paper
   Sens_IGRA <-c(.780,.675,.712,.789,.591)
   Spec_IGRA <-c(.979,.958,.989,.985,.931)
-  IGRA_frc<-.33
+  IGRA_frc<-.50 #updated on 7/9 per Suzanne request
   Sens_TST <-c(.726,.540,.691,.807,.570)
   Spec_TST <-c(.921,.965,.739,.70,.885)
   names(Sens_TST)<- names(Spec_TST)<-names(Sens_IGRA)<- names(Spec_IGRA)<-c("US","hivUS","youngNUS","NUS","hivNUS")
@@ -471,7 +471,7 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   }
 
   ### PROBABILITY OF LATENT TREATMENT INTIATION
-  pTlInt        <- rep(.72,month)
+  pTlInt        <- rep(.773,month) #updated 7/9 after parameter review for manuscript
   ###################### LTBI TX INITIATION PROGRAM CHANGE ########################
   if (prg_chng["ltbi_init_frc"] !=pTlInt[prg_m]){
     pTlInt[prg_m:length(pTlInt)] <- prg_chng["ltbi_init_frc"];

@@ -22,8 +22,8 @@ national_risk_pop_setup<-function(){
   HIV_ttt_vec<-def_ttt_nat_ag()
   HIV_ttt_vec[[3]]<-HIV[1]
   HIV_ttt_vec[[4]]<-1
-  HIV_ttt_vec[[5]]<-2020
-  HIV_ttt_vec[[6]]<-2020
+  HIV_ttt_vec[[5]]<-2022
+  HIV_ttt_vec[[6]]<-2022
   HIV_ttt_vec[[7]]<-HIV[2]
   HIV_ttt_vec[[8]]<-HIV[3]
   HIV_ttt_vec[[9]]<-HIV[4]
@@ -33,8 +33,8 @@ national_risk_pop_setup<-function(){
   Diab_ttt_vec<-def_ttt_nat_ag()
   Diab_ttt_vec[[3]]<-Diab[1]
   Diab_ttt_vec[[4]]<-1
-  Diab_ttt_vec[[5]]<-2020
-  Diab_ttt_vec[[6]]<-2020
+  Diab_ttt_vec[[5]]<-2022
+  Diab_ttt_vec[[6]]<-2022
   Diab_ttt_vec[[7]]<-Diab[2]
   Diab_ttt_vec[[8]]<-Diab[3]
   Diab_ttt_vec[[9]]<-Diab[4]
@@ -44,8 +44,8 @@ national_risk_pop_setup<-function(){
   Silica_ttt_vec<-def_ttt_nat_ag()
   Silica_ttt_vec[[3]]<-Silica[1]
   Silica_ttt_vec[[4]]<-1
-  Silica_ttt_vec[[5]]<-2020
-  Silica_ttt_vec[[6]]<-2020
+  Silica_ttt_vec[[5]]<-2022
+  Silica_ttt_vec[[6]]<-2022
   Silica_ttt_vec[[7]]<-Silica[2]
   Silica_ttt_vec[[8]]<-Silica[3]
   Silica_ttt_vec[[9]]<-Silica[4]
@@ -55,8 +55,8 @@ national_risk_pop_setup<-function(){
   ESRD_ttt_vec<-def_ttt_nat_ag()
   ESRD_ttt_vec[[3]]<-ESRD[1]
   ESRD_ttt_vec[[4]]<-1
-  ESRD_ttt_vec[[5]]<-2020
-  ESRD_ttt_vec[[6]]<-2020
+  ESRD_ttt_vec[[5]]<-2022
+  ESRD_ttt_vec[[6]]<-2022
   ESRD_ttt_vec[[7]]<-ESRD[2]
   ESRD_ttt_vec[[8]]<-ESRD[3]
   ESRD_ttt_vec[[9]]<-ESRD[4]
@@ -68,8 +68,8 @@ national_risk_pop_setup<-function(){
   Child5yr_ttt_vec[[2]]<- rep(0,11)
   Child5yr_ttt_vec[[3]]<-Child5yr[1]
   Child5yr_ttt_vec[[4]]<-1
-  Child5yr_ttt_vec[[5]]<-2020
-  Child5yr_ttt_vec[[6]]<-2020
+  Child5yr_ttt_vec[[5]]<-2022
+  Child5yr_ttt_vec[[6]]<-2022
   Child5yr_ttt_vec[[7]]<-Child5yr[2]
   Child5yr_ttt_vec[[8]]<-Child5yr[3]
   Child5yr_ttt_vec[[9]]<-Child5yr[4]
@@ -80,8 +80,8 @@ national_risk_pop_setup<-function(){
   PWID_ttt_vec<-def_ttt_nat_ag()
   PWID_ttt_vec[[3]]<-PWID[1]
   PWID_ttt_vec[[4]]<-1
-  PWID_ttt_vec[[5]]<-2020
-  PWID_ttt_vec[[6]]<-2020
+  PWID_ttt_vec[[5]]<-2022
+  PWID_ttt_vec[[6]]<-2022
   PWID_ttt_vec[[7]]<-PWID[2]
   PWID_ttt_vec[[8]]<-PWID[3]
   PWID_ttt_vec[[9]]<-PWID[4]
@@ -92,8 +92,8 @@ national_risk_pop_setup<-function(){
   Immunosup_ttt_vec<-def_ttt_nat_ag()
   Immunosup_ttt_vec[[3]]<-Immunosup[1]
   Immunosup_ttt_vec[[4]]<-1
-  Immunosup_ttt_vec[[5]]<-2020
-  Immunosup_ttt_vec[[6]]<-2020
+  Immunosup_ttt_vec[[5]]<-2022
+  Immunosup_ttt_vec[[6]]<-2022
   Immunosup_ttt_vec[[7]]<-Immunosup[2]
   Immunosup_ttt_vec[[8]]<-Immunosup[3]
   Immunosup_ttt_vec[[9]]<-Immunosup[4]
@@ -104,8 +104,8 @@ national_risk_pop_setup<-function(){
   Prisoners_ttt_vec<-def_ttt_nat_ag()
   Prisoners_ttt_vec[[3]]<-Prisoners[1]
   Prisoners_ttt_vec[[4]]<-1
-  Prisoners_ttt_vec[[5]]<-2020
-  Prisoners_ttt_vec[[6]]<-2020
+  Prisoners_ttt_vec[[5]]<-2022
+  Prisoners_ttt_vec[[6]]<-2022
   Prisoners_ttt_vec[[7]]<-Prisoners[2]
   Prisoners_ttt_vec[[8]]<-Prisoners[3]
   Prisoners_ttt_vec[[9]]<-Prisoners[4]
@@ -116,8 +116,8 @@ national_risk_pop_setup<-function(){
   Homeless_ttt_vec<-def_ttt_nat_ag()
   Homeless_ttt_vec[[3]]<-Homeless[1]
   Homeless_ttt_vec[[4]]<-1
-  Homeless_ttt_vec[[5]]<-2020
-  Homeless_ttt_vec[[6]]<-2020
+  Homeless_ttt_vec[[5]]<-2022
+  Homeless_ttt_vec[[6]]<-2022
   Homeless_ttt_vec[[7]]<-Homeless[2]
   Homeless_ttt_vec[[8]]<-Homeless[3]
   Homeless_ttt_vec[[9]]<-Homeless[4]
@@ -130,8 +130,8 @@ national_risk_pop_setup<-function(){
   Migrants_ttt_vec[[2]]<-Migrants_ttt_vec[[2]]/sum(Migrants_ttt_vec[[2]])
   Migrants_ttt_vec[[3]]<-Migrants[1]
   Migrants_ttt_vec[[4]]<-1
-  Migrants_ttt_vec[[5]]<-2020
-  Migrants_ttt_vec[[6]]<-2020
+  Migrants_ttt_vec[[5]]<-2022
+  Migrants_ttt_vec[[6]]<-2022
   Migrants_ttt_vec[[7]]<-Migrants[2]
   Migrants_ttt_vec[[8]]<-Migrants[3]
   Migrants_ttt_vec[[9]]<-Migrants[4]
@@ -142,8 +142,8 @@ national_risk_pop_setup<-function(){
   Healthcare_ttt_vec<-def_ttt_nat_ag()
   Healthcare_ttt_vec[[3]]<-Healthcare[1]
   Healthcare_ttt_vec[[4]]<-1
-  Healthcare_ttt_vec[[5]]<-2020
-  Healthcare_ttt_vec[[6]]<-2020
+  Healthcare_ttt_vec[[5]]<-2022
+  Healthcare_ttt_vec[[6]]<-2022
   Healthcare_ttt_vec[[7]]<-Healthcare[2]
   Healthcare_ttt_vec[[8]]<-Healthcare[3]
   Healthcare_ttt_vec[[9]]<-Healthcare[4]
@@ -154,8 +154,8 @@ national_risk_pop_setup<-function(){
   # Congregate_ttt_vec<-def_ttt_nat_ag()
   # Congregate_ttt_vec[[3]]<-Congregate[1]
   # Congregate_ttt_vec[[4]]<-1
-  # Congregate_ttt_vec[[5]]<-2020
-  # Congregate_ttt_vec[[6]]<-2020
+  # Congregate_ttt_vec[[5]]<-2022
+  # Congregate_ttt_vec[[6]]<-2022
   # Congregate_ttt_vec[[7]]<-Congregate[2]
   # Congregate_ttt_vec[[8]]<-Congregate[3]
   # Congregate_ttt_vec[[9]]<-Congregate[4]
@@ -166,8 +166,8 @@ national_risk_pop_setup<-function(){
   Total_ttt_vec<-def_ttt_nat_ag()
   Total_ttt_vec[[3]]<-Total[1]
   Total_ttt_vec[[4]]<-1
-  Total_ttt_vec[[5]]<-2020
-  Total_ttt_vec[[6]]<-2020
+  Total_ttt_vec[[5]]<-2022
+  Total_ttt_vec[[6]]<-2022
   Total_ttt_vec[[7]]<-Total[2]
   Total_ttt_vec[[8]]<-Total[3]
   Total_ttt_vec[[9]]<-Total[4]
