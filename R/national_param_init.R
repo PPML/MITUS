@@ -23,7 +23,7 @@
 #'@param ttt_input list of ttt changes
 #'@return InputParams list
 #'@export
-national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,Scen4=0,Scen5=0, Scen6=0,prg_chng, ttt_input){
+national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,Scen4=0,Scen5=0, Scen6=0,prg_chng, ttt_input, delay=0, immig=1){
   ########## DEFINE A VARIABLE THAT WILL DETERMINE HOW LONG THE TIME DEPENDENT
   ########## VARIABLES SHOULD BE
   month<-1213;
@@ -179,6 +179,9 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   # for (i in 1:1801){
   for (j in 1:11){
     TotImmAge[,j]        <- SmoCurve(TotImmAge0[,j])
+  }
+  if(immig != 1){
+    TotImmAge[843:855,]<-TotImmAge[843:855,]*immig;
   }
   # }
   ######################           LTBI IMM.             ########################
@@ -503,7 +506,9 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
 
   ######################           PROVIDER DELAY         ########################
   DelaySp    <- rep(PV["DelaySp"],month)
-
+  if (delay == 1){
+    DelaySp[841:859]<-8*DelaySp[841:859]
+  }
   if (prg_chng["tb_tim2tx_frc"] !=100){
     DelaySp[prg_m:length(DelaySp)] <- PV["DelaySp"]*(prg_chng["tb_tim2tx_frc"])/100;
   }
