@@ -86,9 +86,9 @@ notif_fbus_slp_lLik <- function(V) {
   # calculate the slopes
   notif_fbus_slp5<-apply(log(tot_case_nat[,]),2,function(x) lm(x~I(1:5))$coef[2])
   # notif_fbus_slp5<-CalibDat$fbus_cases_slope5
-  adj_3a         <- sum(dnorm(notif_fbus_slp5,notif_fbus_slp5,0.05,log=T))
+  adj_3a         <- sum(dnorm(notif_fbus_slp5,notif_fbus_slp5,0.01,log=T))
   V2 <- apply(log(V),2,function(x) lm(x~I(1:5))$coef[2])
-  sum(dnorm(notif_fbus_slp5,V2,0.05,log=T)) - adj_3a
+  sum(dnorm(notif_fbus_slp5,V2,0.01,log=T)) - adj_3a
   }
 
 #' CASES HR DISTRIBUTION 1993-2014
@@ -245,8 +245,8 @@ tot_pop_yr_fb_lLik <- function(V) {
   tot_pop_yr_fb      <- CalibDat[["tot_pop_yr_fb"]]
   #remove 2018
   tot_pop_yr_fb<-tot_pop_yr_fb[-8,]
-  adj_17             <- sum(dnorm(tot_pop_yr_fb[-1,4],tot_pop_yr_fb[-1,4],tot_pop_yr_fb[8,4]*0.1/1.96,log=T)*wts[c(1+1:6*10, 70)])
-  sum(dnorm(tot_pop_yr_fb[-1,4],V[c(11,21,31,41,51,61,70)],tot_pop_yr_fb[8,4]*0.1/1.96,log=T)*wts[c(1+1:6*10,70)]) - adj_17  } # CI = +/- 2mil
+  adj_17             <- sum(dnorm(tot_pop_yr_fb[-1,4],tot_pop_yr_fb[-1,4],tot_pop_yr_fb[8,4]*0.05/1.96,log=T)*wts[c(1+1:6*10, 70)])
+  sum(dnorm(tot_pop_yr_fb[-1,4],V[c(11,21,31,41,51,61,70)],tot_pop_yr_fb[8,4]*0.05/1.96,log=T)*wts[c(1+1:6*10,70)]) - adj_17  } # CI = +/- 2mil
 
 #' #' TOTAL POP AGE DISTRIBUTION 2016 by nativity
 #' #' Motivation: reported estimates represent pseudo-data for a multinomial likelihood, with ESS = 500
