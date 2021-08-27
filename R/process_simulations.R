@@ -14,16 +14,14 @@
 #'@param Scen1 boolean for scenario 1
 #'@param Scen2 boolean for scenario 2
 #'@param Scen3 boolean for scenario 3
-#'@param Scen4 boolean for scenario 4
-#'@param Scen5 boolean for scenario 3
-#'@param Scen6 boolean for scenario 4
 #'@param prg_chng vector of program change values
 #'@param ttt_list list of targeted testing and treatment values
 #'@return results data frame of output
 #'@export
 OutputsZint <-  function(samp_i=1,ParMatrix,loc, startyr=1950, endyr=2050,
-                                  Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,Scen4=0,Scen5=0,Scen6=0,
-                                  prg_chng=def_prgchng(), ttt_list) {
+                         Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,
+                         prg_chng=def_prgchng(), ttt_list)
+{
   if(min(dim(as.data.frame(ParMatrix)))==1) {
     Par1 <- as.numeric(ParMatrix);
     names(Par1) <- names(ParMatrix)
@@ -40,31 +38,24 @@ OutputsZint <-  function(samp_i=1,ParMatrix,loc, startyr=1950, endyr=2050,
   Scen1 <<- Scen1;
   Scen2 <<- Scen2;
   Scen3 <<- Scen3;
-  Scen4 <<- Scen4;
-  Scen5 <<- Scen5;
-  Scen6 <<- Scen6;
-
-
 
   prms <- list()
-  prms <- param_init(P,loc,Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3,Scen4,Scen5,Scen6,prg_chng,ttt_list)
+  prms <- param_init(P,loc,Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3,prg_chng,ttt_list)
   trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
   if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
-  m <- cSim( nYrs       = endyr-(startyr-1)         , nRes      = length(func_ResNam())  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
-                      Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]  ,
-                      rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
-                      vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    ,
-                      HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat"]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst"]]    ,
-                      net_mig_usb = prms[["net_mig_usb"]], net_mig_nusb = prms[["net_mig_nusb"]], SpImmNon    = prms[["SpImmNon"]]        ,
-                      mubt       = prms[["mubt"]]    , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], RRcrAG = prms[["RRcrAG"]], Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
-                      TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
-                      LtDxPar_lt    = prms[["LtDxPar_lt"]]   , LtDxPar_nolt    = prms[["LtDxPar_nolt"]]   , rLtScrt   = prms[["rLtScrt"]]       , ttt_samp_dist   = prms[["ttt_sampling_dist"]] ,
-                      ttt_ag = prms[["ttt_ag"]], ttt_na = prms[["ttt_na"]], ttt_month = prms[["ttt_month"]], ttt_ltbi = prms[["ttt_ltbi"]], ttt_pop_scrn = prms[["ttt_pop_scrn"]],
-                      RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
-                      EarlyTrend = prms[["EarlyTrend"]], ag_den=prms[["aging_denom"]],  NixTrans = prms[["NixTrans"]], NixTb = prms[["NixTb"]],   trans_mat_tot_ages = trans_mat_tot_ages)$Outputs
+  m <- cSim(nYrs    = endyr-(startyr-1)   , nRes       = length(func_ResNam()), rDxt               = prms[["rDxt"]]        , TxQualt      = prms[["TxQualt"]]     , InitPop       = prms[["InitPop"]],
+            Mpfast   = prms[["Mpfast"]]   , ExogInf    = prms[["ExogInf"]]    , MpfastPI           = prms[["MpfastPI"]]    , Mrslow       = prms[["Mrslow"]]      , rrSlowFB      = prms[["rrSlowFB"]],
+            rfast    = prms[["rfast"]]    , RRcurDef   = prms[["RRcurDef"]]   , rSlfCur            = prms[["rSlfCur"]]     , p_HR         = prms[["p_HR"]]        , vTMort        = prms[["vTMort"]],
+            RRmuRF   = prms[["RRmuRF"]]   , RRmuHR     = prms[["RRmuHR"]]     , Birthst            = prms[["Birthst"]]     , HrEntEx      = prms[["HrEntEx"]]     , ImmNon        = prms[["ImmNon"]],
+            ImmLat   = prms[["ImmLat"]]   , ImmAct     = prms[["ImmAct"]]     , ImmFst             = prms[["ImmFst"]]      , net_mig_usb  = prms[["net_mig_usb"]] , net_mig_nusb  = prms[["net_mig_nusb"]],
+            mubt     = prms[["mubt"]]     , RelInf     = prms[["RelInf"]]     , RelInfRg           = prms[["RelInfRg"]]    , RRcrAG       = prms[["RRcrAG"]]      , Vmix          = prms[["Vmix"]],
+            rEmmigFB = prms [["rEmmigFB"]], TxVec      = prms[["TxVec"]]      , TunTxMort          = prms[["TunTxMort"]]   , rDeft        = prms[["rDeft"]]       , ttt_samp_dist = prms[["ttt_sampling_dist"]],
+            ttt_ag   = prms[["ttt_ag"]]   , ttt_na     = prms[["ttt_na"]]     , ttt_month          = prms[["ttt_month"]]   , ttt_pop_scrn = prms[["ttt_pop_scrn"]], ttt_ltbi      = prms[["ttt_ltbi"]],
+            LtTxPar  = prms[["LtTxPar"]]  , LtDxPar_lt = prms[["LtDxPar_lt"]] , LtDxPar_nolt       = prms[["LtDxPar_nolt"]], rLtScrt      = prms[["rLtScrt"]]     , RRdxAge       = prms[["RRdxAge"]],
+            rRecov   = prms[["rRecov"]]   , pImmScen   = prms[["pImmScen"]]   , EarlyTrend         = prms[["EarlyTrend"]]  , pReTx        = prms[["pReTx"]]       , ag_den        = prms[["aging_denom"]],
+            NixTrans = prms[["NixTrans"]] ,  dist_gen  = prms[["dist_gen"]]   , trans_mat_tot_ages = trans_mat_tot_ages)$Outputs
   colnames(m) <- func_ResNam();
   results<<-as.matrix(m)
-
   return(results)
 }
 
@@ -89,12 +80,12 @@ OutputsZint <-  function(samp_i=1,ParMatrix,loc, startyr=1950, endyr=2050,
 #'@param ttt_list list of targeted testing and treatment values
 #'@return out outputs
 #'@export
-OutputsInt <- function(loc,ParMatrix,n_cores=1,startyr=1950,endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,Scen4=0,Scen5=0,Scen6=0,prg_chng, ttt_list) {
+OutputsInt <- function(loc,ParMatrix,n_cores=1,startyr=1950,endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,prg_chng, ttt_list) {
   if(min(dim(as.data.frame(ParMatrix)))==1) {
-    out <- OutputsZint(samp_i=1,ParMatrix=ParMatrix,loc=loc,endyr=endyr,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3,Scen4=Scen4,Scen5=Scen5,Scen6=Scen6, prg_chng=prg_chng, ttt_list=ttt_list)
+    out <- OutputsZint(samp_i=1,ParMatrix=ParMatrix,loc=loc,endyr=endyr,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3, prg_chng=prg_chng, ttt_list=ttt_list)
   } else {
     out0 <- mclapply(X=1:nrow(ParMatrix),FUN=OutputsZint,mc.cores=n_cores,
-                     ParMatrix=ParMatrix, loc=loc,endyr=endyr,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3,Scen4=Scen4,Scen5=Scen5,Scen6=Scen6,prg_chng=prg_chng,ttt_list= ttt_list)
+                     ParMatrix=ParMatrix, loc=loc,endyr=endyr,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3,prg_chng=prg_chng,ttt_list= ttt_list)
     out <- array(NA,dim=c(length(out0),endyr-(startyr-1),length(func_ResNam())))
 
     for(i in 1:length(out0)){

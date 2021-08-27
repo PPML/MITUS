@@ -3,69 +3,63 @@
 #'@param loc two letter postal abbreviation for states; US for national
 #'@return void
 model_load<-function(loc="US"){
-#' add loc as a global variable
-# loc<<-loc
+  #' add loc as a global variable
+  # loc<<-loc
   library(mnormt)
   library(parallel)
   library(lhs)
   library(Rcpp)
   library(MCMCpack)
   library(MASS)
-#'load necessary datasets
-#'Model Input
+  #'load necessary datasets
+  #'Model Input
   if (loc=="US"){
     CalibDat<<-readRDS(system.file("US/US_CalibDat_2021-01-28.rds", package="MITUS"))
-    ParamInit<<-as.data.frame(readRDS(system.file("US/US_ParamInit_2020-08-20.rds", package="MITUS")))
-    StartVal<<-readRDS(system.file("US/US_StartVal_2021-03-02.rds", package="MITUS"))
+    ParamInit<<-as.data.frame(readRDS(system.file("US/US_ParamInit_2021-06-29.rds", package="MITUS")))
+    StartVal<<-readRDS(system.file("US/US_StartVal_2021-06-29.rds", package="MITUS"))
     Inputs<<-readRDS(system.file("US/US_Inputs_08-31-20.rds", package="MITUS"))
-    #Opt and Par created from the 03032021 optim run
-    Opt <<- readRDS(system.file("US/US_Optim_all_10_0309.rds", package="MITUS"))
-    Par <<- readRDS(system.file("US/US_Param_all_10_0309.rds", package="MITUS"))
-
+    Opt <<- readRDS(system.file("US/US_Optim_all_10_0719.rds", package="MITUS"))
+    Par <<- readRDS(system.file("US/US_Param_all_10_0719.rds", package="MITUS"))
   } else {
     CalibDat<<-CalibDatState<<-readRDS(system.file("ST/ST_CalibDat_2020-12-03.rds", package="MITUS"))
-    ParamInit_st<<-ParamInit<<-readRDS(system.file("ST/ST_ParamInit_2021-03-04.rds", package="MITUS"))
-    StartVal_st<<-StartVal<<-readRDS(system.file("ST/ST_StartVal_2021-03-04.rds", package="MITUS"))
+    ParamInit_st<<-ParamInit<<-readRDS(system.file("ST/ST_ParamInit_2021-07-19.rds", package="MITUS"))
+    StartVal_st<<-StartVal<<-readRDS(system.file("ST/ST_StartVal_2021-07-19.rds", package="MITUS"))
     Inputs<<-readRDS(system.file(paste0(loc,"/",loc,"_ModelInputs_10-19-20.rds"), package="MITUS"))
+    Opt <<- readRDS(system.file(paste0(loc,"/",loc,"_Optim_all_10_0720.rds"), package="MITUS"))
+    Par <<- readRDS(system.file(paste0(loc,"/",loc,"_Param_all_10_0720.rds"), package="MITUS"))
     #last input change was to update the RR active TB by age in immigrants
-    #top 25 state optims are from the 0304 state optims based on the 0303 US optim run
-    Opt<<-readRDS(system.file(paste0(loc,"/",loc,"_Optim_all_10_0309.rds"), package = "MITUS"))
-    Par<<-readRDS(system.file(paste0(loc,"/",loc,"_Param_all_10_0309.rds"), package = "MITUS"))
   }
-  # if (loc=="IN"){
-  #   Inputs<<-readRDS(system.file(paste0(loc,"/",loc,"_ModelInputs_07-14-20.rds"), package="MITUS"))
-  # }
-if (loc=="US"){
-  wts <<- CalibDat[["ImptWeights"]]
-  P  <<- ParamInit[,1]
-  names(P) <<- rownames(ParamInit)
+  if (loc=="US"){
+    wts <<- CalibDat[["ImptWeights"]]
+    P  <<- ParamInit[,1]
+    names(P) <<- rownames(ParamInit)
 
-  ii <<-  ParamInit[,5]==1
-  ParamInitZ <<- ParamInit[ParamInit$Calib==1,]
-  idZ0 <<- ParamInitZ[,4]==0
-  idZ1 <<- ParamInitZ[,4]==1
-  idZ2 <<- ParamInitZ[,4]==2
-} else {
-  wts <<- CalibDatState[["ImptWeights"]]
-  W <- wts[44:69];  W["2016"] <- 4
-  wtZ <<-W
+    ii <<-  ParamInit[,5]==1
+    ParamInitZ <<- ParamInit[ParamInit$Calib==1,]
+    idZ0 <<- ParamInitZ[,4]==0
+    idZ1 <<- ParamInitZ[,4]==1
+    idZ2 <<- ParamInitZ[,4]==2
+  } else {
+    wts <<- CalibDatState[["ImptWeights"]]
+    W <- wts[44:69];  W["2016"] <- 4
+    wtZ <<-W
 
-  #creation of background parameters
-  #elements of P will be replaced from either the StartVals in the case
-  #of optimization or the user inputted dataset
+    #creation of background parameters
+    #elements of P will be replaced from either the StartVals in the case
+    #of optimization or the user inputted dataset
 
-  P  <<- ParamInit_st[,1]
-  names(P) <<- rownames(ParamInit_st)
-  ii <<-  ParamInit_st[,5]==1
-  ParamInitZ <<- ParamInit_st[ParamInit_st$Calib==1,]
-  idZ0 <<- ParamInitZ[,4]==0
-  idZ1 <<- ParamInitZ[,4]==1
-  idZ2 <<- ParamInitZ[,4]==2
-  ParamInit<<-ParamInit_st
-}
+    P  <<- ParamInit_st[,1]
+    names(P) <<- rownames(ParamInit_st)
+    ii <<-  ParamInit_st[,5]==1
+    ParamInitZ <<- ParamInit_st[ParamInit_st$Calib==1,]
+    idZ0 <<- ParamInitZ[,4]==0
+    idZ1 <<- ParamInitZ[,4]==1
+    idZ2 <<- ParamInitZ[,4]==2
+    ParamInit<<-ParamInit_st
+  }
   prgchng<<-def_prgchng(P)
 
-return(invisible(NULL))
+  return(invisible(NULL))
 }
 
 #'loads data for the geography of interest
