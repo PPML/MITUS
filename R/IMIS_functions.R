@@ -232,7 +232,7 @@ llikelihoodZ <-  function(samp_i, start_mat, TB=1) {
   if(is.na(jj))         { lLik <- -10^12 - sum((ParamInitZ[,8]-Par)^2) }
   if(jj%in%c(-Inf,Inf)) { lLik <- -10^12 - sum((ParamInitZ[,8]-Par)^2) }
 
-  return((lLik))  }
+  return((lLik/5))  }
 #'Local parallelization via multicore
 #'@name llikelihood
 #'@param start_mat matrix of parameters
