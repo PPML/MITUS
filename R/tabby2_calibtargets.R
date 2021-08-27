@@ -4,9 +4,9 @@
 # NCD<-CalibDat
 #
 # #states
-# model_load("CA")
+# model_load("FL")
 # SCD<-readRDS(system.file("ST/ST_CalibDat_07-03-19.rds", package="MITUS"))
-#
+# SCD<-CalibDat
 # for(i in 1:length(NCD)){
 #   x<-NCD[[i]]
 #   saveRDS(x,file = paste0("~/MITUS/inst/US/calibration_targets/US_",names(NCD)[i],"_04-02-21.rds"))
@@ -14,13 +14,15 @@
 #
 # for (i in 1:length(SCD)){
 #   x<-SCD[[i]];
-#   # if (length(x)==51){
-#   for (st in 1:51){
+#    if (length(x)==51){
+#   # for (st in 1:51){
+#      st<-10
 #   y<-x[st,]
 #   loc2<-stateID[st,3]
-#   saveRDS(y,file = paste0("~/MITUS/inst/",loc2,"/calibration_targets/",loc2,"_",names(SCD)[i],"_04-02-21.rds"))
-#   }
-#
+#        saveRDS(y,file = paste0("~/MITUS/inst/",loc2,"/calibration_targets/",loc2,"_",names(SCD)[i],"_08-23-21.rds"))
+# }
+# }
+
 #
 #   else {
 #   saveRDS(x,file = paste0("~/MITUS/inst/ST/calibration_targets/ST_",names(SCD)[i],"_04-02-21.rds"))
@@ -138,41 +140,76 @@
 # #   saveRDS(yy,file = paste0("~/MITUS/inst/",loc2,"/calibration_targets/",loc2,"_fb_recent_cases_07-03-19.rds"))
 # # }
 #
-# # #total tb cases
-# # for (i in 1:51){
-# #   loc2<-stateID[i,3]
-# #   x<-SCD[["cases_yr_st"]][[i]]
-# #   x[,2]<-x[,2]/1e6
-# #   saveRDS(x,file = paste0("~/MITUS/inst/",loc2,"/calibration_targets/",loc2,"_cases_yr_07-03-19.rds"))
-# # }
+#total tb cases
+# for (i in 1:51){
+#   loc2<-stateID[i,3]
+#   x<-SCD[["cases_yr_st"]][[i]]
+#   x[,2]<-x[,2]/1e3
+#   saveRDS(x,file = paste0("~/MITUS/inst/",loc2,"/calibration_targets/",loc2,"_cases_yr_08-23-21.rds"))
+# }
+
+#total nativity tb cases
+# for (i in 1:51){
+#   loc2<-stateID[i,3]
+#   saveRDS(SCD[["cases_yr_ag_nat_st_5yr"]][[i]],file = paste0("~/MITUS/inst/",loc2,"/calibration_targets/",loc2,"_ag_nat_cases_5yr_08-23-21.rds"))
+# }
+#agepop
+# for (i in 1:length(stateID[,2])){
+#   fip <- as.numeric(stateID[i,2])
+#   loc<-stateID[i,3]
+#   print(stateID[i,3])
+#   x<-poptab %>% filter(YEAR == 2019 & STATEFIP == fip & USB==1)
+#   if (dim(x)[1]<86) print(dim(x))
+#   us <- c(sum(x[1:5,5]), sum(x[6:25,5]),sum(x[26:45,5]),
+#           sum(x[46:55,5]), sum(x[56:65,5]),sum(x[66:75,5]),
+#           sum(x[76:85,5]),sum(x[86:nrow(x),5]))
+#
+#   x<-poptab %>% filter(YEAR == 2019 & STATEFIP == fip & USB==0)
+#   if (dim(x)[1]<86) print(dim(x))
+#   nus <- c(sum(x[1:5,5]), sum(x[6:25,5]),sum(x[26:45,5]),
+#            sum(x[46:55,5]), sum(x[56:65,5]),sum(x[66:75,5]),
+#            sum(x[76:85,5]),sum(x[86:nrow(x),5]))
+#
+#   nus <- c(0, sum(x[1:15,5]),sum(x[16:34,5]),
+#            sum(x[35:44,5]), sum(x[45:53,5]),sum(x[54:60,5]),
+#            sum(x[61:66,5]),sum(x[67:nrow(x),5]))
+#   newpop<-uspop
+#   newpop[,3]<-c(us, sum(us))
+#   newpop[,4]<-c(nus, sum(nus))
+#   newpop[,2]<-newpop[,3]+newpop[,4]
+#
+#   saveRDS(newpop,file = paste0("~/MITUS/inst/",loc,"/calibration_targets/",loc,"_tot_pop19_ag_fb_08-23-21.rds"))
+#   i<-i+1
+#   print(i)
+# }
 #
 # # #total age tb cases
-# # for (i in 1:51){
-# #   loc2<-stateID[i,3]
-# #   x<-SCD[["cases_yr_ag_nat_st"]][[i]][,-c(1,12),"usb"]*SCD[["cases_yr_ag_nat_st"]][[i]][,12,"usb"]+
-# #      SCD[["cases_yr_ag_nat_st"]][[i]][,-c(1,12),"nusb"]*SCD[["cases_yr_ag_nat_st"]][[i]][,12,"nusb"]
-# #   y<-cbind(SCD[["cases_yr_ag_nat_st"]][[i]][,1,"usb"],x/rowSums(x),rowSums(x))
-# #   saveRDS(y,file = paste0("~/MITUS/inst/",loc2,"/calibration_targets/",loc2,"_age_cases_tot_07-03-19.rds"))
-# # }
+# for (i in 1:51){
+#   loc2<-stateID[i,3]
+#   x<- (SCD[["cases_yr_ag_nat_st_5yr"]][[i]][1:5,-c(1,2,3,4)]+
+#     SCD[["cases_yr_ag_nat_st_5yr"]][[i]][6:10,-c(1,2,3,4)])
+#   y<-data.frame("Years"=SCD[["cases_yr_ag_nat_st_5yr"]][[i]][1:5,2],x/rowSums(x),"Total"=rowSums(x))
+#   saveRDS(y,file = paste0("~/MITUS/inst/",loc2,"/calibration_targets/",loc2,"_age_cases_tot_08-23-21.rds"))
+# }
 #
 #
 # #
 # # #tbdeathsstyr
-# # for (i in 1:51){
-# #   x<-CalibDatState$tbdeaths[[i]]
-# #   loc2<-stateID[i,3]
-# #   y<-dplyr::filter(x,State==stateID[i,1])
-# #   dist<-matrix(unlist(CalibDatState[["tbdeaths_age_yr"]]),18,11)
-# #   z<-yy<-matrix(NA,18,10)
-# #   for(i in 1:18){
-# #   yy[i,]<-(dist[i,2:11]/sum(dist[i,2:11]))
-# #   z[i,]<-x[i,3]*yy[i,]
-# #   }
-# #   z<-(cbind(x[,2],z))
-# #   saveRDS(z,file = paste0("~/MITUS/inst/",loc2,"/calibration_targets/",loc2,"_tb_deaths_07-03-19.rds"))
-# #
-# #   # }
-# # }
+# for (i in 1:51){
+#   x<-CalibDatState$tbdeaths[[i]]
+#   loc2<-stateID[i,3]
+#   y<-dplyr::filter(x,State==stateID[i,1])
+#   dist<-matrix(unlist(CalibDatState[["tbdeaths_age_yr"]]),20,11)
+#   z<-yy<-matrix(NA,20,10)
+#   for(j in 1:20){
+#   yy[j,]<-(dist[j,2:11]/sum(dist[j,2:11]))
+#   z[j,]<-as.numeric(round(as.numeric(x[j,3])*yy[j,]))
+#   }
+#   z<-data.frame("Year"=as.numeric(x[,2]),z)
+#   saveRDS(z,file = paste0("~/MITUS/inst/",loc2,"/calibration_targets/",loc2,"_tb_deaths_08-23-21.rds"))
+#
+#   # }
+# }
 # #
 # # ##make new data directories
 # # # for (i in 1:length(stateID[,3])){
