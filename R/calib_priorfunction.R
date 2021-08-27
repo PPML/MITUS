@@ -12,7 +12,7 @@ lPrior2 <- function(Par,Par3) {
   lDensTrue[idZ1] <- dgamma(Par3[idZ1], shape   = ParamInitZ[idZ1,6], rate   = ParamInitZ[idZ1,7],log=T)
   lDensTrue[idZ2] <- dnorm( Par3[idZ2], mean    = ParamInitZ[idZ2,6], sd     = ParamInitZ[idZ2,7],log=T)
   ldensity3 <- ldensity2+sum(lDensTrue)
-  ldensity3  }
+  return(ldensity3/5)  }
 
 #'@name lprior
 #'@param ParMatrix matrix of Initial parameters
@@ -37,5 +37,5 @@ lprior <- function(ParMatrix = ParInit) { # Par = ParInit
     if(lPri[samp_i]%in%c(-Inf,Inf)) {
       lPri[samp_i] <- -10^12 - sum((ParamInitZ[,8]-Par)^2) }
   } # end inner loop
-  return(lPri)
+  return(lPri/5)
 }
