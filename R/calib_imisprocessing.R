@@ -26,7 +26,7 @@ for(y in 1:nrow(ParamInitZB)){ set.seed(123+y); par_sampB[,y] <- rnorm(1000)  }
 #
 # ########  Load par set
 #load("/Users/nis100/Desktop/MetaTabby/imis_result_temp_061720.rData")
-readRDS("~/Desktop/imis_result_8_13_21.rds")
+imisres<-readRDS("~/Desktop/imis_result_8_27_21.rds")
 #par_samp <- imis_res_tmp$resample[1:1000,]
 par_samp <- imisres$resample
 ###what are we doing here???
@@ -86,7 +86,7 @@ mean_res <-   pred_al_res(Par = Opt[8,-ncol(Opt)], ParB = rep(0,3))
 #
 par_samp_unique <- unique(par_samp) # 533 long
 #lets save the par_samp_unique for the metatabby runs
-saveRDS(par_samp_unique,"~/Desktop/UniqueIMISParams_081621.rds", version=2)
+saveRDS(par_samp_unique,"~/Desktop/UniqueIMISParams_082721.rds", version=2)
 #
 n_reps <- NULL
 for(i in 1:dim(par_samp_unique)[1]) n_reps[i] <- sum(par_samp[,1]==par_samp_unique[i,1])
@@ -97,11 +97,11 @@ for(hh in 1:dim(par_samp_unique)[1]){
   sim_res[,,hh] <- pred_al_res(Par = par_samp_unique[hh,], ParB = par_sampB[hh,])
   cat('\r',hh,"     "); flush.console() }
 
-save(mean_res,sim_res,n_reps,file="metamod_intervals_draws_Int1_8-16-2021.rData")
+save(mean_res,sim_res,n_reps,file="metamod_intervals_draws_Int1_8-27-2021.rData")
 
 
 ###############  Dataset with 2000 model draws, plus a mean vector
-load("metamod_intervals_draws_Int1_8-16-2021.rData")
+load("metamod_intervals_draws_Int1_8-27-2021.rData")
 # sim_res = array of model simulations
 #     dim 1: calendar year, from 1950
 #     dim 2: outcome
@@ -134,7 +134,7 @@ dim(sim_res)
 ## Look at them
 pdf(file="~/Desktop/bounds.pdf", width = 11, height = 8.5)
 
-plot(1,1,ylim=c(1,150),xlim=c(1950,2019),xlab="",ylab="",axes=F,log="y")
+plot(1,1,ylim=c(1,150),xlim=c(1950,2019),xlab="",ylab="",axes=F)
 
 polygon(c(1950:2019,2019:1950),c(notif_tot_i[1,],notif_tot_i[2,70:1])/1e3,border=F,col=mTrsp(1,100))
 polygon(c(1950:2019,2019:1950),c(notif_usb_i[1,],notif_usb_i[2,70:1])/1e3,border=F,col=mTrsp(4,100))
@@ -149,31 +149,39 @@ axis(1,las=1,tcl=-.2,mgp=c(3, 0.4, 0),col="grey50");
 mtext("Year",1,1.8,cex=0.9)
 mtext("Annual TB cases (000s)",2,2,cex=.9)
 box(col="grey50")
+pdf(file="~/Desktop/bounds.pdf", width = 11, height = 8.5)
+  notif_tot_i <- (sim_res[46:70, "NOTIF_ALL",] + sim_res[46:70, "NOTIF_MORT_ALL",])*1e6
+  notif_usb_i <- (sim_res[46:70, "NOTIF_US",] + sim_res[46:70, "NOTIF_MORT_US",])*1e6
+  notif_nusb_i <- (sim_res[46:70, "NOTIF_F1",] + sim_res[46:70, "NOTIF_MORT_F1",] + sim_res[46:70, "NOTIF_F2",] + sim_res[46:70, "NOTIF_MORT_F2",])*1e6
 
-
-
-  notif_tot_i <- (sim_res[, "NOTIF_ALL",] + sim_res[, "NOTIF_MORT_ALL",])*1e6
-  notif_usb_i <- (sim_res[, "NOTIF_US",] + sim_res[, "NOTIF_MORT_US",])*1e6
-  notif_nusb_i <- (sim_res[, "NOTIF_F1",] + sim_res[, "NOTIF_MORT_F1",] + sim_res[, "NOTIF_F2",] + sim_res[, "NOTIF_MORT_F2",])*1e6
-plot(1,1,ylim=c(1,150),xlim=c(1950,2019),xlab="",ylab="",axes=F,log="y")
+  notif_tot_targ <- CalibDat$tot_cases[43:67,2]*1e3
+  notif_usb_targ <- ((1-CalibDat$fb_cases[3:27,2])*CalibDat$fb_cases[3:27,3])/1e3
+  notif_nusb_targ <- (CalibDat$fb_cases[3:27,2]*CalibDat$fb_cases[3:27,3])/1e3
+  plot(0,0,ylim=c(0,25),xlim=c(1995,2019),xlab="",ylab="",axes=F)
 for (i in 1:nrow(sim_res))
 {
-  lines(1950:2019,notif_tot_i[,i]/1e3,pch=21,lwd=2,col=mTrsp(1,100))
-  lines(1950:2019,notif_usb_i[,i]/1e3,pch=21,lwd=2,col=mTrsp(4,100))
-  lines(1950:2019,notif_nusb_i[,i]/1e3,pch=21,lwd=2,col=mTrsp("forestgreen",100))
+  lines(1995:2019,notif_tot_i[,i]/1e3,pch=21,lwd=2,col=mTrsp(1,100))
+  lines(1995:2019,notif_usb_i[,i]/1e3,pch=21,lwd=2,col=mTrsp(4,100))
+  lines(1995:2019,notif_nusb_i[,i]/1e3,pch=21,lwd=2,col=mTrsp("forestgreen",100))
 }
 
-lines(1950:2019,notif_tot_m/1e3,pch=21,lwd=2,col="white")
-lines(1950:2019,notif_usb_m/1e3,pch=21,lwd=2,col="white")
-lines(1950:2019,notif_nusb_m/1e3,pch=21,lwd=2,col="white")
+lines(1995:2019,notif_tot_targ,pch=21,lwd=2,col="white")
+lines(1995:2019,notif_tot_targ,pch=21,lwd=2,col=1, lty=3)
+lines(1995:2019,notif_usb_targ,pch=21,lwd=2,col="white")
+lines(1995:2019,notif_usb_targ,pch=21,lwd=2,col=4, lty=3)
+lines(1995:2019,notif_nusb_targ,pch=21,lwd=2,col="white")
+lines(1995:2019,notif_nusb_targ,pch=21,lwd=2,col="forestgreen",lty=3)
+
 
 axis(2,las=1,tcl=-.2,mgp=c(3, 0.5, 0),col="grey50")
 axis(1,las=1,tcl=-.2,mgp=c(3, 0.4, 0),col="grey50");
 mtext("Year",1,1.8,cex=0.9)
 mtext("Annual TB cases (000s)",2,2,cex=.9)
-box(col="grey50")
+mtext("Total TB Cases by Year 1995-2019",3,.8,font=2,cex=1.2)
+legend("topright",c("Reported data:All", "Reported data:NUSB","Reported data:USB","Model:All","Model:NUSB","Model:USB"),
+       lwd=c(3,3,3,2,2,2),ncol = 2,
+       col=c("black","blue","forestgreen","black","blue","forestgreen"),lty=c(3,3,3,1,1,1),bg="white",pt.cex=c(0.6,0.6,0.6,NA,NA,NA))
 dev.off()
-
 ### ### ### ###Check some other outputs
 #TB deaths
 ### ### ### ### ### ### ###
