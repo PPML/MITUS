@@ -13,7 +13,7 @@ age_denom(loc)
 \item{loc}{two digit mailing abbreviation of state}
 }
 \value{
-age_den matrix of denominators 10x1201
+age_den matrix of denominators 10x1213
 }
 \description{
 THE CODE BELOW SOURCES THE MODEL INPUTS AND THEN FORMATS THEM FOR USE
