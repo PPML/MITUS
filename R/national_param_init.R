@@ -23,7 +23,7 @@
 #'@param ttt_input list of ttt changes
 #'@return InputParams list
 #'@export
-national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,Scen4=0,Scen5=0, Scen6=0,prg_chng, ttt_input, delay=0, immig=1){
+national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,Scen4=0,Scen5=0, Scen6=0,prg_chng, ttt_input, delay=0, immig=1, noiseParams=list(1,1,1)){
   ########## DEFINE A VARIABLE THAT WILL DETERMINE HOW LONG THE TIME DEPENDENT
   ########## VARIABLES SHOULD BE
   month<-1213;
@@ -81,6 +81,7 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
     r_decline=0.015
   }
   ImmigInputs$PrevTrend25_34<-crude_rate(Inputs,loc,r_decline)
+  ImmigInputs$PrevTrend25_34[74:101] <- ImmigInputs$PrevTrend25_34[74:101]*noiseParams[[2]]
   TxInputs         <- Inputs[["TxInputs"]]
   NetMig           <- Inputs[["NetMigrState"]]
 
@@ -168,6 +169,7 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
     high_immig[69:151]<-Inputs$ImmigInputs[["TotByYear"]][69:151]*1.5
     Inputs$ImmigInputs[["TotByYear"]] <-high_immig
   }
+  Inputs$ImmigInputs[["TotByYear"]][74:101]<-Inputs$ImmigInputs[["TotByYear"]][74:101]*noiseParams[[1]]
   ####################### calculate the age immigration #######################
   TotImmig0       <- (c(Inputs$ImmigInputs[[1]][1:151])+c(rep(0,71),cumsum(rep(PV["ImmigVolFut"],80))))/12*PV["ImmigVol"]
   TotImmAge0      <-matrix(0,151,11)
@@ -505,10 +507,15 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   SensSp    <- PV["SensSp"]
 
   ######################           PROVIDER DELAY         ########################
-  DelaySp    <- rep(PV["DelaySp"],month)
+  DelaySp0    <- rep(PV["DelaySp"],151)
+  #add noise
+  DelaySp0[74:101] <- DelaySp0[74:101]*noiseParams[[3]]
+  DelaySp <- SmoCurve(DelaySp0)[1:month]
+
   if (delay == 1){
     DelaySp[841:859]<-8*DelaySp[841:859]
   }
+
   if (prg_chng["tb_tim2tx_frc"] !=100){
     DelaySp[prg_m:length(DelaySp)] <- PV["DelaySp"]*(prg_chng["tb_tim2tx_frc"])/100;
   }
