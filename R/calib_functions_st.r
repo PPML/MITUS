@@ -36,10 +36,11 @@ notif_decline_lLik_st <- function(V, st=st) {
 #'@return likelihood
 US_notif_tot_lLik_st <- function(V,st) {
   notif_tot_us     <- rowSums(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][CalibDat$cases_yr_ag_nat_st_5yr[[st]][,4]==1,5:14])
-  adj_1         <- sum(dnorm(notif_tot_us,notif_tot_us,notif_tot_us*0.1/1.96,log=T)*wts[c(49,54,59,64,70)])
+  for (i in 1:length(notif_tot_us)) if (notif_tot_us[i]==0) notif_tot_us[i] <-NA
+  adj_1         <- sum((dnorm(notif_tot_us,notif_tot_us,notif_tot_us*0.1/1.96,log=T)*wts[c(49,54,59,64,70)])[is.na(notif_tot_us)==F])
   V1<-c(sum(V[1:5]), sum(V[6:10]), sum(V[11:15]), sum(V[16:20]), sum(V[21:25]))*1e6
   #notif tot is in real scale must scale outputs up
-  sum(dnorm(notif_tot_us,V1,notif_tot_us*0.1/1.96,log=T)*wts[c(49,54,59,64,70)]) - adj_1
+  sum((dnorm(notif_tot_us,V1,notif_tot_us*0.1/1.96,log=T)*wts[c(49,54,59,64,70)])[is.na(notif_tot_us)==F]) - adj_1
 }
 
 #'Total Diagnosed NUS Cases 1993-2017
@@ -49,10 +50,11 @@ US_notif_tot_lLik_st <- function(V,st) {
 #'@return likelihood
 NUS_notif_tot_lLik_st <- function(V,st) {
   notif_tot_nus     <- rowSums(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][CalibDat$cases_yr_ag_nat_st_5yr[[st]][,4]==0,5:14])
-  adj_1         <- sum(dnorm(notif_tot_nus,notif_tot_nus,notif_tot_nus*0.1/1.96,log=T)*wts[c(49,54,59,64,70)])
+  for (i in 1:length(notif_tot_nus)) if (notif_tot_nus[i]==0) notif_tot_nus[i] <-NA
+  adj_1         <- sum((dnorm(notif_tot_nus,notif_tot_nus,notif_tot_nus*0.1/1.96,log=T)*wts[c(49,54,59,64,70)])[is.na(notif_tot_nus)==F])
   V1<-c(sum(V[1:5]), sum(V[6:10]), sum(V[11:15]), sum(V[16:20]), sum(V[21:25]))*1e6
   #notif tot is in real scale must scale outputs up
-  sum(dnorm(notif_tot_nus,V1,notif_tot_nus*0.1/1.96,log=T)*wts[c(49,54,59,64,70)]) - adj_1
+  sum((dnorm(notif_tot_nus,V1,notif_tot_nus*0.1/1.96,log=T)*wts[c(49,54,59,64,70)])[is.na(notif_tot_nus)==F]) - adj_1
 }
 
 ###############################################################################################
@@ -291,16 +293,16 @@ tb_dth_age_lLik_st <- function(V,rho=0.005) { # V = table of deaths by age 1999-
 tot_pop_yr_fb_lLik_st <- function(V,st) { # V = total pop (rows=year, cols=us, fb)
   tot_pop_yr      <- CalibDatState[["pop_50_10"]][[st]]
   tot_pop_yr_fb   <- tot_pop_yr[tot_pop_yr[,2]==0,]
-  #get 2017 population
-  pop_ag_11_170  <- CalibDatState[["pop_00_17"]][[st]][,c(1,2,20)]
-  #get 2017 fb population
-  pop_ag_11_17nus <-sum(pop_ag_11_170[pop_ag_11_170[,2]==0,3][-11])
+  #get 2019 population
+  pop_ag_11_190  <- CalibDatState[["pop_00_19"]][[st]][,c(1,2,22)]
+  #get 2019 fb population
+  pop_ag_11_19nus <-sum(pop_ag_11_190[pop_ag_11_190[,2]==0,3][-11])
   #append the foreign born population
-  tot_pop_yr_fb   <- c(tot_pop_yr_fb[,-c(1:2)], pop_ag_11_17nus)
+  tot_pop_yr_fb   <- c(tot_pop_yr_fb[,-c(1:2)], pop_ag_11_19nus)
   # if (loc != "HI" & loc != "AK"){
-  adj_17          <- sum(dnorm(tot_pop_yr_fb[-1],tot_pop_yr_fb[-1],tot_pop_yr_fb[7]*0.05/1.96,log=T)*wts[c(1+1:6*10,68)])
+  adj_17          <- sum(dnorm(tot_pop_yr_fb[-1],tot_pop_yr_fb[-1],tot_pop_yr_fb[7]*0.05/1.96,log=T)*wts[c(1+1:6*10,70)])
   #total population is in real numbers so we need to scale up output
-  sum(dnorm(tot_pop_yr_fb[-1],V[c(11,21,31,41,51,61,68)]*1e6,tot_pop_yr_fb[7]*0.05/1.96,log=T)*wts[c(1+1:6*10,68)]) - adj_17}
+  sum(dnorm(tot_pop_yr_fb[-1],V[c(11,21,31,41,51,61,70)]*1e6,tot_pop_yr_fb[7]*0.05/1.96,log=T)*wts[c(1+1:6*10,70)]) - adj_17}
   # else{
   #   adj_17          <- sum(dnorm(tot_pop_yr_fb,tot_pop_yr_fb,tot_pop_yr_fb[7]*0.1/1.96,log=T)*wts[c(1+1:6*10,68)])
   #   #total population is in real numbers so we need to scale up output
@@ -321,28 +323,45 @@ tot_pop_yr_us_lLik_st <- function(V,st) {
 
   tot_pop_yr      <- CalibDatState[["pop_50_10"]][[st]]
   tot_pop_yr_us   <- tot_pop_yr[tot_pop_yr[,2]==1,]
-  #get 2017 population
-  pop_ag_11_170  <- CalibDatState[["pop_00_17"]][[st]][,c(1,2,20)]
-  #get 2017 fb population
-  pop_ag_11_17us <-sum(pop_ag_11_170[pop_ag_11_170[,2]==1,3][-11])
+  #get 2019 population
+  pop_ag_11_190  <- CalibDatState[["pop_00_19"]][[st]][,c(1,2,22)]
+  #get 2019 fb population
+  pop_ag_11_19us <-sum(pop_ag_11_190[pop_ag_11_190[,2]==1,3][-11])
   #append the foreign born population
-  tot_pop_yr_us   <- c(tot_pop_yr_us[,-c(1:2)], pop_ag_11_17us)
-  adj_17          <- sum(dnorm(tot_pop_yr_us[-1],tot_pop_yr_us[-1],tot_pop_yr_us[7]*0.05/1.96,log=T)*wts[c(1+1:6*10,68)])
+  tot_pop_yr_us   <- c(tot_pop_yr_us[,-c(1:2)], pop_ag_11_19us)
+  adj_17          <- sum(dnorm(tot_pop_yr_us[-1],tot_pop_yr_us[-1],tot_pop_yr_us[7]*0.05/1.96,log=T)*wts[c(1+1:6*10,70)])
   #total population is in real numbers so we need to scale up output
-  sum(dnorm(tot_pop_yr_us[-1],V[c(11,21,31,41,51,61,68)]*1e6,tot_pop_yr_us[7]*0.05/1.96,log=T)*wts[c(1+1:6*10,68)]) - adj_17}
+  sum(dnorm(tot_pop_yr_us[-1],V[c(11,21,31,41,51,61,70)]*1e6,tot_pop_yr_us[7]*0.05/1.96,log=T)*wts[c(1+1:6*10,70)]) - adj_17}
 
 ### ### ### TOTAL POP AGE DISTRIBUTION 2017  ### ### ### ### ### ### D
 # Motivation: reported estimates represent pseudo-data for a multinomial likelihood, with ESS = 500
-tot_pop17_ag_fb_lLik_st <- function(V,st,ESS=500) { # V =  US pop in 2014 (row=11 ages, col= us, fb)
-  pop_ag_11_170  <- CalibDatState[["pop_00_17"]][[st]][,c(1,2,20)]
-  pop_ag_11_17us <-pop_ag_11_170[pop_ag_11_170[,2]==1,3][-11]
-  pop_ag_11_17nus <-pop_ag_11_170[pop_ag_11_170[,2]==0,3][-11]
+tot_pop19_ag_fb_lLik_st <- function(V,st,ESS=500) { # V =  US pop in 2014 (row=11 ages, col= us, fb)
+  pop_ag_11_190  <- CalibDatState[["pop_00_19"]][[st]][,c(1,2,22)]
+  pop_ag_11_19us <-pop_ag_11_190[pop_ag_11_190[,2]==1,3][-11]
+  pop_ag_11_19nus <-pop_ag_11_190[pop_ag_11_190[,2]==0,3][-11]
 
-  pop_ag_11_17   <- cbind(pop_ag_11_17us/sum(pop_ag_11_17us), pop_ag_11_17nus/sum(pop_ag_11_17nus))
-  adj_18         <- (sum(log(pop_ag_11_17[,1])*pop_ag_11_17[,1])+sum(log(pop_ag_11_17[,2])*pop_ag_11_17[,2]))*ESS
+  pop_ag_11_19   <- cbind(pop_ag_11_19us/sum(pop_ag_11_19us)+.001, pop_ag_11_19nus/sum(pop_ag_11_19nus)+.001)
+  adj_18         <- (sum(log(pop_ag_11_19[,1])*pop_ag_11_19[,1])+sum(log(pop_ag_11_19[,2])*pop_ag_11_19[,2]))*ESS
   V1 <- rbind(V[1:9,],V[10,]+V[11,])
   V2<-cbind(V1[,1]/sum(V1[,1]),V1[,2]/sum(V1[,2]))
-  (sum(log(V2[,1])*pop_ag_11_17[,1])+sum(log(V2[,2])*pop_ag_11_17[,2]))*ESS - adj_18
+  (sum(log(V2[,1])*pop_ag_11_19[,1])+sum(log(V2[,2])*pop_ag_11_19[,2]))*ESS - adj_18
+}
+
+### ### ### TOTAL POP AGE DISTRIBUTION 2017  ### ### ### ### ### ### D
+# Motivation: reported estimates represent pseudo-data for a multinomial likelihood, with ESS = 500
+tot_pop1719_ag_fb_lLik_st <- function(V,st,ESS=500) { # V =  US pop in 2014 (row=11 ages, col= us, fb)
+  pop_ag_11_190  <- CalibDatState[["pop_00_19"]][[st]][,c(1,2,20:22)]
+  pop_ag_11_19us <- rowSums(pop_ag_11_190[pop_ag_11_190[,2]==1,3:5])[-11]
+  #top code at 75p
+  # pop_ag_11_19us[9] <- pop_ag_11_19us[9] + pop_ag_11_19us[10]
+  # pop_ag_11_19us <- pop_ag_11_19us[-10]
+  pop_ag_11_19nus <-rowSums(pop_ag_11_190[pop_ag_11_190[,2]==0,3:5])[-11]
+  #top code at 75p
+  pop_ag_11_19   <- cbind(pop_ag_11_19us/sum(pop_ag_11_19us), pop_ag_11_19nus/sum(pop_ag_11_19nus))
+  adj_18         <- (sum(log(pop_ag_11_19[,1])*pop_ag_11_19[,1])+sum(log(pop_ag_11_19[,2])*pop_ag_11_19[,2]))*ESS
+  V1 <- rbind(V[1:9,],V[10,]+V[11,])
+  V2<-cbind(V1[,1]/sum(V1[,1]),V1[,2]/sum(V1[,2]))
+  (sum(log(V2[,1])*pop_ag_11_19[,1])+sum(log(V2[,2])*pop_ag_11_19[,2]))*ESS - adj_18
 }
 
 #' TOTAL US DEATHS

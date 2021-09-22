@@ -184,7 +184,8 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
         lLik <- lLik + addlik
         # print(paste("18:", lLik))
         addlik <- ferebee_lLik_st(Par=v2456); addlik
-        lLik <- lLik + addlik
+
+         lLik <- lLik + addlik
         # print(paste("19:", lLik))
         addlik <- sutherland_lLik_st(Par=v2456); addlik
         lLik <- lLik + addlik
@@ -206,9 +207,13 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
     v17b  <- M[,30]
     addlik <- tot_pop_yr_us_lLik_st(V=v17b,st=st); addlik
     lLik <- lLik + addlik
-    ### ### ### TOTAL POP AGE DISTRIBUTION 2017  ### ### ### ### ### ### D
-    v18  <- cbind(M[68,33:43],M[68,44:54])
-    addlik <- tot_pop17_ag_fb_lLik_st(V=v18,st=st); addlik
+    ### ### ### TOTAL POP AGE DISTRIBUTION 2019  ### ### ### ### ### ### D
+    # v18a  <- cbind(M[70,33:43],M[70,44:54])
+    # addlik <- tot_pop19_ag_fb_lLik_st(V=v18,st=st); addlik
+    # lLik <- lLik + addlik
+    ### ### ### TOTAL POP AGE DISTRIBUTION 2017-2019  ### ### ### ### ### ### D
+    v18  <- cbind(colSums(M[68:70,33:43]),colSums(M[68:70,44:54]))
+    addlik <- tot_pop1719_ag_fb_lLik_st(V=v18,st=st); addlik
     lLik <- lLik + addlik
     #' ### ### ### HOMELESS POP 2010  ### ### ### ### ### ###
     v23b  <- M[61,29]
