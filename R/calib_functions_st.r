@@ -28,70 +28,6 @@ notif_decline_lLik_st <- function(V, st=st) {
   sum(dnorm(notif_tot2,V*1e6,notif_tot2*0.2/1.96,log=T)*wts[4:44]) - adj_1b
 }
 
-
-#'Total Diagnosed US Cases 1993-2017
-#'Motivation: Normal, mean centered with CI = +/- 5% of the mean
-#'@name US_notif_tot_lLik_st
-#'@param V vector of total notifications 1953-2014
-#'@return likelihood
-US_notif_tot_lLik_st <- function(V,st) {
-  notif_tot_us     <- rowSums(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][CalibDat$cases_yr_ag_nat_st_5yr[[st]][,4]==1,5:14])
-  for (i in 1:length(notif_tot_us)) if (notif_tot_us[i]==0) notif_tot_us[i] <-NA
-  adj_1         <- sum((dnorm(notif_tot_us,notif_tot_us,notif_tot_us*0.1/1.96,log=T)*wts[c(49,54,59,64,70)])[is.na(notif_tot_us)==F])
-  V1<-c(sum(V[1:5]), sum(V[6:10]), sum(V[11:15]), sum(V[16:20]), sum(V[21:25]))*1e6
-  #notif tot is in real scale must scale outputs up
-  sum((dnorm(notif_tot_us,V1,notif_tot_us*0.1/1.96,log=T)*wts[c(49,54,59,64,70)])[is.na(notif_tot_us)==F]) - adj_1
-}
-
-#'Total Diagnosed NUS Cases 1993-2017
-#'Motivation: Normal, mean centered with CI = +/- 5% of the mean
-#'@name NUS_notif_tot_lLik_st
-#'@param V vector of total notifications 1953-2014
-#'@return likelihood
-NUS_notif_tot_lLik_st <- function(V,st) {
-  notif_tot_nus     <- rowSums(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][CalibDat$cases_yr_ag_nat_st_5yr[[st]][,4]==0,5:14])
-  for (i in 1:length(notif_tot_nus)) if (notif_tot_nus[i]==0) notif_tot_nus[i] <-NA
-  adj_1         <- sum((dnorm(notif_tot_nus,notif_tot_nus,notif_tot_nus*0.1/1.96,log=T)*wts[c(49,54,59,64,70)])[is.na(notif_tot_nus)==F])
-  V1<-c(sum(V[1:5]), sum(V[6:10]), sum(V[11:15]), sum(V[16:20]), sum(V[21:25]))*1e6
-  #notif tot is in real scale must scale outputs up
-  sum((dnorm(notif_tot_nus,V1,notif_tot_nus*0.1/1.96,log=T)*wts[c(49,54,59,64,70)])[is.na(notif_tot_nus)==F]) - adj_1
-}
-
-###############################################################################################
-###############################################################################################
-#THESE FOLLOWING LIKELIHOODS ARE OUT OF DATE AND NO LONGER USED DUE TO DATA RESTRICTIONS
-#USE THE NOTIF_AGE..._5YR INSTEAD
-###############################################################################################
-###############################################################################################
-### ### ### ANN DECLINE IN CASES 1953-1994  ### ### ### ### ### ### D
-# notif_decline      <- CalibDatState[["cases_prop_change_53_94"]]
-# adj_1a             <- sum(dnorm(rep(notif_decline,40),notif_decline,0.1,log=T))
-# notif_decline_lLik_st <- function(V) { # V = vector of notifications by fb 1953-2015
-#  sum(dnorm(exp(diff(log(V))),notif_decline,0.1,log=T)) - adj_1a  }
-
-### ### ### US CASES AGE DISTRIBUTION 1993-2016  ### ### ### ### ### ### D
-# Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
-notif_age_us_lLik_st <- function(V,st,rho=0.01) { # V = table of us notifications by age 1993-2016 (row=24 years, col=11 ages)
-  notif_age_us0     <- CalibDatState[["cases_yr_ag_nat_st"]][[st]][,,"usb"]
-  notif_age_us      <- notif_age_us0[,-c(1,12)]*notif_age_us0[,12]
-  adj_2a            <- sum(dDirMult(M=notif_age_us+0.01,n=notif_age_us,Rho=0.015)*wts[44:69])
-  V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
-  #scale does not matter for dirichlet llikelihood
-  sum(dDirMult(M=V2,n=notif_age_us,Rho=rho)*wts[44:69]) - adj_2a
-}
-
-### ### ### FB CASES AGE DISTRIBUTION 1993-2016  ### ### ### ### ### ### D
-# Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
-
-notif_age_fb_lLik_st <- function(V,st,rho=0.01) { # V = table of fb notifications by age 1993-2013 (row=21 years, col=11 ages)
-  notif_age_fb0     <- CalibDatState[["cases_yr_ag_nat_st"]][[st]][,,"nusb"]
-  notif_age_fb      <- notif_age_fb0[,-c(1,12)]*notif_age_fb0[,12]
-  adj_2b            <- sum(dDirMult(M=notif_age_fb+0.01,n=notif_age_fb,Rho=0.015)*wts[44:70])
-  V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
-  #scale does not matter for dirichlet llikelihood
-  sum(dDirMult(M=V2,n=notif_age_fb,Rho=rho)*wts[44:70]) - adj_2b
-}
-
 ### ### ### CASES FB DISTRIBUTION 1993-2016  ### ### ### ### ### ###  D
 # Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
 
@@ -131,7 +67,12 @@ notif_fbus_slp_lLik_st <- function(V,st) {
 # }
 ###############################################################################################
 ###############################################################################################
-
+###############################################################################################
+###############################################################################################
+#THESE FOLLOWING LIKELIHOODS ARE OUT OF DATE AND NO LONGER USED DUE TO RESUING OF DATA. ONLY
+#USING THE DISTRIBUTION LIKELIHOOD FROM NOW ON.
+###############################################################################################
+###############################################################################################
 ### ### ### US CASES AGE DISTRIBUTION 5yrs 1993-2016  ### ### ### ### ### ### D
 # Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
 notif_age_us_5yr_lLik_st <- function(V,st,rho=0.1) { # V = table of us notifications by age 1993-2016 (row=24 years, col=11 ages)
