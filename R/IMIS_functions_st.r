@@ -79,9 +79,9 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
         # lLik <- lLik + addlik
         # print(paste("7:", lLik))
         ### ### ### CASES NUSB, US 2010-2014  SLOPE ### ### ### ### ### ### D
-        v4   <- cbind(M[65:69,148]+M[65:69,149]+(M[65:69,201]+M[65:69,202]),
-                      M[65:69,147]+M[65:69,200])
-        addlik <- notif_fbus_slp_lLik_st(V=v4,st=st); addlik
+        # v4   <- cbind(M[65:69,148]+M[65:69,149]+(M[65:69,201]+M[65:69,202]),
+        #               M[65:69,147]+M[65:69,200])
+        # addlik <- notif_fbus_slp_lLik_st(V=v4,st=st); addlik
         # lLik <- lLik + addlik
         # print(paste("8:", lLik))
         ### ### ### CASES HR DISTRIBUTION 1993-2014  ### ### ### ### ### ### D

@@ -12,9 +12,9 @@
 #'@return likelihood
 notif_tot_lLik_st <- function(V,st) {
   notif_tot     <- CalibDatState[["cases_yr_st"]][[st]][,2];
-  adj_1         <- sum(dnorm(notif_tot,notif_tot,notif_tot*0.1/1.96,log=T)*wts[44:70])
+  adj_1         <- sum((dnorm(notif_tot,notif_tot,notif_tot*0.1/1.96,log=T)*wts[44:70])[is.na(notif_tot)==F  & notif_tot != 0])
   #notif tot is in real scale must scale outputs up
-  sum(dnorm(notif_tot,V*1e6,notif_tot*0.1/1.96,log=T)*wts[44:70]) - adj_1
+  sum((dnorm(notif_tot,V*1e6,notif_tot*0.1/1.96,log=T)*wts[44:70])[is.na(notif_tot)==F  & notif_tot != 0]) - adj_1
 }
 
 ### ### ### TOTAL DIAGNOSED CASES 1953-1993  ### ### ### ### ### ### D
@@ -38,6 +38,7 @@ notif_fb_lLik_st <- function(V,st,rho=0.005) { # V = table of notifications by f
   #scale does not matter for dirichlet llikelihood
   (sum(dDirMult(M=V,n=notif_fb,Rho=rho)*wts[44:69]) - adj_3)*2
 }
+###############################################################################################
 
 notif_fb_5yr_lLik_st <- function(V,st,rho=0.00005) { # V = table of notifications by fb 1993-2016 (row=24 years, col=fb then us)
   notif_age_fb0   <- rowSums(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][CalibDat$cases_yr_ag_nat_st_5yr[[st]][,4]==0,5:14])
@@ -74,7 +75,6 @@ notif_fbus_slp_lLik_st <- function(V,st) {
 #   sum(dDirMult(M=V2,n=notif_hr,Rho=rho)*wts[c(45,50,55,60,65)]) - adj_5b
 # }
 
-###############################################################################################
 ###############################################################################################
 ### ### ### US CASES AGE DISTRIBUTION 5yrs 1993-2016  ### ### ### ### ### ### D
 # Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
