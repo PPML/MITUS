@@ -40,7 +40,7 @@ notif_fb_lLik_st <- function(V,st,rho=0.005) { # V = table of notifications by f
 }
 ###############################################################################################
 
-notif_fb_5yr_lLik_st <- function(V,st,rho=0.00005) { # V = table of notifications by fb 1993-2016 (row=24 years, col=fb then us)
+notif_fb_5yr_lLik_st <- function(V,st,rho=0.005) { # V = table of notifications by fb 1993-2016 (row=24 years, col=fb then us)
   notif_age_fb0   <- rowSums(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][CalibDat$cases_yr_ag_nat_st_5yr[[st]][,4]==0,5:14])
   notif_age_us0   <- rowSums(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][CalibDat$cases_yr_ag_nat_st_5yr[[st]][,4]==1,5:14])
   notif_fb      <- cbind(notif_age_fb0,notif_age_us0)

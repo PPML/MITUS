@@ -76,7 +76,7 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
         v3   <-  cbind(M[46:70,148]+M[46:70,149]+(M[46:70,201]+M[46:70,202]),
                        M[46:70,147]+M[46:70,200])
         addlik <- notif_fb_5yr_lLik_st(V=v3,st=st); addlik
-        # lLik <- lLik + addlik
+        lLik <- lLik + addlik
         # print(paste("7:", lLik))
         ### ### ### CASES NUSB, US 2010-2014  SLOPE ### ### ### ### ### ### D
         # v4   <- cbind(M[65:69,148]+M[65:69,149]+(M[65:69,201]+M[65:69,202]),
