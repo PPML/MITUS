@@ -41,9 +41,10 @@ notif_fb_lLik_st <- function(V,st,rho=0.005) { # V = table of notifications by f
 ###############################################################################################
 
 notif_fb_5yr_lLik_st <- function(V,st,rho=0.005) { # V = table of notifications by fb 1993-2016 (row=24 years, col=fb then us)
-  notif_age_fb0   <- rowSums(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][CalibDat$cases_yr_ag_nat_st_5yr[[st]][,4]==0,5:14])
-  notif_age_us0   <- rowSums(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][CalibDat$cases_yr_ag_nat_st_5yr[[st]][,4]==1,5:14])
-  notif_fb      <- cbind(notif_age_fb0,notif_age_us0)
+  ### Read in the nativity stratified data
+  notif_age_fb0   <- CalibDatState$cases_nat_st_5yr[CalibDatState$cases_nat_st_5yr$State.Code==st & CalibDatState$cases_nat_st_5yr$usb==0,4:8]
+  notif_age_us0   <- CalibDatState$cases_nat_st_5yr[CalibDatState$cases_nat_st_5yr$State.Code==st & CalibDatState$cases_nat_st_5yr$usb==1,4:8]
+  notif_fb      <- cbind(t(notif_age_fb0),t(notif_age_us0))
   adj_3         <- sum(dDirMult(M=notif_fb,n=notif_fb,Rho=rho)*wts[c(49,54,59,64,70)])
   V2<-matrix(0,5,2)
   V2[1,]<-colSums(V[1:5,]);V2[2,]<-colSums(V[6:10,]);V2[3,]<-colSums(V[11:15,]); V2[4,]<-colSums(V[16:20,]); V2[5,]<-colSums(V[21:25,])
@@ -79,25 +80,87 @@ notif_fbus_slp_lLik_st <- function(V,st) {
 ### ### ### US CASES AGE DISTRIBUTION 5yrs 1993-2016  ### ### ### ### ### ### D
 # Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
 notif_age_us_5yr_lLik_st <- function(V,st,rho=0.1) { # V = table of us notifications by age 1993-2016 (row=24 years, col=11 ages)
-  notif_age_us_5yr     <- CalibDatState$cases_yr_ag_nat_st_5yr[[st]][CalibDat$cases_yr_ag_nat_st_5yr[[st]][,4]==1,5:14]
-  adj_2a            <- sum(dDirMult(M=notif_age_us_5yr+0.01,n=notif_age_us_5yr,Rho=rho)*wts[c(49,54,59,64,70)])
+  ### Read in the age and nativity stratified data
+  notif_age_us_5yr     <- as.data.frame(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][CalibDat$cases_yr_ag_nat_st_5yr[[st]][,4]==1,5:14])
+  ### Format the model estimates to match the calibration data
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
   V3<-matrix(0,5,10)
   V3[1,]<-colSums(V2[1:5,]);V3[2,]<-colSums(V2[6:10,]);V3[3,]<-colSums(V2[11:15,]); V3[4,]<-colSums(V2[16:20,]); V3[5,]<-colSums(V2[21:25,])
-  #scale does not matter for dirichlet llikelihood
-  sum(dDirMult(M=V3*1e6,n=notif_age_us_5yr,Rho=rho)*wts[c(49,54,59,64,70)]) - adj_2a
+  ### Check for missing calibration data
+  if (sum(is.na(notif_age_us_5yr > 0))) {
+    ### Initialize the likelihood value to zero
+    tot_lik <- 0; adj_2a <-0
+    ### If data is missing we need to create a single new bucket for these data and estimates
+    ### Read in the total US cases to use as a total
+    notif_age_us0   <- CalibDatState$cases_nat_st_5yr[CalibDatState$cases_nat_st_5yr$State.Code==st & CalibDatState$cases_nat_st_5yr$usb==1,4:8]
+    for (i in 1:nrow(notif_age_us_5yr)){
+      ### Calibration data
+      ### Which of the age groups are NA
+      index <- which(is.na(notif_age_us_5yr[i,]))
+      ### Remove these age groups from the dataframe
+      known_cases <- notif_age_us_5yr[i,-index]
+      ### Set the total of missing cases equal to the difference of total cases and known cases
+      missing_cases <- notif_age_us0[i] - sum(known_cases)
+      ### Add missing cases to the dataframe
+      tot_cases <- c(unlist(known_cases), unlist(missing_cases))
+      ### Model estimates (match to estimates)
+      ### Create a sum of the estimates that correspond to missing age groups
+      known_est   <- V3[i,-index]
+      missing_est <- sum(V3) - sum(known_est)
+      tot_est <- c(known_est, missing_est)
+
+      adj_2a  <- adj_2a +  dDirMult(M=tot_cases+0.01,n=tot_cases,Rho=rho)*wts[c(49,54,59,64,70)][i]
+      tot_lik <- tot_lik + dDirMult(M=tot_est*1e6,n=tot_cases,Rho=rho)*wts[c(49,54,59,64,70)][i]
+    }
+  } else {
+    adj_2a            <- sum(dDirMult(M=notif_age_us_5yr+0.01,n=notif_age_us_5yr,Rho=rho)*wts[c(49,54,59,64,70)])
+    #scale does not matter for dirichlet llikelihood
+    tot_lik <- sum(dDirMult(M=V3*1e6,n=notif_age_us_5yr,Rho=rho)*wts[c(49,54,59,64,70)]) - adj_2a
+  }
+  return(tot_lik)
 }
 
 ### ### ### NUS CASES AGE DISTRIBUTION 5yrs 1993-2016  ### ### ### ### ### ### D
 # Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
 notif_age_nus_5yr_lLik_st <- function(V,st,rho=0.1) { # V = table of us notifications by age 1993-2016 (row=24 years, col=11 ages)
-  notif_age_nus_5yr     <- CalibDatState$cases_yr_ag_nat_st_5yr[[st]][CalibDat$cases_yr_ag_nat_st_5yr[[st]][,4]==0,5:14]
-  adj_2b                <- sum(dDirMult(M=notif_age_nus_5yr+0.01,n=notif_age_nus_5yr,Rho=rho)*wts[c(49,54,59,64,69)]);adj_2b
+  ### Read in the age and nativity stratified data
+  notif_age_nus_5yr     <- as.data.frame(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][CalibDat$cases_yr_ag_nat_st_5yr[[st]][,4]==0,5:14])
+  ### Format the model estimates to match the calibration data
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
   V3<-matrix(0,5,10)
   V3[1,]<-colSums(V2[1:5,]);V3[2,]<-colSums(V2[6:10,]);V3[3,]<-colSums(V2[11:15,]); V3[4,]<-colSums(V2[16:20,]); V3[5,]<-colSums(V2[21:25,])
-  #scale does not matter for dirichlet llikelihood
-  sum(dDirMult(M=V3,n=notif_age_nus_5yr,Rho=rho)*wts[c(49,54,59,64,69)]) - adj_2b
+  ### Check for missing calibration data
+  if (sum(is.na(notif_age_nus_5yr > 0))) {
+    ### Initialize the likelihood value to zero
+    tot_lik <- 0; adj_2a <-0
+    ### If data is missing we need to create a single new bucket for these data and estimates
+    ### Read in the total nus cases to nuse as a total
+    notif_age_nus0   <- CalibDatState$cases_nat_st_5yr[CalibDatState$cases_nat_st_5yr$State.Code==st & CalibDatState$cases_nat_st_5yr$usb==0,4:8]
+    for (i in 1:nrow(notif_age_nus_5yr)){
+      ### Calibration data
+      ### Which of the age groups are NA
+      index <- which(is.na(notif_age_nus_5yr[i,]))
+      ### Remove these age groups from the dataframe
+      known_cases <- notif_age_nus_5yr[i,-index]
+      ### Set the total of missing cases equal to the difference of total cases and known cases
+      missing_cases <- notif_age_nus0[i] - sum(known_cases)
+      ### Add missing cases to the dataframe
+      tot_cases <- c(unlist(known_cases), unlist(missing_cases))
+      ### Model estimates (match to estimates)
+      ### Create a sum of the estimates that correspond to missing age groups
+      known_est   <- V3[i,-index]
+      missing_est <- sum(V3) - sum(known_est)
+      tot_est <- c(known_est, missing_est)
+
+      adj_2a  <- adj_2a +  dDirMult(M=tot_cases+0.01,n=tot_cases,Rho=rho)*wts[c(49,54,59,64,70)][i]
+      tot_lik <- tot_lik + dDirMult(M=tot_est*1e6,n=tot_cases,Rho=rho)*wts[c(49,54,59,64,70)][i]
+    }
+  } else {
+    adj_2a            <- sum(dDirMult(M=notif_age_nus_5yr+0.01,n=notif_age_nus_5yr,Rho=rho)*wts[c(49,54,59,64,70)])
+    #scale does not matter for dirichlet llikelihood
+    tot_lik <- sum(dDirMult(M=V3*1e6,n=notif_age_nus_5yr,Rho=rho)*wts[c(49,54,59,64,70)]) - adj_2a
+  }
+  return(tot_lik)
 }
 
 ##smoothed estimates

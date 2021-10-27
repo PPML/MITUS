@@ -122,7 +122,15 @@ dDirMult <- function(M,n,Rho) {
   } else {
     M <- M/rowSums(M)
   }
-  rowSums(lgamma(n+M/Rho))-rowSums(lgamma(M/Rho))
+  M <- as.matrix(M)
+  ### this condition is necessary to check for the vector inputs from
+  ### likelihoods which have a variable number of bins for the distribution
+  ### this is due to missing/censored data in TB reporting
+  if (ncol(M)==1){
+    sum(lgamma(n+M/Rho))-sum(lgamma(M/Rho))
+  } else{
+    rowSums(lgamma(n+M/Rho))-rowSums(lgamma(M/Rho))
+  }
 }
 #'@name getmode
 #'
@@ -131,7 +139,21 @@ dDirMult <- function(M,n,Rho) {
 #'@export
 getmode <- function(v) {
   uniqv <- unique(v)
-  uniqv[which.max(tabulate(match(v, uniqv)))]
+  max_match <- max(tabulate(match(v, uniqv)))
+  if (max_match == 1){
+    print("There is no mode. Inspect manually.")
+  }
+  else {
+    uniqv[which.max(tabulate(match(v, uniqv)))]
+  }
+}
+
+trunc_number_n_decimals <- function(numberToTrunc, nDecimals){
+  numberToTrunc <- numberToTrunc + (10^-(nDecimals+5))
+  splitNumber <- strsplit(x=format(numberToTrunc, digits=20, format=f), split="\\.")[[1]]
+  decimalPartTrunc <- substr(x=splitNumber[2], start=1, stop=nDecimals)
+  truncatedNumber <- as.numeric(paste0(splitNumber[1], ".", decimalPartTrunc))
+  return(truncatedNumber)
 }
 
 ### LIST OF LOCATION VECTORS IN TERMS OF ABSOLUTE INCIDENCE OTIS
