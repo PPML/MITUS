@@ -79,17 +79,23 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
         lLik <- lLik + addlik
         # print(paste("7:", lLik))
         ### ### ### CASES NUSB, US 2010-2014  SLOPE ### ### ### ### ### ### D
+        ### ### ### Removed as we now use the five year totals
         # v4   <- cbind(M[65:69,148]+M[65:69,149]+(M[65:69,201]+M[65:69,202]),
         #               M[65:69,147]+M[65:69,200])
         # addlik <- notif_fbus_slp_lLik_st(V=v4,st=st); addlik
         # lLik <- lLik + addlik
         # print(paste("8:", lLik))
         ### ### ### CASES HR DISTRIBUTION 1993-2014  ### ### ### ### ### ### D
+        ### ### ### CHECK THIS BECAUSE IT'S A HUGE VALUE
+        if (loc %in% c("RI", "ID", "NH", "VT", "WY")){
+          lLik <-lLik;
+        } else {
         v5   <- M[46:70,151] + M[46:70,204]
         v5b  <- rbind(sum(v5[1:5]),sum(v5[6:10]), sum(v5[11:15]),
                       sum(v5[16:20]), sum(v5[21:25]))
         addlik <- notif_hr_lLik_st(V=v5b,st=st); addlik
         lLik <- lLik + addlik
+        }
         # print(paste("9:", lLik))
         ### ### ### CASES RCT TRANS DISTRIBUTION 2015-2018  ### ### ### ### ### ### D
         v4a <- (sum(M[66:69,184:185])/sum(M[66:69,168:169]))
@@ -97,7 +103,7 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
         addlik <- recent_trans_dist_lLik_st(V=v4,st=st); addlik
         lLik <- lLik + addlik
         ### ### ### CASES NUSB RECENT ENTRY DISTRIBUTION 1993-2014  ### ### ### ### ### ### D
-        #recent, not recent
+        ### ### ### recent, not recent
         v6   <-M[45:69,148]+M[45:69,201]
         v6b  <- rbind(sum(v6[1:5]),sum(v6[6:10]), sum(v6[11:15]),
                       sum(v6[16:20]), sum(v6[21:25]))
