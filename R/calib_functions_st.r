@@ -12,9 +12,10 @@
 #'@return likelihood
 notif_tot_lLik_st <- function(V,st) {
   notif_tot     <- CalibDatState[["cases_yr_st"]][[st]][,2];
-  adj_1         <- sum((dnorm(notif_tot,notif_tot,notif_tot*0.1/1.96,log=T)*wts[44:70])[is.na(notif_tot)==F  & notif_tot != 0])
+  wts2 <- wts; wts2[length(wts2)] <- wts2[length(wts2)]*2;
+  adj_1         <- sum((dnorm(notif_tot,notif_tot,notif_tot*0.1/1.96,log=T)*wts2[44:70])[is.na(notif_tot)==F  & notif_tot != 0])
   #notif tot is in real scale must scale outputs up
-  sum((dnorm(notif_tot,V*1e6,notif_tot*0.1/1.96,log=T)*wts[44:70])[is.na(notif_tot)==F  & notif_tot != 0]) - adj_1
+  sum((dnorm(notif_tot,V*1e6,notif_tot*0.1/1.96,log=T)*wts2[44:70])[is.na(notif_tot)==F  & notif_tot != 0]) - adj_1
 }
 
 ### ### ### TOTAL DIAGNOSED CASES 1953-1993  ### ### ### ### ### ### D
@@ -94,24 +95,31 @@ notif_age_us_5yr_lLik_st <- function(V,st,rho=0.1) { # V = table of us notificat
     ### Read in the total US cases to use as a total
     notif_age_us0   <- CalibDatState$cases_nat_st_5yr[CalibDatState$cases_nat_st_5yr$State.Code==st & CalibDatState$cases_nat_st_5yr$usb==1,4:8]
     for (i in 1:nrow(notif_age_us_5yr)){
-      ### Calibration data
-      ### Which of the age groups are NA
-      index <- which(is.na(notif_age_us_5yr[i,]))
-      ### Remove these age groups from the dataframe
-      known_cases <- notif_age_us_5yr[i,-index]
-      ### Set the total of missing cases equal to the difference of total cases and known cases
-      missing_cases <- notif_age_us0[i] - sum(known_cases)
-      ### Add missing cases to the dataframe
-      tot_cases <- c(unlist(known_cases), unlist(missing_cases))
-      ### Model estimates (match to estimates)
-      ### Create a sum of the estimates that correspond to missing age groups
-      known_est   <- V3[i,-index]
-      missing_est <- sum(V3) - sum(known_est)
-      tot_est <- c(known_est, missing_est)
-
+      print(i)
+      ### Check that this row has an NA
+      if (sum(is.na(notif_age_us_5yr[i,])) > 0){
+        ### Calibration data
+        ### Which of the age groups are NA
+        index <- which(is.na(notif_age_us_5yr[i,]))
+        ### Remove these age groups from the dataframe
+        known_cases <- notif_age_us_5yr[i,-index]
+        ### Set the total of missing cases equal to the difference of total cases and known cases
+        missing_cases <- notif_age_us0[i] - sum(known_cases)
+        ### Add missing cases to the dataframe
+        tot_cases <- c(unlist(known_cases), unlist(missing_cases))
+        ### Model estimates (match to estimates)
+        ### Create a sum of the estimates that correspond to missing age groups
+        known_est   <- V3[i,-index]
+        missing_est <- sum(V3) - sum(known_est)
+        tot_est <- c(known_est, missing_est)
+      } else {
+        tot_est <- V3[i,]
+        tot_cases <- notif_age_us_5yr[i,]
+      }
       adj_2a  <- adj_2a +  dDirMult(M=tot_cases+0.01,n=tot_cases,Rho=rho)*wts[c(49,54,59,64,70)][i]
+      print(adj_2a)
       tot_lik <- tot_lik + dDirMult(M=tot_est*1e6,n=tot_cases,Rho=rho)*wts[c(49,54,59,64,70)][i]
-    }
+      }
   } else {
     adj_2a            <- sum(dDirMult(M=notif_age_us_5yr+0.01,n=notif_age_us_5yr,Rho=rho)*wts[c(49,54,59,64,70)])
     #scale does not matter for dirichlet llikelihood
@@ -134,24 +142,30 @@ notif_age_nus_5yr_lLik_st <- function(V,st,rho=0.1) { # V = table of us notifica
     ### Initialize the likelihood value to zero
     tot_lik <- 0; adj_2a <-0
     ### If data is missing we need to create a single new bucket for these data and estimates
-    ### Read in the total nus cases to nuse as a total
+    ### Read in the total US cases to use as a total
     notif_age_nus0   <- CalibDatState$cases_nat_st_5yr[CalibDatState$cases_nat_st_5yr$State.Code==st & CalibDatState$cases_nat_st_5yr$usb==0,4:8]
     for (i in 1:nrow(notif_age_nus_5yr)){
-      ### Calibration data
-      ### Which of the age groups are NA
-      index <- which(is.na(notif_age_nus_5yr[i,]))
-      ### Remove these age groups from the dataframe
-      known_cases <- notif_age_nus_5yr[i,-index]
-      ### Set the total of missing cases equal to the difference of total cases and known cases
-      missing_cases <- notif_age_nus0[i] - sum(known_cases)
-      ### Add missing cases to the dataframe
-      tot_cases <- c(unlist(known_cases), unlist(missing_cases))
-      ### Model estimates (match to estimates)
-      ### Create a sum of the estimates that correspond to missing age groups
-      known_est   <- V3[i,-index]
-      missing_est <- sum(V3) - sum(known_est)
-      tot_est <- c(known_est, missing_est)
-
+      print(i)
+      ### Check that this row has an NA
+      if (sum(is.na(notif_age_nus_5yr[i,])) > 0){
+        ### Calibration data
+        ### Which of the age groups are NA
+        index <- which(is.na(notif_age_nus_5yr[i,]))
+        ### Remove these age groups from the dataframe
+        known_cases <- notif_age_nus_5yr[i,-index]
+        ### Set the total of missing cases equal to the difference of total cases and known cases
+        missing_cases <- notif_age_nus0[i] - sum(known_cases)
+        ### Add missing cases to the dataframe
+        tot_cases <- c(unlist(known_cases), unlist(missing_cases))
+        ### Model estimates (match to estimates)
+        ### Create a sum of the estimates that correspond to missing age groups
+        known_est   <- V3[i,-index]
+        missing_est <- sum(V3) - sum(known_est)
+        tot_est <- c(known_est, missing_est)
+      } else {
+        tot_est <- V3[i,]
+        tot_cases <- notif_age_nus_5yr[i,]
+      }
       adj_2a  <- adj_2a +  dDirMult(M=tot_cases+0.01,n=tot_cases,Rho=rho)*wts[c(49,54,59,64,70)][i]
       tot_lik <- tot_lik + dDirMult(M=tot_est*1e6,n=tot_cases,Rho=rho)*wts[c(49,54,59,64,70)][i]
     }
