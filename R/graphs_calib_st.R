@@ -13,7 +13,7 @@ calib_graphs_st <- function(df,loc, Par_list,pdf=TRUE, cex.size=.75){
   st<-which(StateID$USPS==loc)
   df<-as.data.frame(df)
   if (pdf==TRUE){
-  pdfname<-paste("MITUS_results/",loc,"_calib_graphs_2021-03-27.pdf",sep="")
+  pdfname<-paste("MITUS_results/",loc,"_calib_graphs_2021-10-29.pdf",sep="")
   pdf(file=pdfname, width = 11, height = 8.5)
   par(mfrow=c(2,2),mar=c(4,4.5,3,1))
 }
@@ -73,8 +73,8 @@ calib_graphs_st <- function(df,loc, Par_list,pdf=TRUE, cex.size=.75){
   pop_ag_11_170  <- CalibDatState[["pop_00_17"]][[st]][,c(1,2,20)]
   pop_ag_11_17us <-pop_ag_11_170[pop_ag_11_170[,2]==1,3][-11]
   pop_ag_11_17nus <-pop_ag_11_170[pop_ag_11_170[,2]==0,3][-11]
-
-  plot(1,1,ylim=c(min(pop_ag_11_17nus)*.5/1e6,max(pop_ag_11_17us*1.2/1e6)),xlim=c(0.6,10.4),xlab="",ylab="",axes=F,col=NA,log="y" )
+  pop_ag_11_17nus <-pop_ag_11_17nus + 100
+  plot(1,1,ylim=c(min(pop_ag_11_17nus)*.75/1e6,max(pop_ag_11_17us*1.2/1e6)),xlim=c(0.6,10.4),xlab="",ylab="",axes=F,col=NA,log="y")
   axis(1,1:10,paste(c("0-4","5-14","15-24","25-34","35-44","45-54","55-64","65-74","75-84","85+"),"\nyears",sep=""),tick=F,cex.axis=0.75)
   axis(1,1:11-0.5,rep("",11))
   axis(2,las=2);box()
@@ -316,7 +316,7 @@ calib_graphs_st <- function(df,loc, Par_list,pdf=TRUE, cex.size=.75){
   # tot_cases<-rowSums(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][1:5,5:14])+rowSums(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][6:10,5:14])
   tot_cases<-CalibDatState[["cases_yr_st"]][[st]][,2]
   #format the plot
-  plot(0,0,ylim=c(min(Va)*.5*1e6,max(Va)*1.25*1e6),xlim=c(1993,2019),xlab="",ylab="",axes=F)
+  plot(0,0,ylim=c(0,max(Va)*1.25*1e6),xlim=c(1993,2019),xlab="",ylab="",axes=F)
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
 
@@ -348,7 +348,7 @@ calib_graphs_st <- function(df,loc, Par_list,pdf=TRUE, cex.size=.75){
 
   # tot_cases<-rowSums(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][1:5,5:14])+rowSums(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][6:10,5:14])
   #format the plot
-  plot(0,0,ylim=c(min(Vn2,Vu2)*.5*1e6,max(Vn2,Vu2)*1.25*1e6),xlim=c(1995,2020),xlab="",ylab="",axes=F)
+  plot(0,0,ylim=c(0,max(Vn2,Vu2)*1.25*1e6),xlim=c(1995,2020),xlab="",ylab="",axes=F)
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
 
@@ -446,7 +446,7 @@ calib_graphs_st <- function(df,loc, Par_list,pdf=TRUE, cex.size=.75){
   notif_age<- notif_age_us+notif_age_nus
   #format the plot
   cls <- colorRampPalette(c("blue", "red"))( 4 )
-  plot(0,0,ylim=c(min(V3,notif_age)*.5,max(V3,notif_age)*2),xlim=c(1995,2019),xlab="",ylab="",axes=F)
+  plot(0,0,ylim=c(min(V3,notif_age[!is.na(notif_age)])*.5,max(V3,notif_age[!is.na(notif_age)])*2),xlim=c(1995,2019),xlab="",ylab="",axes=F)
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
 
