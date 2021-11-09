@@ -55,13 +55,14 @@ notif_fb_5yr_lLik_st <- function(V,st,rho=0.005) { # V = table of notifications 
 ### ### ### CASES FB DISTRIBUTION SLOPES OVER PAST 5 year  ### ### ### ### ### ###
 notif_fbus_slp_lLik_st <- function(V,st) {
   # notif_fbus_slp5     <- as.numeric(CalibDatState[["case_change_5"]][st,2:3])
-  notif_age_fb0     <- CalibDatState[["cases_yr_ag_nat_st"]][[st]][,,"nusb"]
-  notif_age_us0     <- CalibDatState[["cases_yr_ag_nat_st"]][[st]][,,"usb"]
-  tot_case_nat<-cbind(notif_age_fb0[,12],notif_age_us0 [,12])
+  notif_age_fb0   <- CalibDatState$cases_nat_st_5yr[CalibDatState$cases_nat_st_5yr$State.Code==st & CalibDatState$cases_nat_st_5yr$usb==0,7:8]
+  notif_age_us0   <- CalibDatState$cases_nat_st_5yr[CalibDatState$cases_nat_st_5yr$State.Code==st & CalibDatState$cases_nat_st_5yr$usb==1,7:8]
+  tot_case_nat<-cbind(t(notif_age_fb0),t(notif_age_us0))
   #calculate the slopes
-  notif_fbus_slp5<-apply(log(tot_case_nat[22:26,]),2,function(x) lm(x~I(1:5))$coef[2])
+  notif_fbus_slp5<-apply(log(tot_case_nat),2,function(x) lm(x~I(1:2))$coef[2])
   adj_3a              <- sum(dnorm(notif_fbus_slp5,notif_fbus_slp5,0.005,log=T))# V = table of notifications by fb 2011-2016 (row=6 years, col=fb then us)
-  V2 <- apply(log(V[,]),2,function(x) lm(x~I(1:5))$coef[2])
+  V1a <- matrix(c(sum(V[1:5,1]),sum(V[1:5,2]), sum(V[6:10,1]), sum(V[6:10,2])),2,2, byrow = TRUE)
+  V2 <- apply(log(V1a),2,function(x) lm(x~I(1:2))$coef[2])
   sum(dnorm(notif_fbus_slp5,V2,0.005,log=T)) - adj_3a
 }
 
