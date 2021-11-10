@@ -13,7 +13,7 @@ calib_graphs_st <- function(df,loc, Par_list,pdf=TRUE, cex.size=.75){
   st<-which(StateID$USPS==loc)
   df<-as.data.frame(df)
   if (pdf==TRUE){
-  pdfname<-paste("MITUS_results/",loc,"_calib_graphs_2021-10-29.pdf",sep="")
+  pdfname<-paste("MITUS_results/",loc,"_calib_graphs_", Sys.Date(), ".pdf",sep="")
   pdf(file=pdfname, width = 11, height = 8.5)
   par(mfrow=c(2,2),mar=c(4,4.5,3,1))
 }
