@@ -41,7 +41,7 @@ notif_fb_lLik_st <- function(V,st,rho=0.005) { # V = table of notifications by f
 }
 ###############################################################################################
 
-notif_fb_5yr_lLik_st <- function(V,st,rho=0.005) { # V = table of notifications by fb 1993-2016 (row=24 years, col=fb then us)
+notif_fb_5yr_lLik_st <- function(V,st,rho=0.0005) { # V = table of notifications by fb 1993-2016 (row=24 years, col=fb then us)
   ### Read in the nativity stratified data
   notif_age_fb0   <- CalibDatState$cases_nat_st_5yr[CalibDatState$cases_nat_st_5yr$State.Code==st & CalibDatState$cases_nat_st_5yr$usb==0,4:8]
   notif_age_us0   <- CalibDatState$cases_nat_st_5yr[CalibDatState$cases_nat_st_5yr$State.Code==st & CalibDatState$cases_nat_st_5yr$usb==1,4:8]
