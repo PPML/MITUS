@@ -10,7 +10,7 @@ def_ttt<-function(){
   ttt_list[[2]]<-"All" #or "0 to 24" or "25 to 64" or "65+"
   ttt_list[[3]]<-0 #size of population IN MILLIONS
   ttt_list[[4]]<-0 #fraction screened
-  ttt_list[[5]]<-2020
+  ttt_list[[5]]<-2022
   ttt_list[[6]]<-2050
   ttt_list[[7]]<-1
   ttt_list[[8]]<-1

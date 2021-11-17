@@ -22,8 +22,8 @@ def_prgchng<-function(ParVec){
     "tb_tim2tx_frc", #Duration of Infectiousness
     "tb_txdef_frc" #Fraction Discontinuing/Defaulting from Treatment
   )
-  #default start year will always be 2020
-  DefPrgChngVec[1]<-2020
+  #default start year will be 2022
+  DefPrgChngVec[1]<-2022
   #default screening coverage multiplier will always default to 1
   DefPrgChngVec[2]<-1
   #the default IGRA fraction is a constant that is not calibrated or calculated
