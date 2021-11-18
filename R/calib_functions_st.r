@@ -52,6 +52,33 @@ notif_fb_5yr_lLik_st <- function(V,st,rho=0.0005) { # V = table of notifications
   #scale does not matter for dirichlet llikelihood
   (sum(dDirMult(M=V2,n=notif_fb,Rho=rho)*wts[c(49,54,59,64,70)]) - adj_3)*2
 }
+
+#'FB Diagnosed Cases 1953-2016
+#'Motivation: Normal, mean centered with CI = +/- 5% of the mean
+#'@param V vector of total notifications 1953-2014
+#'@return likelihood
+notif_fb_5yr_lik <- function(V,st=st) {
+  notif_fb   <- as.numeric(unlist(CalibDatState$cases_nat_st_5yr[CalibDatState$cases_nat_st_5yr$State.Code==st & CalibDatState$cases_nat_st_5yr$usb==0,4:8]))
+  adj_1         <- sum(dnorm(notif_fb,notif_fb,notif_fb*0.1/1.96,log=T)*wts[c(49,54,59,64,70)])
+  V2<-rep(0,5)
+  V2[1]<-sum(V[1:5]);V2[2]<-sum(V[6:10]);V2[3]<-sum(V[11:15]); V2[4]<-sum(V[16:20]); V2[5]<-sum(V[21:25])
+  (sum(dnorm(notif_fb,V*1e6,notif_fb*0.1/1.96,log=T)*wts[c(49,54,59,64,70)]) - adj_1)
+}
+
+#'US Diagnosed Cases 1953-2016
+#'Motivation: Normal, mean centered with CI = +/- 5% of the mean
+#'@param V vector of total notifications 1953-2014
+#'@return likelihood
+
+notif_us_5yr_lik <- function(V,st=st) {
+  notif_us   <- as.numeric(unlist(CalibDatState$cases_nat_st_5yr[CalibDatState$cases_nat_st_5yr$State.Code==st & CalibDatState$cases_nat_st_5yr$usb==1,4:8]))
+  adj_1         <- sum(dnorm(notif_us,notif_us,notif_us*0.05/1.96,log=T)*wts[c(49,54,59,64,70)])
+  V2<-rep(0,5)
+  V2[1]<-sum(V[1:5]);V2[2]<-sum(V[6:10]);V2[3]<-sum(V[11:15]); V2[4]<-sum(V[16:20]); V2[5]<-sum(V[21:25])
+  (sum(dnorm(notif_us,V*1e6,notif_us*0.1/1.96,log=T)*wts[c(49,54,59,64,70)]) - adj_1)
+}
+
+
 ### ### ### CASES FB DISTRIBUTION SLOPES OVER PAST 5 year  ### ### ### ### ### ###
 notif_fbus_slp_lLik_st <- function(V,st) {
   # notif_fbus_slp5     <- as.numeric(CalibDatState[["case_change_5"]][st,2:3])

@@ -73,11 +73,19 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
         # print(addlik)
         # print(paste("6:", lLik))
         ### ### ### NUSB CASE DISTRIBUTION 1995-2019 ### ### ###
-        v3   <-  cbind(M[46:70,148]+M[46:70,149]+(M[46:70,201]+M[46:70,202]),
-                       M[46:70,147]+M[46:70,200])
-        addlik <- notif_fb_5yr_lLik_st(V=v3,st=st); addlik
-        lLik <- lLik + addlik
+        # v3   <-  cbind(M[46:70,148]+M[46:70,149]+(M[46:70,201]+M[46:70,202]),
+        #                M[46:70,147]+M[46:70,200])
+        # addlik <- notif_fb_5yr_lLik_st(V=v3,st=st); addlik
+        # lLik <- lLik + addlik
         # print(paste("7:", lLik))
+        ### ### ### NUSB CASE TOTALS 1995-2019 ### ### ###
+        v3a   <-  M[46:70,148]+M[46:70,149]+(M[46:70,201]+M[46:70,202])
+        addlik <- notif_fb_5yr_lik(V=v3a,st=st); addlik
+        lLik <- lLik + addlik
+        ### ### ### USB CASE TOTALS 1995-2019 ### ### ###
+        v3b   <- M[46:70,147]+M[46:70,200]
+        addlik <- notif_us_5yr_lik(V=v3b,st=st); addlik
+        lLik <- lLik + addlik
         ### ### ### CASES NUSB, US 2010-2014  SLOPE ### ### ### ### ### ### D
         ### ### ### Removed as we now use the five year totals
         v4   <- cbind(M[61:70,148]+M[61:70,149]+(M[61:70,201]+M[61:70,202]),
@@ -102,7 +110,7 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
         v4 <- c(v4a,1-v4a)
         addlik <- recent_trans_dist_lLik_st(V=v4,st=st); addlik
         lLik <- lLik + addlik
-        ### ### ### CASES NUSB RECENT ENTRY DISTRIBUTION 1993-2014  ### ### ### ### ### ### D
+        ### ### ### CASES NUSB RECENT ENTRY DISTRIBUTION 5YR 1994-2018 ### ### ### ### ### ### D
         ### ### ### recent, not recent
         v6   <-M[45:69,148]+M[45:69,201]
         v6b  <- rbind(sum(v6[1:5]),sum(v6[6:10]), sum(v6[11:15]),
@@ -110,7 +118,7 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
         addlik <- notif_fb_rec_lLik_st(V=v6b, st=st); addlik
         lLik <- lLik + addlik
         # print(paste("10:", lLik))
-        ### ### ### TREATMENT OUTCOMES 1993-2012  ### ### ### ### ### ### D
+        ### ### ### TREATMENT OUTCOMES 1993-2015  ### ### ### ### ### ### D
         v11  <- M[44:66,132:134]
         addlik <- tx_outcomes_lLik_st(V=v11); addlik
         lLik <- lLik + addlik
@@ -148,7 +156,7 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
         addlik <- ltbi_fb_11_lLik_st(V=v16d)*2; addlik
         lLik <- lLik + addlik
         # # print(paste("15:", lLik))
-        # ### ### ### TOTAL DEATHS WITH TB 1999-2016 ### ### ### ### ### ###  D
+        # ### ### ### TOTAL DEATHS WITH TB 1999-2018 ### ### ### ### ### ###  D
         v19  <- M[50:69,227:237]   ### THIS NOW ALL TB DEATHS
         addlik <- tbdeaths_lLik_st(V=v19,st=st); addlik
         lLik <- lLik + addlik
