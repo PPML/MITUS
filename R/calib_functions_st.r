@@ -62,7 +62,7 @@ notif_fb_5yr_lik <- function(V,st=st) {
   adj_1         <- sum(dnorm(notif_fb,notif_fb,notif_fb*0.1/1.96,log=T)*wts[c(49,54,59,64,70)])
   V2<-rep(0,5)
   V2[1]<-sum(V[1:5]);V2[2]<-sum(V[6:10]);V2[3]<-sum(V[11:15]); V2[4]<-sum(V[16:20]); V2[5]<-sum(V[21:25])
-  (sum(dnorm(notif_fb,V*1e6,notif_fb*0.1/1.96,log=T)*wts[c(49,54,59,64,70)]) - adj_1)
+  (sum(dnorm(notif_fb,V2*1e6,notif_fb*0.1/1.96,log=T)*wts[c(49,54,59,64,70)]) - adj_1)
 }
 
 #'US Diagnosed Cases 1953-2016
@@ -75,7 +75,7 @@ notif_us_5yr_lik <- function(V,st=st) {
   adj_1         <- sum(dnorm(notif_us,notif_us,notif_us*0.05/1.96,log=T)*wts[c(49,54,59,64,70)])
   V2<-rep(0,5)
   V2[1]<-sum(V[1:5]);V2[2]<-sum(V[6:10]);V2[3]<-sum(V[11:15]); V2[4]<-sum(V[16:20]); V2[5]<-sum(V[21:25])
-  (sum(dnorm(notif_us,V*1e6,notif_us*0.1/1.96,log=T)*wts[c(49,54,59,64,70)]) - adj_1)
+  (sum(dnorm(notif_us,V2*1e6,notif_us*0.1/1.96,log=T)*wts[c(49,54,59,64,70)]) - adj_1)
 }
 
 
