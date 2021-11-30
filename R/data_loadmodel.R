@@ -30,7 +30,12 @@ if (loc=="US"){
   #last input change was to update the RR active TB by age in immigrants
 }
 if (loc=="US"){
-  wts <<- CalibDat[["ImptWeights"]]
+  LgtCurveY2 <- function(StYr,Endyr,EndVal) { z <- log(1/0.005-1)
+  zz  <- seq(-z*(1+2*(StYr-1950)/(Endyr-StYr)),z*(1+2*(2019-Endyr)/(Endyr-StYr)),by=(2*z)/(Endyr-StYr))
+  zz  <- as.numeric(EndVal)/(1+exp(-zz));    zz  }
+  ImptWeights <- LgtCurveY2(2000,2019,0.95)+0.05
+  names(ImptWeights) <- 1950:2019
+  wts <<- ImptWeights
   P  <<- ParamInit[,1]
   names(P) <<- rownames(ParamInit)
 
@@ -40,7 +45,12 @@ if (loc=="US"){
   idZ1 <<- ParamInitZ[,4]==1
   idZ2 <<- ParamInitZ[,4]==2
 } else {
-  wts <<- CalibDatState[["ImptWeights"]]
+  LgtCurveY2 <- function(StYr,Endyr,EndVal) { z <- log(1/0.005-1)
+  zz  <- seq(-z*(1+2*(StYr-1950)/(Endyr-StYr)),z*(1+2*(2019-Endyr)/(Endyr-StYr)),by=(2*z)/(Endyr-StYr))
+  zz  <- as.numeric(EndVal)/(1+exp(-zz));    zz  }
+  ImptWeights <- LgtCurveY2(2000,2019,0.95)+0.05
+  names(ImptWeights) <- 1950:2019
+  wts <<- ImptWeights
   W <- wts[44:69];  W["2016"] <- 4
   wtZ <<-W
 
