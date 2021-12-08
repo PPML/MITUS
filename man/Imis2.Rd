@@ -6,12 +6,12 @@
 \usage{
 Imis2(
   B = 1000,
-  B.re = 10000,
+  B.re = 5000,
   number_k = 100,
   seed_val = 1,
   SaveNam = "xx",
   n_cores = 2,
-  OptInit
+  OptInit = Opt[1, -ncol(Opt)]
 )
 }
 \value{
