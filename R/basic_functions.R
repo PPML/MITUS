@@ -1,4 +1,3 @@
-#' attempting to see if sync works
 #' Basic Functions Used In Package
 #' This script includes several functions that are useful for data manipulation
 #' throughout the package.
@@ -38,7 +37,7 @@ invlgt <- function(x) 1/(1+exp(-x))
 LgtCurve <- function(StYr,Endyr,EndVal) {
   z <- log(1/0.005-1)
   zz  <- seq(-z*(1+2*(StYr-1950)/(Endyr-StYr)),
-              z*(1+2*(2051-Endyr)/(Endyr-StYr)),
+             z*(1+2*(2051-Endyr)/(Endyr-StYr)),
              by=(2*z)/(Endyr-StYr)/12)
   zz  <- as.numeric(EndVal)/(1+exp(-zz))
   if(StYr>1950) {
@@ -104,11 +103,11 @@ expit <- function(x) {
 bspline <- function(x,k,i,m) {
   if (m==-1) {
     res <- as.numeric(x<k[i+1] & x>=k[i])
-} else {
+  } else {
     z0  <- (x-k[i]) / (k[i+m+1]-k[i]);
     z1  <- (k[i+m+2]-x) / (k[i+m+2]-k[i+1])
     z0*bspline(x,k,i,m-1) + z1*bspline(x,k,i+1,m-1)
-}  }
+  }  }
 
 #'Dirichlet multinomial density function
 #'@name dDirMult
@@ -123,17 +122,39 @@ dDirMult <- function(M,n,Rho) {
   } else {
     M <- M/rowSums(M)
   }
-  rowSums(lgamma(n+M/Rho))-rowSums(lgamma(M/Rho))
+  M <- as.matrix(M)
+  ### this condition is necessary to check for the vector inputs from
+  ### likelihoods which have a variable number of bins for the distribution
+  ### this is due to missing/censored data in TB reporting
+  if (ncol(M)==1){
+    sum(lgamma(n+M/Rho))-sum(lgamma(M/Rho))
+  } else{
+    rowSums(lgamma(n+M/Rho))-rowSums(lgamma(M/Rho))
+  }
 }
 #'@name getmode
+#'
 #'@param x some vector (character or numeric)
 #'@return mode
 #'@export
 getmode <- function(v) {
   uniqv <- unique(v)
-  uniqv[which.max(tabulate(match(v, uniqv)))]
+  max_match <- max(tabulate(match(v, uniqv)))
+  if (max_match == 1){
+    print("There is no mode. Inspect manually.")
+  }
+  else {
+    uniqv[which.max(tabulate(match(v, uniqv)))]
+  }
 }
 
+trunc_number_n_decimals <- function(numberToTrunc, nDecimals){
+  numberToTrunc <- numberToTrunc + (10^-(nDecimals+5))
+  splitNumber <- strsplit(x=format(numberToTrunc, digits=20, format=f), split="\\.")[[1]]
+  decimalPartTrunc <- substr(x=splitNumber[2], start=1, stop=nDecimals)
+  truncatedNumber <- as.numeric(paste0(splitNumber[1], ".", decimalPartTrunc))
+  return(truncatedNumber)
+}
 
 ### LIST OF LOCATION VECTORS IN TERMS OF ABSOLUTE INCIDENCE OTIS
 ordered_locs<-c(

@@ -24,7 +24,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   ########## DEFINE A VARIABLE THAT WILL DETERMINE HOW LONG THE TIME DEPENDENT
   ########## VARIABLES SHOULD BE
   month<-1213;
-  intv_yr<-2020
+  intv_yr<-2022
   intv_m<-((intv_yr-1949)*12)+1
   prg_yr <-prg_chng["start_yr"]
   prg_m  <-((prg_yr-1949)*12)+1
@@ -419,9 +419,8 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
     for(i in 1:11) ImmFst[,i] <- ImmFst[,i]*(1-LgtCurve(intv_yr,intv_yr+5,1)*SensLt[4,1]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
     ImmNon      <- TotImmAge[1:month,]-ImmAct-ImmFst-ImmLat
   }
-  ##### ##### TREATMENT COMPLETION RATE IS DEPENDENT ON
-  ##### ##### PROGRAM CHANGE VALUES; NEED TO CREATE A CHECK FOR WHEN THESE VALUES ARE
-  ##### ##### CHANGED FROM THE DEFAULT VALUES
+
+  ######################          LTBI DIAGNOSIS           ########################
   ##read in the default program change values
   default_pc<-def_prgchng(PV)
   ######################          LTBI DIAGNOSIS           ########################
@@ -461,7 +460,6 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   LtTxPar       <- cbind(pTlInt,pDefLt,EffLt)
 
   pImmScen    <- PV["pImmScen"] # lack of reactivitiy to IGRA for Sp
-
 
   #### #### #### INT 2 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
   ### HOW TO ADD PROGRAM CHANGE HERE?
@@ -547,7 +545,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   rDeft<-rDeft[1:month]
 
 
-  if (round(prg_chng["tb_txdef_frc"],2) !=round(rDeft[prg_m], 2)){
+  if (prg_chng["tb_txdef_frc"] != default_pc["tb_txdef_frc"]){
     rDeft[prg_m:length(rDeft)] <- prg_chng["tb_txdef_frc"];
   }
 

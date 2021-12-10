@@ -9,21 +9,21 @@ def_prgchng<-function(ParVec){
   #create an empty vector to hold the values
   DefPrgChngVec<-rep(NA,12)
   names(DefPrgChngVec)<-c(
-                    "start_yr", #year in which the program change starts (discontinuous step up to the values below at this year)
-                    "scrn_cov", #Screening Coverage Rate as a Multiple of the Current Rate
-                    "IGRA_frc", #Fraction of Individuals Receiving IGRA
-                    "ltbi_init_frc", #Fraction of Individuals Testing Positive who Accept Treatment
-                    "frc_3hp",  #fraction of Individuals on 3HP
-                    "comp_3hp", #Probability of Completion of Treatment among Individuals on 3HP
-                    "frc_3hr",  #fraction of Individuals on 3HR
-                    "comp_3hr", #Probability of Completion of Treatment among Individuals on 3HR
-                    "frc_4r",   #fraction of Individuals on 4R
-                    "comp_4r",  #Probability of Completion of Treatment among Individuals on 4R
-                    "tb_tim2tx_frc", #Duration of Infectiousness
-                    "tb_txdef_frc" #Fraction Discontinuing/Defaulting from Treatment
+    "start_yr", #year in which the program change starts (discontinuous step up to the values below at this year)
+    "scrn_cov", #Screening Coverage Rate as a Multiple of the Current Rate
+    "IGRA_frc", #Fraction of Individuals Receiving IGRA
+    "ltbi_init_frc", #Fraction of Individuals Testing Positive who Accept Treatment
+    "frc_3hp",  #fraction of Individuals on 3HP
+    "comp_3hp", #Probability of Completion of Treatment among Individuals on 3HP
+    "frc_3hr",  #fraction of Individuals on 3HR
+    "comp_3hr", #Probability of Completion of Treatment among Individuals on 3HR
+    "frc_4r",   #fraction of Individuals on 4R
+    "comp_4r",  #Probability of Completion of Treatment among Individuals on 4R
+    "tb_tim2tx_frc", #Duration of Infectiousness
+    "tb_txdef_frc" #Fraction Discontinuing/Defaulting from Treatment
   )
-  #default start year will always be 2020
-  DefPrgChngVec[1]<-2020
+  #default start year will be 2022
+  DefPrgChngVec[1]<-2022
   #default screening coverage multiplier will always default to 1
   DefPrgChngVec[2]<-1
   #the default IGRA fraction is a constant that is not calibrated or calculated
@@ -53,8 +53,8 @@ def_prgchng<-function(ParVec){
   rDef0[64:151] <- rDef0[63]
   rDef1         <- predict(smooth.spline(x=c(1950:1979,1993:2100),y=rDef0[-(31:43)],spar=0.4),x=1950:2100)$y
   rDeft         <- SmoCurve(rDef1)/12;
-  rDef<-rDeft[(2020-1950)+1]
+  rDef<-rDeft[(2022-1950)+1]
   DefPrgChngVec[12]<-rDef
 
-return(DefPrgChngVec)
+  return(DefPrgChngVec)
 }
