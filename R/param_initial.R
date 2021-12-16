@@ -176,6 +176,8 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   ImmFst         <- outer(PrevTrend25_34a*exp(PV["RRtbprev"]),ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*(1-PV["pImmAct"])
 
   ImmNon         <- TotImmAge-ImmAct-ImmFst-ImmLat
+  for (i in 1:length(ImmNon)) if (ImmNon[i]<0) ImmNon[i]<-0
+
   ###################### TRUNCATE THESE VALS
   ImmAct<-ImmAct[1:month,];ImmFst<-ImmFst[1:month,]; ImmLat<-ImmLat[1:month,]; ImmNon<-ImmNon[1:month,]
   # ImmNon[1:6,]<- ImmAct[1:6,]<-ImmFst[1:6,]<-ImmLat[1:6,]<-0
@@ -187,6 +189,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
     for(i in 1:11) ImmAct[,i] <- ImmAct[,i]*(1-LgtCurve(intv_yr,intv_yr+1,1))
     for(i in 1:11) ImmFst[,i] <- ImmFst[,i]*(1-LgtCurve(intv_yr,intv_yr+1,1))
     ImmNon        <- TotImmAge[1:month,]-ImmAct-ImmFst-ImmLat
+    for (i in 1:length(ImmNon)) if (ImmNon[i]<0) ImmNon[i]<-0
 
   }
 
@@ -199,6 +202,8 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
     for(i in 1:11) ImmAct[intv_m:month,i] <- ImmAct[intv_m:month,i]*adjfV
     for(i in 1:11) ImmFst[intv_m:month,i] <- ImmFst[intv_m:month,i]*adjfV
     ImmNon         <- TotImmAge[1:month,]-ImmAct-ImmFst-ImmLat
+    for (i in 1:length(ImmNon)) if (ImmNon[i]<0) ImmNon[i]<-0
+
   }
 
   ######################   EXOGENEOUS INFECTION RISK      ########################
@@ -418,7 +423,9 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
     for(i in 1:11) ImmAct[,i] <- ImmAct[,i]*(1-LgtCurve(intv_yr,intv_yr+5,1)*SensLt[4,1]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
     for(i in 1:11) ImmFst[,i] <- ImmFst[,i]*(1-LgtCurve(intv_yr,intv_yr+5,1)*SensLt[4,1]*PV["EffLt"]*(1-PV["pDefLt"])*pctDoc)
     ImmNon      <- TotImmAge[1:month,]-ImmAct-ImmFst-ImmLat
+    for (i in 1:length(ImmNon)) if (ImmNon[i]<0) ImmNon[i]<-0
   }
+  #### #### #### INT 1 #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
   ######################          LTBI DIAGNOSIS           ########################
   ##read in the default program change values
@@ -440,7 +447,6 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
       prg_chng[["frc_3hr"]] != default_pc[["frc_3hr"]] | prg_chng[["comp_3hr"]] != default_pc[["comp_3hr"]] |
       prg_chng[["frc_4r"]] != default_pc[["frc_4r"]] | prg_chng[["comp_4r"]] != default_pc[["comp_4r"]]){
     #calculate the weighted treatment completion rate
-
     comprate<-(prg_chng[["frc_3hp"]]*prg_chng[["comp_3hp"]]+prg_chng[["frc_3hr"]]*prg_chng[["comp_3hr"]]+
                  prg_chng[["frc_4r"]]*prg_chng[["comp_4r"]])/1
     pDefLt         <- c(rep(1-bccomprate,prg_m-1),rep(1-comprate,1+month-prg_m))
@@ -518,7 +524,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
 
   #### #### #### INT 3 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
-  if(Int3==1) { for(i in 1:2) { rDxt[,i] <- rDxt[,i]+ rDxt[,i]*LgtCurve(intv_yr,intv_yr+5,1)     }   }
+  if(Int3==1) { for(i in 1:2) { rDxt[,i] <- rDxt[,i]+ rDxt[,i]*LgtCurve(intv_yr,intv_yr+5,1)}}
 
   #### #### #### INT 3 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
@@ -577,9 +583,13 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   NixTrans<- rep(1,month)
   #### #### #### INT 4 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
-  if(Int4==1) {  rDeftH <- rDeftH*(1-LgtCurve(intv_yr,intv_yr+5,0.5))      }
+  if(Int4==1) {  rDeftH <- rDeftH*(1-LgtCurve(intv_yr,intv_yr+5,0.5))
+                  for (i in 1:length(rDeftH)) if (rDeftH[i] > 1) rDeftH[i] <-1
+                  }
   if(Int4==1) {  rDeft<-rDeft[1:month]
-  rDeft<- rDeft * (1-LgtCurve(intv_yr,intv_yr+5,0.5))      }
+              rDeft<- rDeft * (1-LgtCurve(intv_yr,intv_yr+5,0.5))
+              for (i in 1:length(rDeft)) if (rDeft[i] > 1) rDeft[i] <-1
+  }
 
   #### #### #### INT 4 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
   ## Tx quality
@@ -594,7 +604,10 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
 
   #### #### #### INT 4 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
-  if(Int4==1) {  TxQualt<- 1-(1-TxQualt)*(1-LgtCurve(intv_yr,intv_yr+5,0.5))      }
+  if(Int4==1) {
+    TxQualt<- 1-(1-TxQualt)*(1-LgtCurve(intv_yr,intv_yr+5,0.5))
+    for (i in 1:length(TxQualt)) if (TxQualt[i] > 1) TxQualt[i] <-1
+    }
 
   #### #### #### INT 4 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
@@ -616,7 +629,10 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   TxVec[1]       <-  d1st
   TxVec[2]       <-  pCurPs
   ### REMOVED ART PARAMETERS
-
+  for(i in 1:2){
+  for (j in 1:nrow(rDxt)){
+    if (rDxt[j,i]>1) {rDxt[j,i]<-1
+  }   }}
 
   InputParams<-list()
   InputParams[["rDxt"]]      = rDxt
