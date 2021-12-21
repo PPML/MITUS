@@ -88,7 +88,7 @@ llikelihoodZ_st <-  function(samp_i,ParMatrix,loc, TB=1) { # ParMatrix = ParInit
         lLik <- lLik + addlik
         ### ### ### CASES NUSB, US 2010-2014  SLOPE ### ### ### ### ### ### D
         ### ### ### Removed as we now use the five year totals
-        if (loc %in% c("ND", "MT")){
+        if (loc %in% c("MT")){
           lLik <-lLik;
         } else {
         v4   <- cbind(M[61:70,148]+M[61:70,149]+(M[61:70,201]+M[61:70,202]),
