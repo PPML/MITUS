@@ -87,17 +87,17 @@ notif_fbus_slp_lLik_st <- function(V,st) {
   tot_case_nat<-cbind(t(notif_age_fb0),t(notif_age_us0))
   #calculate the slopes
   notif_fbus_slp5<-apply(log(tot_case_nat),2,function(x) lm(x~I(1:2))$coef[2])
-  if (loc =="ND"){
+  if (st ==35){
     adj_3a              <- dnorm(notif_fbus_slp5[1],notif_fbus_slp5[1],0.005,log=T)# V = table of notifications by fb 2011-2016 (row=6 years, col=fb then us)
   } else{
     adj_3a              <- sum(dnorm(notif_fbus_slp5,notif_fbus_slp5,0.005,log=T))# V = table of notifications by fb 2011-2016 (row=6 years, col=fb then us)
   }
   V1a <- matrix(c(sum(V[1:5,1]),sum(V[1:5,2]), sum(V[6:10,1]), sum(V[6:10,2])),2,2, byrow = TRUE)
   V2 <- apply(log(V1a),2,function(x) lm(x~I(1:2))$coef[2])
-  if (loc=="ND"){
-    dnorm(notif_fbus_slp5[1],V2[1],0.005,log=T) - adj_3a
+  if (st==35){
+    return(dnorm(notif_fbus_slp5[1],V2[1],0.005,log=T) - adj_3a)
   } else{
-    sum(dnorm(notif_fbus_slp5,V2,0.005,log=T)) - adj_3a
+    return(sum(dnorm(notif_fbus_slp5,V2,0.005,log=T)) - adj_3a)
   }
 }
 
