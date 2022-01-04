@@ -232,8 +232,8 @@ notif_hr_lLik_st <- function(V,st) { # V = table of notifications by tx history 
 #'@return likelihood
 recent_trans_dist_lLik_st  <- function(V,st) {
   rct_trans_dist        <- CalibDat[["rct_cases_sm"]][st,5]
-  adj_13          <- dbeta(rct_trans_dist,rct_trans_dist*100,(1-rct_trans_dist)*100,log=T)
-  dbeta(rct_trans_dist,V[1]*100,V[2]*100,log=T)  - adj_13
+  adj_13          <- dbeta(rct_trans_dist,rct_trans_dist*1000,(1-rct_trans_dist)*1000,log=T)
+  dbeta(rct_trans_dist,V[1]*1000,V[2]*1000,log=T)  - adj_13
 }
 
 ### ### ### CASES FB RECENT ENTRY DISTRIBUTION 1993-2013  ### ### ### ### ### ### D
