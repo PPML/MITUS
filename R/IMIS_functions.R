@@ -28,7 +28,9 @@ llikelihoodZ <-  function(samp_i, start_mat, TB=1) {
   jj <- tryCatch({
     prg_chng<-def_prgchng(P)
     prms <-list()
-    prms <- param_init(P,"US",prg_chng=prg_chng, ttt_list=def_ttt())
+    prms <- param_init(P,"US",prg_chng=prg_chng, ttt_list=def_ttt(), immig = P["Immig2020"])
+    prms$rDxt[843:855,]<-prms$rDxt[843:855,]*P["Dxt2020"]
+    prms$NixTrans[843:855]<-(1+P["Trans2020"])
     # data("trans_mat_nat",package="MITUS")
     # trans_mat_tot_ages<-trans_mat_tot_ages_nat
     # tm<-matrix(0,16,16)
@@ -36,7 +38,7 @@ llikelihoodZ <-  function(samp_i, start_mat, TB=1) {
     # trans_mat_tot_ages<<-matrix(tm,16,176)
     trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
     if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
-    zz <- cSim( nYrs       = 2020-1950         , nRes      = length(func_ResNam())  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
+    zz <- cSim( nYrs       = 2021-1950         , nRes      = length(func_ResNam())  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
                 Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]  ,
                 rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
                 vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    ,
@@ -219,14 +221,39 @@ llikelihoodZ <-  function(samp_i, start_mat, TB=1) {
       addlik <- homeless_10_lLik(V=v23b); addlik
       lLik <- lLik + addlik
 
-
-
-
       ### ### ### FB RT LIKELIHOOD
       #   v30  <-  (M[66,212]/M[66,195])
       #   addlik <- dnorm(v30,0.075,0.0125,log=T)-dnorm(0.075,0.075,0.0125,log=T); addlik
       #   lLik <- lLik + addlik
       ### ### ###  ALL LIKELIHOODS DONE !!
+
+      ### 2020 llikelihoods ###
+      ### These three likelihoods are used to account for the change in 2020
+      ### TB values; because it is anticipated that these are due to temporary
+      ### changes due to the COVID-19 pandemic we are accounting for these with
+      ### tailored, % of change likelihoods as opposed to using our typical
+      ### likelihood procedures.
+      bcRes <- readRDS(system.file("US/US_basecase_0719.rds", package="MITUS"))
+      colnames(bcRes)<-func_ResNam()
+      # TOTAL DIAGNOSED CASES 2020
+      v24bc   <- bcRes[70,"NOTIF_ALL"]+bcRes[70,"NOTIF_MORT_ALL"]
+      v24M     <- M[71,"NOTIF_ALL"]+M[71,"NOTIF_MORT_ALL"]
+      v24 <- (v24bc - v24M )/ v24bc
+      addlik <- notif_tot_20_lik(V=v24); addlik
+      lLik <- lLik + addlik
+      # CASES FB RECENT ENTRY DISTRIBUTION 2020
+      v25bc   <- (bcRes[70,148] + bcRes[70,201])/ sum(bcRes[70,201:202],bcRes[70,148:149])
+      v25M    <- (M[71,148] + M[71,201])/ sum(M[71,201:202],M[71,148:149])
+      v25 <- (v25bc - v25M )/ v25bc
+      addlik <- notif_NUSBrec_20_lik(V=v25); addlik
+      lLik <- lLik + addlik
+      # CASES RECENT TRANSMISSION DISTRIBUTION 2020
+      v26abc  <- sum(bcRes[70,184:185])/sum(bcRes[70,168:169])
+      v26aM   <- sum(M[71,184:185])/sum(M[71,168:169])
+      v26     <- (v26abc - v26aM )/ v26abc
+      addlik <- notif_RT_20_lik(V=v26); addlik
+      lLik   <- lLik + addlik
+
 
     } }, error = function(e) NA)
   if(is.na(jj))         { lLik <- -10^12 - sum((ParamInitZ[,8]-Par)^2) }
