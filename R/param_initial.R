@@ -158,7 +158,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
     TotImmAge[,j]        <- SmoCurve(TotImmAge0[,j])
   }
   if(immig != 1){
-    TotImmAge[843:855,]<-TotImmAge[843:855,]*immig;
+    TotImmAge[843:855,]<-TotImmAge[843:855,]-(TotImmAge[843:855,]*immig);
   }
   # }
   ######################           LTBI IMM.             ########################

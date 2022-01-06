@@ -19,8 +19,8 @@ llikelihood2020 <- function(samp_i, start_mat, TB=1){
   prg_chng<-def_prgchng(P)
   prms <-list()
   prms <- param_init(P,"US",prg_chng=prg_chng, ttt_list=def_ttt(), immig = par2020["Immig"])
-  prms$rDxt[843:855,]<-prms$rDxt[843:855,]*par2020["Dxt"]
-  prms$NixTrans[843:855]<-(1+par2020["Trans"])
+  prms$rDxt[843:855,]<-prms$rDxt[843:855,] - (prms$rDxt[843:855,]*par2020["Dxt"])
+  prms$NixTrans[843:855]<- (1-par2020["Trans"])
   trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
   if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
   # jj <- tryCatch({
@@ -95,7 +95,7 @@ notif_NUSBrec_20_lik <- function(V) {
 ### Measure the % change in recent transmission cases
 notif_RT_20_lik <- function(V) {
   ### We are basing this off of the preliminary data that suggests a 0% decrease
-  case_diff_RT <- 0.001
+  case_diff_RT <- 0.01
   adj_3         <- dnorm(case_diff_RT,case_diff_RT,case_diff_RT*0.1/1.96,log=T)
   dnorm(case_diff_RT,V,case_diff_RT*0.1/1.96,log=T) - adj_3
 }
@@ -123,6 +123,7 @@ optim_2020 <- function(df, samp_i=1,n_cores=2, TB=1){
     names(df1) <- names(df)
   } else{
     df1 <- as.numeric(df[samp_i,])
+    names(df1) <- names(df)
   }
 
   b<-samp_i
