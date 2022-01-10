@@ -19,7 +19,7 @@ optim_data <- function(batches, loc, date){
   month<-strsplit(date, "-")[[1]][1]
   day<-strsplit(date, "-")[[1]][2]
   for (i in batches){
-    load(paste("/Users/nis100/Desktop/state_run1/","Opt_", loc, "_r9_",i,"_2021-", date, ".rda", sep=""))
+    load(paste("/Users/nis100/Desktop/ND_010422/","Opt_", loc, "_r9_",i,"_2022-", date, ".rda", sep=""))
     opt_all[i,1:nrow(ParamInitZ)] <- o9$par
     opt_all[i,nrow(ParamInitZ)+1]<- o9$value
   }
@@ -51,4 +51,21 @@ calib_plots_locs<-function(locs, simp.date, batches=15){
       results <-calib(samp.i[1], Opt, loc, cex.size = .8)
       ### Create Calibration Targets
       model_calib_outputs(loc, results, 1, simp.date)
+      model_calib_outputs_2020(loc, results, 1, simp.date)
    }}
+
+calib_plots_locs_2020<-function(locs, simp.date, batches=15){
+  for (loc in locs){
+    print(loc)
+    model_load(loc)
+    Opt<-readRDS(system.file(paste0(loc,"/", loc, "_Optim_all_", batches,"_", simp.date,".rds"), package="MITUS"))
+    posterior<-rep(0,15)
+    for(i in 1:15){ posterior[i]<-trunc_number_n_decimals(Opt[i,ncol(Opt)],1);  print(posterior[i]) }
+    # mode<-round(getmode(posterior), 2); print(mode)
+    # if (mode>1e11){ print(paste(loc, "did not optimize. Check optim manually", sep = " ")); next }
+    samp.i<-which(posterior==min(posterior));print(samp.i)
+    Opt<-Opt[,-ncol(Opt)]
+    results <-calib_2020(samp.i[1], Opt, loc, cex.size = .8)
+    ### Create Calibration Targets
+    # model_calib_outputs_2020(loc, results, 1, simp.date)
+  }}
