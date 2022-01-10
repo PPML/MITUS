@@ -9,7 +9,7 @@ llikelihood2020 <- function(samp_i, start_mat, TB=1){
   } else{
     par2020 <- as.numeric(start_mat[samp_i,])
   }
-
+  # par2020 <- c(0.088, 0.43, 0.28)
   names(par2020) <- c("Immig", "Dxt", "Trans")
   # print(colnames(start_mat))
   # print(par2020)
@@ -44,11 +44,13 @@ llikelihood2020 <- function(samp_i, start_mat, TB=1){
       bcRes <- readRDS(system.file("US/US_basecase_0719.rds", package="MITUS"))
       M <- zz$Outputs
       colnames(M) <- func_ResNam()
+      # saveRDS(M,"~/MITUS/inst/US/US_2020basecase_010621.rds")
       lLik <- 0
       # TOTAL DIAGNOSED CASES 2020
       v1bc   <- bcRes[70,"NOTIF_ALL"]+bcRes[70,"NOTIF_MORT_ALL"]
       v1M     <- M[71,"NOTIF_ALL"]+M[71,"NOTIF_MORT_ALL"]
       v1 <- 1 - (v1M / v1bc)
+      # (v1bc - v1M) / v1bc
       addlik <- notif_tot_20_lik(V=v1); addlik
       lLik <- lLik + addlik
       # CASES FB RECENT ENTRY DISTRIBUTION 2020
