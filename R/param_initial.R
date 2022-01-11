@@ -68,6 +68,9 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   Births           <- Inputs[["Births"]]
   ImmigInputs      <- Inputs[["ImmigInputs"]]
   ImmigInputs$PrevTrend25_34<-crude_rate(Inputs,loc)
+  if (loc=="ND"){
+    ImmigInputs$PrevTrend25_34[61:71]<-seq(from=ImmigInputs$PrevTrend25_34[61], to=ImmigInputs$PrevTrend25_34[61]*2, length.out=11)
+  }
   TxInputs         <- Inputs[["TxInputs"]]
   NetMig           <- Inputs[["NetMigrState"]]
 
@@ -141,6 +144,9 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   ######################         IMMIGRATION             ########################
   ######################         OVERALL IMM.            ########################
   TotImmig0       <- (c(Inputs$ImmigInputs[[1]][1:151])+c(rep(0,71),cumsum(rep(PV["ImmigVolFut"],80))))/12*PV["ImmigVol"]
+  if (loc=="ND"){
+    TotImmig0[61:71]<-seq(from=TotImmig0[61], to=TotImmig0[61]*3, length.out=11)
+  }
   TotImmAge0      <-matrix(0,151,11)
   for (i in 1:151){
     for (j in 1:11){
@@ -152,7 +158,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
     TotImmAge[,j]        <- SmoCurve(TotImmAge0[,j])
   }
   if(immig != 1){
-    TotImmAge[843:855,]<-TotImmAge[843:855,]*immig;
+    TotImmAge[843:855,]<-TotImmAge[843:855,]-(TotImmAge[843:855,]*immig);
   }
   # }
   ######################           LTBI IMM.             ########################
