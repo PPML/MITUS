@@ -50,7 +50,6 @@ llikelihood2020 <- function(samp_i, start_mat, TB=1){
       v1bc   <- bcRes[70,"NOTIF_ALL"]+bcRes[70,"NOTIF_MORT_ALL"]
       v1M     <- M[71,"NOTIF_ALL"]+M[71,"NOTIF_MORT_ALL"]
       v1 <- 1 - (v1M / v1bc)
-      # (v1bc - v1M) / v1bc
       addlik <- notif_tot_20_lik(V=v1); addlik
       lLik <- lLik + addlik
       # CASES FB RECENT ENTRY DISTRIBUTION 2020
@@ -61,11 +60,7 @@ llikelihood2020 <- function(samp_i, start_mat, TB=1){
       lLik <- lLik + addlik
       # CASES RECENT TRANSMISSION DISTRIBUTION 2020
       v3abc  <- sum(bcRes[70,184:185])/sum(bcRes[70,168:169])
-      # v3bc   <- c(v3abc[1],1-v3abc[1])
-
       v3aM   <- sum(M[71,184:185])/sum(M[71,168:169])
-      # v3M    <- c(v3aM[1],1-v3aM[1])
-
       v3     <- 1- (v3aM / v3abc)
       addlik <- notif_RT_20_lik(V=v3); addlik
       lLik   <- lLik + addlik
@@ -81,7 +76,7 @@ llikelihood2020 <- function(samp_i, start_mat, TB=1){
 ###  Measure the change in TB cases in 2020 from 2019 (basecase)
 notif_tot_20_lik <- function(V) {
   ### We are basing this off of the preliminary data that suggests a 20% decrease
-  case_diff_tot <-  0.2
+  case_diff_tot <-  0.1953791
   adj_1         <- dnorm(case_diff_tot,case_diff_tot,case_diff_tot*0.1/1.96,log=T)
   dnorm(case_diff_tot,V,case_diff_tot*0.1/1.96,log=T) - adj_1
 }
@@ -89,9 +84,9 @@ notif_tot_20_lik <- function(V) {
 ### Measure the % change in NUSB recent entry in 2020 from 2019 (basecase)
 notif_NUSBrec_20_lik <- function(V) {
   ### We are basing this off of the preliminary data that suggests a 6% decrease
-  case_diff_NUSB <- 0.06
-  adj_2         <- dnorm(case_diff_NUSB,case_diff_NUSB,case_diff_NUSB*0.1/1.96,log=T)
-  dnorm(case_diff_NUSB,V,case_diff_NUSB*0.1/1.96,log=T) - adj_2
+  case_diff_NUSB <- .2175
+  adj_2         <- dnorm(case_diff_NUSB,case_diff_NUSB,0.1/1.96,log=T)
+  dnorm(case_diff_NUSB,V,0.1/1.96,log=T) - adj_2
 }
 
 ### Measure the % change in recent transmission cases
@@ -106,7 +101,8 @@ notif_RT_20_lik <- function(V) {
 
 ### First make a matrix of each value and its prior boundaries
 # paraminit2020 <- matrix(0,3,5)
-# paraminit2020[,1:3]<- cbind(c(.3, .3, 0), c(.1, .1, -.1), c(.5, .5, .1))
+# rownames(paraminit2020) <- c("Immig", "Dxt", "Trans")
+# paraminit2020[,1:3]<- cbind(c(.17, .5, .5), c(.07, .1, .3), c(.27, .9, .7))
 # paraminit2020[,4:5] <- c(paraminit2020[,1],(paraminit2020[,3]-paraminit2020[,2])/3.92)
 #
 # startval2020 <-randomLHS(10,nrow(paraminit2020))
