@@ -11,6 +11,8 @@ llikelihood2020 <- function(samp_i, start_mat, TB=1){
   }
   # par2020 <- c(0.088, 0.43, 0.28)
   # par2020<-c(0.2046272,0.4325273,0.2712293)
+  # par2020 <- c (0.1797244, 0.4360917, 0.2754278)
+
   names(par2020) <- c("Immig", "Dxt", "Trans")
   # print(colnames(start_mat))
   # print(par2020)
@@ -61,7 +63,7 @@ llikelihood2020 <- function(samp_i, start_mat, TB=1){
     lLik <- lLik + addlik
     # CASES RECENT TRANSMISSION DISTRIBUTION 2020
     v3abc  <- sum(bcRes[70,184:185])/sum(bcRes[70,168:169])
-    v3aM   <- sum(M[71,184:185])/sum(M[71,168:169])
+    v3aM   <- sum(M[71,172])/sum(M[71,156])
     v3     <- 1- (v3aM / v3abc)
     addlik <- notif_RT_20_lik(V=v3); addlik
     lLik   <- lLik + addlik
@@ -86,16 +88,16 @@ notif_tot_20_lik <- function(V) {
 notif_NUSBrec_20_lik <- function(V) {
   ### We are basing this off of the preliminary data that suggests a 6% decrease
   case_diff_NUSB <- .2175
-  adj_2         <- dnorm(case_diff_NUSB,case_diff_NUSB,case_diff_NUSB*0.1/1.96,log=T)
-  dnorm(case_diff_NUSB,V,case_diff_NUSB*0.1/1.96,log=T) - adj_2
+  adj_2         <- dnorm(case_diff_NUSB,case_diff_NUSB,0.1/1.96,log=T)
+  dnorm(case_diff_NUSB,V,0.1/1.96,log=T) - adj_2
 }
 
 ### Measure the % change in recent transmission cases
 notif_RT_20_lik <- function(V) {
   ### We are basing this off of the preliminary data that suggests a 0% decrease
   case_diff_RT <- 0.001
-  adj_3         <- dnorm(case_diff_RT,case_diff_RT,case_diff_RT*0.1/1.96,log=T)
-  dnorm(case_diff_RT,V,case_diff_RT*0.1/1.96,log=T) - adj_3
+  adj_3         <- dnorm(case_diff_RT,case_diff_RT,0.1/1.96,log=T)
+  dnorm(case_diff_RT,V,0.1/1.96,log=T) - adj_3
 }
 
 ### Create the starting parameter matrix
