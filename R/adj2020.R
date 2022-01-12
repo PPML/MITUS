@@ -10,6 +10,7 @@ llikelihood2020 <- function(samp_i, start_mat, TB=1){
     par2020 <- as.numeric(start_mat[samp_i,])
   }
   # par2020 <- c(0.088, 0.43, 0.28)
+  # par2020<-c(0.2046272,0.4325273,0.2712293)
   names(par2020) <- c("Immig", "Dxt", "Trans")
   # print(colnames(start_mat))
   # print(par2020)
@@ -24,48 +25,48 @@ llikelihood2020 <- function(samp_i, start_mat, TB=1){
   trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
   if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
   # jj <- tryCatch({
-    zz <- cSim( nYrs       = 2021-1950         , nRes      = length(func_ResNam())  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
-                Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]  ,
-                rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
-                vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    ,
-                HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat"]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst"]]    ,
-                net_mig_usb = prms[["net_mig_usb"]], net_mig_nusb = prms[["net_mig_nusb"]],
-                mubt       = prms[["mubt"]]    , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], RRcrAG = prms[["RRcrAG"]],
-                Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
-                TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
-                LtDxPar_lt    = prms[["LtDxPar_lt"]]   , LtDxPar_nolt    = prms[["LtDxPar_nolt"]]   , rLtScrt   = prms[["rLtScrt"]]       , ttt_samp_dist   = prms[["ttt_sampling_dist"]] ,
-                ttt_ag = prms[["ttt_ag"]], ttt_na = prms[["ttt_na"]], ttt_month = prms[["ttt_month"]], ttt_ltbi = prms[["ttt_ltbi"]], ttt_pop_scrn = prms[["ttt_pop_scrn"]], RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
-                EarlyTrend = prms[["EarlyTrend"]], ag_den=prms[["aging_denom"]],  NixTrans = prms[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)
+  zz <- cSim( nYrs       = 2021-1950         , nRes      = length(func_ResNam())  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
+              Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]  ,
+              rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
+              vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    ,
+              HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat"]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst"]]    ,
+              net_mig_usb = prms[["net_mig_usb"]], net_mig_nusb = prms[["net_mig_nusb"]],
+              mubt       = prms[["mubt"]]    , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], RRcrAG = prms[["RRcrAG"]],
+              Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
+              TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
+              LtDxPar_lt    = prms[["LtDxPar_lt"]]   , LtDxPar_nolt    = prms[["LtDxPar_nolt"]]   , rLtScrt   = prms[["rLtScrt"]]       , ttt_samp_dist   = prms[["ttt_sampling_dist"]] ,
+              ttt_ag = prms[["ttt_ag"]], ttt_na = prms[["ttt_na"]], ttt_month = prms[["ttt_month"]], ttt_ltbi = prms[["ttt_ltbi"]], ttt_pop_scrn = prms[["ttt_pop_scrn"]], RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
+              EarlyTrend = prms[["EarlyTrend"]], ag_den=prms[["aging_denom"]],  NixTrans = prms[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)
 
-    if(sum(is.na(zz$Outputs[68,]))>0 | min(zz$Outputs[68,])<0 | min(zz$V1)<0 ) {
-      lLik <- -10^12
-    } else {
-      ### read in the basecase for creating comparison
-      bcRes <- readRDS(system.file("US/US_basecase_0719.rds", package="MITUS"))
-      M <- zz$Outputs
-      colnames(M) <- func_ResNam()
-      # saveRDS(M,"~/MITUS/inst/US/US_2020basecase_010621.rds")
-      lLik <- 0
-      # TOTAL DIAGNOSED CASES 2020
-      v1bc   <- bcRes[70,"NOTIF_ALL"]+bcRes[70,"NOTIF_MORT_ALL"]
-      v1M     <- M[71,"NOTIF_ALL"]+M[71,"NOTIF_MORT_ALL"]
-      v1 <- 1 - (v1M / v1bc)
-      addlik <- notif_tot_20_lik(V=v1); addlik
-      lLik <- lLik + addlik
-      # CASES FB RECENT ENTRY DISTRIBUTION 2020
-      v2bc   <- (bcRes[70,148] + bcRes[70,201])/ sum(bcRes[70,201:202],bcRes[70,148:149])
-      v2M    <- (M[71,148] + M[71,201])/ sum(M[71,201:202],M[71,148:149])
-      v2 <- 1 - (v2M / v2bc)
-      addlik <- notif_NUSBrec_20_lik(V=v2); addlik
-      lLik <- lLik + addlik
-      # CASES RECENT TRANSMISSION DISTRIBUTION 2020
-      v3abc  <- sum(bcRes[70,184:185])/sum(bcRes[70,168:169])
-      v3aM   <- sum(M[71,184:185])/sum(M[71,168:169])
-      v3     <- 1- (v3aM / v3abc)
-      addlik <- notif_RT_20_lik(V=v3); addlik
-      lLik   <- lLik + addlik
-    }
-    return((lLik))
+  if(sum(is.na(zz$Outputs[68,]))>0 | min(zz$Outputs[68,])<0 | min(zz$V1)<0 ) {
+    lLik <- -10^12
+  } else {
+    ### read in the basecase for creating comparison
+    bcRes <- readRDS(system.file("US/US_basecase_0719.rds", package="MITUS"))
+    M <- zz$Outputs
+    colnames(M) <- func_ResNam()
+    # saveRDS(M,"~/MITUS/inst/US/US_2020basecase_010621.rds")
+    lLik <- 0
+    # TOTAL DIAGNOSED CASES 2020
+    v1bc   <- bcRes[70,"NOTIF_ALL"]+bcRes[70,"NOTIF_MORT_ALL"]
+    v1M     <- M[71,"NOTIF_ALL"]+M[71,"NOTIF_MORT_ALL"]
+    v1 <- 1 - (v1M / v1bc)
+    addlik <- notif_tot_20_lik(V=v1); addlik
+    lLik <- lLik + addlik
+    # CASES FB RECENT ENTRY DISTRIBUTION 2020
+    v2bc   <- (bcRes[70,148] + bcRes[70,201])/ sum(bcRes[70,201:202],bcRes[70,148:149])
+    v2M    <- (M[71,148] + M[71,201])/ sum(M[71,201:202],M[71,148:149])
+    v2 <- 1 - (v2M / v2bc)
+    addlik <- notif_NUSBrec_20_lik(V=v2); addlik
+    lLik <- lLik + addlik
+    # CASES RECENT TRANSMISSION DISTRIBUTION 2020
+    v3abc  <- sum(bcRes[70,184:185])/sum(bcRes[70,168:169])
+    v3aM   <- sum(M[71,184:185])/sum(M[71,168:169])
+    v3     <- 1- (v3aM / v3abc)
+    addlik <- notif_RT_20_lik(V=v3); addlik
+    lLik   <- lLik + addlik
+  }
+  return((lLik))
 }
 
 ### Use three likelihoods to evaluate the differential changes in our mechanisms:
@@ -85,8 +86,8 @@ notif_tot_20_lik <- function(V) {
 notif_NUSBrec_20_lik <- function(V) {
   ### We are basing this off of the preliminary data that suggests a 6% decrease
   case_diff_NUSB <- .2175
-  adj_2         <- dnorm(case_diff_NUSB,case_diff_NUSB,0.1/1.96,log=T)
-  dnorm(case_diff_NUSB,V,0.1/1.96,log=T) - adj_2
+  adj_2         <- dnorm(case_diff_NUSB,case_diff_NUSB,case_diff_NUSB*0.1/1.96,log=T)
+  dnorm(case_diff_NUSB,V,case_diff_NUSB*0.1/1.96,log=T) - adj_2
 }
 
 ### Measure the % change in recent transmission cases
@@ -102,7 +103,7 @@ notif_RT_20_lik <- function(V) {
 ### First make a matrix of each value and its prior boundaries
 # paraminit2020 <- matrix(0,3,5)
 # rownames(paraminit2020) <- c("Immig", "Dxt", "Trans")
-# paraminit2020[,1:3]<- cbind(c(.17, .5, .5), c(.07, .1, .3), c(.27, .9, .7))
+# paraminit2020[,1:3]<- cbind(c(.17, .5, .5), c(.12, .1, .3), c(.22, .9, .7))
 # paraminit2020[,4:5] <- c(paraminit2020[,1],(paraminit2020[,3]-paraminit2020[,2])/3.92)
 #
 # startval2020 <-randomLHS(10,nrow(paraminit2020))
@@ -145,17 +146,17 @@ lprior2020 <- function(ParMatrix = startval2020, InitPar = paraminit2020) { # Pa
     Par3 <- Par
     Par3 <- qnorm(Par, mean    = InitPar[,4], sd = InitPar[,5])
 
-  if(dim(as.matrix(Par))[2]==1) Par <- t(as.matrix(Par))
-  ldensity <- dmnorm(Par,rep(0,nrow(InitPar)),diag(nrow(InitPar)),log=T)
-  lDensTrue <- rep(NA,nrow(InitPar))
-  lDensTrue <- dnorm(Par, mean  = InitPar[,4], sd = InitPar[,5], log=T)
-  ldensity3 <- ldensity
-  ldensity3[samp_i] <- ldensity+sum(lDensTrue)
+    if(dim(as.matrix(Par))[2]==1) Par <- t(as.matrix(Par))
+    ldensity <- dmnorm(Par,rep(0,nrow(InitPar)),diag(nrow(InitPar)),log=T)
+    lDensTrue <- rep(NA,nrow(InitPar))
+    lDensTrue <- dnorm(Par, mean  = InitPar[,4], sd = InitPar[,5], log=T)
+    ldensity3 <- ldensity
+    ldensity3[samp_i] <- ldensity+sum(lDensTrue)
 
-  if(is.na(ldensity3[samp_i]))         {
-    ldensity3[samp_i] <- -10^12 }
-  if(ldensity3[samp_i]%in%c(-Inf,Inf)) {
-    ldensity3[samp_i] <- -10^12  }
+    if(is.na(ldensity3[samp_i]))         {
+      ldensity3[samp_i] <- -10^12 }
+    if(ldensity3[samp_i]%in%c(-Inf,Inf)) {
+      ldensity3[samp_i] <- -10^12  }
   }
   return(ldensity3)
 }
