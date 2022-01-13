@@ -91,8 +91,8 @@ notif_tot_20_lik <- function(V) {
 notif_NUSBrec_20_lik <- function(V) {
   ### We are basing this off of the preliminary data that suggests a 6% decrease
   case_diff_NUSB <- .2175
-  adj_2         <- dnorm(case_diff_NUSB,case_diff_NUSB,case_diff_NUSB*0.05/1.96,log=T)
-  dnorm(case_diff_NUSB,V,case_diff_NUSB*0.05/1.96,log=T) - adj_2
+  adj_2         <- dnorm(case_diff_NUSB,case_diff_NUSB,0.05/1.96,log=T)
+  dnorm(case_diff_NUSB,V,0.05/1.96,log=T) - adj_2
 }
 
 ### Measure the % change in recent transmission cases
