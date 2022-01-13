@@ -96,8 +96,8 @@ notif_NUSBrec_20_lik <- function(V) {
 notif_RT_20_lik <- function(V) {
   ### We are basing this off of the preliminary data that suggests a 0% decrease
   case_diff_RT <- 0.001
-  adj_3         <- dnorm(case_diff_RT,case_diff_RT,0.05/1.96,log=T)
-  dnorm(case_diff_RT,V,0.05/1.96,log=T) - adj_3
+  adj_3         <- dnorm(case_diff_RT,case_diff_RT,case_diff_RT*0.1/1.96,log=T)
+  dnorm(case_diff_RT,V,case_diff_RT*0.1/1.96,log=T) - adj_3
 }
 
 ### Create the starting parameter matrix
