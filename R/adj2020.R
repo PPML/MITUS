@@ -96,8 +96,8 @@ notif_NUSBrec_20_lik <- function(V) {
 notif_RT_20_lik <- function(V) {
   ### We are basing this off of the preliminary data that suggests a 0% decrease
   case_diff_RT <- 0.001
-  adj_3         <- dnorm(case_diff_RT,case_diff_RT,0.1/1.96,log=T)
-  dnorm(case_diff_RT,V,0.1/1.96,log=T) - adj_3
+  adj_3         <- dnorm(case_diff_RT,case_diff_RT,0.05/1.96,log=T)
+  dnorm(case_diff_RT,V,0.05/1.96,log=T) - adj_3
 }
 
 ### Create the starting parameter matrix
@@ -105,7 +105,7 @@ notif_RT_20_lik <- function(V) {
 ### First make a matrix of each value and its prior boundaries
 # paraminit2020 <- matrix(0,3,5)
 # rownames(paraminit2020) <- c("Immig", "Dxt", "Trans")
-# paraminit2020[,1:3]<- cbind(c(.17, .5, .5), c(.12, .1, .3), c(.22, .9, .7))
+# paraminit2020[,1:3]<- cbind(c(.17, .5, .5), c(.07, .1, .3), c(.27, .9, .7))
 # paraminit2020[,4:5] <- c(paraminit2020[,1],(paraminit2020[,3]-paraminit2020[,2])/3.92)
 #
 # startval2020 <-randomLHS(10,nrow(paraminit2020))
