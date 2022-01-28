@@ -92,7 +92,7 @@ notif_tot_20_lik <- function(V) {
 ### Measure the % change in NUSB recent entry in 2020 from 2019 (basecase)
 notif_NUSBrec_20_lik <- function(V) {
   ### We are basing this off of the preliminary data that suggests a 6% decrease
-  case_diff_NUSB <- .2175
+  case_diff_NUSB <- .174
   adj_2         <- dnorm(case_diff_NUSB,case_diff_NUSB,0.1/1.96,log=T)
   dnorm(case_diff_NUSB,V,0.1/1.96,log=T) - adj_2
 }
