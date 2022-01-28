@@ -18,6 +18,7 @@ llikelihood2020 <- function(samp_i, start_mat, TB=1){
   # par2020 <- c(0.2859564,0.4206157,0.2653754)
   # par2020 <- c(0.3205440,0.4151213,0.2593764)
   # par2020 <- c(0.4064649,0.4010572,0.2438105)
+  # par2020 <- c(0.5003912,0.3857184,0.2265612)
   names(par2020) <- c("Immig", "Dxt", "Trans")
   # print(colnames(start_mat))
   # print(par2020)
@@ -93,8 +94,8 @@ notif_tot_20_lik <- function(V) {
 notif_NUSBrec_20_lik <- function(V) {
   ### We are basing this off of the preliminary data that suggests a 6% decrease
   case_diff_NUSB <- .174
-  adj_2         <- dnorm(case_diff_NUSB,case_diff_NUSB,0.1/1.96,log=T)
-  dnorm(case_diff_NUSB,V,0.1/1.96,log=T) - adj_2
+  adj_2         <- dnorm(case_diff_NUSB,case_diff_NUSB,0.05/1.96,log=T)
+  dnorm(case_diff_NUSB,V,0.05/1.96,log=T) - adj_2
 }
 
 ### Measure the % change in recent transmission cases
