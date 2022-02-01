@@ -19,49 +19,41 @@ plot text
 Percent of Total Cases Non-US Born Population
 format the plot
 plot the model data
-reported data for comparison
 plot text
 Percent of Non-US Born Cases from Recent Immigrant Population
 format the plot
 plot the model data
-reported data for comparison
 plot text
 Treatment Outcomes 1993-2014
-format the plot
-plot the model data
-reported data for comparison
-plot text}
+V   <- df[44:(endyr-1949),132:134]
+Vdisc <- V[,2]/rowSums(V)
+Vdead <- V[,3]/rowSums(V)}
 \usage{
 future_graphs(df, endyr)
 }
 \description{
-graph of total diagnosed cases
-by total population, US born population, and non-US born population
-format the plot
-plot the model data
-multiply raw output by 1,000 to convert from millions to thousands
-reported data for comparison
-plot text
-graph of total diagnosed cases
-by total population, US born population, and non-US born population
-format the plot
-plot the model data
-multiply raw output by 1,000 to convert from millions to thousands
-reported data for comparison
-plot text
-Percent of Total Cases Non-US Born Population
-format the plot
-plot the model data
-reported data for comparison
-plot text
-Percent of Non-US Born Cases from Recent Immigrant Population
-format the plot
-plot the model data
-reported data for comparison
-plot text
-Treatment Outcomes 1993-2014
-format the plot
-plot the model data
-reported data for comparison
-plot text
+#'format the plot
+plot(0,0,ylim=c(0,15),xlim=c(1993,endyr),xlab="",ylab="",axes=F)
+axis(1);axis(2,las=2);box()
+abline(h=axTicks(2),col="grey85")
+}
+\details{
+#'plot the model data
+lines(1993:endyr,Vdisc*100,lwd=2,col="red3")
+lines(1993:endyr,Vdead*100,lwd=2,col="blue")
+
+#'reported data for comparison
+tx_outcomes      <- cbind(1-rowSums(CalibDat[["tx_outcomes"]][,2:3]),CalibDat[["tx_outcomes"]][,2],CalibDat[["tx_outcomes"]][,3])*CalibDat[["tx_outcomes"]][,4]
+
+points(1993:2014,tx_outcomes[,2]/rowSums(tx_outcomes)*100,pch=19,cex=0.6,col="red3")
+points(1993:2014,tx_outcomes[,3]/rowSums(tx_outcomes)*100,pch=19,cex=0.6,col="blue")
+lines (1993:2014,tx_outcomes[,2]/rowSums(tx_outcomes)*100,lty=3,col="red3")
+lines (1993:2014,tx_outcomes[,3]/rowSums(tx_outcomes)*100,lty=3,col="blue")
+
+#'plot text
+
+mtext("Year",1,2.5,cex=0.9)
+mtext("Treatment Outcomes: Discontinued and Died (%)",3,.8,font=2,cex=0.8)
+legend("topright",c("Discontinued","Died","Reported data","Model"),pch=c(15,15,19,NA),lwd=c(NA,NA,1,2),
+       col=c("red3",4,1,1),lty=c(NA,NA,3,1),bg="white",pt.cex=c(1.8,1.8,0.6,NA))
 }
