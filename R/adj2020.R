@@ -21,6 +21,9 @@ llikelihood2020 <- function(samp_i, start_mat, TB=1){
   # par2020 <- c(0.5003912,0.3857184,0.2265612)
   # par2020 <- c(0.4508752,0.3942389,0.2361109)
   # par2020 <- c(0.3865738,0.4044850,0.2477164)
+  # par2020 <- c(0.3638802,0.4045582,0.2426989) #as of 1/29/22
+  # par2020 <- c(0.3957942, 0.3992307, 0.2365767) #as of 1/31/22
+
   names(par2020) <- c("Immig", "Dxt", "Trans")
   # print(colnames(start_mat))
   # print(par2020)
@@ -30,8 +33,8 @@ llikelihood2020 <- function(samp_i, start_mat, TB=1){
   prg_chng<-def_prgchng(P)
   prms <-list()
   prms <- param_init(P,"US",prg_chng=prg_chng, ttt_list=def_ttt(), immig = par2020["Immig"])
-  prms$rDxt[843:855,]<-prms$rDxt[843:855,] - (prms$rDxt[843:855,]*par2020["Dxt"])
-  prms$NixTrans[843:855]<- (1-par2020["Trans"])
+  prms$rDxt[843:864,]<-prms$rDxt[843:864,] - (prms$rDxt[843:864,]*par2020["Dxt"])
+  prms$NixTrans[843:864]<- (1-par2020["Trans"])
   trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
   if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
   # jj <- tryCatch({
@@ -63,18 +66,21 @@ llikelihood2020 <- function(samp_i, start_mat, TB=1){
     v1 <- 1 - (v1M / v1bc)
     addlik <- notif_tot_20_lik(V=v1); addlik
     lLik <- lLik + addlik
+
     # CASES FB RECENT ENTRY DISTRIBUTION 2020
     v2bc   <- (bcRes[70,148] + bcRes[70,201])/ sum(bcRes[70,201:202],bcRes[70,148:149])
     v2M    <- (M[71,148] + M[71,201])/ sum(M[71,201:202],M[71,148:149])
     v2 <- 1 - (v2M / v2bc)
     addlik <- notif_NUSBrec_20_lik(V=v2); addlik
     lLik <- lLik + addlik
+
     # CASES RECENT TRANSMISSION DISTRIBUTION 2020
     v3abc  <- sum(bcRes[70,184:185])/sum(bcRes[70,168:169])
     v3aM   <- sum(M[71,172])/sum(M[71,156])
     v3     <- 1- (v3aM / v3abc)
     addlik <- notif_RT_20_lik(V=v3); addlik
     lLik   <- lLik + addlik
+
   }
   return((lLik))
 }
@@ -95,7 +101,7 @@ notif_tot_20_lik <- function(V) {
 ### Measure the % change in NUSB recent entry in 2020 from 2019 (basecase)
 notif_NUSBrec_20_lik <- function(V) {
   ### We are basing this off of the preliminary data that suggests a 6% decrease
-  case_diff_NUSB <- .174
+  case_diff_NUSB <- 0.174
   adj_2         <- dnorm(case_diff_NUSB,case_diff_NUSB,0.025/1.96,log=T)
   dnorm(case_diff_NUSB,V,0.025/1.96,log=T) - adj_2
 }

@@ -94,16 +94,32 @@ calib_2020<-function(samp_i,optim_mat, loc, pdf=TRUE, cex.size=1){
   Par3[idZ2] <- qnorm( Par2[idZ2], mean    = ParamInitZ[idZ2,6], sd     = ParamInitZ[idZ2,7])
   P[ii] <- Par3
   P <- P
-
-  par2020 <- c(0.088, 0.43, 0.28)
+  # P <- Par[1,]
+  # par2020 <- c(0.088, 0.43, 0.28)
+  # par2020 <- c (0.1797244, 0.4360917, 0.2754278)
+  # par2020 <- c(0.1800718,.4351458,0.3015594)
+  # par2020 <- c(0.3114697,0.4184191,0.2535374)
+  # *.1, *.1, .1
+  # par2020 <- c(0.3956915,0.4018355, 0.2696539)
+  # par2020 <- c(0.2059258,0.4313880, 0.29800063)
+  #as of 1/14/22
+  # par2020 <- c(0.4064649,0.4010572,0.2438105)
+  #as of 1/24/22
+  par2020 <- c(0.5168886,0.3827480,0.2232671)
   names(par2020) <- c("Immig", "Dxt", "Trans")
 
   prg_chng<-def_prgchng(P)
 
   prms <-list()
   prms <- param_init(P,loc,prg_chng=prg_chng, ttt_list=def_ttt(), immig = par2020["Immig"])
-  prms$rDxt[843:855,]<-prms$rDxt[843:855,] - (prms$rDxt[843:855,]*par2020["Dxt"])
-  prms$NixTrans[843:855]<- (1-par2020["Trans"])  # data("trans_mat_nat",package="MITUS")
+  prms$rDxt[843:864,]<-prms$rDxt[843:864,] - (prms$rDxt[843:864,]*par2020["Dxt"])
+  prms$NixTrans[843:864]<- (1-par2020["Trans"])  # data("trans_mat_nat",package="MITUS")
+  # Bring up params to 50% by end of 2022 (smoothly)
+  for (riskgrp in 1:ncol(prms$rDxt)){
+    prms$rDxt[865:888,riskgrp] <- seq(prms$rDxt[864,riskgrp],prms$rDxt[842,riskgrp], length.out=24)
+  }
+    prms$NixTrans[865:888] <- seq(prms$NixTrans[864],prms$NixTrans[842], length.out=24)
+
   # trans_mat_tot_ages<-trans_mat_tot_ages_nat
   # tm<-matrix(0,16,16)
   # diag(tm)<-1
@@ -113,7 +129,7 @@ calib_2020<-function(samp_i,optim_mat, loc, pdf=TRUE, cex.size=1){
   colnames(trans_mat_tot_ages) <-  rep(paste0(rep(paste0("p",0:3),each=4),"_",rep(paste0("m",0:3),4)),11)
 
   if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
-  zz <- cSim( nYrs       = 2021-1950         , nRes      = length(func_ResNam())  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
+  zz <- cSim( nYrs       = 2050-1950         , nRes      = length(func_ResNam())  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
               Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]  ,
               rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]] ,  dist_gen = prms[["dist_gen"]]    ,
               vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    ,
@@ -139,7 +155,8 @@ calib_2020<-function(samp_i,optim_mat, loc, pdf=TRUE, cex.size=1){
   if (loc=="US"){
     calib_graphs_2020(M, pub_list)
   } else calib_graphs_st_2020(M,loc, pdf=TRUE, cex.size = .7)
-  return(M)
+  future_graphs_st(loc=loc, df=M, cex.size = .7)
+   return(M)
 }
 
 # calib_par<-function(samp_i,par_vec, loc){
