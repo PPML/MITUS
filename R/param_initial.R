@@ -71,6 +71,16 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   if (loc=="ND"){
     ImmigInputs$PrevTrend25_34[61:71]<-seq(from=ImmigInputs$PrevTrend25_34[61], to=ImmigInputs$PrevTrend25_34[61]*2, length.out=11)
   }
+  ### Adjust immigration for the states with increasing TB trends
+  if (loc != "US") {
+  av_immig <- mean(ImmigInputs$TotByYear[51:69])
+  ImmigInputs$TotByYear[70:71]<-c(((ImmigInputs$TotByYear[69]+av_immig)/2), av_immig)
+  for (i in 72:151){
+    ImmigInputs$TotByYear[i]<-ImmigInputs$TotByYear[i-1]*1.005
+  }
+  Inputs$ImmigInputs <<- ImmigInputs
+  }
+
   TxInputs         <- Inputs[["TxInputs"]]
   NetMig           <- Inputs[["NetMigrState"]]
 
@@ -158,9 +168,13 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
     TotImmAge[,j]        <- SmoCurve(TotImmAge0[,j])
   }
   if(immig != 1){
-    TotImmAge[843:855,]<-TotImmAge[843:855,]-(TotImmAge[843:855,]*immig);
+    #Hold reduction through December 2021
+    TotImmAge[843:864,]<-TotImmAge[843:864,]-(TotImmAge[843:864,]*immig);
+    # Bring up immigration to 50% by end of 2022 (smoothly)
+    for (agegrp in 1:ncol(TotImmAge)){
+      TotImmAge[865:888,agegrp] <- seq(TotImmAge[864,agegrp],TotImmAge[842,agegrp], length.out=24)
+    }
   }
-  # }
   ######################           LTBI IMM.             ########################
   PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:71]^(exp(PV["TunLtbiTrend"]))*ImmigInputs[["PrevTrend25_34"]][71]^(1-exp(PV["TunLtbiTrend"])),
                         ImmigInputs[["PrevTrend25_34"]][72:151]*(PV["ImmigPrevFutLat"]/0.99)^(1:80))
@@ -529,6 +543,9 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   rDxt[,2]       <- (rDxt[,1]-min(rDxt[,1]))/PV["rrDxH"]+min(rDxt[,1]) #check this with Nick
   colnames(rDxt) <- c("Active","Active_HighRisk")
 
+  if (loc != "US"){
+     rDxt<-adj_rDxt(rDxt)
+  }
   #### #### #### INT 3 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
   if(Int3==1) { for(i in 1:2) { rDxt[,i] <- rDxt[,i]+ rDxt[,i]*LgtCurve(intv_yr,intv_yr+5,1)}}
