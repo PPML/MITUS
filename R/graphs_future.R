@@ -4,7 +4,7 @@
   future_graphs <- function(df,endyr){
     df<-as.data.frame(df)
     pdf(file=paste("MITUS_results/future_graphs",Sys.time(),".pdf"), width = 11, height = 8.5)
-    par(mfrow=c(2,2),mar=c(4,4.5,3,1))
+    par(mfrow=c(2,3),mar=c(4,4.5,3,1))
 
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
     ### ### ### ### ### ###   TOTAL POP EACH DECADE, BY US/FB   ### ### ### ### ### ###
@@ -243,7 +243,7 @@
 
     pdfname<-paste("MITUS_results/",loc,"_future_graphs_", Sys.Date(), ".pdf",sep="")
     pdf(file=pdfname, width = 11, height = 8.5)
-    par(mfrow=c(2,2),mar=c(4,4.5,3,1))
+    par(mfrow=c(2,3),mar=c(4,4.5,3,1))
 
     ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
     ### ### ### ### ### ###   TOTAL POP EACH DECADE, BY US/FB   ### ### ### ### ### ###
@@ -313,13 +313,14 @@
     #reported data for comparison
     points(2010:2020,tot_cases[18:28],pch=19,cex=0.3) #total population
     lines(2010:2020,tot_cases[18:28],lty=3,col=1)
+    abline(v=2020, col="red")
 
     #plot text
     mtext("Year",1,2.5,cex=cex.size)
     mtext(paste("Total TB Cases Identified in", loc, ", 1993-2050", sep = " "),3,.3,font=2,cex=cex.size)
     legend("topright",c("Reported data (all)",
-                        "Model (all)"),
-           pch=c(19,NA),lwd=c(1,2),lty=c(3,1),col=c(1,1),bg="white",ncol=2,cex=cex.size,pt.cex=0.4)
+                        "Model (all)","Model (US born)","Model (foreign born)"),
+           pch=c(19,NA,NA,NA),lwd=c(1,2,2,2),lty=c(3,1,1,1),col=c(1,1,4,3),bg="white",ncol=2,cex=.8,pt.cex=0.4)
 
 
     #Percent of Non-US Born Cases from Recent Immigrant Population
@@ -368,6 +369,23 @@
     mtext(paste("Total TB Deaths by Year 2008-2020 in", loc, sep=" "),3,.3,font=2,cex=cex.size)
     legend("topright",c("Reported data","Model"),pch=c(19,NA),lwd=c(1,2),
            col=c("black","blue"),lty=c(3,1),bg="white",pt.cex=c(0.6,NA),cex=cex.size)
+    ###Immigration
+    plot(y=Inputs$ImmigInputs$TotByYear[1:101], x=1950:2050, type="l")
+    # abline(v=2019, col="red")
+    mtext(paste("Rate of immigration in",loc, sep = " "),3,.3,font=2,cex=cex.size)
+
+
+    plot(0,0,ylim=c(0,max(prms$rDxt)*1.15),xlim=c(600,911),xlab="",ylab="",axes=F)
+    axis(1);axis(2,las=2);box()
+    abline(h=axTicks(2),col="grey85")
+    lines(y=prms$rDxt[600:911,2], x=600:911, col="blue")
+    lines(y=prms$rDxt[600:911,1], x=600:911, col="red3")
+    # mtext("Month",1,2.5,cex=.7)
+    mtext(paste("Rate of diagnosis in",loc," 2000-2025", sep = " "),3,.3,font=2,cex=cex.size)
+
+    legend("bottomright",c("Low Risk","High Risk"),cex=cex.size,
+           pch=c(15,15),lwd=c(NA,NA),lty=c(NA,NA),col=c("blue","red3"),
+           bg="white",pt.cex=c(1.8,1.8), ncol=2)
     dev.off()
   }
 
