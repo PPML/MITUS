@@ -5,6 +5,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // reblncd
 Rcpp::NumericMatrix reblncd(Rcpp::NumericMatrix mubt, Rcpp::NumericMatrix can_go, double RRmuHR, std::vector<double> RRmuRF, std::vector<double> HRdist, std::vector<double> dist_gen_v, std::vector<double> adj_fact);
 RcppExport SEXP _MITUS_reblncd(SEXP mubtSEXP, SEXP can_goSEXP, SEXP RRmuHRSEXP, SEXP RRmuRFSEXP, SEXP HRdistSEXP, SEXP dist_gen_vSEXP, SEXP adj_factSEXP) {
@@ -23,8 +28,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // cSim
-Rcpp::List cSim(int nYrs, int nRes, Rcpp::NumericMatrix rDxt, std::vector<double> TxQualt, Rcpp::NumericMatrix InitPop, Rcpp::NumericMatrix Mpfast, std::vector<double> ExogInf, Rcpp::NumericMatrix MpfastPI, Rcpp::NumericMatrix Mrslow, std::vector<double> rrSlowFB, double rfast, double RRcurDef, double rSlfCur, double p_HR, Rcpp::NumericMatrix vTMort, std::vector<double> RRmuRF, std::vector<double> RRmuHR, std::vector<double> Birthst, Rcpp::NumericMatrix HrEntEx, Rcpp::NumericMatrix ImmNon, Rcpp::NumericMatrix ImmLat, Rcpp::NumericMatrix ImmAct, Rcpp::NumericMatrix ImmFst, std::vector<double> net_mig_usb, std::vector<double> net_mig_nusb, Rcpp::NumericMatrix mubt, std::vector<double> RelInf, std::vector<double> RelInfRg, std::vector<double> RRcrAG, std::vector<double> Vmix, std::vector<double> rEmmigFB, std::vector<double> TxVec, double TunTxMort, std::vector<double> rDeft, std::vector<double> rLtScrt, Rcpp::NumericMatrix ttt_samp_dist, std::vector<double> ttt_ag, std::vector<double> ttt_na, std::vector<int> ttt_month, double ttt_pop_scrn, double ttt_ltbi, Rcpp::NumericMatrix LtTxPar, Rcpp::NumericMatrix LtDxPar_lt, Rcpp::NumericMatrix LtDxPar_nolt, std::vector<double> RRdxAge, double rRecov, double pImmScen, std::vector<double> EarlyTrend, std::vector<double> pReTx, Rcpp::NumericMatrix ag_den, std::vector<double> NixTrans, Rcpp::NumericMatrix dist_gen, Rcpp::NumericMatrix trans_mat_tot_ages);
-RcppExport SEXP _MITUS_cSim(SEXP nYrsSEXP, SEXP nResSEXP, SEXP rDxtSEXP, SEXP TxQualtSEXP, SEXP InitPopSEXP, SEXP MpfastSEXP, SEXP ExogInfSEXP, SEXP MpfastPISEXP, SEXP MrslowSEXP, SEXP rrSlowFBSEXP, SEXP rfastSEXP, SEXP RRcurDefSEXP, SEXP rSlfCurSEXP, SEXP p_HRSEXP, SEXP vTMortSEXP, SEXP RRmuRFSEXP, SEXP RRmuHRSEXP, SEXP BirthstSEXP, SEXP HrEntExSEXP, SEXP ImmNonSEXP, SEXP ImmLatSEXP, SEXP ImmActSEXP, SEXP ImmFstSEXP, SEXP net_mig_usbSEXP, SEXP net_mig_nusbSEXP, SEXP mubtSEXP, SEXP RelInfSEXP, SEXP RelInfRgSEXP, SEXP RRcrAGSEXP, SEXP VmixSEXP, SEXP rEmmigFBSEXP, SEXP TxVecSEXP, SEXP TunTxMortSEXP, SEXP rDeftSEXP, SEXP rLtScrtSEXP, SEXP ttt_samp_distSEXP, SEXP ttt_agSEXP, SEXP ttt_naSEXP, SEXP ttt_monthSEXP, SEXP ttt_pop_scrnSEXP, SEXP ttt_ltbiSEXP, SEXP LtTxParSEXP, SEXP LtDxPar_ltSEXP, SEXP LtDxPar_noltSEXP, SEXP RRdxAgeSEXP, SEXP rRecovSEXP, SEXP pImmScenSEXP, SEXP EarlyTrendSEXP, SEXP pReTxSEXP, SEXP ag_denSEXP, SEXP NixTransSEXP, SEXP dist_genSEXP, SEXP trans_mat_tot_agesSEXP) {
+Rcpp::List cSim(int nYrs, int nRes, Rcpp::NumericMatrix rDxt, std::vector<double> TxQualt, Rcpp::NumericMatrix InitPop, Rcpp::NumericMatrix Mpfast, std::vector<double> ExogInf, Rcpp::NumericMatrix MpfastPI, Rcpp::NumericMatrix Mrslow, std::vector<double> rrSlowFB, double rfast, double RRcurDef, double rSlfCur, double p_HR, Rcpp::NumericMatrix vTMort, std::vector<double> RRmuRF, std::vector<double> RRmuHR, std::vector<double> Birthst, Rcpp::NumericMatrix HrEntEx, Rcpp::NumericMatrix ImmNon, Rcpp::NumericMatrix ImmLat, Rcpp::NumericMatrix ImmAct, Rcpp::NumericMatrix ImmFst, std::vector<double> net_mig_usb, std::vector<double> net_mig_nusb, Rcpp::NumericMatrix mubt, std::vector<double> RelInf, std::vector<double> RelInfRg, std::vector<double> RRcrAG, std::vector<double> Vmix, std::vector<double> rEmmigFB, std::vector<double> TxVec, double TunTxMort, std::vector<double> rDeft, std::vector<double> rLtScrt, Rcpp::NumericMatrix ttt_samp_dist, std::vector<double> ttt_ag, std::vector<double> ttt_na, std::vector<int> ttt_month, double ttt_pop_scrn, double ttt_ltbi, Rcpp::NumericMatrix LtTxPar, Rcpp::NumericMatrix LtDxPar_lt, Rcpp::NumericMatrix LtDxPar_nolt, Rcpp::NumericMatrix Int1Test, Rcpp::NumericMatrix Int1Init, Rcpp::NumericMatrix Int1Tx, std::vector<double> RRdxAge, double rRecov, double pImmScen, std::vector<double> EarlyTrend, std::vector<double> pReTx, Rcpp::NumericMatrix ag_den, std::vector<double> NixTrans, Rcpp::NumericMatrix dist_gen, Rcpp::NumericMatrix trans_mat_tot_ages);
+RcppExport SEXP _MITUS_cSim(SEXP nYrsSEXP, SEXP nResSEXP, SEXP rDxtSEXP, SEXP TxQualtSEXP, SEXP InitPopSEXP, SEXP MpfastSEXP, SEXP ExogInfSEXP, SEXP MpfastPISEXP, SEXP MrslowSEXP, SEXP rrSlowFBSEXP, SEXP rfastSEXP, SEXP RRcurDefSEXP, SEXP rSlfCurSEXP, SEXP p_HRSEXP, SEXP vTMortSEXP, SEXP RRmuRFSEXP, SEXP RRmuHRSEXP, SEXP BirthstSEXP, SEXP HrEntExSEXP, SEXP ImmNonSEXP, SEXP ImmLatSEXP, SEXP ImmActSEXP, SEXP ImmFstSEXP, SEXP net_mig_usbSEXP, SEXP net_mig_nusbSEXP, SEXP mubtSEXP, SEXP RelInfSEXP, SEXP RelInfRgSEXP, SEXP RRcrAGSEXP, SEXP VmixSEXP, SEXP rEmmigFBSEXP, SEXP TxVecSEXP, SEXP TunTxMortSEXP, SEXP rDeftSEXP, SEXP rLtScrtSEXP, SEXP ttt_samp_distSEXP, SEXP ttt_agSEXP, SEXP ttt_naSEXP, SEXP ttt_monthSEXP, SEXP ttt_pop_scrnSEXP, SEXP ttt_ltbiSEXP, SEXP LtTxParSEXP, SEXP LtDxPar_ltSEXP, SEXP LtDxPar_noltSEXP, SEXP Int1TestSEXP, SEXP Int1InitSEXP, SEXP Int1TxSEXP, SEXP RRdxAgeSEXP, SEXP rRecovSEXP, SEXP pImmScenSEXP, SEXP EarlyTrendSEXP, SEXP pReTxSEXP, SEXP ag_denSEXP, SEXP NixTransSEXP, SEXP dist_genSEXP, SEXP trans_mat_tot_agesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -72,6 +77,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type LtTxPar(LtTxParSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type LtDxPar_lt(LtDxPar_ltSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type LtDxPar_nolt(LtDxPar_noltSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Int1Test(Int1TestSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Int1Init(Int1InitSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Int1Tx(Int1TxSEXP);
     Rcpp::traits::input_parameter< std::vector<double> >::type RRdxAge(RRdxAgeSEXP);
     Rcpp::traits::input_parameter< double >::type rRecov(rRecovSEXP);
     Rcpp::traits::input_parameter< double >::type pImmScen(pImmScenSEXP);
@@ -81,14 +89,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::vector<double> >::type NixTrans(NixTransSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type dist_gen(dist_genSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type trans_mat_tot_ages(trans_mat_tot_agesSEXP);
-    rcpp_result_gen = Rcpp::wrap(cSim(nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow, rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, net_mig_usb, net_mig_nusb, mubt, RelInf, RelInfRg, RRcrAG, Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, ttt_samp_dist, ttt_ag, ttt_na, ttt_month, ttt_pop_scrn, ttt_ltbi, LtTxPar, LtDxPar_lt, LtDxPar_nolt, RRdxAge, rRecov, pImmScen, EarlyTrend, pReTx, ag_den, NixTrans, dist_gen, trans_mat_tot_ages));
+    rcpp_result_gen = Rcpp::wrap(cSim(nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow, rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, net_mig_usb, net_mig_nusb, mubt, RelInf, RelInfRg, RRcrAG, Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, ttt_samp_dist, ttt_ag, ttt_na, ttt_month, ttt_pop_scrn, ttt_ltbi, LtTxPar, LtDxPar_lt, LtDxPar_nolt, Int1Test, Int1Init, Int1Tx, RRdxAge, rRecov, pImmScen, EarlyTrend, pReTx, ag_den, NixTrans, dist_gen, trans_mat_tot_ages));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
     {"_MITUS_reblncd", (DL_FUNC) &_MITUS_reblncd, 7},
-    {"_MITUS_cSim", (DL_FUNC) &_MITUS_cSim, 53},
+    {"_MITUS_cSim", (DL_FUNC) &_MITUS_cSim, 56},
     {NULL, NULL, 0}
 };
 

@@ -25,6 +25,9 @@ using namespace Rcpp;
 //'@param ImmLat Immigration with Latent TB
 //'@param ImmAct Immigration with Active TB
 //'@param ImmFst Immigration with Fast Progressing TB
+//'@param Int1Test Additional tests for Int1
+//'@param Int1Init Additional treatment inits for Int1
+//'@param Int1Tx Additional treatment completions for Int1
 //'@param net_mig_usb net internal migration usb
 //'@param net_mig_nusb net internal migration nusb
 //'@param mubt background mortality over time
@@ -103,6 +106,9 @@ Rcpp::List cSim(
     Rcpp::NumericMatrix LtTxPar,
     Rcpp::NumericMatrix LtDxPar_lt,
     Rcpp::NumericMatrix LtDxPar_nolt,
+    Rcpp::NumericMatrix Int1Test,
+    Rcpp::NumericMatrix Int1Init,
+    Rcpp::NumericMatrix Int1Tx,
     std::vector<double> RRdxAge,
     double              rRecov,
     double              pImmScen,
@@ -132,6 +138,9 @@ Rcpp::List cSim(
   double        ImmLatN[ImmLat.nrow()][ImmLat.ncol()];
   double        ImmFstN[ImmFst.nrow()][ImmFst.ncol()];
   double        ImmActN[ImmAct.nrow()][ImmAct.ncol()];
+  double        Int1TestN[Int1Test.nrow()][Int1Test.ncol()];
+  double        Int1InitN[Int1Init.nrow()][Int1Init.ncol()];
+  double        Int1TxN[Int1Tx.nrow()][Int1Tx.ncol()];
   double        mubtN[mubt.nrow()][mubt.ncol()];
   double        rDxtN[rDxt.nrow()][rDxt.ncol()];
   double        ttt_samp_distN[ttt_samp_dist.nrow()][ttt_samp_dist.ncol()];
@@ -230,21 +239,18 @@ Rcpp::List cSim(
     for(int j=0; j<ag_den.ncol(); j++) {
       ag_denN[i][j] = ag_den(i,j);
     } }
-  for(int i=0; i<ImmNon.nrow(); i++) {
-    for(int j=0; j<ImmNon.ncol(); j++) {
-      ImmNonN[i][j] = ImmNon(i,j);
-    } }
-  for(int i=0; i<ImmLat.nrow(); i++) {
-    for(int j=0; j<ImmLat.ncol(); j++) {
-      ImmLatN[i][j] = ImmLat(i,j);
-    } }
   for(int i=0; i<ImmFst.nrow(); i++) {
     for(int j=0; j<ImmFst.ncol(); j++) {
+      ImmNonN[i][j] = ImmNon(i,j);
+      ImmLatN[i][j] = ImmLat(i,j);
       ImmFstN[i][j] = ImmFst(i,j);
-    } }
-  for(int i=0; i<ImmAct.nrow(); i++) {
-    for(int j=0; j<ImmAct.ncol(); j++) {
       ImmActN[i][j] = ImmAct(i,j);
+    } }
+  for(int i=0; i<Int1Test.nrow(); i++) {
+    for(int j=0; j<Int1Test.ncol(); j++) {
+      Int1TestN[i][j] = Int1Test(i,j);
+      Int1InitN[i][j] = Int1Init(i,j);
+      Int1TxN[i][j] = Int1Tx(i,j);
     } }
   for(int i=0; i<mubt.nrow(); i++) {
     for(int j=0; j<mubt.ncol(); j++) {
@@ -1544,11 +1550,11 @@ Rcpp::List cSim(
                   } } } } } }
         for(int i=134; i<151; i++) { Outputs[y][i] = Outputs[y][i]*12; } //yes these are updated
         /// TLTBI INITS ///
-        for(int rg=0; rg<2; rg++) {
-          for(int na=0; na<3; na++) {
-            for(int im=0; im<4; im++) {
-              for(int nm=0; nm<4; nm++) {
-                for(int ag=0; ag<11; ag++) {
+        for(int ag=0; ag<11; ag++) {
+          for(int rg=0; rg<2; rg++) {
+            for(int na=0; na<3; na++) {
+              for(int im=0; im<4; im++) {
+                for(int nm=0; nm<4; nm++) {
                   Outputs[y][151] += (VLdx[ag][2][0][im][nm][rg][na]+VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0] +
                     ((V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxParN[s][0]);//all inits (((1- pop_frc)*rTbN) + (pop_frc*(1-(rTbP*rr_ltbi))))*LtTxParN[s][0]; //all init
                   if(na>0) {
@@ -1559,17 +1565,24 @@ Rcpp::List cSim(
                       ((V0[ag][1 ][0 ][im][nm][rg][na]+V0[ag][0 ][0 ][im][nm][rg][na])*rTbN*LtTxParN[s][0]); } // high risk inits
 
                   Outputs[y][154] += (VLdx[ag][2][0][im][nm][rg][na]+VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0]; // inits with LTBI
-
+        // Calculate the number of LTBI Tests, Tx Initiations, and Tx Completions
                   if(na==0){
                     Outputs[y][683+ag] +=  VLtest[ag][0][0][im][nm][rg][na]+VLtest[ag][1][0][im][nm][rg][na]+VLtest[ag][2][0][im][nm][rg][na]+VLtest[ag][3][0][im][nm][rg][na];
                     Outputs[y][705+ag] +=  (VLdx[ag][2][0][im][nm][rg][na] + VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0];
                     Outputs[y][727+ag] +=  (VLdx[ag][2][0][im][nm][rg][na] + VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0]*(1-LtTxParN[s][1]);
                   } else {
-                    Outputs[y][694+ag] += VLtest[ag][0][0][im][nm][rg][na]+VLtest[ag][1][0][im][nm][rg][na]+VLtest[ag][2][0][im][nm][rg][na]+VLtest[ag][3][0][im][nm][rg][na];
-                    Outputs[y][716+ag] += (VLdx[ag][2][0][im][nm][rg][na] + VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0];
-                    Outputs[y][738+ag] += (VLdx[ag][2][0][im][nm][rg][na] + VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0]*(1-LtTxParN[s][1]);
+                    /// For the non-USB calculations, we need to allow for the addition of tests for the Intervention #1 scenario
+                    /// in which every migrant is tested for LTBI prior to entry to the United States
+                    Outputs[y][694+ag] += VLtest[ag][0][0][im][nm][rg][na] + VLtest[ag][1][0][im][nm][rg][na] +
+                                          VLtest[ag][2][0][im][nm][rg][na] + VLtest[ag][3][0][im][nm][rg][na];
+                    Outputs[y][716+ag] += ((VLdx[ag][2][0][im][nm][rg][na] + VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0]);
+                    Outputs[y][738+ag] += ((VLdx[ag][2][0][im][nm][rg][na] + VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0]*(1-LtTxParN[s][1]) );
                   }
-                } } } } }
+                } } } }
+                    Outputs[y][694+ag] += Int1TestN[y][ag];
+                    Outputs[y][716+ag] += Int1InitN[y][ag];
+                    Outputs[y][738+ag] += Int1TxN[y][ag];
+          }
 
         // for(int i=151; i<155; i++) { Outputs[y][i] = Outputs[y][i]*12; } // annualize
         // for(int i=705; i<749; i++) { Outputs[y][i] = Outputs[y][i]*12; }
