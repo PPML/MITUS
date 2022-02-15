@@ -105,7 +105,8 @@ calib_2020<-function(samp_i,optim_mat, loc, pdf=TRUE, cex.size=1){
   #as of 1/14/22
   # par2020 <- c(0.4064649,0.4010572,0.2438105)
   #as of 1/24/22
-  par2020 <- c(0.5168886,0.3827480,0.2232671)
+  # par2020 <- c(0.5168886,0.3827480,0.2232671)
+  par2020 <- c(0.3957942, 0.3992307, 0.2365767) #as of 1/31/22
   names(par2020) <- c("Immig", "Dxt", "Trans")
 
   prg_chng<-def_prgchng(P)
@@ -154,8 +155,9 @@ calib_2020<-function(samp_i,optim_mat, loc, pdf=TRUE, cex.size=1){
   # print(pub_list)
   if (loc=="US"){
     calib_graphs_2020(M, pub_list)
-  } else calib_graphs_st_2020(M,loc, pdf=TRUE, cex.size = .7)
-  future_graphs_st(loc=loc, df=M, cex.size = .7)
+    future_graphs(M,2049)
+  } else{ calib_graphs_st_2020(M,loc, pdf=TRUE, cex.size = .7)
+  future_graphs_st(loc=loc, df=M, cex.size = .7)}
    return(M)
 }
 
