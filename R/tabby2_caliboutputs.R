@@ -44,9 +44,9 @@ model_calib_outputs<-function(loc="US",bc.array, samp_i=1,simp.date){
   ############                   tb specific targets                     ############
   # graph of total diagnosed cases
   # by total population, US born population, and non-US born population
-  V0 <- res[4:70,"NOTIF_ALL"]+res[4:70,"NOTIF_MORT_ALL"] #total population
-  V1 <- res[44:70,"NOTIF_US"]+res[44:70,"NOTIF_MORT_US"]   #US born population
-  V2 <- res[44:70,"NOTIF_F1"]+res[44:70,"NOTIF_F2"]+res[44:70,"NOTIF_MORT_F1"]+res[44:70,"NOTIF_MORT_F2"]   #non-US born population
+  V0 <- res[4:71,"NOTIF_ALL"]+res[4:71,"NOTIF_MORT_ALL"] #total population
+  V1 <- res[44:71,"NOTIF_US"]+res[44:71,"NOTIF_MORT_US"]   #US born population
+  V2 <- res[44:71,"NOTIF_F1"]+res[44:71,"NOTIF_F2"]+res[44:71,"NOTIF_MORT_F1"]+res[44:71,"NOTIF_MORT_F2"]   #non-US born population
   tot_cases<-list()
   tot_cases[["allpop"]]<-V0
   tot_cases[["USBpop"]]<-V1
@@ -54,27 +54,27 @@ model_calib_outputs<-function(loc="US",bc.array, samp_i=1,simp.date){
   saveRDS(tot_cases,file = paste0("~/MITUS/inst/",loc,"/calibration_outputs/",loc,"_TBcases_",simp.date,".rds"))
 
   #Percent of Total Cases Non-US Born Population
-  V <- cbind(res[44:70,"NOTIF_US"]+res[44:70,"NOTIF_MORT_US"], #US born population
-             res[44:70,"NOTIF_F1"]+res[44:70,"NOTIF_F2"]+  #non-US born population
-               res[44:70,"NOTIF_MORT_F1"]+res[44:70,"NOTIF_MORT_F2"])
+  V <- cbind(res[44:71,"NOTIF_US"]+res[44:71,"NOTIF_MORT_US"], #US born population
+             res[44:71,"NOTIF_F1"]+res[44:71,"NOTIF_F2"]+  #non-US born population
+               res[44:71,"NOTIF_MORT_F1"]+res[44:71,"NOTIF_MORT_F2"])
   V <- V[,2]/rowSums(V)
   #Percent of Non-US Born Cases from Recent Immigrant Population
-  V <- cbind(res[44:70,"NOTIF_F1"]+res[44:70,"NOTIF_MORT_F1"],res[44:70,"NOTIF_F2"]+res[44:70,"NOTIF_MORT_F2"])
+  V <- cbind(res[44:71,"NOTIF_F1"]+res[44:71,"NOTIF_MORT_F1"],res[44:71,"NOTIF_F2"]+res[44:71,"NOTIF_MORT_F2"])
   V <- V[,1]/rowSums(V)*100
   saveRDS(V,file = paste0("~/MITUS/inst/",loc,"/calibration_outputs/",loc,"_percentRecentFBcases_",simp.date,".rds"))
 
   #Age distribution of Cases
   #0-24 yrs, 25-44 yrs, 45-64 yrs, 65+ yrs
   #ends in 2016
-  V   <- (res[51:70,136:146]+res[51:70,189:199])
-  V2<-matrix(NA,length(51:70),4)
+  V   <- (res[52:71,136:146]+res[52:71,189:199])
+  V2<-matrix(NA,length(52:71),4)
   V2[,1]<-rowSums(V[,1:3]); V2[,2]<-rowSums(V[,4:5])
   V2[,3]<-rowSums(V[,6:8]); V2[,4]<-rowSums(V[,9:11])
   saveRDS(V2*1e6,file = paste0("~/MITUS/inst/",loc,"/calibration_outputs/",loc,"_age_cases_4grps_",simp.date,".rds"))
   #Age distribution of Cases
   #all age bands
-  V   <- (res[51:70,136:146]+res[51:70,189:199])
-  V2  <- cbind(2000:2019,V)
+  V   <- (res[52:71,136:146]+res[52:71,189:199])
+  V2  <- cbind(2001:2020,V)
   saveRDS(V2,file = paste0("~/MITUS/inst/",loc,"/calibration_outputs/",loc,"_age_cases_tot_",simp.date,".rds"))
 
   # Treatment Outcomes 1993-2014

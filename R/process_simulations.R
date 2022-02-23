@@ -39,8 +39,22 @@ OutputsZint <-  function(samp_i=1,ParMatrix,loc, startyr=1950, endyr=2050,
   Scen2 <<- Scen2;
   Scen3 <<- Scen3;
 
+  ### add in the 2020 parameter adjustments
+  # par2020 <- c(0.3957942, 0.3992307, 0.2365767) #as of 1/31/22
+  par2020 <- c(0.4396327,0.3918562,0.2280117) #as of 2/18/22
+
+  names(par2020) <- c("Immig", "Dxt", "Trans")
+
   prms <- list()
-  prms <- param_init(P,loc,Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3,prg_chng,ttt_list)
+  prms <- param_init(P,loc,Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3,prg_chng,ttt_list, immig = par2020["Immig"])
+  prms$rDxt[843:864,]<-prms$rDxt[843:864,] - (prms$rDxt[843:864,]*par2020["Dxt"])
+  prms$NixTrans[843:864]<- (1-par2020["Trans"])
+  # Bring up params to 50% by end of 2022 (smoothly)
+  for (riskgrp in 1:ncol(prms$rDxt)){
+    prms$rDxt[865:888,riskgrp] <- seq(prms$rDxt[864,riskgrp],prms$rDxt[842,riskgrp], length.out=24)
+  }
+  prms$NixTrans[865:888] <- seq(prms$NixTrans[864],prms$NixTrans[842], length.out=24)
+
   trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
   if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
   m <- cSim(nYrs    = endyr-(startyr-1)   , nRes       = length(func_ResNam()), rDxt               = prms[["rDxt"]]        , TxQualt      = prms[["TxQualt"]]     , InitPop       = prms[["InitPop"]],
