@@ -236,14 +236,19 @@ func_ResNam<-function(){
               #counts of various services
               paste("N_LtbiTests_USB",StatList[[1]],sep="_"),
               paste("N_LtbiTests_NUSB",StatList[[1]],sep="_"),
+
               paste("N_LtbiTxInits_USB",StatList[[1]],sep="_"),
               paste("N_LtbiTxInits_NUSB",StatList[[1]],sep="_"),
+
               paste("N_LtbiTxComps_USB",StatList[[1]],sep="_"),
               paste("N_LtbiTxComps_NUSB",StatList[[1]],sep="_"),
 
               paste("N_TBTxInits_USB",StatList[[1]],sep="_"),
               paste("N_TBTxInits_NUSB",StatList[[1]],sep="_"),
               paste("N_TBTxComps_USB",StatList[[1]],sep="_"),
-              paste("N_TBTxComps_NUSB",StatList[[1]],sep="_")
+              paste("N_TBTxComps_NUSB",StatList[[1]],sep="_"),
+
+              paste("N_LtbiTests_USB_TP",StatList[[1]],sep="_"),
+              paste("N_LtbiTests_NUSB_TP",StatList[[1]],sep="_")
   )
 }

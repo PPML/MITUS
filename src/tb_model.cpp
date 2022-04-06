@@ -48,6 +48,7 @@ using namespace Rcpp;
 //'@param ttt_pop_scrn population size to apply the ltbi prev to
 //'@param LtDxPar_lt matrix of latent diagnosis parameters
 //'@param LtDxPar_nolt matrix of latent diagnosis parameters
+//'@param rrTestLrNoTb
 //'@param LtTxPar matrix of latent treatment parameters
 //'@param RRdxAge vector of rate ratios for TB diagnosis by age
 //'@param rRecov rate of recovery from latent slow to safe tb state
@@ -96,7 +97,7 @@ Rcpp::List cSim(
     std::vector<double> TxVec,
     double              TunTxMort,
     std::vector<double> rDeft,
-    std::vector<double> rLtScrt,
+    Rcpp::NumericMatrix rLtScrt,
     Rcpp::NumericMatrix ttt_samp_dist,
     std::vector<double> ttt_ag,
     std::vector<double> ttt_na,
@@ -106,6 +107,8 @@ Rcpp::List cSim(
     Rcpp::NumericMatrix LtTxPar,
     Rcpp::NumericMatrix LtDxPar_lt,
     Rcpp::NumericMatrix LtDxPar_nolt,
+    double rrTestLrNoTb,
+    double rrTestHr,
     Rcpp::NumericMatrix Int1Test,
     Rcpp::NumericMatrix Int1Init,
     Rcpp::NumericMatrix Int1Tx,
@@ -143,6 +146,7 @@ Rcpp::List cSim(
   double        Int1TxN[Int1Tx.nrow()][Int1Tx.ncol()];
   double        mubtN[mubt.nrow()][mubt.ncol()];
   double        rDxtN[rDxt.nrow()][rDxt.ncol()];
+  double        rLtScrtN[rLtScrt.nrow()][rLtScrt.ncol()];
   double        ttt_samp_distN[ttt_samp_dist.nrow()][ttt_samp_dist.ncol()];
   double   	    ttt_dist[ttt_samp_dist.nrow()][ttt_samp_dist.ncol()];
   double        LtTxParN[LtTxPar.nrow()][LtTxPar.ncol()];
@@ -259,6 +263,10 @@ Rcpp::List cSim(
   for(int i=0; i<rDxt.nrow(); i++) {
     for(int j=0; j<rDxt.ncol(); j++) {
       rDxtN[i][j] = rDxt(i,j);
+    } }
+  for(int i=0; i<rLtScrt.nrow(); i++) {
+    for(int j=0; j<rLtScrt.ncol(); j++) {
+      rLtScrtN[i][j] = rLtScrt(i,j);
     } }
   for(int i=0; i<dist_gen.nrow(); i++) {
     for(int j=0; j<dist_gen.ncol(); j++) {
@@ -1146,38 +1154,49 @@ Rcpp::List cSim(
           for(int na=0; na<3; na++) {
             ///// US BORN, LOW RISK  ////////////////////////////////////////////////
             if(rg==0 && na==0) {
-              rTbN = rLtScrt[s]*LtDxPar_noltN[0][s];
+              rTbN = rLtScrtN[s][0]*LtDxPar_noltN[0][s];
+              temp7=1;
             }
             ///// US BORN, HIGH RISK  ///////////////////////////////////////////////
             if(rg==1 && na==0) {
-              rTbN = rLtScrt[s]*LtDxPar_noltN[1][s];
+              rTbN = rLtScrtN[s][1]*LtDxPar_noltN[1][s];
+              temp7 = rrTestHr;
             }
             for(int ag=0; ag<11; ag++) {
               ///// Young NUS (under 5)  ////////////////////////////////////////////
               if(rg==0 && na > 0 && ag==0) {
-                rTbN = rLtScrt[s]*LtDxPar_noltN[2][s];
+                rTbN = rLtScrtN[s][0]*LtDxPar_noltN[2][s];
+                temp7 = 1;
               }
               ///// NON US BORN  ////////////////////////////////////////////////////
               if(rg==0 && na > 0 && ag > 0) {
-                rTbN = rLtScrt[s]*LtDxPar_noltN[3][s];
+                rTbN = rLtScrtN[s][0]*LtDxPar_noltN[3][s];
+                temp7 = 1;
               }
               ///// NON US BORN, HIGH RISK  //////////////////////////////////////////
               if(rg==1 && na >0) {
-                rTbN = rLtScrt[s]*LtDxPar_noltN[4][s];
+                rTbN = rLtScrtN[s][1]*LtDxPar_noltN[4][s];
+                temp7 = rrTestHr;
               }
               for(int im=0; im<4; im++) {
                 for(int nm=0; nm<4; nm++) {
                   /////////////////////////////////////////////////////////////////////
+                  ///// calculate the number of tests                              ////
+                  /////////////////////////////////////////////////////////////////////
+                  VLtest[ag][0][0][im][nm][rg][na] += V0[ag][0][0][im][nm][rg][na] * rLtScrtN[s][rg] * temp7 * rrTestLrNoTb;
+                  VLtest[ag][1][0][im][nm][rg][na] += V0[ag][1][0][im][nm][rg][na] * rLtScrtN[s][rg] * temp7 * rrTestLrNoTb;
+                  /////////////////////////////////////////////////////////////////////
                   ///// remove those who test positive, but are true LTBI negative ////
                   /////////////////////////////////////////////////////////////////////
-                  temp  = V0[ag][0][0][im][nm][rg][na]*rTbN;
-                  temp2 = V0[ag][1][0][im][nm][rg][na]*rTbN;
+
+                  VLdx[ag][0][0][im][nm][rg][na] = V0[ag][0][0][im][nm][rg][na]*rTbN;
+                  VLdx[ag][1][0][im][nm][rg][na] = V0[ag][1][0][im][nm][rg][na]*rTbN;
                   ///// Remove from the TB naive and PI states ////////////////////////
-                  V1[ag][0][0][im][nm][rg][na]  -= temp;
-                  V1[ag][1][0][im][nm][rg][na]  -= temp2;
+                  V1[ag][0][0][im][nm][rg][na]  -= VLdx[ag][0][0][im][nm][rg][na];
+                  V1[ag][1][0][im][nm][rg][na]  -= VLdx[ag][1][0][im][nm][rg][na];
                   ///// Move to latent tx experienced /////////////////////////////////
-                  V1[ag][0][1][im][nm][rg][na]  += temp;
-                  V1[ag][1][1][im][nm][rg][na]  += temp2;
+                  V1[ag][0][1][im][nm][rg][na]  += VLdx[ag][0][0][im][nm][rg][na];
+                  V1[ag][1][1][im][nm][rg][na]  += VLdx[ag][1][0][im][nm][rg][na];
                 } } } } }
         ///////////////////////////////////////////////////////////////////////////////
         ///// RESET SEVERAL VARIABLES FOR TTT EXTRA SCREENING TO ZERO FOR BASECASE
@@ -1220,29 +1239,32 @@ Rcpp::List cSim(
                   ///// calculate the rates of tb positive for the basecase and the rate of  /////
                   ///// TB negatives these are equal to the rate of screening combined with  /////
                   ///// the sensitivity or specificity in the base case                      /////
-                  ///// temp7 is adjustment to remove extra screening for HR in param        /////
+                  ///// temp7 is adjustment to add extra screening for HR in param           /////
                   ////////////////////////////////////////////////////////////////////////////////
                   //////////////                US BORN, LOW RISK              ///////////////////
                   if(rg==0 && na==0) {
-                    rTbP = rLtScrt[s]*LtDxPar_ltN[0][s];
+                    rTbP = rLtScrtN[s][0]*LtDxPar_ltN[0][s];
+                    temp7 = 1;
                   }
                   //////////////                US BORN, HIGH RISK              /////////////////
                   if(rg==1 && na==0) {
-                    rTbP = rLtScrt[s]*LtDxPar_ltN[1][s];
-                    temp7=LtDxPar_ltN[1][s]/LtDxPar_ltN[0][s];
+                    rTbP = rLtScrtN[s][1]*LtDxPar_ltN[1][s];
+                    temp7 = rrTestHr;
                   }
                   //////////////                Young NUS (under 5)             /////////////////
                   if(rg==0 && na > 0 && ag==0) {
-                    rTbP = rLtScrt[s]*LtDxPar_ltN[2][s];
+                    rTbP = rLtScrtN[s][0]*LtDxPar_ltN[2][s];
+                    temp7 = 1;
                   }
                   ////////////                     NON US BORN                   ////////////////
                   if(rg==0 && na > 0 && ag > 0) {
-                    rTbP = rLtScrt[s]*LtDxPar_ltN[3][s];
+                    rTbP = rLtScrtN[s][0]*LtDxPar_ltN[3][s];
+                    temp7 = 1;
                   }
                   //////////////              NON US BORN, HIGH RISK            /////////////////
                   if(rg==1 && na >0) {
-                    rTbP = rLtScrt[s]*LtDxPar_ltN[4][s];
-                    temp7=LtDxPar_ltN[4][s]/LtDxPar_ltN[3][s];
+                    rTbP = rLtScrtN[s][1]*LtDxPar_ltN[4][s];
+                    temp7 = rrTestHr;
                   }
                   ///////////////////////////////////////////////////////////////////////////////
                   /////            START TTT EXTRA SCREENING INTERVENTION CODE              /////
@@ -1345,27 +1367,29 @@ Rcpp::List cSim(
                   ///////////////////////////////////////////////////////////////////////////////
                   ///// UPDATE THE NUMBER TESTS TO REFLECT BASELINE SCREENING
                   ///////////////////////////////////////////////////////////////////////////////
-                  VLtest[ag][2][0][im][nm][rg][na] += V0[ag][2][0][im][nm][rg][na] *rLtScrt[s] * temp7;
-                  VLtest[ag][3][0][im][nm][rg][na] += V0[ag][3][0][im][nm][rg][na] *rLtScrt[s] * temp7;
+                  VLtest[ag][2][0][im][nm][rg][na] += V0[ag][2][0][im][nm][rg][na] * rLtScrtN[s][rg] * temp7;
+                  VLtest[ag][3][0][im][nm][rg][na] += V0[ag][3][0][im][nm][rg][na] * rLtScrtN[s][rg] * temp7;
                   ///////////////////////////////////////////////////////////////////////////////
                   ///// remove those who test positive who are true LTBI positive (true positives)
                   ///////////////////////////////////////////////////////////////////////////////
-                  base_diag=V0[ag][2][0][im][nm][rg][na]*rTbP;
+                  base_diag = V0[ag][2][0][im][nm][rg][na]*rTbP;
                   temp  =(base_diag*LtTxParN[s][0]*(1-LtTxParN[s][1]))+
-                    (temp5*ttt_ltbi_initN*ttt_ltbi_compN); // tx completion
+                         (temp5*ttt_ltbi_initN*ttt_ltbi_compN); // tx completion
 
                   temp3 =(base_diag*LtTxParN[s][0]*LtTxParN[s][1])+
-                    (temp5*ttt_ltbi_initN*(1-ttt_ltbi_compN)); // default
-                  VLdx[ag][2][0][im][nm][rg][na]+=base_diag+temp5;
+                         (temp5*ttt_ltbi_initN*(1-ttt_ltbi_compN)); // default
+                  ///// Update the number of diagnoses
+                  VLdx[ag][2][0][im][nm][rg][na] += base_diag+temp5;
 
                   base_diag=V0[ag][3][0][im][nm][rg][na]*rTbP;
                   temp2 =(base_diag*LtTxParN[s][0]*(1-LtTxParN[s][1]))+
-                    (temp6*ttt_ltbi_initN*ttt_ltbi_compN); // tx completion
+                         (temp6*ttt_ltbi_initN*ttt_ltbi_compN); // tx completion
 
                   temp4 =(base_diag*LtTxParN[s][0]*LtTxParN[s][1])+
-                    (temp6*ttt_ltbi_initN*(1-ttt_ltbi_compN)); // default
+                         (temp6*ttt_ltbi_initN*(1-ttt_ltbi_compN)); // default
 
-                  VLdx[ag][3][0][im][nm][rg][na]+=base_diag+temp6;
+                  ///// Update the number of diagnoses
+                  VLdx[ag][3][0][im][nm][rg][na] += base_diag + temp6;
 
                   V1[ag][2][0][im][nm][rg][na]  -=  (temp+temp3); //remove from latent slow
                   V1[ag][3][0][im][nm][rg][na]  -=  (temp2+temp4);  //remove from latent fast
@@ -1450,10 +1474,10 @@ Rcpp::List cSim(
               for(int nm=0; nm<4; nm++) {
                 for(int rg=0; rg<2; rg++) {
                   Outputs[y][54+ag] += (V1[ag][1][lt][im][nm][rg][0])*(1-pImmScen)+
-                    V1[ag][2][lt][im][nm][rg][0]+V1[ag][3][lt][im][nm][rg][0];   // N_ by age and US (11) LATENT INFECTION
+                                        V1[ag][2][lt][im][nm][rg][0]+V1[ag][3][lt][im][nm][rg][0];   // N_ by age and US (11) LATENT INFECTION
                   Outputs[y][65+ag] += (V1[ag][1][lt][im][nm][rg][1]+V1[ag][1][lt][im][nm][rg][2])*(1-pImmScen)+
-                    V1[ag][2][lt][im][nm][rg][1]+V1[ag][2][lt][im][nm][rg][2]+
-                    V1[ag][3][lt][im][nm][rg][1]+V1[ag][3][lt][im][nm][rg][2]; // N_ by age and FB (11) LATENT INFECTION
+                                        V1[ag][2][lt][im][nm][rg][1]+V1[ag][2][lt][im][nm][rg][2]+
+                                        V1[ag][3][lt][im][nm][rg][1]+V1[ag][3][lt][im][nm][rg][2]; // N_ by age and FB (11) LATENT INFECTION
                 } } } } }
         /////////////////////RISK FACTOR OF INTEREST COUNT BY AGE/////////////////////
         ///////will need to be updated; if im>1 | nm>1 then i=1, else i=0 ////////////
@@ -1568,17 +1592,24 @@ Rcpp::List cSim(
         // Calculate the number of LTBI Tests, Tx Initiations, and Tx Completions
                   if(na==0){
                     Outputs[y][683+ag] +=  VLtest[ag][0][0][im][nm][rg][na]+VLtest[ag][1][0][im][nm][rg][na]+VLtest[ag][2][0][im][nm][rg][na]+VLtest[ag][3][0][im][nm][rg][na];
-                    Outputs[y][705+ag] +=  (VLdx[ag][2][0][im][nm][rg][na] + VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0];
-                    Outputs[y][727+ag] +=  (VLdx[ag][2][0][im][nm][rg][na] + VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0]*(1-LtTxParN[s][1]);
+                    Outputs[y][793+ag] +=  VLtest[ag][2][0][im][nm][rg][na]+VLtest[ag][3][0][im][nm][rg][na]+(VLtest[ag][1][0][im][nm][rg][na]*(1-pImmScen));
+                    Outputs[y][705+ag] +=  (VLdx[ag][0][0][im][nm][rg][na] + VLdx[ag][1][0][im][nm][rg][na] + VLdx[ag][2][0][im][nm][rg][na] + VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0];
+                    Outputs[y][727+ag] +=  (VLdx[ag][0][0][im][nm][rg][na] + VLdx[ag][1][0][im][nm][rg][na] + VLdx[ag][2][0][im][nm][rg][na] + VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0]*(1-LtTxParN[s][1]) ;
                   } else {
                     /// For the non-USB calculations, we need to allow for the addition of tests for the Intervention #1 scenario
                     /// in which every migrant is tested for LTBI prior to entry to the United States
                     Outputs[y][694+ag] += VLtest[ag][0][0][im][nm][rg][na] + VLtest[ag][1][0][im][nm][rg][na] +
                                           VLtest[ag][2][0][im][nm][rg][na] + VLtest[ag][3][0][im][nm][rg][na];
-                    Outputs[y][716+ag] += ((VLdx[ag][2][0][im][nm][rg][na] + VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0]);
-                    Outputs[y][738+ag] += ((VLdx[ag][2][0][im][nm][rg][na] + VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0]*(1-LtTxParN[s][1]) );
+
+                    Outputs[y][804+ag] += VLtest[ag][2][0][im][nm][rg][na] + VLtest[ag][3][0][im][nm][rg][na]+(VLtest[ag][1][0][im][nm][rg][na]*(1-pImmScen));
+
+                    Outputs[y][716+ag] += (VLdx[ag][0][0][im][nm][rg][na] + VLdx[ag][1][0][im][nm][rg][na] + VLdx[ag][2][0][im][nm][rg][na] + VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0];
+
+                    Outputs[y][738+ag] += (VLdx[ag][0][0][im][nm][rg][na] + VLdx[ag][1][0][im][nm][rg][na] + VLdx[ag][2][0][im][nm][rg][na] + VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0]*(1-LtTxParN[s][1]) ;
                   }
                 } } } }
+          // Add in the additional tests for Intervention 1; If Int1 is not active, this adds a zero to every cell
+          // come back and add a more refined way of doing this.
                     Outputs[y][694+ag] += Int1TestN[y][ag];
                     Outputs[y][716+ag] += Int1InitN[y][ag];
                     Outputs[y][738+ag] += Int1TxN[y][ag];

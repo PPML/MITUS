@@ -381,17 +381,27 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
     SensLt[i,]          <-rep((Sens_IGRA[i]*IGRA_frc + (1-IGRA_frc)*Sens_TST[i]),month)
     SpecLt[i,]          <-rep((Spec_IGRA[i]*IGRA_frc + (1-IGRA_frc)*Spec_TST[i]),month)
   }
+  ### In intervention 2, we would like to assume a smooth transition to 100% igra as the
+  ### test of choice. In order to take account of this, we will transition the test
+  ### sensitivities and specificities to IGRA levels.
+  if (Int2 == 1) {
+    for (i in 1:nrow(SensLt)){
+    SensLt[i,] <- LgtCurve(intv_yr,intv_yr + 5,Sens_IGRA[i] - SensLt[i,]) + SensLt[i,]
+
+    SpecLt[i,] <- LgtCurve(intv_yr, intv_yr + 5,Spec_IGRA[i] - SpecLt[i,]) + SpecLt[i,]
+  } }
+
 
   ######################     IGRA FRACTION PROGRAM CHANGE    ########################
   if (prg_chng["IGRA_frc"] != IGRA_frc){
     for (i in 1:nrow(SensLt)){
       SensLt[i,prg_m:ncol(SensLt)]    <-rep((Sens_IGRA[i]*prg_chng["IGRA_frc"] + (1-prg_chng["IGRA_frc"])*Sens_TST[i]),1+month-prg_m)
       SpecLt[i,prg_m:ncol(SpecLt)]    <-rep((Spec_IGRA[i]*prg_chng["IGRA_frc"] + (1-prg_chng["IGRA_frc"])*Spec_TST[i]),1+month-prg_m)
-    }}
+  }}
 
   ### ADJUST THIS FOR THE FOREIGN BORN
   ######################        SCREENING RATES          ######################
-  rLtScrt       <- LgtCurve(1985,2015,(PV["rLtScr"]))/12
+  rLtScrt       <- cbind(LgtCurve(1985,2015,(PV["rLtScr"]))/12, LgtCurve(1985,2015,(PV["rLtScr"]))/12)
   ######################  SCREENING RATE PROGRAM CHANGE ########################
   if (prg_chng["scrn_cov"] !=1) {
     rLtScrt[prg_m:length(rLtScrt)]<-rLtScrt[prg_m:length(rLtScrt)]*prg_chng["scrn_cov"];
@@ -426,7 +436,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   }
 
   ###adjustments to the screening rates dependent on risk and TB status
-  rrTestHr      <- PV["rrTestHr"] # RR of LTBI screening for HIV and HR as cmpared to general
+  rrTestHr    <- PV["rrTestHr"] # RR of LTBI screening for HIV and HR as cmpared to general
   rrTestLrNoTb  <- PV["rrTestLrNoTb"] # RR of LTBI screening for individuals with no risk factors
   ### because of the introduction of new time varying parameters, we will create 2 matrices to
   ### hold the three different sensitivity and specificity measures; one will be for those whose
@@ -523,7 +533,16 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
 
   #### #### #### INT 2 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
   ### HOW TO ADD PROGRAM CHANGE HERE?
-  if(Int2==1) { rLtScrt     <- rLtScrt  + LgtCurve(intv_yr,intv_yr+5,1)*rLtScrt*1}
+
+  if(Int2==1) {
+    ## INCREASE SCREENING AMONG THE HIGH RISK POPULATION
+    rLtScrt[,2]     <- rLtScrt[,2]  + LgtCurve(intv_yr,intv_yr+5,1)*rLtScrt[,2]
+    ## INCREASE THE EFFECTIVENESS OF TREATMENT
+    LtTxPar[,3] <-    LtTxPar[,3]+LgtCurve(intv_yr,intv_yr+5, (1-EffLt[intv_m])/2)
+    ## INCREASE TREATMENT COMPLETION RATE
+    LtTxPar[,2] <-    LtTxPar[,2]-LgtCurve(intv_yr,intv_yr+5, pDefLt[intv_m]/2)
+
+  }
   pImmScen   <- PV["pImmScen"] # lack of reactivitiy to IGRA for Sp
 
   ################################################################################
@@ -730,6 +749,8 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   InputParams[["LtTxPar"]]   = LtTxPar
   InputParams[["LtDxPar_lt"]]   = LtDxPar_lt
   InputParams[["LtDxPar_nolt"]]   = LtDxPar_nolt
+  InputParams[["rrTestLrNoTb"]] = rrTestLrNoTb
+  InputParams[["rrTestHr"]] = rrTestHr
   InputParams[["ttt_month"]]<-ttt_month
   InputParams[["ttt_sampling_dist"]]<-ttt_sampling_dist
   InputParams[["ttt_na"]]<-ttt_na
