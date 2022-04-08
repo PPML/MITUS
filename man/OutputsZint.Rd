@@ -20,7 +20,8 @@ OutputsZint(
   Scen2 = 0,
   Scen3 = 0,
   prg_chng = def_prgchng(),
-  ttt_list
+  ttt_list = def_ttt(),
+  par2020 = c(0.4396327, 0.3918562, 0.2280117)
 )
 }
 \arguments{
@@ -53,6 +54,8 @@ OutputsZint(
 \item{prg_chng}{vector of program change values}
 
 \item{ttt_list}{list of targeted testing and treatment values}
+
+\item{par2020}{vector of 2020 adjustment parameters}
 }
 \value{
 results data frame of output
