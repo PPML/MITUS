@@ -19,7 +19,8 @@ OutputsInt(
   Scen2 = 0,
   Scen3 = 0,
   prg_chng,
-  ttt_list
+  ttt_list,
+  par2020
 )
 }
 \arguments{
@@ -52,6 +53,8 @@ OutputsInt(
 \item{prg_chng}{vector of program change values}
 
 \item{ttt_list}{list of targeted testing and treatment values}
+
+\item{par2020}{vector of 2020 adjustment parameters}
 }
 \value{
 out outputs
