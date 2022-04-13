@@ -18,7 +18,7 @@ notif_tot_lik <- function(V) {
 #'@param V vector of total notifications 1953-2014
 #'@return likelihood
 notif_fb_lik <- function(V) {
-  notif_fb      <- CalibDat[["age_cases_fb"]][,12]
+  notif_fb      <- CalibDat[["age_cases_fb"]][1:27,12]
   adj_1         <- sum(dnorm(notif_fb,notif_fb,notif_fb*0.05/1.96,log=T)*wts[44:70])
   (sum(dnorm(notif_fb,V,notif_fb*0.05/1.96,log=T)*wts[44:70]) - adj_1)
 }
@@ -49,7 +49,7 @@ recent_trans_dist_lLik  <- function(V) {
 #'@param rho correlation parameter
 #'@return likelihood
 notif_fb_lLik <- function(V,rho=0.01) {
-  notif_fb      <- cbind(CalibDat[["age_cases_fb"]][,12],CalibDat[["age_cases_us"]][,12])/1e6
+  notif_fb      <- cbind(CalibDat[["age_cases_fb"]][1:27,12],CalibDat[["age_cases_us"]][1:27,12])/1e6
   adj_3         <- sum(dDirMult(M=notif_fb,n=notif_fb,Rho=rho)*wts[44:70])
   (sum(dDirMult(M=V,n=notif_fb,Rho=rho)*wts[44:70]) - adj_3 )*2 }
 
@@ -59,7 +59,7 @@ notif_fb_lLik <- function(V,rho=0.01) {
 #'@param rho correlation parameter
 #'@return likelihood
 notif_age_us_lLik <- function(V,rho=0.05) {
-  notif_age_us      <- CalibDat[["age_cases_us"]][,-c(1,12)]*CalibDat[["age_cases_us"]][,12]
+  notif_age_us      <- CalibDat[["age_cases_us"]][1:27,-c(1,12)]*CalibDat[["age_cases_us"]][1:27,12]
   #weighted sum across the years
   adj_2a            <- sum(dDirMult(M=notif_age_us,n=notif_age_us,Rho=rho)*wts[44:70])
   sum(dDirMult(M=V,n=notif_age_us,Rho=rho)*wts[44:70]) - adj_2a
@@ -71,7 +71,7 @@ notif_age_us_lLik <- function(V,rho=0.05) {
 #'@param rho correlation parameter
 #'@return likelihood
 notif_age_fb_lLik <- function(V,rho=0.005) {
-  notif_age_fb     <- CalibDat[["age_cases_fb"]][,-c(1,12)]*CalibDat[["age_cases_fb"]][,12]
+  notif_age_fb     <- CalibDat[["age_cases_fb"]][1:27,-c(1,12)]*CalibDat[["age_cases_fb"]][1:27,12]
   adj_2b           <- sum(dDirMult(M=notif_age_fb,n=notif_age_fb,Rho=rho)*wts[44:70])
   sum(dDirMult(M=V,n=notif_age_fb,Rho=rho)*wts[44:70]) - adj_2b
 }
@@ -117,7 +117,7 @@ notif_hr_lLik <- function(V,rho=0.05) {
 #'@param rho correlation parameter
 #'@return likelihood
 notif_hr2_lLik <- function(V,rho=0.1) {
-  notif_hr2      <- CalibDat[["homeless_cases"]][,2]*CalibDat[["homeless_cases"]][,3]
+  notif_hr2      <- CalibDat[["homeless_cases"]][1:27,2]*CalibDat[["homeless_cases"]][1:27,3]
   adj_5d<-sum(dnorm(notif_hr2,notif_hr2,notif_hr2*0.1/1.96,log=T)*wts[44:70])
   (sum(dnorm(notif_hr2,V*1e6,notif_hr2*0.1/1.96,log=T)*wts[44:70]) - adj_5d)
 }
@@ -127,8 +127,8 @@ notif_hr2_lLik <- function(V,rho=0.1) {
 #'@param rho
 #'@return likelihood
 notif_hr_dist_lLik<-function(V,rho=0.05){
-  hr_dist_us<-CalibDat[["us_homeless_cases"]][,2]*CalibDat[["us_homeless_cases"]][,3]
-  hr_dist_tot<-CalibDat[["homeless_cases"]][,2]*CalibDat[["homeless_cases"]][,3]
+  hr_dist_us<-CalibDat[["us_homeless_cases"]][1:27,2]*CalibDat[["us_homeless_cases"]][1:27,3]
+  hr_dist_tot<-CalibDat[["homeless_cases"]][1:27,2]*CalibDat[["homeless_cases"]][1:27,3]
   #US, NUSB
   notif_hr_dist<-cbind(hr_dist_us,(hr_dist_tot-hr_dist_us))
   adj_5c <-sum(dDirMult(M=notif_hr_dist,n=notif_hr_dist,Rho=rho)*wts[44:70])
@@ -141,7 +141,7 @@ notif_hr_dist_lLik<-function(V,rho=0.05){
 #'@param rho correlation parameter
 #'@return likelihood
 notif_fb_rec_lLik <- function(V,rho=0.01) {
-  notif_fb_rec   <- cbind(CalibDat[["fb_recent_cases2"]][,2],1-CalibDat[["fb_recent_cases2"]][,2])*CalibDat[["fb_recent_cases2"]][,3]
+  notif_fb_rec   <- cbind(CalibDat[["fb_recent_cases2"]][1:27,2],1-CalibDat[["fb_recent_cases2"]][1:27,2])*CalibDat[["fb_recent_cases2"]][1:27,3]
   adj_6          <- sum(dDirMult(M=notif_fb_rec,n=notif_fb_rec,Rho=rho)*wts[44:70])
   sum(dDirMult(M=V,n=notif_fb_rec,Rho=rho)*wts[44:70]) - adj_6
 }
@@ -221,9 +221,9 @@ ltbi_fb_11_dp_lLik <- function(V) {
 #'@return likelihood
 tb_dth_tot_lLik <- function(V) {
   tb_deaths_tot   <- rowSums(CalibDat[["tb_deaths"]][,-1])
-  adj_19a         <- sum(dnorm(tb_deaths_tot,tb_deaths_tot,tb_deaths_tot*0.2/1.96,log=T)*wts[50:69])
+  adj_19a         <- sum(dnorm(tb_deaths_tot,tb_deaths_tot,tb_deaths_tot*0.2/1.96,log=T)*wts[50:70])
   V2<-rowSums(V)
-  sum(dnorm(tb_deaths_tot,V2*1e6,tb_deaths_tot*0.2/1.96,log=T)*wts[50:69]) - adj_19a  }
+  sum(dnorm(tb_deaths_tot,V2*1e6,tb_deaths_tot*0.2/1.96,log=T)*wts[50:70]) - adj_19a  }
 
 #' TB DEATHS AGE DISTRIBUTION 1999-2014
 #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
@@ -232,9 +232,9 @@ tb_dth_tot_lLik <- function(V) {
 #'@return likelihood
 tb_dth_age_lLik <- function(V,rho=0.01) {
   tb_deaths_age  <- CalibDat[["tb_deaths"]][,-1]
-  adj_19b        <- sum(dDirMult(M=tb_deaths_age+.1,n=tb_deaths_age,Rho=rho)*wts[50:69])
+  adj_19b        <- sum(dDirMult(M=tb_deaths_age+.1,n=tb_deaths_age,Rho=rho)*wts[50:70])
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
-  sum(dDirMult(M=(V*1e6),n=tb_deaths_age,Rho=rho)*wts[50:69]) - adj_19b  }
+  sum(dDirMult(M=(V*1e6),n=tb_deaths_age,Rho=rho)*wts[50:70]) - adj_19b  }
 
 ###start demographic log likelihood
 #' TOTAL POP EACH DECADE, FOR FB
