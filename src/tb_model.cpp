@@ -20,6 +20,7 @@ using namespace Rcpp;
 //'@param vTMort vector of TB mortality rates
 //'@param RRmuRF rate ratio of mortality across mortality risk group
 //'@param RRmuHR rate ratio of mortality across low/high risk dimension
+//'@param RRmuTBPand rate ratio of TB mortality during pandemic
 //'@param Birthst Births over time
 //'@param HrEntEx Matrix of Entry and Exit rates into the High Risk population
 //'@param ImmNon Immigration with no TB
@@ -77,6 +78,7 @@ Rcpp::List cSim(
     Rcpp::NumericMatrix vTMort,
     std::vector<double> RRmuRF,
     std::vector<double> RRmuHR,
+    std::vector<double> RRmuTBPand,
     std::vector<double> Birthst,
     Rcpp::NumericMatrix HrEntEx,
     Rcpp::NumericMatrix ImmNon,
@@ -970,9 +972,9 @@ Rcpp::List cSim(
                     VMort[ag][tb ][lt][im][nm][rg][na]  = V0[ag][tb][lt][im][nm][rg][na]*temp;
                   }//close the tb loop
                   ////////////////////////      ACTIVE TB         /////////////////////////////////
-                  VMort[ag][4 ][lt][im][nm][rg][na]  = V0[ag][4 ][lt][im][nm][rg][na]*(temp+vTMortN[ag][4 ] );
+                  VMort[ag][4 ][lt][im][nm][rg][na]  = V0[ag][4 ][lt][im][nm][rg][na]*(temp+vTMortN[ag][4 ]*RRmuTBPand[s]);
                   ////////////////////////    TB TREATMENT        /// //////////////////////////////
-                  VMort[ag][5 ][lt][im][nm][rg][na]  = V0[ag][5 ][lt][im][nm][rg][na]*(temp+vTMortN[ag][5 ]*pow(1.0-TxVecZ[1],TunTxMort));
+                  VMort[ag][5 ][lt][im][nm][rg][na]  = V0[ag][5 ][lt][im][nm][rg][na]*(temp+vTMortN[ag][5 ]*pow(1.0-TxVecZ[1],TunTxMort)*RRmuTBPand[s]);
                   ///////////// UPDATE THE PRIMARY VECTOR BY REMOVING MORTALITY /////////////////
                   for(int tb=0; tb<6; tb++) {
                     V1[ag][tb][lt][im][nm][rg][na]  -= VMort[ag][tb][lt][im][nm][rg][na];

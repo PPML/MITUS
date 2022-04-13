@@ -23,8 +23,8 @@ llikelihood2020 <- function(samp_i, start_mat, TB=1){
   # par2020 <- c(0.3865738,0.4044850,0.2477164)
   # par2020 <- c(0.3638802,0.4045582,0.2426989) #as of 1/29/22
   # par2020 <- c(0.3957942, 0.3992307, 0.2365767) #as of 1/31/22
-
-  names(par2020) <- c("Immig", "Dxt", "Trans")
+  # par2020 <- c(0.3086960, 0.4073365, 0.2470019, 1.1374781)
+  names(par2020) <- c("Immig", "Dxt", "Trans", "CaseFat")
   # print(colnames(start_mat))
   # print(par2020)
   ### Set P to the optimal parameter set which is loaded in with load_model()
@@ -41,7 +41,7 @@ llikelihood2020 <- function(samp_i, start_mat, TB=1){
   zz <- cSim( nYrs       = 2021-1950         , nRes      = length(func_ResNam())  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
               Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]  ,
               rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
-              vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , Birthst  = prms[["Birthst"]]    ,
+              vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , RRmuTBPand = c(rep(1,842), rep(par2020["CaseFat"], 22)), Birthst  = prms[["Birthst"]]    ,
               HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat"]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst"]]    ,
               net_mig_usb = prms[["net_mig_usb"]], net_mig_nusb = prms[["net_mig_nusb"]],
               mubt       = prms[["mubt"]]    , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], RRcrAG = prms[["RRcrAG"]],
@@ -75,10 +75,17 @@ llikelihood2020 <- function(samp_i, start_mat, TB=1){
     lLik <- lLik + addlik
 
     # CASES RECENT TRANSMISSION DISTRIBUTION 2020
-    v3abc  <- sum(bcRes[70,184:185])/sum(bcRes[70,168:169])
-    v3aM   <- sum(M[71,172])/sum(M[71,156])
+    v3abc  <- sum(bcRes[70,184:185])/sum(bcRes[70,156])
+    v3aM   <- sum(M[71,184:185])/sum(M[71,156])
     v3     <- 1- (v3aM / v3abc)
     addlik <- notif_RT_20_lik(V=v3); addlik
+    lLik   <- lLik + addlik
+
+    # CASES RECENT TRANSMISSION DISTRIBUTION 2020
+    v4abc  <- sum(bcRes[70,253:254])/(bcRes[70,"NOTIF_ALL"]+bcRes[70,"NOTIF_MORT_ALL"])
+    v4aM   <-sum(M[71,253:254])/(M[71,"NOTIF_ALL"]+M[71,"NOTIF_MORT_ALL"])
+    v4     <- 1- (v4aM / v4abc)
+    addlik <- case_fat_20_lik(V=v4); addlik
     lLik   <- lLik + addlik
 
   }
@@ -114,16 +121,24 @@ notif_RT_20_lik <- function(V) {
   dnorm(case_diff_RT,V,0.025/1.96,log=T) - adj_3
 }
 
+### Measure the % change in recent transmission cases
+case_fat_20_lik <- function(V) {
+  ### We are basing this off of the preliminary data that suggests a 0% decrease
+  case_fat_diff <- 1-((1146/7173)/(982/8916))
+  adj_4         <- dnorm(case_fat_diff,case_fat_diff,0.025/1.96,log=T)
+  dnorm(case_fat_diff,V,0.025/1.96,log=T) - adj_4
+}
+
 ### Create the starting parameter matrix
 
 ### First make a matrix of each value and its prior boundaries
-# paraminit2020 <- matrix(0,3,5)
-# rownames(paraminit2020) <- c("Immig", "Dxt", "Trans")
-# paraminit2020[,1:3]<- cbind(c(.17, .5, .5), c(.07, .1, .3), c(.27, .9, .7))
+# paraminit2020 <- matrix(0,4,5)
+# rownames(paraminit2020) <- c("Immig", "Dxt", "Trans", "CaseFat")
+# paraminit2020[,1:3]<- cbind(c(.17, .5, .5, 3), c(.07, .1, .3, 1), c(.27, .9, .7, 5))
 # paraminit2020[,4:5] <- c(paraminit2020[,1],(paraminit2020[,3]-paraminit2020[,2])/3.92)
 #
 # startval2020 <-randomLHS(10,nrow(paraminit2020))
-# colnames(startval2020) <- c("Immig", "Dxt", "Trans")
+# colnames(startval2020) <- c("Immig", "Dxt", "Trans", "CaseFat")
 ### Optimizing Function
 optim_2020 <- function(df, samp_i=1,n_cores=2, TB=1){
 
