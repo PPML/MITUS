@@ -81,7 +81,7 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
     r_decline=0.015
   }
   ImmigInputs$PrevTrend25_34<-crude_rate(Inputs,loc,r_decline)
-  ImmigInputs$PrevTrend25_34[74:101] <- ImmigInputs$PrevTrend25_34[74:101]*noiseParams[[2]]
+  ImmigInputs$PrevTrend25_34[74:101] <- ImmigInputs$PrevTrend25_34[73]*noiseParams[[2]]
   TxInputs         <- Inputs[["TxInputs"]]
   NetMig           <- Inputs[["NetMigrState"]]
 
@@ -169,9 +169,10 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
     high_immig[69:151]<-Inputs$ImmigInputs[["TotByYear"]][69:151]*1.5
     Inputs$ImmigInputs[["TotByYear"]] <-high_immig
   }
-  Inputs$ImmigInputs[["TotByYear"]][74:101]<-Inputs$ImmigInputs[["TotByYear"]][74:101]*noiseParams[[1]]
+  Inputs$ImmigInputs[["TotByYear"]][74:101]<-Inputs$ImmigInputs[["TotByYear"]][73]*noiseParams[[1]]
   ####################### calculate the age immigration #######################
   TotImmig0       <- (c(Inputs$ImmigInputs[[1]][1:151])+c(rep(0,71),cumsum(rep(PV["ImmigVolFut"],80))))/12*PV["ImmigVol"]
+  # TotImmig0[74:151]       <- TotImmig0[73]*noiseParams[[1]]
   TotImmAge0      <-matrix(0,151,11)
   for (i in 1:151){
     for (j in 1:11){
@@ -509,7 +510,7 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   ######################           PROVIDER DELAY         ########################
   DelaySp0    <- rep(PV["DelaySp"],151)
   #add noise
-  DelaySp0[74:101] <- DelaySp0[74:101]*noiseParams[[3]]
+  DelaySp0[74:101] <- DelaySp0[73]*noiseParams[[3]]
   DelaySp <- SmoCurve(DelaySp0)[1:month]
 
   if (delay == 1){
@@ -660,6 +661,11 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   TxVec[1]       <-  d1st
   TxVec[2]       <-  pCurPs
   ### REMOVED ART PARAMETERS
+
+  for(i in 1:2){
+    for (j in 1:nrow(rDxt)){
+      if (rDxt[j,i]>1) {rDxt[j,i]<-1
+      }   }}
 
 
   InputParams<-list()
