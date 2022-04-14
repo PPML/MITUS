@@ -221,9 +221,9 @@ ltbi_fb_11_dp_lLik <- function(V) {
 #'@return likelihood
 tb_dth_tot_lLik <- function(V) {
   tb_deaths_tot   <- rowSums(CalibDat[["tb_deaths"]][,-1])
-  adj_19a         <- sum(dnorm(tb_deaths_tot,tb_deaths_tot,tb_deaths_tot*0.2/1.96,log=T)*wts[50:70])
+  adj_19a         <- sum(dnorm(tb_deaths_tot,tb_deaths_tot,tb_deaths_tot*0.1/1.96,log=T)*wts[50:70])
   V2<-rowSums(V)
-  sum(dnorm(tb_deaths_tot,V2*1e6,tb_deaths_tot*0.2/1.96,log=T)*wts[50:70]) - adj_19a  }
+  sum(dnorm(tb_deaths_tot,V2*1e6,tb_deaths_tot*0.1/1.96,log=T)*wts[50:70]) - adj_19a  }
 
 #' TB DEATHS AGE DISTRIBUTION 1999-2014
 #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
