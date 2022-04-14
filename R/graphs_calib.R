@@ -692,9 +692,9 @@ calib_graphs <- function(df, Par_list){
          pt.cex=c(1,2),col=c("black","lightblue"),bg="white")
 
   ################################################################################
-  # Age Distribution of TB Deaths 1999-2014
+  # Age Distribution of TB Deaths 1999-2019
 
-  V  <- df[50:69,227:237]
+  V  <- df[50:70,227:237]
 
   V2 <- V[,-11]; V2[,10] <- V[,10]+V[,11]
   V3 <- colSums(V2)*1e6
@@ -714,33 +714,34 @@ calib_graphs <- function(df, Par_list){
 
   #plot text
   mtext("Age Group",1,2.5,cex=1.2)
-  mtext("Total TB Deaths by Age Group 1999-2018",3,.8,font=2,cex=1.2)
+  mtext("Total TB Deaths by Age Group 1999-2019",3,.8,font=2,cex=1.2)
   legend("topleft",c("Reported data","Model"),pch=c(19,15),lwd=NA,
          pt.cex=c(1,2),col=c("black","lightblue"),bg="white")
 
   #######################################
   # total tb deaths over time 2004-2014
-  V   <- rowSums(df[59:69,227:237])
-  tb_death_tot<-rowSums(CalibDat$tb_deaths[9:19,-1])
+  V   <- rowSums(df[61:70,227:237])
+  tb_death_tot<-rowSums(CalibDat$tb_deaths[12:21,-1])
 
   #format the plot
-  plot(0,0,ylim=c(0,max(tb_death_tot)*1.2),xlim=c(2008,2018),xlab="",ylab="",axes=F)
+  plot(0,0,ylim=c(0,max(tb_death_tot)*1.2),xlim=c(2010,2019),xlab="",ylab="",axes=F)
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
 
   #plot the model data
-  lines(2008:2018,V*1e6,lwd=2,col="blue")
+  lines(2010:2019,V*1e6,lwd=2,col="blue")
 
   #reported data for comparison
-  points(2008:2018,tb_death_tot,pch=19,cex=0.6,col="black")
-  lines (2008:2018,tb_death_tot,lty=3,col="black")
+  points(2010:2019,tb_death_tot,pch=19,cex=0.6,col="black")
+  lines (2010:2019,tb_death_tot,lty=3,col="black")
 
   #plot text
 
   mtext("Year",1,2.5,cex=1.2)
-  mtext("Total TB Deaths by Year 2008-2018",3,.8,font=2,cex=1.2)
-  legend("topright",c("Reported data","Model"),pch=c(19,NA),lwd=c(1,2),
-         col=c("black","blue"),lty=c(3,1),bg="white",pt.cex=c(0.6,NA))################################################################################
+  mtext("Total TB Deaths by Year 2010-2019",3,.8,font=2,cex=1.2)
+  legend("bottomright",c("Reported data","Model"),pch=c(19,NA),lwd=c(1,2),
+         col=c("black","blue"),lty=c(3,1),bg="white",pt.cex=c(0.6,NA))
+  ################################################################################
 
   ###rate of decline in TB deaths over time
   # V1<-rowSums(df[2:70,227:237])-rowSums(df[1:69,227:237])
