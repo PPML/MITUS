@@ -18,8 +18,8 @@ if (loc=="US"){
   ParamInit<<-as.data.frame(readRDS(system.file("US/US_ParamInit_2022-01-04.rds", package="MITUS")))
   StartVal<<-readRDS(system.file("US/US_StartVal_2022-01-04.rds", package="MITUS"))
   Inputs<<-readRDS(system.file("US/US_Inputs_08-31-20.rds", package="MITUS"))
-  Opt <<- readRDS(system.file("US/US_Optim_all_10_0719.rds", package="MITUS"))
-  Par <<- readRDS(system.file("US/US_Param_all_10_0719.rds", package="MITUS"))
+  Opt <<- readRDS(system.file("US/US_Optim_all_10_0417.rds", package="MITUS"))
+  Par <<- readRDS(system.file("US/US_Param_all_10_0417.rds", package="MITUS"))
 } else {
   CalibDat<<-CalibDatState<<-readRDS(system.file("ST/ST_CalibDat_2022-01-07.rds", package="MITUS"))
   ParamInit_st<<-ParamInit<<-readRDS(system.file("ST/ST_ParamInit_2021-07-19.rds", package="MITUS"))
@@ -39,6 +39,9 @@ if (loc=="US"){
   zz  <- as.numeric(EndVal)/(1+exp(-zz));    zz  }
   ImptWeights <- LgtCurveY2(2000,2019,0.95)+0.05
   names(ImptWeights) <- 1950:2019
+
+  ImptWeights[61:70] <- ImptWeights[61:70]*2
+
   wts <<- ImptWeights
   P  <<- ParamInit[,1]
   names(P) <<- rownames(ParamInit)
@@ -52,6 +55,7 @@ if (loc=="US"){
   LgtCurveY2 <- function(StYr,Endyr,EndVal) { z <- log(1/0.005-1)
   zz  <- seq(-z*(1+2*(StYr-1950)/(Endyr-StYr)),z*(1+2*(2019-Endyr)/(Endyr-StYr)),by=(2*z)/(Endyr-StYr))
   zz  <- as.numeric(EndVal)/(1+exp(-zz));    zz  }
+
   ImptWeights <- LgtCurveY2(2000,2019,0.95)+0.05
   names(ImptWeights) <- 1950:2019
   wts <<- ImptWeights
