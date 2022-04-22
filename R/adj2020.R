@@ -9,22 +9,10 @@ llikelihood2020 <- function(samp_i, start_mat, TB=1){
   } else{
     par2020 <- as.numeric(start_mat[samp_i,])
   }
-  # par2020 <- c(0.088, 0.43, 0.28)
-  # par2020<-c(0.2046272,0.4325273,0.2712293)
-  # par2020 <- c (0.1797244, 0.4360917, 0.2754278)
-  # par2020 <- c(0.3952822,0.4029466,0.2458458)
-  # par2020 <- c(0.2049939,0.4322080, 0.2785897)
-  # par2020 <- c(0.2046310,0.4325234, 0.2712266)
-  # par2020 <- c(0.2859564,0.4206157,0.2653754)
-  # par2020 <- c(0.3205440,0.4151213,0.2593764)
-  # par2020 <- c(0.4064649,0.4010572,0.2438105)
-  # par2020 <- c(0.5003912,0.3857184,0.2265612)
-  # par2020 <- c(0.4508752,0.3942389,0.2361109)
-  # par2020 <- c(0.3865738,0.4044850,0.2477164)
-  # par2020 <- c(0.3638802,0.4045582,0.2426989) #as of 1/29/22
-  # par2020 <- c(0.3957942, 0.3992307, 0.2365767) #as of 1/31/22
-  # par2020 <- c(0.3086960, 0.4073365, 0.2470019, 1.1374781)
+  # optimized parameters as of 4/22/22 below
+  # par2020 <- c(0.4232265, 0.3707595, 0.1984619, 1.1158255)
   names(par2020) <- c("Immig", "Dxt", "Trans", "CaseFat")
+
   # print(colnames(start_mat))
   # print(par2020)
   ### Set P to the optimal parameter set which is loaded in with load_model()
@@ -55,7 +43,7 @@ llikelihood2020 <- function(samp_i, start_mat, TB=1){
     lLik <- -10^12
   } else {
     ### read in the basecase for creating comparison
-    bcRes <- readRDS(system.file("US/US_basecase_0719.rds", package="MITUS"))
+    bcRes <- readRDS(system.file("US/US_basecase_0417.rds", package="MITUS"))
     M <- zz$Outputs
     colnames(M) <- func_ResNam()
     # saveRDS(M,"~/MITUS/inst/US/US_2020basecase_010621.rds")
@@ -134,11 +122,40 @@ case_fat_20_lik <- function(V) {
 ### First make a matrix of each value and its prior boundaries
 # paraminit2020 <- matrix(0,4,5)
 # rownames(paraminit2020) <- c("Immig", "Dxt", "Trans", "CaseFat")
-# paraminit2020[,1:3]<- cbind(c(.17, .5, .5, 3), c(.07, .1, .3, 1), c(.27, .9, .7, 5))
+# paraminit2020[,1:3]<- cbind(c(.55, .5, .5, 2), c(.45, .1, .3, 1), c(.65, .9, .7, 3))
 # paraminit2020[,4:5] <- c(paraminit2020[,1],(paraminit2020[,3]-paraminit2020[,2])/3.92)
 #
 # startval2020 <-randomLHS(10,nrow(paraminit2020))
 # colnames(startval2020) <- c("Immig", "Dxt", "Trans", "CaseFat")
+
+### Calculate the basecase if we have re-optimized
+# model_load("US")
+# P <- Par[1,]
+# ### Setup the model run
+# prg_chng<-def_prgchng(P)
+# prms <-list()
+# prms <- param_init(P,"US",prg_chng=prg_chng, ttt_list=def_ttt(), immig = 1)
+# trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
+# if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
+# # jj <- tryCatch({
+# zz <- cSim( nYrs       = 2021-1950         , nRes      = length(func_ResNam())  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
+#             Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]  ,
+#             rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]]      , dist_gen = prms[["dist_gen"]]    ,
+#             vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , RRmuTBPand = rep(1,1213), Birthst  = prms[["Birthst"]]    ,
+#             HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat"]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst"]]    ,
+#             net_mig_usb = prms[["net_mig_usb"]], net_mig_nusb = prms[["net_mig_nusb"]],
+#             mubt       = prms[["mubt"]]    , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], RRcrAG = prms[["RRcrAG"]],
+#             Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
+#             TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
+#             LtDxPar_lt    = prms[["LtDxPar_lt"]]   , LtDxPar_nolt    = prms[["LtDxPar_nolt"]]   , rLtScrt   = prms[["rLtScrt"]]       , ttt_samp_dist   = prms[["ttt_sampling_dist"]] ,
+#             ttt_ag = prms[["ttt_ag"]], ttt_na = prms[["ttt_na"]], ttt_month = prms[["ttt_month"]], ttt_ltbi = prms[["ttt_ltbi"]], ttt_pop_scrn = prms[["ttt_pop_scrn"]], RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
+#             EarlyTrend = prms[["EarlyTrend"]], ag_den=prms[["aging_denom"]],  NixTrans = prms[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)
+#
+# M <- zz$Outputs
+# colnames(M) <- func_ResNam()
+#
+# saveRDS(M, "~/MITUS/inst/US/US_basecase_0417.rds", version=2)
+
 ### Optimizing Function
 optim_2020 <- function(df, samp_i=1,n_cores=2, TB=1){
 
