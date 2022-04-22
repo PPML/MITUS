@@ -11,7 +11,7 @@
 #'cations 1953-2014
 #'@return likelihood
 notif_tot_lLik_st <- function(V,st) {
-  notif_tot     <- CalibDatState[["cases_yr_st"]][[st]][,2];
+  notif_tot     <- CalibDatCases[["cases_yr_st"]][[st]][,2];
   wts2 <- wts; wts2[length(wts2)] <- wts2[length(wts2)]*2;
   adj_1         <- sum((dnorm(notif_tot,notif_tot,notif_tot*0.1/1.96,log=T)*wts2[44:70])[is.na(notif_tot)==F  & notif_tot != 0])
   #notif tot is in real scale must scale outputs up
@@ -20,20 +20,20 @@ notif_tot_lLik_st <- function(V,st) {
 
 ### ### ### TOTAL DIAGNOSED CASES 1953-1993  ### ### ### ### ### ### D
 notif_decline_lLik_st <- function(V, st=st) {
-  notif_tot     <- CalibDatState[["cases_yr_st"]][[st]][,2];
+  notif_tot     <- CalibDatCases[["cases_yr_st"]][[st]][-28,2];
   # V = vector of total notifications 1953-1993
-  notif_decline  <- CalibDatState[["cases_prop_change_53_94"]]
+  notif_decline  <- CalibDatCases[["cases_prop_change_53_94"]]
   notif_tot2     <- cumprod(notif_decline)/prod(notif_decline)*notif_tot[1]
   adj_1b         <- sum(dnorm(notif_tot2,notif_tot2,notif_tot2*0.2/1.96,log=T)*wts[4:44])
   #notif tot is in real scale must scale outputs up
   sum(dnorm(notif_tot2,V*1e6,notif_tot2*0.2/1.96,log=T)*wts[4:44]) - adj_1b
 }
 
-### ### ### CASES FB DISTRIBUTION 1993-2016  ### ### ### ### ### ###  D
+### ### ### CASES FB DISTRIBUTION 1993-2018  ### ### ### ### ### ###  D
 # Motivatioµn: dirichlet-multinomial, multinomial data with additional non-sampling biases
 notif_fb_lLik_st <- function(V,st,rho=0.005) { # V = table of notifications by fb 1993-2016 (row=24 years, col=fb then us)
-  notif_age_fb0     <- CalibDatState[["cases_yr_ag_nat_st"]][[st]][,,"nusb"]
-  notif_age_us0     <- CalibDatState[["cases_yr_ag_nat_st"]][[st]][,,"usb"]
+  notif_age_fb0     <- CalibDatCases[["cases_yr_ag_nat_st"]][[st]][,,"nusb"]
+  notif_age_us0     <- CalibDatCases[["cases_yr_ag_nat_st"]][[st]][,,"usb"]
   notif_fb      <- cbind(notif_age_fb0[,12],notif_age_us0[,12])
   adj_3         <- sum(dDirMult(M=notif_fb+0.01,n=notif_fb,Rho=rho)*wts[44:69])
   #scale does not matter for dirichlet llikelihood
@@ -43,8 +43,8 @@ notif_fb_lLik_st <- function(V,st,rho=0.005) { # V = table of notifications by f
 
 notif_fb_5yr_lLik_st <- function(V,st,rho=0.0005) { # V = table of notifications by fb 1993-2016 (row=24 years, col=fb then us)
   ### Read in the nativity stratified data
-  notif_age_fb0   <- CalibDatState$cases_nat_st_5yr[CalibDatState$cases_nat_st_5yr$State.Code==st & CalibDatState$cases_nat_st_5yr$usb==0,4:8]
-  notif_age_us0   <- CalibDatState$cases_nat_st_5yr[CalibDatState$cases_nat_st_5yr$State.Code==st & CalibDatState$cases_nat_st_5yr$usb==1,4:8]
+  notif_age_fb0   <- CalibDatCases$cases_nat_st_5yr[CalibDatCases$cases_nat_st_5yr$State.Code==st & CalibDatCases$cases_nat_st_5yr$usb==0,4:8]
+  notif_age_us0   <- CalibDatCases$cases_nat_st_5yr[CalibDatCases$cases_nat_st_5yr$State.Code==st & CalibDatCases$cases_nat_st_5yr$usb==1,4:8]
   notif_fb      <- cbind(t(notif_age_fb0),t(notif_age_us0))
   adj_3         <- sum(dDirMult(M=notif_fb,n=notif_fb,Rho=rho)*wts[c(49,54,59,64,70)])
   V2<-matrix(0,5,2)
@@ -58,7 +58,7 @@ notif_fb_5yr_lLik_st <- function(V,st,rho=0.0005) { # V = table of notifications
 #'@param V vector of total notifications 1953-2014
 #'@return likelihood
 notif_fb_5yr_lik <- function(V,st=st) {
-  notif_fb   <- as.numeric(unlist(CalibDatState$cases_nat_st_5yr[CalibDatState$cases_nat_st_5yr$State.Code==st & CalibDatState$cases_nat_st_5yr$usb==0,4:8]))
+  notif_fb   <- as.numeric(unlist(CalibDatCases$cases_nat_st_5yr[CalibDatCases$cases_nat_st_5yr$State.Code==st & CalibDatCases$cases_nat_st_5yr$usb==0,4:8]))
   adj_1         <- sum(dnorm(notif_fb,notif_fb,notif_fb*0.05/1.96,log=T)*wts[c(49,54,59,64,70)])
   V2<-rep(0,5)
   V2[1]<-sum(V[1:5]);V2[2]<-sum(V[6:10]);V2[3]<-sum(V[11:15]); V2[4]<-sum(V[16:20]); V2[5]<-sum(V[21:25])
@@ -71,7 +71,7 @@ notif_fb_5yr_lik <- function(V,st=st) {
 #'@return likelihood
 
 notif_us_5yr_lik <- function(V,st=st) {
-  notif_us   <- as.numeric(unlist(CalibDatState$cases_nat_st_5yr[CalibDatState$cases_nat_st_5yr$State.Code==st & CalibDatState$cases_nat_st_5yr$usb==1,4:8]))
+  notif_us   <- as.numeric(unlist(CalibDatCases$cases_nat_st_5yr[CalibDatCases$cases_nat_st_5yr$State.Code==st & CalibDatCases$cases_nat_st_5yr$usb==1,4:8]))
   adj_1         <- sum(dnorm(notif_us,notif_us,notif_us*0.05/1.96,log=T)*wts[c(49,54,59,64,70)])
   V2<-rep(0,5)
   V2[1]<-sum(V[1:5]);V2[2]<-sum(V[6:10]);V2[3]<-sum(V[11:15]); V2[4]<-sum(V[16:20]); V2[5]<-sum(V[21:25])
@@ -81,9 +81,9 @@ notif_us_5yr_lik <- function(V,st=st) {
 
 ### ### ### CASES FB DISTRIBUTION SLOPES OVER PAST 5 year  ### ### ### ### ### ###
 notif_fbus_slp_lLik_st <- function(V,st) {
-  # notif_fbus_slp5     <- as.numeric(CalibDatState[["case_change_5"]][st,2:3])
-  notif_age_fb0   <- CalibDatState$cases_nat_st_5yr[CalibDatState$cases_nat_st_5yr$State.Code==st & CalibDatState$cases_nat_st_5yr$usb==0,7:8]
-  notif_age_us0   <- CalibDatState$cases_nat_st_5yr[CalibDatState$cases_nat_st_5yr$State.Code==st & CalibDatState$cases_nat_st_5yr$usb==1,7:8]
+  # notif_fbus_slp5     <- as.numeric(CalibDatCases[["case_change_5"]][st,2:3])
+  notif_age_fb0   <- CalibDatCases$cases_nat_st_5yr[CalibDatCases$cases_nat_st_5yr$State.Code==st & CalibDatCases$cases_nat_st_5yr$usb==0,7:8]
+  notif_age_us0   <- CalibDatCases$cases_nat_st_5yr[CalibDatCases$cases_nat_st_5yr$State.Code==st & CalibDatCases$cases_nat_st_5yr$usb==1,7:8]
   tot_case_nat<-cbind(t(notif_age_fb0),t(notif_age_us0))
   #calculate the slopes
   notif_fbus_slp5<-apply(log(tot_case_nat),2,function(x) lm(x~I(1:2))$coef[2])
@@ -105,7 +105,7 @@ notif_fbus_slp_lLik_st <- function(V,st) {
 # Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
 
 # notif_hr_lLik_st <- function(V,st,rho=0.005) { # V = table of notifications by tx history (row=97:16, col=n then e)
-#   notif_hr0     <- CalibDatState[["hr_cases"]][[st]]
+#   notif_hr0     <- CalibDatCases[["hr_cases"]][[st]]
 #   notif_hr      <- cbind(notif_hr0[,1],1-notif_hr0[,1])#*notif_us_hr0[,2]
 #   adj_5b           <- sum(dDirMult(M=notif_hr+0.01,n=notif_hr,Rho=rho)*wts[c(45,50,55,60,65)])
 #   V2 <- rbind(colSums(V[1:5,]),colSums(V[6:10,]),colSums(V[11:15,]),colSums(V[16:20,]), colSums(V[21:25,]))
@@ -118,7 +118,7 @@ notif_fbus_slp_lLik_st <- function(V,st) {
 # Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
 notif_age_us_5yr_lLik_st <- function(V,st,rho=0.1) { # V = table of us notifications by age 1993-2016 (row=24 years, col=11 ages)
   ### Read in the age and nativity stratified data
-  notif_age_us_5yr     <- as.data.frame(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][CalibDat$cases_yr_ag_nat_st_5yr[[st]][,4]==1,5:14])
+  notif_age_us_5yr     <- as.data.frame(CalibDatCases$cases_yr_ag_nat_st_5yr[[st]][CalibDat$cases_yr_ag_nat_st_5yr[[st]][,4]==1,5:14])
   ### Format the model estimates to match the calibration data
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
   V3<-matrix(0,5,10)
@@ -129,7 +129,7 @@ notif_age_us_5yr_lLik_st <- function(V,st,rho=0.1) { # V = table of us notificat
     tot_lik <- 0; adj_2a <-0
     ### If data is missing we need to create a single new bucket for these data and estimates
     ### Read in the total US cases to use as a total
-    notif_age_us0   <- CalibDatState$cases_nat_st_5yr[CalibDatState$cases_nat_st_5yr$State.Code==st & CalibDatState$cases_nat_st_5yr$usb==1,4:8]
+    notif_age_us0   <- CalibDatCases$cases_nat_st_5yr[CalibDatCases$cases_nat_st_5yr$State.Code==st & CalibDatCases$cases_nat_st_5yr$usb==1,4:8]
     for (i in 1:nrow(notif_age_us_5yr)){
       print(i)
       ### Check that this row has an NA
@@ -168,7 +168,7 @@ notif_age_us_5yr_lLik_st <- function(V,st,rho=0.1) { # V = table of us notificat
 # Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
 notif_age_nus_5yr_lLik_st <- function(V,st,rho=0.1) { # V = table of us notifications by age 1993-2016 (row=24 years, col=11 ages)
   ### Read in the age and nativity stratified data
-  notif_age_nus_5yr     <- as.data.frame(CalibDatState$cases_yr_ag_nat_st_5yr[[st]][CalibDat$cases_yr_ag_nat_st_5yr[[st]][,4]==0,5:14])
+  notif_age_nus_5yr     <- as.data.frame(CalibDatCases$cases_yr_ag_nat_st_5yr[[st]][CalibDat$cases_yr_ag_nat_st_5yr[[st]][,4]==0,5:14])
   ### Format the model estimates to match the calibration data
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
   V3<-matrix(0,5,10)
@@ -179,7 +179,7 @@ notif_age_nus_5yr_lLik_st <- function(V,st,rho=0.1) { # V = table of us notifica
     tot_lik <- 0; adj_2a <-0
     ### If data is missing we need to create a single new bucket for these data and estimates
     ### Read in the total US cases to use as a total
-    notif_age_nus0   <- CalibDatState$cases_nat_st_5yr[CalibDatState$cases_nat_st_5yr$State.Code==st & CalibDatState$cases_nat_st_5yr$usb==0,4:8]
+    notif_age_nus0   <- CalibDatCases$cases_nat_st_5yr[CalibDatCases$cases_nat_st_5yr$State.Code==st & CalibDatCases$cases_nat_st_5yr$usb==0,4:8]
     for (i in 1:nrow(notif_age_nus_5yr)){
       print(i)
       ### Check that this row has an NA
@@ -215,13 +215,13 @@ notif_age_nus_5yr_lLik_st <- function(V,st,rho=0.1) { # V = table of us notifica
 
 ##smoothed estimates
 notif_hr_lLik_st <- function(V,st) { # V = table of notifications by tx history (row=97:16, col=n then e)
-  notif_hr_5yr<-CalibDatState[["hr_cases_sm"]][which(CalibDatState[["hr_cases_sm"]][,1]==stateID[st,1]),7]*
-                CalibDatState[["hr_cases_sm"]][which(CalibDatState[["hr_cases_sm"]][,1]==stateID[st,1]),3]
-  # notif_5yr          <-    c(sum(CalibDatState[["cases_yr_st"]][[st]][2:6,2]),
-  #                             sum(CalibDatState[["cases_yr_st"]][[st]][7:11,2]),
-  #                             sum(CalibDatState[["cases_yr_st"]][[st]][12:16,2]),
-  #                             sum(CalibDatState[["cases_yr_st"]][[st]][17:21,2]),
-  #                             sum(CalibDatState[["cases_yr_st"]][[st]][22:26,2]))
+  notif_hr_5yr<-CalibDatCases[["hr_cases_sm"]][which(CalibDatCases[["hr_cases_sm"]][,1]==stateID[st,1]),7]*
+                CalibDatCases[["hr_cases_sm"]][which(CalibDatCases[["hr_cases_sm"]][,1]==stateID[st,1]),3]
+  # notif_5yr          <-    c(sum(CalibDatCases[["cases_yr_st"]][[st]][2:6,2]),
+  #                             sum(CalibDatCases[["cases_yr_st"]][[st]][7:11,2]),
+  #                             sum(CalibDatCases[["cases_yr_st"]][[st]][12:16,2]),
+  #                             sum(CalibDatCases[["cases_yr_st"]][[st]][17:21,2]),
+  #                             sum(CalibDatCases[["cases_yr_st"]][[st]][22:26,2]))
   # notif_hr_5yr      <- notif_hr*notif_5yr
   adj_6           <- sum(dnorm(notif_hr_5yr,notif_hr_5yr,notif_hr_5yr*0.1/1.96,log=T)*wts[c(45,50,55,60,65)])
   sum(dnorm(notif_hr_5yr,V*1e6,notif_hr_5yr*0.1/1.96,log=T)*wts[c(45,50,55,60,65)]) - adj_6
@@ -324,8 +324,8 @@ ltbi_fb_11_dp_lLik_st <- function(V) { # V = LTBI in FB pop 2011 (row=11 ages, c
 tbdeaths_lLik_st <- function(V,st) { # V = vector of total notifications 1999-2016
   tb_deaths <- as.numeric(CalibDatState[["tbdeaths"]][[st]][,3])
   V2<-rowSums(V)*1e6
-  adj_19    <- sum((dnorm(tb_deaths,tb_deaths,tb_deaths*0.1/1.96,log=T)*wts[50:69])[is.na(tb_deaths)==F])
-  sum((dnorm(tb_deaths,V2,tb_deaths*0.1/1.96,log=T)*wts[50:69])[is.na(tb_deaths)==F]) - adj_19
+  adj_19    <- sum((dnorm(tb_deaths,tb_deaths,tb_deaths*0.1/1.96,log=T)*wts[50:70])[is.na(tb_deaths)==F])
+  sum((dnorm(tb_deaths,V2,tb_deaths*0.1/1.96,log=T)*wts[50:70])[is.na(tb_deaths)==F]) - adj_19
 }
 ### ### ### ANN DECLINE IN TB DEATHS 1968-2015  ### ### ### ### ### ### D
 
@@ -340,9 +340,9 @@ tbdeaths_decline_lLik_st <- function(V) { # V = vector of tb deaths 1968-2015
 
 tb_dth_age_lLik_st <- function(V,rho=0.005) { # V = table of deaths by age 1999-2016 (row=18 years, col=11 ages)
   tb_deaths_age  <- CalibDatState[["tbdeaths_age_yr"]][,-1]
-  adj_19b        <- sum(dDirMult(M=tb_deaths_age+0.005,n=tb_deaths_age,Rho=rho)*wts[50:69])
+  adj_19b        <- sum(dDirMult(M=tb_deaths_age+0.005,n=tb_deaths_age,Rho=rho)*wts[50:70])
   V2 <- V[,-11]; V2[,10] <- V2[,10]+V[,11]
-  sum(dDirMult(M=V2,n=tb_deaths_age,Rho=rho)*wts[50:69]) - adj_19b
+  sum(dDirMult(M=V2,n=tb_deaths_age,Rho=rho)*wts[50:70]) - adj_19b
 }
 ### ### ### TOTAL POP EACH DECADE, FOR FB  ### ### ### ### ### ###  D
 # Motivation: norm, mean centered with CI = +/- 2 million wts[1+0:6*10]
