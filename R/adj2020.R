@@ -5,12 +5,15 @@ llikelihood2020 <- function(samp_i, start_mat, TB=1){
   ### param_init function for the model run.
 
   if(min(dim(as.data.frame(start_mat)))==1) {
-    par2020 <- as.numeric(start_mat)
+    par2020a <- as.numeric(start_mat)
   } else{
-    par2020 <- as.numeric(start_mat[samp_i,])
+    par2020a <- as.numeric(start_mat[samp_i,])
   }
   # optimized parameters as of 4/22/22 below
   # par2020 <- c(0.4232265, 0.3707595, 0.1984619, 1.1158255)
+  # convert the parameters back to normal
+  par2020b <- pnorm(par2020a,0,1)
+  par2020 <- qnorm(par2020b, mean    = paraminit2020[,4], sd     = paraminit2020[,5])
   names(par2020) <- c("Immig", "Dxt", "Trans", "CaseFat")
 
   # print(colnames(start_mat))
@@ -125,7 +128,7 @@ case_fat_20_lik <- function(V) {
 # paraminit2020[,1:3]<- cbind(c(.55, .5, .5, 2), c(.45, .1, .3, 1), c(.65, .9, .7, 3))
 # paraminit2020[,4:5] <- c(paraminit2020[,1],(paraminit2020[,3]-paraminit2020[,2])/3.92)
 #
-# startval2020 <-randomLHS(10,nrow(paraminit2020))
+# startval2020 <-qnorm(randomLHS(10,nrow(paraminit2020)))
 # colnames(startval2020) <- c("Immig", "Dxt", "Trans", "CaseFat")
 
 ### Calculate the basecase if we have re-optimized
@@ -186,20 +189,26 @@ optim_2020 <- function(df, samp_i=1,n_cores=2, TB=1){
 lprior2020 <- function(ParMatrix = startval2020, InitPar = paraminit2020) { # Par = ParInit
   if(dim(as.data.frame(ParMatrix))[2]==1) {
     ParMatrix <- t(as.data.frame(ParMatrix)) }
-  lPri <- rep(0,nrow(ParMatrix))
+  ldensity3 <- rep(0,nrow(ParMatrix))
+
   for(samp_i in 1:nrow(ParMatrix)) {
     # norm2unif
     Par <- ParMatrix[samp_i,]
+    # print(Par)
+    Par2 <- pnorm(Par,0,1)
     # unif2true
-    Par3 <- Par
-    Par3 <- qnorm(Par, mean    = InitPar[,4], sd = InitPar[,5])
+    Par3 <- qnorm(Par2, mean    = InitPar[,4], sd = InitPar[,5])
+    # print(Par3)
 
     if(dim(as.matrix(Par))[2]==1) Par <- t(as.matrix(Par))
     ldensity <- dmnorm(Par,rep(0,nrow(InitPar)),diag(nrow(InitPar)),log=T)
+    # print(ldensity)
+    ldensity2 <- ldensity - sum(dnorm(Par,0.1,log=T))
     lDensTrue <- rep(NA,nrow(InitPar))
-    lDensTrue <- dnorm(Par, mean  = InitPar[,4], sd = InitPar[,5], log=T)
-    ldensity3 <- ldensity
-    ldensity3[samp_i] <- ldensity+sum(lDensTrue)
+    lDensTrue <- dnorm(Par3, mean  = InitPar[,4], sd = InitPar[,5], log=T)
+    # print(lDensTrue)
+    ldensity3[samp_i] <- ldensity2+sum(lDensTrue)
+    # print(ldensity3)
 
     if(is.na(ldensity3[samp_i]))         {
       ldensity3[samp_i] <- -10^12 }
@@ -209,3 +218,12 @@ lprior2020 <- function(ParMatrix = startval2020, InitPar = paraminit2020) { # Pa
   return(ldensity3)
 }
 
+
+llikelihood2020_B <- function(start_mat, TB=1) {
+  if(dim(as.data.frame(start_mat))[2]==1) {
+    lLik <- llikelihood2020(1,t(as.data.frame(start_mat)), TB=TB)
+  } else {
+    lLik <- unlist(mclapply(1:nrow(start_mat),llikelihood2020,start_mat=start_mat,mc.cores = 1, TB=TB))
+  }
+  return((lLik))
+}
