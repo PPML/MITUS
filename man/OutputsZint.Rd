@@ -21,7 +21,7 @@ OutputsZint(
   Scen3 = 0,
   prg_chng = def_prgchng(),
   ttt_list = def_ttt(),
-  par2020 = c(0.4396327, 0.3918562, 0.2280117)
+  par2020 = c(0.4232265, 0.3707595, 0.1984619, 1.1158255)
 )
 }
 \arguments{

@@ -1,6 +1,7 @@
 #include <Rcpp.h>
 #include <math.h>
 using namespace Rcpp;
+//' This function is the timestepped model function
 //'@name cSim
 //'@description runs a simulation of the tb model
 //'@param nYrs number of years to run the model.
@@ -19,6 +20,7 @@ using namespace Rcpp;
 //'@param vTMort vector of TB mortality rates
 //'@param RRmuRF rate ratio of mortality across mortality risk group
 //'@param RRmuHR rate ratio of mortality across low/high risk dimension
+//'@param RRmuTBPand rate ratio of TB mortality during pandemic
 //'@param Birthst Births over time
 //'@param HrEntEx Matrix of Entry and Exit rates into the High Risk population
 //'@param ImmNon Immigration with no TB
@@ -48,7 +50,7 @@ using namespace Rcpp;
 //'@param ttt_pop_scrn population size to apply the ltbi prev to
 //'@param LtDxPar_lt matrix of latent diagnosis parameters
 //'@param LtDxPar_nolt matrix of latent diagnosis parameters
-//'@param rrTestLrNoTb
+//'@param rrTestLrNoTb reduction of testing for those whose true LTBI status is negative
 //'@param LtTxPar matrix of latent treatment parameters
 //'@param RRdxAge vector of rate ratios for TB diagnosis by age
 //'@param rRecov rate of recovery from latent slow to safe tb state
@@ -58,7 +60,7 @@ using namespace Rcpp;
 //'@param ag_den denominator used in the aging process
 //'@param NixTrans reduction of transmission over time
 //'@param dist_gen general distribution across tb progression and mort
-//'@param trans_mat_tot_ages
+//'@param trans_mat_tot_ages rebalancing of populations over time
 //'@return Outputs a list of outputs
 //[[Rcpp::export]]
 
@@ -80,6 +82,7 @@ Rcpp::List cSim(
     Rcpp::NumericMatrix vTMort,
     std::vector<double> RRmuRF,
     std::vector<double> RRmuHR,
+    std::vector<double> RRmuTBPand,
     std::vector<double> Birthst,
     Rcpp::NumericMatrix HrEntEx,
     Rcpp::NumericMatrix ImmNon,
@@ -901,9 +904,9 @@ Rcpp::List cSim(
                     VMort[ag][tb ][lt][im][nm][rg][na]  = V0[ag][tb][lt][im][nm][rg][na]*temp;
                   }
                   ///// WITH ACTIVE TB //////////////////////////////////////////////////
-                  VMort[ag][4 ][lt][im][nm][rg][na]  = V0[ag][4 ][lt][im][nm][rg][na]*(temp+vTMortN[ag][4 ] );
+                  VMort[ag][4 ][lt][im][nm][rg][na]  = V0[ag][4 ][lt][im][nm][rg][na]*(temp+vTMortN[ag][4 ]*RRmuTBPand[s]);
                   ///// WITH TB TREATMENT ///////////////////////////////////////////////
-                  VMort[ag][5 ][lt][im][nm][rg][na]  = V0[ag][5 ][lt][im][nm][rg][na]*(temp+vTMortN[ag][5 ]*pow(1.0-TxVecZ[1],TunTxMort));
+                  VMort[ag][5 ][lt][im][nm][rg][na]  = V0[ag][5 ][lt][im][nm][rg][na]*(temp+vTMortN[ag][5 ]*pow(1.0-TxVecZ[1],TunTxMort)*RRmuTBPand[s]);
                   ///// UPDATE THE PRIMARY VECTOR BY REMOVING MORTALITY /////////////////
                   for(int tb=0; tb<6; tb++) {
                     V1[ag][tb][lt][im][nm][rg][na]  -= VMort[ag][tb][lt][im][nm][rg][na];
@@ -1204,7 +1207,7 @@ Rcpp::List cSim(
         ///// calculate the number of rows which are the number of populations screened
         int rows = sizeof(ttt_samp_distN)/sizeof(ttt_samp_distN[0]);
         int cols = 16;
-        int agi = ttt_ag.size(); int nai = ttt_na.size(); int si = ttt_month.size();
+        int agi = ttt_ag.size(); int nai = ttt_na.size();
         ///////////////////////////////////////////////////////////////////////////////
         ///// start the loop for LTBI screening and treatment
         ///// only for no previous TB or LTBI tx
@@ -1777,8 +1780,8 @@ Rcpp::List cSim(
                     // if(im > 2) { temp = muTbRF;
                     // } else { temp = 0; }
                     temp=0;
-                    Outputs[y][252+ti]  += V0[ag][4][lt][im][nm][rg][na]*(vTMortN[ag][4 ]+temp);
-                    Outputs[y][252+ti]  += V0[ag][5][lt][im][nm][rg][na]*(vTMortN[ag][5 ]+temp)*pow(1.0-TxVecZ[1],TunTxMort); //check the TxMatZ portion
+                    Outputs[y][252+ti]  += VMort[ag][4][lt][im][nm][rg][na];
+                    Outputs[y][252+ti]  += VMort[ag][5][lt][im][nm][rg][na];
                   } } } } } }
         ////////////     CREATE YEARLY VALUES FROM THE MONTH ESTIMATE     ////////////
         for(int i=252; i<254; i++) { Outputs[y][i] = Outputs[y][i]*12; }
