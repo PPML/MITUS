@@ -18,7 +18,7 @@ param_init(
   prg_chng,
   ttt_list,
   delay = 0,
-  immig = 1
+  immig = 99
 )
 }
 \arguments{

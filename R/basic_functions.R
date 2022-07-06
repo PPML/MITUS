@@ -37,7 +37,7 @@ invlgt <- function(x) 1/(1+exp(-x))
 LgtCurve <- function(StYr,Endyr,EndVal) {
   z <- log(1/0.005-1)
   zz  <- seq(-z*(1+2*(StYr-1950)/(Endyr-StYr)),
-              z*(1+2*(2051-Endyr)/(Endyr-StYr)),
+             z*(1+2*(2100-Endyr)/(Endyr-StYr)),
              by=(2*z)/(Endyr-StYr)/12)
   zz  <- as.numeric(EndVal)/(1+exp(-zz))
   if(StYr>1950) {
@@ -103,11 +103,11 @@ expit <- function(x) {
 bspline <- function(x,k,i,m) {
   if (m==-1) {
     res <- as.numeric(x<k[i+1] & x>=k[i])
-} else {
+  } else {
     z0  <- (x-k[i]) / (k[i+m+1]-k[i]);
     z1  <- (k[i+m+2]-x) / (k[i+m+2]-k[i+1])
     z0*bspline(x,k,i,m-1) + z1*bspline(x,k,i+1,m-1)
-}  }
+  }  }
 
 #'Dirichlet multinomial density function
 #'@name dDirMult
@@ -132,8 +132,8 @@ dDirMult <- function(M,n,Rho) {
     rowSums(lgamma(n+M/Rho))-rowSums(lgamma(M/Rho))
   }
 }
+#'Simple function to return the mode of a vector
 #'@name getmode
-#'
 #'@param x some vector (character or numeric)
 #'@return mode
 #'@export

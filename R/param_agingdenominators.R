@@ -5,10 +5,11 @@
 
 #'@name age_denom
 #' @param loc two digit mailing abbreviation of state
-#' @return age_den matrix of denominators 10x1201
+#' @param month how long to run the calculation
+#' @return age_den matrix of denominators 10xmonth
 #' @export
 
-age_denom<-function(loc){
+age_denom<-function(loc, month){
   if (loc=="US"){
     #read in the population data that is 1 year age bands by each year 1950-2017
     popdist<- as.matrix(readRDS(system.file("US/US_PopCountsByAge.rds", package="MITUS")))
@@ -31,10 +32,10 @@ age_denom<-function(loc){
     #invert this for the aging rate
     ltd<-1/ltd
 
-    td<-matrix(NA,10,1201)
+    td<-matrix(NA,10,month)
     for (i in 1:10){
       td[i,1:817]<-SmoCurve(as.numeric(ltd[i,]))
-      td[i,818:1201]<-td[i,817]
+      td[i,818:month]<-td[i,817]
     }
 
     age_den<-t(td)*12
@@ -56,12 +57,12 @@ age_denom<-function(loc){
     if (loc %in% c("AK","HI")){
       years<-c(2017,2010,2000,1990,1980,1970,1960)
       for (i in 1:nrow(popdist)){
-      pop2<-rev(popdist[i,-1])
-      coeff<-lm(pop2~years)$coefficients
-      estim<-round((coeff[2]*1950)+coeff[1])
-      if (estim<0) estim<-0
-      popdist[i,1]<-estim
-    }}
+        pop2<-rev(popdist[i,-1])
+        coeff<-lm(pop2~years)$coefficients
+        estim<-round((coeff[2]*1950)+coeff[1])
+        if (estim<0) estim<-0
+        popdist[i,1]<-estim
+      }}
 
     #calculate the percentage of the total age band in each single year age
     ltd<-matrix(NA,10,8)
@@ -80,18 +81,18 @@ age_denom<-function(loc){
 
 
     for (i in 1:length(ltd)){
-    if (ltd[i]==0){
-      ltd[i]<-0.01980337
-    }}
+      if (ltd[i]==0){
+        ltd[i]<-0.01980337
+      }}
     #invert this for the aging rate
 
     ltd<-1/ltd
-    td<-matrix(NA,10,1201)
+    td<-matrix(NA,10,month)
     for (i in 1:10){
       td[i,1:841]<-SmoCurve_decade_month(as.numeric(ltd[i,]))
-      td[i,842:1201]<-td[i,841]
+      td[i,842:month]<-td[i,841]
     }
-  age_den<-t(td)*12
+    age_den<-t(td)*12
   } #end of else statement
   return(age_den)
 }

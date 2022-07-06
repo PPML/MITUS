@@ -2,8 +2,7 @@
 % Please edit documentation in R/IMIS_functions_st.r
 \name{llikelihoodZ_st}
 \alias{llikelihoodZ_st}
-\title{if any output is missing or negative or if any model state population is negative
-LTBI PREVALENCE BY AGE 2011, NUSB - index updated
+\title{LTBI PREVALENCE BY AGE 2011, NUSB - index updated
 LIKELIHOOD FOR BORGDORFF, FEREBEE & SUTHERLAND ESTIMATES
 ### ### ### HOMELESS POP 2010  ### ### ### ### ### ###
 #' Total DEATHS 2016
@@ -13,7 +12,6 @@ LIKELIHOOD FOR BORGDORFF, FEREBEE & SUTHERLAND ESTIMATES
 llikelihoodZ_st(samp_i, ParMatrix, loc, TB = 1)
 }
 \description{
-if any output is missing or negative or if any model state population is negative
 LTBI PREVALENCE BY AGE 2011, NUSB - index updated
 LIKELIHOOD FOR BORGDORFF, FEREBEE & SUTHERLAND ESTIMATES
 ### ### ### HOMELESS POP 2010  ### ### ### ### ### ###

@@ -8,8 +8,9 @@ OutputsInt(
   loc,
   ParMatrix,
   n_cores = 1,
-  endyr = 2050,
+  output_month = 11,
   startyr = 1950,
+  endyr = 2050,
   Int1 = 0,
   Int2 = 0,
   Int3 = 0,
@@ -20,7 +21,8 @@ OutputsInt(
   Scen3 = 0,
   prg_chng,
   ttt_list,
-  par2020
+  par2020 = c(0.4232265, 0.3707595, 0.1984619, 1.1158255),
+  care_cascade = def_care_cascade()
 )
 }
 \arguments{
@@ -30,9 +32,11 @@ OutputsInt(
 
 \item{n_cores}{how many cores to use}
 
-\item{endyr}{year to end the simulation}
+\item{output_month}{when to output results}
 
 \item{startyr}{year to start the simulation}
+
+\item{endyr}{year to end the simulation}
 
 \item{Int1}{boolean for intervention 1}
 

@@ -7,13 +7,15 @@ IN THE OUTPUTSINTZ FUNCTION THAT CALLS CSIM FROM THE TB_MODEL.CPP
 FUNCTION FILE. ALL VARIABLE NAMES THAT END IN t ARE INDEXED BY TIME
 VARIABLE NAMES BEGINNING WITH m ARE MATRICES & V ARE VECTORS.}
 \usage{
-age_denom(loc)
+age_denom(loc, month)
 }
 \arguments{
 \item{loc}{two digit mailing abbreviation of state}
+
+\item{month}{how long to run the calculation}
 }
 \value{
-age_den matrix of denominators 10x1201
+age_den matrix of denominators 10xmonth
 }
 \description{
 THE CODE BELOW SOURCES THE MODEL INPUTS AND THEN FORMATS THEM FOR USE
