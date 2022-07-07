@@ -404,7 +404,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   }
   }
 
-  ### ADJUST THIS FOR THE NUSB
+  ### ADJUST THIS FOR THE FOREIGN BORN
   ######################        SCREENING RATES          ######################
   rLtScrt       <- cbind(LgtCurve(1985,2015,(PV["rLtScr"]))/12, LgtCurve(1985,2015,(PV["rLtScr"]))/12)
   ######################  SCREENING RATE PROGRAM CHANGE ########################
@@ -457,13 +457,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   #adjust for High Risk Populations
   LtDxPar_lt[2,]     <-rrTestHr*LtDxPar_lt[1,]
   LtDxPar_nolt[2,]   <-rrTestHr*LtDxPar_nolt[1,]
-  #NUSB < 5 yr
-  LtDxPar_lt[3,]     <-rrTestHr*LtDxPar_lt[3,]
-  LtDxPar_nolt[3,]   <-rrTestHr*LtDxPar_nolt[3,]
-  #low risk NUSB
-  LtDxPar_lt[4,]     <-rrTestHr*LtDxPar_lt[4,]
-  LtDxPar_nolt[4,]   <-rrTestHr*LtDxPar_nolt[4,]
-  #High risk NUSB
+  #High risk foriegn born
   LtDxPar_lt[5,]     <-rrTestHr*LtDxPar_lt[4,]
   LtDxPar_nolt[5,]   <-rrTestHr*LtDxPar_nolt[4,]
   #adjust for no latent
