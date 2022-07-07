@@ -174,7 +174,7 @@ notif_age_nus_5yr_lLik_st <- function(V,st,rho=0.1) { # V = table of us notifica
   V3<-matrix(0,5,10)
   V3[1,]<-colSums(V2[1:5,]);V3[2,]<-colSums(V2[6:10,]);V3[3,]<-colSums(V2[11:15,]); V3[4,]<-colSums(V2[16:20,]); V3[5,]<-colSums(V2[21:25,])
   ### Check for missing calibration data
-  if (sum(is.na(notif_age_nus_5yr > 0))) {
+  if (sum(is.na(notif_age_nus_5yr)) > 0) {
     ### Initialize the likelihood value to zero
     tot_lik <- 0; adj_2a <-0
     ### If data is missing we need to create a single new bucket for these data and estimates
