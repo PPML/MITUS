@@ -1895,12 +1895,28 @@ Rcpp::List cSim(
         ///////////////////      TB INCIDENCE, BY ALL VS RECENT      /////////////////
         // By recency (<2 years) == all immediate, 1-(1-rfast)^24 x all Lf
         // Break down from latent fast and slow
+        // for(int rg=0; rg<2; rg++)  {
+        //   for(int ag=0; ag<11; ag++) {
+        //     for(int im=0; im<4; im++) {
+        //       temp4V[ag][im][rg] = (1-pow(1-(MrslowN[ag][im])-rRecov,24.0-(1.0/rDxtN[s][rg])))*(MrslowN[ag][im]);
+        //     } }
+        //   temp3V[rg] = (1-pow(1-rfast,24.0-(1.0/rDxtN[s][rg])))*rfast;
+        // }
+        // for(int ag=0; ag<11; ag++) {
+        //   for(int lt=0; lt<2; lt++) {
+        //     for(int im=0; im<4; im++) {
+        //       for(int nm=0; nm<4; nm++) {
+        //         for(int rg=0; rg<2; rg++) {
+        //           for(int na=0; na<3; na++) {
+        //             temp2 = (Vinf[ag][lt][im][nm][rg][na])*((MpfastN[ag][im]*(1-pow(1-rfast,24.0)) + (1-MpfastN[ag][im])*(1-pow(1-MrslowN[ag][im],24.0))));// Progression from recent infection
+        //             temp =  V0[ag][2 ][lt][im][nm][rg][na]*(MrslowN[ag][im]) + V0[ag][3 ][lt][im][nm][rg][na]*rfast; // All progression
         for(int rg=0; rg<2; rg++)  {
+          temp3V[rg] = std::max((1-pow(1-rfast,24.0-(1.0/rDxtN[s][rg])))*rfast, 1.0);
+
           for(int ag=0; ag<11; ag++) {
             for(int im=0; im<4; im++) {
-              temp4V[ag][im][rg] = (1-pow(1-(MrslowN[ag][im])-rRecov,24.0-(1.0/rDxtN[s][rg])))*(MrslowN[ag][im]);
+              temp4V[ag][im][rg] = std::max((1-pow(1-(MrslowN[ag][im])-rRecov,24.0-(1.0/rDxtN[s][rg])))*(MrslowN[ag][im]), 1.0);
             } }
-          temp3V[rg] = (1-pow(1-rfast,24.0-(1.0/rDxtN[s][rg])))*rfast;
         }
         for(int ag=0; ag<11; ag++) {
           for(int lt=0; lt<2; lt++) {
@@ -1908,8 +1924,8 @@ Rcpp::List cSim(
               for(int nm=0; nm<4; nm++) {
                 for(int rg=0; rg<2; rg++) {
                   for(int na=0; na<3; na++) {
-                    temp2 = (Vinf[ag][lt][im][nm][rg][na])*((MpfastN[ag][im]*(1-pow(1-rfast,24.0)) + (1-MpfastN[ag][im])*(1-pow(1-MrslowN[ag][im],24.0))));// Progression from recent infection
-                    temp =  V0[ag][2 ][lt][im][nm][rg][na]*(MrslowN[ag][im]) + V0[ag][3 ][lt][im][nm][rg][na]*rfast; // All progression
+                     temp2 = (Vinf[ag][lt][im][nm][rg][na])*((MpfastN[ag][im]*(1-pow(1-rfast,24.0)) + (1-MpfastN[ag][im])*(1-pow(1-MrslowN[ag][im],24.0))));// Progression from recent infection
+                    temp =  V0[ag][2 ][lt][im][nm][rg][na]*(MrslowN[ag][im])   + V0[ag][3 ][lt][im][nm][rg][na]*rfast ; // All progression
                     Outputs[y][155      ] += temp ;   // all incidence
                     Outputs[y][155+16   ] += temp2;   // all incidence, recent infection
                     Outputs[y][156+ag   ] += temp ;   // incidence by age
@@ -1933,6 +1949,8 @@ Rcpp::List cSim(
                     //   Outputs[y][171      ] += temp ;   //  incidence, HIV pos
                     //   Outputs[y][171+16   ] += temp2; } //  incidence, HIV pos, recent infection
                   } } } } } }
+        ////////////     CREATE YEARLY VALUES FROM THE MONTH ESTIMATE     ////////////
+        for(int i=155; i<171; i++) { Outputs[y][i] = Outputs[y][i]*12; }
         /////////////////// TB NOTIFICATIONS (DEAD AT DIAGNOSIS) /////////////////////
         for(int nm=0; nm<4 ; nm++) {
           for(int ag=0; ag<11; ag++) {
@@ -2457,11 +2475,12 @@ Rcpp::List cSim(
         // By recency (<2 years) == all immediate, 1-(1-rfast)^24 x all Lf
         // Break down from latent fast and slow
         for(int rg=0; rg<2; rg++)  {
+          temp3V[rg] = std::max((1-pow(1-rfast,24.0-(1.0/rDxtN[s][rg])))*rfast, 1.0);
+
           for(int ag=0; ag<11; ag++) {
             for(int im=0; im<4; im++) {
               temp4V[ag][im][rg] = (1-pow(1-(MrslowN[ag][im])-rRecov,24.0-(1.0/rDxtN[s][rg])))*(MrslowN[ag][im]);
             } }
-          temp3V[rg] = (1-pow(1-rfast,24.0-(1.0/rDxtN[s][rg])))*rfast;
         }
         for(int ag=0; ag<11; ag++) {
           for(int lt=0; lt<2; lt++) {
@@ -2469,8 +2488,12 @@ Rcpp::List cSim(
               for(int nm=0; nm<4; nm++) {
                 for(int rg=0; rg<2; rg++) {
                   for(int na=0; na<3; na++) {
-                    temp2 = (Vinf[ag][lt][im][nm][rg][na])*((MpfastN[ag][im]*(1-pow(1-rfast,24.0)) + (1-MpfastN[ag][im])*(1-pow(1-MrslowN[ag][im],24.0))));// Progression from recent infection
-                    temp =  V0[ag][2 ][lt][im][nm][rg][na]*(MrslowN[ag][im]) + V0[ag][3 ][lt][im][nm][rg][na]*rfast; // All progression
+                    // temp2 = (Vinf[ag][lt][im][nm][rg][na])*((MpfastN[ag][im]*(1-pow(1-rfast,24.0)) + (1-MpfastN[ag][im])*(1-pow(1-MrslowN[ag][im],24.0))));// Progression from recent infection
+                    // temp =  V0[ag][2 ][lt][im][nm][rg][na]*(MrslowN[ag][im]) + V0[ag][3 ][lt][im][nm][rg][na]*rfast; // All progression
+
+                    temp2 = V0[ag][2 ][lt][im][nm][rg][na]*temp4V[ag][im][rg]  + V0[ag][3 ][lt][im][nm][rg][na]*temp3V[rg];// Progression from recent infection
+                    temp =  V0[ag][2 ][lt][im][nm][rg][na]*(MrslowN[ag][im])   + V0[ag][3 ][lt][im][nm][rg][na]*rfast; // All progression
+
                     OutputsInt[y][155      ] += temp ;   // all incidence
                     OutputsInt[y][155+16   ] += temp2;   // all incidence, recent infection
                     OutputsInt[y][156+ag   ] += temp ;   // incidence by age
