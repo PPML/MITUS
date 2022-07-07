@@ -1,17 +1,10 @@
 #'@name fixed_vals
 #'@description function generates new param_init files for a state with values fixed to national levels
-#'@param samp_i which row of the optim_data frame to use
 #'@return dataset
 #'@export
-fixed_vals<-function(samp_i, US_opt_all){
+fixed_vals<-function(){
   library(dplyr)
   model_load("US")
-  # fixed prior values are those which we have large evidence informing
-  # the prior value and we are confident using this for all states
-  fixed_prior<-c("EffLt","SensSp","pCurPs")
-  pr_x<-filter(ParamInit, rownames(ParamInit) %in% fixed_prior)
-  pr_x<-as.vector(unlist(pr_x[,1]))
-  # model_load loads in the most recent optimized parameters
   P<-Par[1,]
   US_opt <- as.data.frame(P)
 
@@ -24,13 +17,13 @@ fixed_vals<-function(samp_i, US_opt_all){
   fixed_national<-c("muIp","TunmuTbAg","RRmuHR","pfast","ORpfast1","ORpfast2",
                     "ORpfastH","ORpfastPI","rslow","rslowH","TunrslowAge", "rfast",
                     "rRecov","rSlfCur", "rrTestHr", "rrTestLrNoTb",  "pImmScen",
-                    "TxQualEarly","TunTxQual","RRcurDef")
+                    "pCurPs", "TxQualEarly","TunTxQual","RRcurDef")
 
   nat_x<-filter(US_opt, rownames(US_opt) %in% fixed_national)
   nat_x<-as.vector(unlist(nat_x))
-  fixed_vals<-rep(NA,length(c(fixed_prior,fixed_national)))
-  fixed_vals<-as.vector(c(pr_x,nat_x))
-  names(fixed_vals)<-c(fixed_prior,fixed_national)
+  fixed_vals<-rep(NA,length(fixed_national))
+  fixed_vals<-as.vector(nat_x)
+  names(fixed_vals)<-c(fixed_national)
 
   ###LOAD IN THE STATE DATA TO CREATE A NEW PARAM_INIT,
   ###START_VAL DATA SETS FOR A NEW OPTIMIZATION RUN
