@@ -19,7 +19,7 @@ optim_data <- function(batches, loc, date){
   month<-strsplit(date, "-")[[1]][1]
   day<-strsplit(date, "-")[[1]][2]
   for (i in batches){
-    load(paste("/Users/nis100/Desktop/ND_010422/","Opt_", loc, "_r9_",i,"_2022-", date, ".rda", sep=""))
+    load(paste("/Users/nis100/Desktop/states_070822/","Opt_", loc, "_r9_",i,"_2022-", date, ".rda", sep=""))
     opt_all[i,1:nrow(ParamInitZ)] <- o9$par
     opt_all[i,nrow(ParamInitZ)+1]<- o9$value
   }
@@ -51,7 +51,7 @@ calib_plots_locs<-function(locs, simp.date, batches=15){
       results <-calib(samp.i[1], Opt, loc, cex.size = .8)
       ### Create Calibration Targets
       model_calib_outputs(loc, results, 1, simp.date)
-      model_calib_outputs_2020(loc, results, 1, simp.date)
+      # model_calib_outputs_2020(loc, results, 1, simp.date)
    }}
 
 calib_plots_locs_2020<-function(locs, simp.date, batches=15){

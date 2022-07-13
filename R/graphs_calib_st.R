@@ -531,7 +531,7 @@ calib_graphs_st <- function(df,loc, Par_list,pdf=TRUE, cex.size=.7){
     abline(h=axTicks(2),col="grey85")
 
     #plot the model data
-    lines(1951:2020,avg_age[2:length(avg_age)],lwd=2,col="blue")    #0-24 yrs
+    lines(1950:2020,avg_age[2:length(avg_age)],lwd=2,col="blue")    #0-24 yrs
 
     #plot text
     mtext(paste("Average Age of Notified TB Case in",loc,", 1950-2020", sep = " "),3,.3,font=2,cex=cex.size)

@@ -1,64 +1,72 @@
-calib<-function(samp_i,optim_mat, loc, pdf=TRUE, cex.size=1){
+calib<-function(samp_i,
+                optim_mat,
+                loc,
+                pdf=TRUE,
+                cex.size=1){
+
   if(min(dim(as.data.frame(optim_mat)))==1) {
-  Par <- as.numeric(optim_mat);
-  names(Par) <- names(optim_mat)
-} else {  Par <- as.numeric(optim_mat[samp_i,]);
-names(Par) <- colnames(optim_mat) }  ##previously, the distribution of parameters were transformed to normal distribution in
-##to facilitate comparisons. These first two steps convert these parameters back to their
-##distributions
-# normal to uniform
-Par2 <- pnorm(Par,0,1)
-# uniform to true
-Par3 <- Par2
-Par3[idZ0] <- qbeta( Par2[idZ0], shape1  = ParamInitZ[idZ0,6], shape2 = ParamInitZ[idZ0,7])
-Par3[idZ1] <- qgamma(Par2[idZ1], shape   = ParamInitZ[idZ1,6], rate   = ParamInitZ[idZ1,7])
-Par3[idZ2] <- qnorm( Par2[idZ2], mean    = ParamInitZ[idZ2,6], sd     = ParamInitZ[idZ2,7])
-P[ii] <- Par3
-P <- P
-# P <- Par[8,]
-# P["TunmuAg"]<-P["adj_ag1"]<-P["adj_ag11"]<-0
-# P[["pfast"]]<-.08
-# P[["rslowH"]]<-oldpar["rslowH"]*2
-# P[["rslow"]]<-oldpar["rslow"]*2
+    Par <- as.numeric(optim_mat);
+    names(Par) <- names(optim_mat)
+  } else {
+    Par <- as.numeric(optim_mat[samp_i,]);
+    names(Par) <- colnames(optim_mat) }  ##previously, the distribution of parameters were transformed to normal distribution in
+  ##to facilitate comparisons. These first two steps convert these parameters back to their
+  ##distributions
+  # normal to uniform
+  Par2 <- pnorm(Par,0,1)
+  # uniform to true
+  Par3 <- Par2
+  Par3[idZ0] <- qbeta( Par2[idZ0], shape1  = ParamInitZ[idZ0,6], shape2 = ParamInitZ[idZ0,7])
+  Par3[idZ1] <- qgamma(Par2[idZ1], shape   = ParamInitZ[idZ1,6], rate   = ParamInitZ[idZ1,7])
+  Par3[idZ2] <- qnorm( Par2[idZ2], mean    = ParamInitZ[idZ2,6], sd     = ParamInitZ[idZ2,7])
+  P[ii] <- Par3
+  P <- P
 
-# P["TunrslowAge"]<-oldpar["TunrslowAge"]
-# P[["rSlfCur"]]<-1
-# P[["ImmigVol"]]<-1;
-# P["RRtbprev"]<-2;
-# P["TunLtbiTrend"]<-P["TunLtbiTrend"]*4
-# P[["TunNetMig"]]<-1
-# P[["TunMubt"]]<-.1
-# P[["pImAct"]]<-.1
-# P[["LtbiPar1"]]<-1
-# P[["LtbiPar2"]]<-1
-# P[["sigmaFb"]]<-.5 #.9#P[["sigmaFb"]]*10
-# P[["sigmaHr"]]<-.5# .9#P[["sigmaHr"]]/10
-#  P[["RelCrHr"]]<-  P[["RelCrHr"]]/2
+  ### add in the 2020 parameter adjustments
+  par2020 = c(0.4232265, 0.3707595, 0.1984619, 1.1158255)
+  names(par2020) <- c("Immig", "Dxt", "Trans", "CaseFat")
+  ### CALL THE DEFAULT CARE CASCADE FOR BELOW
+  care_cascade <- def_care_cascade()
 
+  prg_chng<-def_prgchng(P)
+  prms <-list()
+  prms <- param_init(P,loc,prg_chng=prg_chng, ttt_list=def_ttt())
 
-prms <-list()
-prms<-param_init(PV=P, loc=loc, prg_chng = def_prgchng(P), ttt_list = def_ttt())
-# data("trans_mat_nat",package="MITUS")
-# trans_mat_tot_ages<-trans_mat_tot_ages_nat
-# tm<-matrix(0,16,16)
-# diag(tm)<-1
-# trans_mat_tot_ages<<-matrix(tm,16,176)
-trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
-rownames(trans_mat_tot_ages) <-  paste0(rep(paste0("p",0:3),each=4),"_",rep(paste0("m",0:3),4))
-colnames(trans_mat_tot_ages) <-  rep(paste0(rep(paste0("p",0:3),each=4),"_",rep(paste0("m",0:3),4)),11)
+  ### ADD IN THE 2020 ADJUSTMENT PARAMETERS; FOR OPTIMS THROUGH 2021 THESE
+  ### WILL NOT HAVE ANY EFFECT, BUT ARE REQUIRED FOR MODEL RUNS
+  prms$rDxt[843:864,]<-prms$rDxt[843:864,] - (prms$rDxt[843:864,]*par2020["Dxt"])
+  prms$NixTrans[843:864]<- (1-par2020["Trans"])
+  # Bring up params to 50% by end of 2022 (smoothly)
+  for (riskgrp in 1:ncol(prms$rDxt)){
+    prms$rDxt[865:888,riskgrp] <- seq(prms$rDxt[864,riskgrp],prms$rDxt[842,riskgrp], length.out=24)
+  }
+  prms$NixTrans[865:888] <- seq(prms$NixTrans[864],prms$NixTrans[842], length.out=24)
 
-if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
-zz <- cSim( nYrs       = 2021-1950         , nRes      = length(func_ResNam())  , rDxt     = prms[["rDxt"]]  , TxQualt    = prms[["TxQualt"]]   , InitPop  = prms[["InitPop"]]    ,
-            Mpfast     = prms[["Mpfast"]]    , ExogInf   = prms[["ExogInf"]]       , MpfastPI = prms[["MpfastPI"]], Mrslow     = prms[["Mrslow"]]    , rrSlowFB = prms[["rrSlowFB"]]  ,
-            rfast      = prms[["rfast"]]     , RRcurDef  = prms[["RRcurDef"]]      , rSlfCur  = prms[["rSlfCur"]] , p_HR       = prms[["p_HR"]] ,  dist_gen = prms[["dist_gen"]]    ,
-            vTMort     = prms[["vTMort"]]    , RRmuRF    = prms[["RRmuRF"]]        , RRmuHR   = prms[["RRmuHR"]]  , RRmuTBPand = rep(1,1213),  Birthst  = prms[["Birthst"]]    ,
-            HrEntEx    = prms[["HrEntEx"]]   , ImmNon    = prms[["ImmNon"]]        , ImmLat   = prms[["ImmLat"]] , ImmAct     = prms[["ImmAct"]]    , ImmFst   = prms[["ImmFst"]]    ,
-            net_mig_usb = prms[["net_mig_usb"]], net_mig_nusb = prms[["net_mig_nusb"]],
-            mubt       = prms[["mubt"]]    , RelInf    = prms[["RelInf"]]        , RelInfRg = prms[["RelInfRg"]], RRcrAG = prms[["RRcrAG"]], Vmix       = prms[["Vmix"]]      , rEmmigFB = prms [["rEmmigFB"]]  ,
-            TxVec      = prms[["TxVec"]]     , TunTxMort = prms[["TunTxMort"]]     , rDeft    = prms[["rDeft"]]   , pReTx      = prms[["pReTx"]]     , LtTxPar  = prms[["LtTxPar"]]    ,
-            LtDxPar_lt    = prms[["LtDxPar_lt"]]   , LtDxPar_nolt    = prms[["LtDxPar_nolt"]]   , rLtScrt   = prms[["rLtScrt"]]       , ttt_samp_dist   = prms[["ttt_sampling_dist"]] ,
-            ttt_ag = prms[["ttt_ag"]], ttt_na = prms[["ttt_na"]], ttt_month = prms[["ttt_month"]], ttt_ltbi = prms[["ttt_ltbi"]], ttt_pop_scrn = prms[["ttt_pop_scrn"]], RRdxAge  = prms[["RRdxAge"]] , rRecov     = prms[["rRecov"]]    , pImmScen = prms[["pImmScen"]]   ,
-            EarlyTrend = prms[["EarlyTrend"]], ag_den=prms[["aging_denom"]],  NixTrans = prms[["NixTrans"]],   trans_mat_tot_ages = trans_mat_tot_ages)
+  RRmuTBPand <- rep(1,1812)
+  RRmuTBPand[843:888] <-c(rep(par2020["CaseFat"], 22), seq(par2020["CaseFat"], 1, length.out = 24))
+  ### END OF 2020 ADJUSTMENT
+  ### POPULATION DISTRIBUTION REBLANCING FUNCTION
+  trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
+  if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
+  ### END POPULATION REBLANCING
+  ### DUE TO PARAMETER LIMITS WE CREATE A VECTOR OF VARIOUS SETUP VALUES
+  ### THESE CORRESPOND TO NYRS, NRES, AND OUTCOME MONTH
+  setup <- c(2021-(1950-1), length(func_ResNam()), 11)
+  ### END SETUP PARAMETERS
+  ### CALL THE MODEL FUNCTION
+  zz <- cSim(setup_pars = setup, rDxt               = prms[["rDxt"]]        , TxQualt      = prms[["TxQualt"]]     , InitPop       = prms[["InitPop"]],
+             Mpfast   = prms[["Mpfast"]]   , ExogInf    = prms[["ExogInf"]]    , MpfastPI           = prms[["MpfastPI"]]    , Mrslow       = prms[["Mrslow"]]      , rrSlowFB      = prms[["rrSlowFB"]],
+             rfast    = prms[["rfast"]]    , RRcurDef   = prms[["RRcurDef"]]   , rSlfCur            = prms[["rSlfCur"]]     , p_HR         = prms[["p_HR"]]        , vTMort        = prms[["vTMort"]],
+             RRmuRF   = prms[["RRmuRF"]]   , RRmuHR     = prms[["RRmuHR"]]     , Birthst            = prms[["Birthst"]]     , HrEntEx      = prms[["HrEntEx"]]     , ImmNon        = prms[["ImmNon"]],
+             ImmLat   = prms[["ImmLat"]]   , ImmAct     = prms[["ImmAct"]]     , ImmFst             = prms[["ImmFst"]]      , Int1Test     = prms[['Int1Test']]    , Int1Init     = prms[["Int1Init"]],
+             Int1Tx     = prms[['Int1Tx']] , net_mig_usb  = prms[["net_mig_usb"]] , net_mig_nusb  = prms[["net_mig_nusb"]]  , RRmuTBPand   = RRmuTBPand            ,
+             mubt     = prms[["mubt"]]     , RelInf     = prms[["RelInf"]]     , RelInfRg           = prms[["RelInfRg"]]    , RRcrAG       = prms[["RRcrAG"]]      , Vmix          = prms[["Vmix"]],
+             rEmmigFB = prms [["rEmmigFB"]], TxVec      = prms[["TxVec"]]      , TunTxMort          = prms[["TunTxMort"]]   , rDeft        = prms[["rDeft"]]       , ttt_samp_dist = prms[["ttt_sampling_dist"]],
+             ttt_ag   = prms[["ttt_ag"]]   , ttt_na     = prms[["ttt_na"]]     , ttt_month          = prms[["ttt_month"]]   , ttt_pop_scrn = prms[["ttt_pop_scrn"]], ttt_ltbi      = prms[["ttt_ltbi"]],
+             LtTxPar  = prms[["LtTxPar"]]  , LtDxPar_lt = prms[["LtDxPar_lt"]] , LtDxPar_nolt       = prms[["LtDxPar_nolt"]], rrTestLrNoTb = prms[["rrTestLrNoTb"]], rrTestHr = prms[["rrTestHr"]], rLtScrt      = prms[["rLtScrt"]]     , RRdxAge       = prms[["RRdxAge"]],
+             ttt_ltbi_init=care_cascade[1], ttt_ltbi_comp=care_cascade[2], ttt_ltbi_eff=care_cascade[3], ttt_ltbi_sens=care_cascade[4], ttt_ltbi_spec=care_cascade[5], ttt_ltbi_accept=care_cascade[6],
+             rRecov   = prms[["rRecov"]]   , pImmScen   = prms[["pImmScen"]]   , EarlyTrend         = prms[["EarlyTrend"]]  , pReTx        = prms[["pReTx"]]       , ag_den        = prms[["aging_denom"]],
+             NixTrans = prms[["NixTrans"]] ,  dist_gen  = prms[["dist_gen"]]   , trans_mat_tot_ages = trans_mat_tot_ages)
 #'if any output is missing or negative or if any model state population is negative
   M <- zz$Outputs
     colnames(M) <- prms[["ResNam"]]
