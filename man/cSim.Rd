@@ -5,8 +5,7 @@
 \title{This function is the timestepped model function}
 \usage{
 cSim(
-  nYrs,
-  nRes,
+  setup_pars,
   rDxt,
   TxQualt,
   InitPop,
@@ -47,6 +46,12 @@ cSim(
   ttt_month,
   ttt_pop_scrn,
   ttt_ltbi,
+  ttt_ltbi_accept,
+  ttt_ltbi_init,
+  ttt_ltbi_comp,
+  ttt_ltbi_eff,
+  ttt_ltbi_sens,
+  ttt_ltbi_spec,
   LtTxPar,
   LtDxPar_lt,
   LtDxPar_nolt,
@@ -67,9 +72,7 @@ cSim(
 )
 }
 \arguments{
-\item{nYrs}{number of years to run the model.}
-
-\item{nRes}{number of results of the model}
+\item{setup_pars}{number of years to run the model.}
 
 \item{rDxt}{Rate of active TB diagnosis over time}
 
@@ -149,6 +152,16 @@ cSim(
 
 \item{ttt_ltbi}{how much to increase ltbi}
 
+\item{ttt_ltbi_init}{counterfactual tltbi initiation}
+
+\item{ttt_ltbi_comp}{counterfactual tltbi completion}
+
+\item{ttt_ltbi_eff}{counterfactual tltbi effectiveness}
+
+\item{ttt_ltbi_sens}{counterfactual tltbi sensitivity}
+
+\item{ttt_ltbi_spec}{counterfactual tltbi specificity}
+
 \item{LtTxPar}{matrix of latent treatment parameters}
 
 \item{LtDxPar_lt}{matrix of latent diagnosis parameters}
@@ -180,6 +193,8 @@ cSim(
 \item{dist_gen}{general distribution across tb progression and mort}
 
 \item{trans_mat_tot_ages}{rebalancing of populations over time}
+
+\item{ttt_ltbi_acceot}{counterfactual ltbi testing}
 }
 \value{
 Outputs a list of outputs

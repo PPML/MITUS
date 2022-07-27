@@ -12,8 +12,7 @@ reblncd <- function(mubt, can_go, RRmuHR, RRmuRF, HRdist, dist_gen_v, adj_fact) 
 #' This function is the timestepped model function
 #'@name cSim
 #'@description runs a simulation of the tb model
-#'@param nYrs number of years to run the model.
-#'@param nRes number of results of the model
+#'@param setup_pars number of years to run the model.
 #'@param rDxt Rate of active TB diagnosis over time
 #'@param TxQualt active TB treatment over time
 #'@param InitPop Initial Population matrix
@@ -54,6 +53,12 @@ reblncd <- function(mubt, can_go, RRmuHR, RRmuRF, HRdist, dist_gen_v, adj_fact) 
 #'@param ttt_ag which age groups to apply ttt
 #'@param ttt_na which nativity groups to apply ttt
 #'@param ttt_ltbi how much to increase ltbi
+#'@param ttt_ltbi_init counterfactual tltbi initiation
+#'@param ttt_ltbi_comp counterfactual tltbi completion
+#'@param ttt_ltbi_eff counterfactual tltbi effectiveness
+#'@param ttt_ltbi_acceot counterfactual ltbi testing
+#'@param ttt_ltbi_sens  counterfactual tltbi sensitivity
+#'@param ttt_ltbi_spec counterfactual tltbi specificity
 #'@param ttt_month when to apply ttt interventions
 #'@param ttt_pop_scrn population size to apply the ltbi prev to
 #'@param LtDxPar_lt matrix of latent diagnosis parameters
@@ -70,7 +75,7 @@ reblncd <- function(mubt, can_go, RRmuHR, RRmuRF, HRdist, dist_gen_v, adj_fact) 
 #'@param dist_gen general distribution across tb progression and mort
 #'@param trans_mat_tot_ages rebalancing of populations over time
 #'@return Outputs a list of outputs
-cSim <- function(nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow, rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, RRmuTBPand, Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, net_mig_usb, net_mig_nusb, mubt, RelInf, RelInfRg, RRcrAG, Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, ttt_samp_dist, ttt_ag, ttt_na, ttt_month, ttt_pop_scrn, ttt_ltbi, LtTxPar, LtDxPar_lt, LtDxPar_nolt, rrTestLrNoTb, rrTestHr, Int1Test, Int1Init, Int1Tx, RRdxAge, rRecov, pImmScen, EarlyTrend, pReTx, ag_den, NixTrans, dist_gen, trans_mat_tot_ages) {
-    .Call('_MITUS_cSim', PACKAGE = 'MITUS', nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow, rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, RRmuTBPand, Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, net_mig_usb, net_mig_nusb, mubt, RelInf, RelInfRg, RRcrAG, Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, ttt_samp_dist, ttt_ag, ttt_na, ttt_month, ttt_pop_scrn, ttt_ltbi, LtTxPar, LtDxPar_lt, LtDxPar_nolt, rrTestLrNoTb, rrTestHr, Int1Test, Int1Init, Int1Tx, RRdxAge, rRecov, pImmScen, EarlyTrend, pReTx, ag_den, NixTrans, dist_gen, trans_mat_tot_ages)
+cSim <- function(setup_pars, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow, rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, RRmuTBPand, Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, net_mig_usb, net_mig_nusb, mubt, RelInf, RelInfRg, RRcrAG, Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, ttt_samp_dist, ttt_ag, ttt_na, ttt_month, ttt_pop_scrn, ttt_ltbi, ttt_ltbi_accept, ttt_ltbi_init, ttt_ltbi_comp, ttt_ltbi_eff, ttt_ltbi_sens, ttt_ltbi_spec, LtTxPar, LtDxPar_lt, LtDxPar_nolt, rrTestLrNoTb, rrTestHr, Int1Test, Int1Init, Int1Tx, RRdxAge, rRecov, pImmScen, EarlyTrend, pReTx, ag_den, NixTrans, dist_gen, trans_mat_tot_ages) {
+    .Call('_MITUS_cSim', PACKAGE = 'MITUS', setup_pars, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow, rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, RRmuTBPand, Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, net_mig_usb, net_mig_nusb, mubt, RelInf, RelInfRg, RRcrAG, Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, ttt_samp_dist, ttt_ag, ttt_na, ttt_month, ttt_pop_scrn, ttt_ltbi, ttt_ltbi_accept, ttt_ltbi_init, ttt_ltbi_comp, ttt_ltbi_eff, ttt_ltbi_sens, ttt_ltbi_spec, LtTxPar, LtDxPar_lt, LtDxPar_nolt, rrTestLrNoTb, rrTestHr, Int1Test, Int1Init, Int1Tx, RRdxAge, rRecov, pImmScen, EarlyTrend, pReTx, ag_den, NixTrans, dist_gen, trans_mat_tot_ages)
 }
 

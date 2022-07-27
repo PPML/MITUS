@@ -249,6 +249,37 @@ func_ResNam<-function(){
               paste("N_TBTxComps_NUSB",StatList[[1]],sep="_"),
 
               paste("N_LtbiTests_USB_TP",StatList[[1]],sep="_"),
-              paste("N_LtbiTests_NUSB_TP",StatList[[1]],sep="_")
-  )
+              paste("N_LtbiTests_NUSB_TP",StatList[[1]],sep="_"),
+
+              paste("N_LtTxNaive_US"),
+              paste("N_LtTxNaive_F1"),
+              paste("N_LtTxNaive_F2"),
+
+              paste("N_LtbiTests_USB",StatList[[4]],sep="_"),
+              paste("N_LtbiTests_NUSB",StatList[[4]],sep="_"),
+#
+              paste("N_US_LTBI_LtTxNaive"),
+              paste("N_US_LTBI_LtTxExp"),
+              paste("N_NUS_LTBI_LtTxNaive"),
+              paste("N_NUS_LTBI_LtTxExp"),
+
+
+              paste("0-4",StatList[[6]],sep="_"),
+              paste("5-14",StatList[[6]],sep="_"),
+              paste("15-24",StatList[[6]],sep="_"),
+              paste("25-34",StatList[[6]],sep="_"),
+              paste("35-44",StatList[[6]],sep="_"),
+              paste("45-54",StatList[[6]],sep="_"),
+              paste("55-64",StatList[[6]],sep="_"),
+              paste("65-74",StatList[[6]],sep="_"),
+              paste("75-84",StatList[[6]],sep="_"),
+              paste("85-94",StatList[[6]],sep="_"),
+              paste("95p",StatList[[6]],sep="_"),
+
+              c("N_Susc_US","N_L0_US"),
+              c("N_Susc_FB","N_L0_FB"),
+
+              paste("TLTBI_TP_L0"),
+              paste("LTBI_NUSB_nL0")
+              )
 }
