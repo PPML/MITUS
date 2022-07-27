@@ -36,7 +36,7 @@ crude_rate<-function(Inputs, loc){
   }
   #combine past and future
   cruderate<-c(cruderatepast,cruderatefuture)
-  names(cruderate)<-as.character(seq(1950,2050,1))
+  names(cruderate)<-as.character(seq(1950,2100,1))
 
 
   return(cruderate)}

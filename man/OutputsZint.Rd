@@ -9,6 +9,7 @@ OutputsZint(
   samp_i = 1,
   ParMatrix,
   loc,
+  output_month = 11,
   startyr = 1950,
   endyr = 2050,
   Int1 = 0,
@@ -19,8 +20,9 @@ OutputsZint(
   Scen1 = 0,
   Scen2 = 0,
   Scen3 = 0,
-  prg_chng = def_prgchng(),
+  prg_chng = def_prgchng(Par[1, ]),
   ttt_list = def_ttt(),
+  care_cascade = def_care_cascade(),
   par2020 = c(0.4232265, 0.3707595, 0.1984619, 1.1158255)
 )
 }
@@ -30,6 +32,8 @@ OutputsZint(
 \item{ParMatrix}{parameter matrix to use in the simulation}
 
 \item{loc}{two-digit abbreviation for location}
+
+\item{output_month}{when to output results}
 
 \item{startyr}{year to start the simulation}
 
