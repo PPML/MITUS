@@ -19,7 +19,10 @@ national_param_init(
   Scen5 = 0,
   Scen6 = 0,
   prg_chng,
-  ttt_input
+  ttt_list,
+  delay = 0,
+  immig = 1,
+  noiseParams = list(1, 1, 1)
 )
 }
 \arguments{
@@ -43,15 +46,15 @@ national_param_init(
 
 \item{Scen3}{boolean for scenario 3}
 
-\item{Scen4}{boolean for scenario 4}
+\item{Scen4}{boolean for scenario 4 (additional for paper analysis)}
 
-\item{Scen5}{boolean for scenario 5}
+\item{Scen5}{boolean for scenario 5 (additional for paper analysis)}
 
-\item{Scen6}{boolean for scenario 6}
+\item{Scen6}{boolean for scenario 6 (additional for paper analysis)}
 
 \item{prg_chng}{vector of program change values}
 
-\item{ttt_input}{list of ttt changes}
+\item{ttt_list}{list of ttt changes}
 }
 \value{
 InputParams list

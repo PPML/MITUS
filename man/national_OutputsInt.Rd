@@ -21,7 +21,7 @@ national_OutputsInt(
   Scen5 = 0,
   Scen6 = 0,
   prg_chng,
-  ttt_input,
+  ttt_list,
   care_cascade
 )
 }
@@ -52,7 +52,7 @@ national_OutputsInt(
 
 \item{prg_chng}{vector of program change values}
 
-\item{ttt_input}{list of targeted testing and treatment values}
+\item{ttt_list}{list of targeted testing and treatment values}
 
 \item{startyr}{year to start the simulation}
 }

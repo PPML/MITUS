@@ -9,6 +9,7 @@ national_OutputsZint(
   samp_i = 1,
   ParMatrix,
   loc,
+  output_month = 11,
   startyr = 1950,
   endyr = 2050,
   Int1 = 0,
@@ -23,7 +24,7 @@ national_OutputsZint(
   Scen5 = 0,
   Scen6 = 0,
   prg_chng,
-  ttt_input,
+  ttt_list,
   care_cascade
 )
 }
@@ -33,6 +34,8 @@ national_OutputsZint(
 \item{ParMatrix}{parameter matrix to use in the simulation}
 
 \item{loc}{two-digit abbreviation for location}
+
+\item{output_month}{when to output results}
 
 \item{startyr}{year to start the simulation}
 
@@ -62,7 +65,7 @@ national_OutputsZint(
 
 \item{prg_chng}{vector of program change values}
 
-\item{ttt_input}{list of targeted testing and treatment values}
+\item{ttt_list}{list of targeted testing and treatment values}
 }
 \value{
 results data frame of output
