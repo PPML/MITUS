@@ -18,9 +18,13 @@
 #'@param Scen3 boolean for scenario 3
 #'@param prg_chng vector of program change values
 #'@param ttt_list list of ttt changes
+#'@param immig
+#'@param return_months
+#'@param multiplier
 #'@return InputParams list
 #'@export
-param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,prg_chng, ttt_list,delay=0, immig=99){
+param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,
+                       prg_chng, ttt_list,delay=0, immig=99, return_months = 865:888, multiplier = 1){
   ################################################################################
   ##### DEFINE VARIABLES THAT WILL DETERMINE HOW LONG THE TIME               #####
   ##### DEPENDENT VARIABLES SHOULD BE                                        #####
@@ -178,12 +182,10 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
     TotImmAge[,j]        <- SmoCurve(TotImmAge0[,j])
   }
   if(immig != 99){
-    #Hold reduction through December 2021
-    TotImmAge[843:864,]<-TotImmAge[843:864,]-(TotImmAge[843:864,]*immig);
-    # Bring up immigration to 50% by end of 2022 (smoothly)
-    for (agegrp in 1:ncol(TotImmAge)){
-      TotImmAge[865:888,agegrp] <- seq(TotImmAge[864,agegrp],TotImmAge[842,agegrp], length.out=24)
-    }
+      TotImmAge <- adj_immig_2020(TotImmAge = TotImmAge,
+                                  immig = immig,
+                                  return_months = return_months,
+                                  multiplier=multiplier)
   }
   ######################           LTBI IMM.             ########################
   PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:71]^(exp(PV["TunLtbiTrend"]))*ImmigInputs[["PrevTrend25_34"]][71]^(1-exp(PV["TunLtbiTrend"])),

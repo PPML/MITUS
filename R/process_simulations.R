@@ -18,12 +18,16 @@
 #'@param prg_chng vector of program change values
 #'@param ttt_list list of targeted testing and treatment values
 #'@param par2020 vector of 2020 adjustment parameters
+#'@param return_months
+#'@param multiplier
 #'@return results data frame of output
 #'@export
 OutputsZint <-  function(samp_i=1,ParMatrix,loc, output_month = 11, startyr=1950, endyr=2050,
                          Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,
                          prg_chng=def_prgchng(Par[1,]), ttt_list=def_ttt(), care_cascade = def_care_cascade(),
-                         par2020 = c(0.4232265, 0.3707595, 0.1984619, 1.1158255))
+                         par2020 = c(0.4232265, 0.3707595, 0.1984619, 1.1158255),
+                         return_months =  865:888,
+                         multiplier = 1)
 {
   if(min(dim(as.data.frame(ParMatrix)))==1) {
     Par1 <- as.numeric(ParMatrix);
@@ -48,35 +52,46 @@ OutputsZint <-  function(samp_i=1,ParMatrix,loc, output_month = 11, startyr=1950
   prms <- list()
   # prms <- param_init(P,loc="MA",prg_chng=def_prgchng(Par[1,]),ttt_list=def_ttt())
 
-  prms <- param_init(P,loc,Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3,prg_chng,ttt_list, immig = par2020["Immig"])
-  prms$rDxt[843:864,]<-prms$rDxt[843:864,] - (prms$rDxt[843:864,]*par2020["Dxt"])
-  prms$NixTrans[843:864]<- (1-par2020["Trans"])
-  # Bring up params to 50% by end of 2022 (smoothly)
-  for (riskgrp in 1:ncol(prms$rDxt)){
-    prms$rDxt[865:888,riskgrp] <- seq(prms$rDxt[864,riskgrp],prms$rDxt[842,riskgrp], length.out=24)
-  }
-  prms$NixTrans[865:888] <- seq(prms$NixTrans[864],prms$NixTrans[842], length.out=24)
+  prms <- param_init(P,loc,Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3,prg_chng,ttt_list, immig = par2020["Immig"],
+                     return_months = return_months,
+                     multiplier = multiplier)
 
-  RRmuTBPand <- rep(1,1812)
-  RRmuTBPand[843:888] <-c(rep(par2020["CaseFat"], 22), seq(par2020["CaseFat"], 1, length.out = 24))
+  ### adjust parameters for 2020 ###
+
+  prms2020 <<- adj_param_2020(rDxt = prms$rDxt,
+                             NixTrans = prms$NixTrans,
+                             par2020 = par2020,
+                             return_months = return_months,
+                             multiplier = multiplier)
+
+  # prms$rDxt[843:864,]<-prms$rDxt[843:864,] - (prms$rDxt[843:864,]*par2020["Dxt"])
+  # prms$NixTrans[843:864]<- (1-par2020["Trans"])
+  # # Bring up params to 50% by end of 2022 (smoothly)
+  # for (riskgrp in 1:ncol(prms$rDxt)){
+  #   prms$rDxt[865:888,riskgrp] <- seq(prms$rDxt[864,riskgrp],prms$rDxt[842,riskgrp], length.out=24)
+  # }
+  # prms$NixTrans[865:888] <- seq(prms$NixTrans[864],prms$NixTrans[842], length.out=24)
+  #
+  # RRmuTBPand <- rep(1,1812)
+  # RRmuTBPand[843:888] <-c(rep(par2020["CaseFat"], 22), seq(par2020["CaseFat"], 1, length.out = 24))
   trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
   if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
 
   setup <- c(endyr-(startyr-1), length(func_ResNam()), output_month)
 
-  m <- cSim(setup_pars = setup, rDxt               = prms[["rDxt"]]        , TxQualt      = prms[["TxQualt"]]     , InitPop       = prms[["InitPop"]],
+  m <- cSim(setup_pars = setup, rDxt               = prms2020[["rDxt"]]        , TxQualt      = prms[["TxQualt"]]     , InitPop       = prms[["InitPop"]],
             Mpfast   = prms[["Mpfast"]]   , ExogInf    = prms[["ExogInf"]]    , MpfastPI           = prms[["MpfastPI"]]    , Mrslow       = prms[["Mrslow"]]      , rrSlowFB      = prms[["rrSlowFB"]],
             rfast    = prms[["rfast"]]    , RRcurDef   = prms[["RRcurDef"]]   , rSlfCur            = prms[["rSlfCur"]]     , p_HR         = prms[["p_HR"]]        , vTMort        = prms[["vTMort"]],
             RRmuRF   = prms[["RRmuRF"]]   , RRmuHR     = prms[["RRmuHR"]]     , Birthst            = prms[["Birthst"]]     , HrEntEx      = prms[["HrEntEx"]]     , ImmNon        = prms[["ImmNon"]],
             ImmLat   = prms[["ImmLat"]]   , ImmAct     = prms[["ImmAct"]]     , ImmFst             = prms[["ImmFst"]]      , Int1Test     = prms[['Int1Test']]    , Int1Init     = prms[["Int1Init"]],
-            Int1Tx     = prms[['Int1Tx']] , net_mig_usb  = prms[["net_mig_usb"]] , net_mig_nusb  = prms[["net_mig_nusb"]]  , RRmuTBPand   = RRmuTBPand            ,
+            Int1Tx     = prms[['Int1Tx']] , net_mig_usb  = prms[["net_mig_usb"]] , net_mig_nusb  = prms[["net_mig_nusb"]]  , RRmuTBPand   = prms2020[["RRmuTBPand"]]            ,
             mubt     = prms[["mubt"]]     , RelInf     = prms[["RelInf"]]     , RelInfRg           = prms[["RelInfRg"]]    , RRcrAG       = prms[["RRcrAG"]]      , Vmix          = prms[["Vmix"]],
             rEmmigFB = prms [["rEmmigFB"]], TxVec      = prms[["TxVec"]]      , TunTxMort          = prms[["TunTxMort"]]   , rDeft        = prms[["rDeft"]]       , ttt_samp_dist = prms[["ttt_sampling_dist"]],
             ttt_ag   = prms[["ttt_ag"]]   , ttt_na     = prms[["ttt_na"]]     , ttt_month          = prms[["ttt_month"]]   , ttt_pop_scrn = prms[["ttt_pop_scrn"]], ttt_ltbi      = prms[["ttt_ltbi"]],
             LtTxPar  = prms[["LtTxPar"]]  , LtDxPar_lt = prms[["LtDxPar_lt"]] , LtDxPar_nolt       = prms[["LtDxPar_nolt"]], rrTestLrNoTb = prms[["rrTestLrNoTb"]], rrTestHr = prms[["rrTestHr"]], rLtScrt      = prms[["rLtScrt"]]     , RRdxAge       = prms[["RRdxAge"]],
             ttt_ltbi_init=care_cascade[1], ttt_ltbi_comp=care_cascade[2], ttt_ltbi_eff=care_cascade[3], ttt_ltbi_sens=care_cascade[4], ttt_ltbi_spec=care_cascade[5], ttt_ltbi_accept=care_cascade[6],
             rRecov   = prms[["rRecov"]]   , pImmScen   = prms[["pImmScen"]]   , EarlyTrend         = prms[["EarlyTrend"]]  , pReTx        = prms[["pReTx"]]       , ag_den        = prms[["aging_denom"]],
-            NixTrans = prms[["NixTrans"]] ,  dist_gen  = prms[["dist_gen"]]   , trans_mat_tot_ages = trans_mat_tot_ages)
+            NixTrans = prms2020[["NixTrans"]] ,  dist_gen  = prms[["dist_gen"]]   , trans_mat_tot_ages = trans_mat_tot_ages)
 
   colnames(m$Outputs) <- func_ResNam();
 
@@ -111,14 +126,20 @@ OutputsZint <-  function(samp_i=1,ParMatrix,loc, output_month = 11, startyr=1950
 #'@param prg_chng vector of program change values
 #'@param ttt_list list of targeted testing and treatment values
 #'@param par2020 vector of 2020 adjustment parameters
+#'@param return_months
+#'@param multiplier
 #'@return out outputs
 #'@export
-OutputsInt <- function(loc,ParMatrix, n_cores=1, output_month = 11, startyr=1950,endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,prg_chng, ttt_list, par2020=c(0.4232265, 0.3707595, 0.1984619, 1.1158255), care_cascade = def_care_cascade()) {
+OutputsInt <- function(loc,ParMatrix, n_cores=1, output_month = 11, startyr=1950,endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,prg_chng, ttt_list, par2020=c(0.4232265, 0.3707595, 0.1984619, 1.1158255), care_cascade = def_care_cascade(),
+                       return_months =  865:888,
+                       multiplier = 1) {
   if(min(dim(as.data.frame(ParMatrix)))==1) {
-    out <- OutputsZint(samp_i=1,ParMatrix=ParMatrix,loc=loc, output_month = output_month, endyr=endyr,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3, prg_chng=prg_chng, ttt_list=ttt_list, par2020 = par2020, care_cascade = care_cascade)
+    out <- OutputsZint(samp_i=1,ParMatrix=ParMatrix,loc=loc, output_month = output_month, endyr=endyr,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3,
+                       prg_chng=prg_chng, ttt_list=ttt_list, par2020 = par2020, care_cascade = care_cascade, return_months = return_months, multiplier = multiplier)
   } else {
     out0 <- mclapply(X=1:nrow(ParMatrix),FUN=OutputsZint,mc.cores=n_cores,
-                     ParMatrix=ParMatrix, loc=loc, output_month = output_month, endyr=endyr,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3,prg_chng=prg_chng,ttt_list= ttt_list, par2020 = par2020, care_cascade = care_cascade)
+                     ParMatrix=ParMatrix, loc=loc, output_month = output_month, endyr=endyr,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3,
+                     prg_chng=prg_chng,ttt_list= ttt_list, par2020 = par2020, care_cascade = care_cascade, return_months = return_months, multiplier = multiplier)
     out <- array(NA,dim=c(length(out0),endyr-(startyr-1),length(func_ResNam())))
 
     for(i in 1:length(out0)){
