@@ -18,16 +18,14 @@
 #'@param prg_chng vector of program change values
 #'@param ttt_list list of targeted testing and treatment values
 #'@param par2020 vector of 2020 adjustment parameters
-#'@param return_months
-#'@param multiplier
+#'@param return_params
 #'@return results data frame of output
 #'@export
 OutputsZint <-  function(samp_i=1,ParMatrix,loc, output_month = 11, startyr=1950, endyr=2050,
                          Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,
                          prg_chng=def_prgchng(Par[1,]), ttt_list=def_ttt(), care_cascade = def_care_cascade(),
                          par2020 = c(0.4232265, 0.3707595, 0.1984619, 1.1158255),
-                         return_months =  865:888,
-                         multiplier = 1)
+                         return_params = def_returnScenario())
 {
   if(min(dim(as.data.frame(ParMatrix)))==1) {
     Par1 <- as.numeric(ParMatrix);
@@ -53,16 +51,15 @@ OutputsZint <-  function(samp_i=1,ParMatrix,loc, output_month = 11, startyr=1950
   # prms <- param_init(P,loc="MA",prg_chng=def_prgchng(Par[1,]),ttt_list=def_ttt())
 
   prms <- param_init(P,loc,Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3,prg_chng,ttt_list, immig = par2020["Immig"],
-                     return_months = return_months,
-                     multiplier = multiplier)
+                     return_months = return_params[["Immig"]][["return_months"]],
+                     multiplier = return_params[["Immig"]][["multiplier"]])
 
   ### adjust parameters for 2020 ###
 
   prms2020 <<- adj_param_2020(rDxt = prms$rDxt,
                              NixTrans = prms$NixTrans,
                              par2020 = par2020,
-                             return_months = return_months,
-                             multiplier = multiplier)
+                             return_params = return_params)
 
   # prms$rDxt[843:864,]<-prms$rDxt[843:864,] - (prms$rDxt[843:864,]*par2020["Dxt"])
   # prms$NixTrans[843:864]<- (1-par2020["Trans"])
