@@ -281,5 +281,8 @@ func_ResNam<-function(){
 
               paste("TLTBI_TP_L0"),
               paste("LTBI_NUSB_nL0")
+              # These were used for troubleshooting the relationship between incident Mtb infections
+              # and TB notifications. Unnecessary to produce every run
+              # c("FOI_POP_LR_US","FOI_POP_HR_US","FOI_POP_LR_FB","FOI_POP_HR_FB" ) #force of infection pops
               )
 }

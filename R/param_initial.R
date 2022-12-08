@@ -606,6 +606,10 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   if (loc != "US"){
      rDxt<-adj_rDxt(rDxt)
   }
+  # adjustment to ensure notifications match expectation based on immigration and recent infections
+  if (loc == "KY") rDxt[865:1801,] <-rDxt[865:1801,]*2.25
+  if (loc == "IN") rDxt[865:1801,] <-rDxt[865:1801,]*3.25
+
   #### #### #### INT 3 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
   if(Int3==1) { for(i in 1:2) { rDxt[,i] <- rDxt[,i]+ rDxt[,i]*LgtCurve(intv_yr,intv_yr+5,1)}}
