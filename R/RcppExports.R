@@ -19,6 +19,7 @@
 #'@param vTMort vector of TB mortality rates
 #'@param RRmuRF rate ratio of mortality across mortality risk group
 #'@param RRmuHR rate ratio of mortality across low/high risk dimension
+#'@param RRmuTBPand rate ratio of TB mortality during pandemic
 #'@param Birthst Births over time
 #'@param HrEntEx Matrix of Entry and Exit rates into the High Risk population
 #'@param ImmNon Immigration with no TB
@@ -65,8 +66,8 @@
 #'@param dist_gen general distribution across tb progression and mort
 #'@param trans_mat_tot_ages
 #'@return Outputs a list of outputs
-national_cSim <- function(setup_pars, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow, rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, SpImmNon, net_mig_usb, net_mig_nusb, mubt, RelInf, RelInfRg, RRcrAG, Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, ttt_samp_dist, ttt_month, ttt_pop_scrn, ttt_ltbi, ttt_ltbi_accept, ttt_ltbi_init, ttt_ltbi_comp, ttt_ltbi_eff, ttt_ltbi_sens, ttt_ltbi_spec, LtTxPar, LtDxPar_lt, LtDxPar_nolt, rrTestLrNoTb, rrTestHr, Int1Test, Int1Init, Int1Tx, RRdxAge, rRecov, pImmScen, EarlyTrend, pReTx, ag_den, NixTrans, NixTb, dist_gen, trans_mat_tot_ages) {
-    .Call('_MITUS_national_cSim', PACKAGE = 'MITUS', setup_pars, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow, rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, SpImmNon, net_mig_usb, net_mig_nusb, mubt, RelInf, RelInfRg, RRcrAG, Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, ttt_samp_dist, ttt_month, ttt_pop_scrn, ttt_ltbi, ttt_ltbi_accept, ttt_ltbi_init, ttt_ltbi_comp, ttt_ltbi_eff, ttt_ltbi_sens, ttt_ltbi_spec, LtTxPar, LtDxPar_lt, LtDxPar_nolt, rrTestLrNoTb, rrTestHr, Int1Test, Int1Init, Int1Tx, RRdxAge, rRecov, pImmScen, EarlyTrend, pReTx, ag_den, NixTrans, NixTb, dist_gen, trans_mat_tot_ages)
+national_cSim <- function(setup_pars, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow, rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, RRmuTBPand, Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, SpImmNon, net_mig_usb, net_mig_nusb, mubt, RelInf, RelInfRg, RRcrAG, Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, ttt_samp_dist, ttt_month, ttt_pop_scrn, ttt_ltbi, ttt_ltbi_accept, ttt_ltbi_init, ttt_ltbi_comp, ttt_ltbi_eff, ttt_ltbi_sens, ttt_ltbi_spec, LtTxPar, LtDxPar_lt, LtDxPar_nolt, rrTestLrNoTb, rrTestHr, Int1Test, Int1Init, Int1Tx, RRdxAge, rRecov, pImmScen, EarlyTrend, pReTx, ag_den, NixTrans, NixTb, dist_gen, trans_mat_tot_ages) {
+    .Call('_MITUS_national_cSim', PACKAGE = 'MITUS', setup_pars, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow, rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, RRmuTBPand, Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, SpImmNon, net_mig_usb, net_mig_nusb, mubt, RelInf, RelInfRg, RRcrAG, Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, ttt_samp_dist, ttt_month, ttt_pop_scrn, ttt_ltbi, ttt_ltbi_accept, ttt_ltbi_init, ttt_ltbi_comp, ttt_ltbi_eff, ttt_ltbi_sens, ttt_ltbi_spec, LtTxPar, LtDxPar_lt, LtDxPar_nolt, rrTestLrNoTb, rrTestHr, Int1Test, Int1Init, Int1Tx, RRdxAge, rRecov, pImmScen, EarlyTrend, pReTx, ag_den, NixTrans, NixTb, dist_gen, trans_mat_tot_ages)
 }
 
 #'@name national_cSim_react

@@ -21,11 +21,16 @@
 #'@param Scen6 boolean for scenario 6 (additional for paper analysis)
 #'@param prg_chng vector of program change values
 #'@param ttt_list list of ttt changes
+#'@param delay
+#'@param immig
+#'@param noiseParams
 #'@return InputParams list
 #'@export
 national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,
-                                Scen1=0,Scen2=0,Scen3=0,Scen4=0,Scen5=0, Scen6=0,
-                                prg_chng, ttt_list, delay=0, immig=1, noiseParams=list(1,1,1)){
+                                Scen1=0, Scen2=0, Scen3=0, Scen4=0, Scen5=0,
+                                Scen6=0, prg_chng, ttt_list, delay=0,
+                                immig=99, noiseParams=list(1,1,1)){
+
   ################################################################################
   ##### DEFINE VARIABLES THAT WILL DETERMINE HOW LONG THE TIME               #####
   ##### DEPENDENT VARIABLES SHOULD BE                                        #####
@@ -35,7 +40,9 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,
   intv_m<-((intv_yr-1949)*12)+1
   prg_yr <-prg_chng["start_yr"]
   prg_m  <-((prg_yr-1949)*12)+1
-  ttt_month <-seq(((ttt_list[[1]][["StartYr"]]-1950)*12) + 6,((ttt_list[[1]][["EndYr"]]-1950)*12) + 6,12)
+  ttt_month <- seq(((ttt_list[[1]][["StartYr"]] - 1950) * 12) + 6,
+                   ((ttt_list[[1]][[ "EndYr" ]] - 1950) * 12) + 6, length.out = 12)
+
   ################################################################################
   ##### CHECK IF ALL INTERVENTIONS OPTION IS SELECTED AND UPDATE INT VARS ########
   ################################################################################
@@ -72,13 +79,16 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,
       BgMort[j,i]<-BgMort[j-1,i]*(1-.0069)
     }
   }
-  ################################################################################
+  #############################################################################
   InitPop          <- Inputs[["InitPop"]]
   Births           <- Inputs[["Births"]]
   ImmigInputs      <- Inputs[["ImmigInputs"]]
-  ################################################################################
-  ##################### CHECK FOR SCENARIO 6             ########################
-  ##################### CHANGES IMMIGRATION BURDEN       ########################
+
+  #############################################################################
+  #####################      CHECK FOR SCENARIO 6        ######################
+  #####################    CHANGES IMMIGRATION BURDEN    ######################
+  #############################################################################
+
   if(Scen6==1){
     r_decline=.03
   } else if (Scen6==2){
@@ -86,7 +96,8 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,
   } else {
     r_decline=0.015
   }
-  ImmigInputs$PrevTrend25_34<-crude_rate(Inputs,loc,r_decline)
+
+  ImmigInputs$PrevTrend25_34 <- crude_rate(Inputs, loc, r_decline)
   ImmigInputs$PrevTrend25_34[74:101] <- ImmigInputs$PrevTrend25_34[73]*noiseParams[[2]]
   ################################################################################
   TxInputs         <- Inputs[["TxInputs"]]
@@ -103,13 +114,14 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,
   ################################################################################
   #######################           BIRTHS                 #######################
   ####### INDEXED BY TIME, ABSOLUTE NUMBER OF NEW ADULT ENTRANTS OVER TIME #######
-
+  ################################################################################
   Birthst   <- SmoCurve(Births)*PV["TunBirths"]/12
   Birthst   <- Birthst[1:month]
 
   ################################################################################
   ##########################      MORTALITY RATES       ##########################
   ########################## BACKGROUND MORTALITY BY TIME ########################
+  ################################################################################
   mubt      <- matrix(NA,1801,11)
   for(i in 1:11){
     mubt[,i] <- SmoCurve(BgMort[,i+1])*PV[["TunMubt"]] /12
@@ -191,8 +203,14 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,
   for (j in 1:11){
     TotImmAge[,j]        <- SmoCurve(TotImmAge0[,j])
   }
-  if(immig != 1){
-    TotImmAge[843:855,]<-TotImmAge[843:855,]*immig;
+  ### Add in the adjustment for migration due to COVID-19 emergency.
+  if(immig != 99){
+    #Hold reduction through December 2021
+    TotImmAge[843:864,]<-TotImmAge[843:864,]-(TotImmAge[843:864,]*immig);
+    # Bring up immigration to 50% by end of 2022 (smoothly)
+    for (agegrp in 1:ncol(TotImmAge)){
+      TotImmAge[865:888,agegrp] <- seq(TotImmAge[864,agegrp],TotImmAge[842,agegrp], length.out=24)
+    }
   }
   # }
   ######################           LTBI IMM.             ########################
