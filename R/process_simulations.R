@@ -45,11 +45,10 @@ OutputsZint <-  function(samp_i=1,ParMatrix,loc, output_month = 11, startyr=1950
   Scen3 <<- Scen3;
 
   ### add in the 2020 parameter adjustments
+  ### basecase values are c(99, 0, 0, 1)
   names(par2020) <- c("Immig", "Dxt", "Trans", "CaseFat")
 
   prms <- list()
-  # prms <- param_init(P,loc="MA",prg_chng=def_prgchng(Par[1,]),ttt_list=def_ttt())
-
   prms <- param_init(P,loc,Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3,prg_chng,ttt_list, immig = par2020["Immig"],
                      return_months = return_params[["Immig"]][["return_months"]],
                      multiplier = return_params[["Immig"]][["multiplier"]])
@@ -57,9 +56,9 @@ OutputsZint <-  function(samp_i=1,ParMatrix,loc, output_month = 11, startyr=1950
   ### adjust parameters for 2020 ###
 
   prms2020 <<- adj_param_2020(rDxt = prms$rDxt,
-                             NixTrans = prms$NixTrans,
-                             par2020 = par2020,
-                             return_params = return_params)
+                              NixTrans = prms$NixTrans,
+                              par2020 = par2020,
+                              return_params = return_params)
 
   # prms$rDxt[843:864,]<-prms$rDxt[843:864,] - (prms$rDxt[843:864,]*par2020["Dxt"])
   # prms$NixTrans[843:864]<- (1-par2020["Trans"])
