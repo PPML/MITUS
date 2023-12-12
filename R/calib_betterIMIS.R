@@ -1,6 +1,6 @@
 ######
 library(mnormt)
-library(numDeriv)
+# library(numDeriv)
 library(lhs)
 
 
