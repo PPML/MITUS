@@ -28,7 +28,7 @@ Trans <- list(
 # default value based on CDC Wonder Multiple Cause of Death data
 # found here: https://wonder.cdc.gov/mcd-icd10-expanded.html
 CaseFat <- list(
-  "return_months" = 844:890,
+  "return_months" = 877:888,
   "multiplier" = 1
 )
 

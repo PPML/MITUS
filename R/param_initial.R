@@ -184,7 +184,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   if(immig != 99){
       TotImmAge <- adj_immig_2020(TotImmAge = TotImmAge,
                                   immig = immig,
-                                  return_months = return_months,
+                                  # return_months = return_months,
                                   multiplier=multiplier)
   }
   ######################           LTBI IMM.             ########################
