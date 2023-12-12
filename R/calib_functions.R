@@ -10,8 +10,8 @@
 #'@return likelihood
 notif_tot_lik <- function(V) {
   notif_tot     <- CalibDat[["tot_cases"]][1:40,2]
-  adj_1         <- sum(dnorm(notif_tot,notif_tot,notif_tot*0.05/1.96,log=T)*wts[4:43])
-  sum(dnorm(notif_tot,V,notif_tot*0.05/1.96,log=T)*wts[4:43]) - adj_1
+  adj_1         <- sum(dnorm(notif_tot,notif_tot,notif_tot*0.05/1.96,log=T)*wts[4:43]*c(rep(1,39),1.5))
+  sum(dnorm(notif_tot,V,notif_tot*0.05/1.96,log=T)*wts[4:43]*c(rep(1,39),1.5)) - adj_1
 }
 #'FB Diagnosed Cases 1953-2016
 #'Motivation: Normal, mean centered with CI = +/- 5% of the mean
@@ -142,8 +142,8 @@ notif_hr_dist_lLik<-function(V,rho=0.05){
 #'@return likelihood
 notif_fb_rec_lLik <- function(V,rho=0.01) {
   notif_fb_rec   <- cbind(CalibDat[["fb_recent_cases2"]][1:27,2],1-CalibDat[["fb_recent_cases2"]][1:27,2])*CalibDat[["fb_recent_cases2"]][1:27,3]
-  adj_6          <- sum(dDirMult(M=notif_fb_rec,n=notif_fb_rec,Rho=rho)*wts[44:70])
-  sum(dDirMult(M=V,n=notif_fb_rec,Rho=rho)*wts[44:70]) - adj_6
+  adj_6          <- sum(dDirMult(M=notif_fb_rec,n=notif_fb_rec,Rho=rho)*wts[44:70]*c(rep(1,26),1.5))
+  sum(dDirMult(M=V,n=notif_fb_rec,Rho=rho)*wts[44:70]*c(rep(1,26),1.5)) - adj_6
 }
 
 #' TREATMENT OUTCOMES 1993-2014
@@ -221,9 +221,9 @@ ltbi_fb_11_dp_lLik <- function(V) {
 #'@return likelihood
 tb_dth_tot_lLik <- function(V) {
   tb_deaths_tot   <- rowSums(CalibDat[["tb_deaths"]][,-1])
-  adj_19a         <- sum(dnorm(tb_deaths_tot,tb_deaths_tot,tb_deaths_tot*0.05/1.96,log=T)*wts[50:70])
+  adj_19a         <- sum(dnorm(tb_deaths_tot,tb_deaths_tot,tb_deaths_tot*0.05/1.96,log=T)*wts[50:70]*c(rep(1,20),1.5))
   V2<-rowSums(V)
-  sum(dnorm(tb_deaths_tot,V2*1e6,tb_deaths_tot*0.05/1.96,log=T)*wts[50:70]) - adj_19a  }
+  sum(dnorm(tb_deaths_tot,V2*1e6,tb_deaths_tot*0.05/1.96,log=T)*wts[50:70]*c(rep(1,20),1.5)) - adj_19a  }
 
 #' TB DEATHS AGE DISTRIBUTION 1999-2014
 #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
