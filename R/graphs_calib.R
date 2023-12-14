@@ -489,7 +489,7 @@ calib_graphs <- function(df, Par_list){
   abline(h=axTicks(2),col="grey85")
 
   #plot the model data
-  lines(1950:2020,avg_age,lwd=2,col="blue")    #0-24 yrs
+  lines(1950:2020,avg_age[-72],lwd=2,col="blue")    #0-24 yrs
 
   #plot text
   mtext("Average Age of Notified TB Case, 1950-2020",3,.8,font=2,cex=1.2)
@@ -1210,27 +1210,28 @@ calib_graphs_2020 <- function(df, Par_list){
 
   #######################################
   # total tb deaths over time 2004-2014
-  V   <- rowSums(df[59:69,227:237])
-  tb_death_tot<-rowSums(CalibDat$tb_deaths[9:19,-1])
+  V   <- rowSums(df[59:70,227:237])
+  tb_death_tot<-rowSums(CalibDat$tb_deaths[10:21,-1])
 
   #format the plot
-  plot(0,0,ylim=c(0,max(tb_death_tot)*1.2),xlim=c(2008,2018),xlab="",ylab="",axes=F)
+  plot(0,0,ylim=c(0,max(tb_death_tot)*1.2),xlim=c(2008,2019),xlab="",ylab="",axes=F)
   axis(1);axis(2,las=2);box()
   abline(h=axTicks(2),col="grey85")
 
   #plot the model data
-  lines(2008:2018,V*1e6,lwd=2,col="blue")
+  lines(2008:2019,V*1e6,lwd=2,col="blue")
 
   #reported data for comparison
-  points(2008:2018,tb_death_tot,pch=19,cex=0.6,col="black")
-  lines (2008:2018,tb_death_tot,lty=3,col="black")
+  points(2008:2019,tb_death_tot,pch=19,cex=0.6,col="black")
+  lines (2008:2019,tb_death_tot,lty=3,col="black")
 
   #plot text
 
   mtext("Year",1,2.5,cex=1.2)
-  mtext("Total TB Deaths by Year 2008-2018",3,.8,font=2,cex=1.2)
+  mtext("Total TB Deaths by Year 2008-2019",3,.8,font=2,cex=1.2)
   legend("topright",c("Reported data","Model"),pch=c(19,NA),lwd=c(1,2),
-         col=c("black","blue"),lty=c(3,1),bg="white",pt.cex=c(0.6,NA))################################################################################
+         col=c("black","blue"),lty=c(3,1),bg="white",pt.cex=c(0.6,NA))
+  ################################################################################
 
 dev.off()
 }
