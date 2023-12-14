@@ -182,6 +182,9 @@ llikelihoodZ <-  function(samp_i, start_mat, TB=1) {
       v19  <- M[50:70,227:237]
       addlik <- tb_dth_tot_lLik(V=v19); addlik
       lLik <- lLik + addlik
+      #' TOTAL DEATHS 2015-2019  SLOPE - index updated
+      addlik <- tb_dth_slp_lLik(V=rowSums(v19[17:21,])); addlik
+      lLik <- lLik + addlik
       #' TB DEATHS 1999-2014 BY AGE - index updated above
       addlik <- tb_dth_age_lLik(V=v19); addlik
       lLik <- lLik + addlik

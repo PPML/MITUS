@@ -10,17 +10,17 @@
 #'@return likelihood
 notif_tot_lik <- function(V) {
   notif_tot     <- CalibDat[["tot_cases"]][1:40,2]
-  adj_1         <- sum(dnorm(notif_tot,notif_tot,notif_tot*0.05/1.96,log=T)*wts[4:43]*c(rep(1,39),1.5))
-  sum(dnorm(notif_tot,V,notif_tot*0.05/1.96,log=T)*wts[4:43]*c(rep(1,39),1.5)) - adj_1
+  adj_1         <- sum(dnorm(notif_tot,notif_tot,notif_tot*0.01/1.96,log=T)*wts[4:43]*c(rep(1,39),1.5))
+  sum(dnorm(notif_tot,V,notif_tot*0.01/1.96,log=T)*wts[4:43]*c(rep(1,39),1.5)) - adj_1
 }
 #'FB Diagnosed Cases 1953-2016
 #'Motivation: Normal, mean centered with CI = +/- 5% of the mean
 #'@param V vector of total notifications 1953-2014
 #'@return likelihood
 notif_fb_lik <- function(V) {
-  notif_fb      <- CalibDat[["age_cases_fb"]][1:27,12]
+  notif_fb      <- CalibDat[["age_cases_fb"]][1:27,12]/1e6
   adj_1         <- sum(dnorm(notif_fb,notif_fb,notif_fb*0.05/1.96,log=T)*wts[44:70])
-  (sum(dnorm(notif_fb,V,notif_fb*0.05/1.96,log=T)*wts[44:70]) - adj_1)
+  (sum(dnorm(notif_fb,V/1e6,notif_fb*0.05/1.96,log=T)*wts[44:70]) - adj_1)
 }
 
 #'US Diagnosed Cases 1953-2016
@@ -29,9 +29,9 @@ notif_fb_lik <- function(V) {
 #'@return likelihood
 
 notif_us_lik <- function(V) {
-  notif_us     <- CalibDat[["age_cases_us"]][1:27,12]
+  notif_us     <- CalibDat[["age_cases_us"]][1:27,12]/1e6
   adj_1         <- sum(dnorm(notif_us,notif_us,notif_us*0.05/1.96,log=T)*wts[44:70])
-  (sum(dnorm(notif_us,V,notif_us*0.1/1.96,log=T)*wts[44:70]) - adj_1)
+  (sum(dnorm(notif_us,V/1e6,notif_us*0.05/1.96,log=T)*wts[44:70]) - adj_1)
 }
 
 #' DISTRIBUTION OF CASES RECENT TRANSMISSION VS NO RECENT TRANSMISSION
@@ -140,7 +140,7 @@ notif_hr_dist_lLik<-function(V,rho=0.05){
 #'@param V table of notifications by FB 1993-2014 (row=22 years, col=pos then neg)
 #'@param rho correlation parameter
 #'@return likelihood
-notif_fb_rec_lLik <- function(V,rho=0.01) {
+notif_fb_rec_lLik <- function(V, rho=0.001) {
   notif_fb_rec   <- cbind(CalibDat[["fb_recent_cases2"]][1:27,2],1-CalibDat[["fb_recent_cases2"]][1:27,2])*CalibDat[["fb_recent_cases2"]][1:27,3]
   adj_6          <- sum(dDirMult(M=notif_fb_rec,n=notif_fb_rec,Rho=rho)*wts[44:70]*c(rep(1,26),1.5))
   sum(dDirMult(M=V,n=notif_fb_rec,Rho=rho)*wts[44:70]*c(rep(1,26),1.5)) - adj_6
@@ -220,10 +220,23 @@ ltbi_fb_11_dp_lLik <- function(V) {
 #'@param V vector of TB deaths in fraction of millions
 #'@return likelihood
 tb_dth_tot_lLik <- function(V) {
-  tb_deaths_tot   <- rowSums(CalibDat[["tb_deaths"]][,-1])
-  adj_19a         <- sum(dnorm(tb_deaths_tot,tb_deaths_tot,tb_deaths_tot*0.05/1.96,log=T)*wts[50:70]*c(rep(1,20),1.5))
+  tb_deaths_tot   <- rowSums(CalibDat[["tb_deaths"]][,-1])/1e6
+  adj_19a         <- sum(dnorm(tb_deaths_tot,tb_deaths_tot,tb_deaths_tot*0.01/1.96,log=T)*wts[50:70]*c(rep(1,20),1.5))
   V2<-rowSums(V)
-  sum(dnorm(tb_deaths_tot,V2*1e6,tb_deaths_tot*0.05/1.96,log=T)*wts[50:70]*c(rep(1,20),1.5)) - adj_19a  }
+  sum(dnorm(tb_deaths_tot,V2,tb_deaths_tot*0.01/1.96,log=T)*wts[50:70]*c(rep(1,20),1.5)) - adj_19a  }
+
+#' TB DEATHS SLOPES OVER PAST 5 year
+#'@param V table of deaths 2015-2019
+#'@return likelihood
+tb_dth_slp_lLik <- function(V) {
+  tb_deaths_tot   <- rowSums(CalibDat[["tb_deaths"]][17:21,-1])
+  # calculate the slopes
+  TBdeaths_slp5<-lm(log(tb_deaths_tot)~I(1:5))$coef[2]
+  # notif_fbus_slp5<-CalibDat$fbus_cases_slope5
+  adj_19a2         <- sum(dnorm(TBdeaths_slp5, TBdeaths_slp5, 0.002, log=T))
+  V2 <- lm(log(V)~I(1:5))$coef[2]
+  sum(dnorm(TBdeaths_slp5,V2,0.002,log=T)) - adj_19a2
+}
 
 #' TB DEATHS AGE DISTRIBUTION 1999-2014
 #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
