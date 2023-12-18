@@ -221,9 +221,9 @@ ltbi_fb_11_dp_lLik <- function(V) {
 #'@return likelihood
 tb_dth_tot_lLik <- function(V) {
   tb_deaths_tot   <- rowSums(CalibDat[["tb_deaths"]][,-1])/1e6
-  adj_19a         <- sum(dnorm(tb_deaths_tot,tb_deaths_tot,tb_deaths_tot*0.01/1.96,log=T)*wts[50:70]*c(rep(1,20),1.5))
+  adj_19a         <- sum(dnorm(tb_deaths_tot,tb_deaths_tot,tb_deaths_tot*0.05/1.96,log=T)*wts[50:70]*c(rep(1,20),1.5))
   V2<-rowSums(V)
-  sum(dnorm(tb_deaths_tot,V2,tb_deaths_tot*0.01/1.96,log=T)*wts[50:70]*c(rep(1,20),1.5)) - adj_19a  }
+  sum(dnorm(tb_deaths_tot,V2,tb_deaths_tot*0.05/1.96,log=T)*wts[50:70]*c(rep(1,20),1.5)) - adj_19a  }
 
 #' TB DEATHS SLOPES OVER PAST 5 year
 #'@param V table of deaths 2015-2019
