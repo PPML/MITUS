@@ -133,7 +133,7 @@ llikelihoodZ <-  function(samp_i, start_mat, TB=1) {
       addlik <- notif_hr2_lLik(V=v5d); addlik
       lLik <- lLik + addlik
       # CASES HR NATIVTY DISTRIBUTION
-      v5c<-cbind(M[44:70,685],M[44:70,687])
+      v5c<-cbind(M[44:70,"NOTIF_US_HR"],M[44:70,"NOTIF_NUS_HR"])
       addlik<-notif_hr_dist_lLik(V=v5c); addlik
       lLik <-lLik +addlik
       #' CASES FB RECENT ENTRY DISTRIBUTION 1993-2014 index updated

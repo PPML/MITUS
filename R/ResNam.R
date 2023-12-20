@@ -28,7 +28,7 @@ func_ResNam<-function(){
   ################################################################################
   ################################################################################
   ResNam <- c("Year",                                         # year
-              ##############################    POPULATION    ################################
+  ##############################    POPULATION    ################################
               "N_ALL",                                        # total pop
               paste("N",StatList[[1]],sep="_"),               # pop by ag cat
               paste("N",StatList[[2]],sep="_"),               # pop by tb cat
@@ -36,20 +36,19 @@ func_ResNam<-function(){
               paste("N",StatList[[5]],sep="_"),               # pop by nm cat
               paste("N",StatList[[6]],sep="_"),               # pop by rg cat
               paste("N",StatList[[7]],sep="_"),               # pop by na cat
-              ###################    POPULATION W/ NATIVITY  ################################
+  ###################    POPULATION W/ NATIVITY  ################################
               paste("N_US",StatList[[1]],sep="_"),            # US pop by ag cat
               paste("N_FB",StatList[[1]],sep="_"),            # FB pop by ag cat
               paste("N_US_LTBI",StatList[[1]],sep="_"),       # US LTBI pop by ag cat
               paste("N_FB_LTBI",StatList[[1]],sep="_"),       # FB LTBI pop by ag cat
               paste("N_RF",StatList[[1]],sep="_"),            # RF pop by ag cat
-              #############################    MORTALITY    ################################
+  #############################    MORTALITY    ################################
               paste("TBMORT_US",StatList[[1]],sep="_"),   # TB mort, HIV neg, by ag cat
               paste("TBMORT_NUS",StatList[[1]],sep="_"),   # TB mort, HIV pos, by ag cat
               paste("RFMORT",StatList[[1]],sep="_"),         # RF mort, by ag cat
               paste("TOTMORT",StatList[[1]],sep="_"),         # total mort, by ag cat
               #### @object 131
-              #############################   TX OUTCOMES   ################################
-
+   #############################   TX OUTCOMES   ################################
               "TBTX_COMPLT","TBTX_DISCONT","TBTX_DIED",       # TB treatment outcomes complete, discontinue, death
               "NOTIF_ALL",                                    # total notif
               paste("NOTIF",StatList[[1]],sep="_"),           # notif by ag cat
@@ -60,13 +59,13 @@ func_ResNam<-function(){
               #            paste("NOTIF_US_E",StatList[[3]],sep="_"),      # notif, US, E, by dr cat
               #           paste("NOTIF_FB_N",StatList[[3]],sep="_"),      # notif, FB, N, by dr cat
               #           paste("NOTIF_FB_E",StatList[[3]],sep="_"),      # notif, FB, E, by dr cat
-              ###########################   TLTBI INITIATION   ##############################
+  ###########################   TLTBI INITIATION   ##############################
               "TLTBI_INITS",                                  # Initiations on LTBI tx
               "TLTBI_INITS_FB",                               # Initiations on LTBI tx FB
               "TLTBI_INITS_HR",                               # Initiations on LTBI tx HR
               #            "TLTBI_INITS_HV",                               # Initiations on LTBI tx HV
               "TLTBI_INITS_TP",                               # Initiations on LTBI tx, with LTBI
-              ###########################     TB INCIDENCE     ##############################
+  ###########################     TB INCIDENCE     ##############################
               "INCID_ALL",                                    # Total incidence
               paste("INCID_ALL",StatList[[1]],sep="_"),       # Total incidence by ag cat
               "INCID_ALL_US",                                 # Total incidence, US born
@@ -81,7 +80,7 @@ func_ResNam<-function(){
               "INCID_REC_FB2",                                # Total incidence, foreign born, recent infection
               "INCID_REC_HR",                                 # Total incidence, high risk, recent infection
               #            "INCID_REC_HV",                                 # Total incidence, HIV pos, recent infection
-              ###########################    NOTIFICATION DEAD      ##############################
+  ###########################    NOTIFICATION DEAD      ##############################
               "NOTIF_MORT_ALL",                               # total notif, dead at diagnosis
               paste("NOTIF_MORT",StatList[[1]],sep="_"),      # notif by ag cat, dead at diagnosis
               paste("NOTIF_MORT",StatList[[7]],sep="_"),      # notif by nat cat, dead at diagnosis
@@ -280,6 +279,9 @@ func_ResNam<-function(){
               c("N_Susc_FB","N_L0_FB"),
 
               paste("TLTBI_TP_L0"),
-              paste("LTBI_NUSB_nL0")
+              paste("LTBI_NUSB_nL0"),
+   ##############  NOTIFICATION BY NATIVITY AND RISK GROUP ####################
+              paste("NOTIF_US",StatList[[6]],sep="_"),           # notif by nat & rg cat
+              paste("NOTIF_NUS",StatList[[6]],sep="_")
               )
 }

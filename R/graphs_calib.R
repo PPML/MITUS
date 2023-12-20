@@ -497,9 +497,10 @@ calib_graphs <- function(df, Par_list){
 
   ################################################################################
   ### ### ### CASES HR DISTRIBUTION 1993-2013  ### ### ### ### ### ###
-  V <-cbind(df[44:71,685]/(df[44:71,685]+df[44:71,684]),
-            df[44:71,687]/(df[44:71,687]+df[44:71,686]))
-  V2<-(df[44:71,685]+df[44:71,687])/(df[44:71,687]+df[44:71,686]+df[44:71,685]+df[44:71,684])
+  V <-cbind(df[44:71,"NOTIF_US_HR"]/(df[44:71,"NOTIF_US_LR"]+df[44:71,"NOTIF_US_HR"]),
+            df[44:71,"NOTIF_NUS_HR"]/(df[44:71,"NOTIF_NUS_LR"]+df[44:71,"NOTIF_NUS_HR"]))
+  V2 <- (df[44:71,"NOTIF_US_HR"] + df[44:71,"NOTIF_NUS_HR"]) /
+       (df[44:71,"NOTIF_US_LR"]+df[44:71,"NOTIF_US_HR"]+df[44:71,"NOTIF_NUS_LR"]+df[44:71,"NOTIF_NUS_HR"])
   hr_dist_us<-CalibDat[["us_homeless_cases"]][,2]*CalibDat[["us_homeless_cases"]][,3]
   hr_dist_tot<-CalibDat[["homeless_cases"]][,2]*CalibDat[["homeless_cases"]][,3]
   #US, NUSB

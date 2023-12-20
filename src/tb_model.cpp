@@ -2097,6 +2097,20 @@ Rcpp::List cSim(
                   Outputs[y][856] += ((VLdx[ag][1][0][im][nm][rg][na]*(1-pImmScen)) + VLdx[ag][2][0][im][nm][rg][na]+VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0]; // inits with LTBI
                 } } } } }
 
+        ////////////////        TB DIAGNOSES BY NATIVITY AND RG       ///////////////
+        for(int ag=0; ag<11; ag++) {
+          for(int lt=0; lt<2; lt++) {
+            for(int im=0; im<4; im++) {
+              for(int nm=0; nm<4; nm++) {
+                for(int rg=0; rg<2; rg++) {
+                  for(int na=0; na<3; na++) {
+                    if(na==0){
+                      Outputs[y][858+rg] += Vdx[ag][4][lt][im][nm][rg][na];
+                    } else {
+                      Outputs[y][860+rg] += Vdx[ag][4][lt][im][nm][rg][na];
+                    }
+                  } } } } } }
+
         ////////////////      RESET THE CUMULATIVE ANNUAL COUNTS      ////////////////
         for(int ag=0; ag<11; ag++) {
           for(int rg=0; rg<2; rg++) {
