@@ -23,7 +23,7 @@
 #'@export
 OutputsZint <-  function(samp_i=1,ParMatrix,loc, output_month = 11, startyr=1950, endyr=2050,
                          Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,
-                         prg_chng=def_prgchng(Par[1,]), ttt_list=def_ttt(), care_cascade = def_care_cascade(),
+                         prg_chng=def_prgchng(Par[4,]), ttt_list=def_ttt(), care_cascade = def_care_cascade(),
                          par2020 = c(99,rep(0,10),rep(1,5)),
                          return_params = def_returnScenario())
 {
@@ -53,9 +53,9 @@ OutputsZint <-  function(samp_i=1,ParMatrix,loc, output_month = 11, startyr=1950
 
   prms <- list()
   prms <- param_init(P,loc,Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3,prg_chng,ttt_list,
-                     immig = par2020["Immig"],
-                     return_months = return_params[["Immig"]][["return_months"]],
-                     multiplier = return_params[["Immig"]][["multiplier"]])
+                     immig = par2020["Immig"])
+                     # return_months = return_params[["Immig"]][["return_months"]],
+                     # multiplier = return_params[["Immig"]][["multiplier"]])
 
   ### adjust parameters for 2020 ###
 
@@ -95,7 +95,7 @@ OutputsZint <-  function(samp_i=1,ParMatrix,loc, output_month = 11, startyr=1950
 
   colnames(m$Outputs) <- func_ResNam();
 
-  results<<-as.matrix(m$Outputs)
+  results <- as.matrix(m$Outputs)
 
   population <- as.matrix(m$OutputsI)
 
