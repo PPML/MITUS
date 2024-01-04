@@ -19,9 +19,9 @@ optim_data <- function(batches, loc, date){
   month<-strsplit(date, "-")[[1]][1]
   day<-strsplit(date, "-")[[1]][2]
   for (i in batches){
-    load(paste("/Users/nis100/Desktop/states_070822/","Opt_", loc, "_r9_",i,"_2022-", date, ".rda", sep=""))
-    opt_all[i,1:nrow(ParamInitZ)] <- o9$par
-    opt_all[i,nrow(ParamInitZ)+1]<- o9$value
+    load(paste("/Users/nis100/Desktop/ModelOpts_122123/","Opt_", loc, "_r7_",i,"_2023-", date, ".rda", sep=""))
+    opt_all[i,1:nrow(ParamInitZ)] <- o7$par
+    opt_all[i,nrow(ParamInitZ)+1]<- o7$value
   }
   saveRDS(opt_all, file=paste("~/MITUS/inst/", loc,"/", loc, "_Optim_all_", length(batches),"_", month, day,".rds", sep = ""),version=2)
 }
@@ -69,3 +69,36 @@ calib_plots_locs_2020<-function(locs, simp.date, batches=15){
     ### Create Calibration Targets
     # model_calib_outputs_2020(loc, results, 1, simp.date)
   }}
+
+#### Create the dataFrame of formatted parameters for model run
+format_Opt_to_Par <- function(loc,
+                              date,
+                              batches = 25){
+  ### format the date
+  month<-strsplit(date, "-")[[1]][1]
+  day<-strsplit(date, "-")[[1]][2]
+  ### read in the Opt file
+  Opt <- readRDS(system.file(paste0(loc,"/", loc, "_Optim_all_", batches,"_", month, day,".rds"), package="MITUS"))
+  ### determine the posterior
+  posterior<-rep(0,nrow(Opt))
+  for(i in 1:nrow(Opt)){ posterior[i]<-trunc_number_n_decimals(Opt[i,ncol(Opt)],1);  print(posterior[i]) }
+  samp.i<-which(posterior==min(posterior));print(samp.i)
+  Par0 <- Opt[samp.i[1], -ncol(Opt)]
+  ##to facilitate comparisons. These first two steps convert these parameters back to their
+  ##distributions
+  # normal to uniform
+  Par2 <- pnorm(Par0,0,1)
+  # uniform to true
+  Par3 <- Par2
+  Par3[idZ0] <- qbeta( Par2[idZ0], shape1  = ParamInitZ[idZ0,6], shape2 = ParamInitZ[idZ0,7])
+  Par3[idZ1] <- qgamma(Par2[idZ1], shape   = ParamInitZ[idZ1,6], rate   = ParamInitZ[idZ1,7])
+  Par3[idZ2] <- qnorm( Par2[idZ2], mean    = ParamInitZ[idZ2,6], sd     = ParamInitZ[idZ2,7])
+  P[ii] <- Par3
+  ### Both MITUS and Tabby2 have been designed to allow for the future calculation
+  ### of uncertainty intervals. However, because of this design, we must create
+  ### a matrix that repeats the same vector until the design of those uncertainty
+  ### intervals have been completed.
+  Par <- t(replicate(batches, P))
+  ### Save the matrix to a datafile
+  saveRDS(Par, file=paste("~/MITUS/inst/", loc,"/", loc, "_Param_all_", nrow(Par),"_", month, day,".rds", sep = ""),version=2)
+}
