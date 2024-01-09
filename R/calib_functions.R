@@ -135,16 +135,28 @@ notif_hr_dist_lLik<-function(V,rho=0.05){
   sum(dDirMult(M=V,n=notif_hr_dist,Rho=rho)*wts[44:70]) - adj_5c
 }
 
-#' CASES FB RECENT ENTRY DISTRIBUTION 1993-2013
+#' CASES FB RECENT ENTRY DISTRIBUTION 1993-2014
 #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
 #'@param V table of notifications by FB 1993-2014 (row=22 years, col=pos then neg)
 #'@param rho correlation parameter
 #'@return likelihood
-notif_fb_rec_lLik <- function(V, rho=0.001) {
-  notif_fb_rec   <- cbind(CalibDat[["fb_recent_cases2"]][1:27,2],1-CalibDat[["fb_recent_cases2"]][1:27,2])*CalibDat[["fb_recent_cases2"]][1:27,3]
-  adj_6          <- sum(dDirMult(M=notif_fb_rec,n=notif_fb_rec,Rho=rho)*wts[44:70]*c(rep(1,26),1.5))
-  sum(dDirMult(M=V,n=notif_fb_rec,Rho=rho)*wts[44:70]*c(rep(1,26),1.5)) - adj_6
+notif_fb_rec_lLik <- function(V, rho=0.05) {
+  notif_fb_rec   <- cbind(CalibDat[["fb_recent_cases2"]][1:22,2],1-CalibDat[["fb_recent_cases2"]][1:22,2])*CalibDat[["fb_recent_cases2"]][1:22,3]
+  adj_6          <- sum(dDirMult(M=notif_fb_rec,n=notif_fb_rec,Rho=rho)*wts[44:65])
+  sum(dDirMult(M=V[1:22,],n=notif_fb_rec,Rho=rho)*wts[44:65]) - adj_6
 }
+
+#' CASES FB RECENT ENTRY DISTRIBUTION 2015-2019
+#' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
+#'@param V table of notifications by FB 2015-2019 (row 5 years, col=pos then neg)
+#'@param rho correlation parameter
+#'@return likelihood
+notif_fb_rec_1519_lLik <- function(V, rho=0.001) {
+  notif_fb_rec   <- cbind(CalibDat[["fb_recent_cases2"]][23:27,2],1-CalibDat[["fb_recent_cases2"]][23:27,2])*CalibDat[["fb_recent_cases2"]][23:27,3]
+  adj_6          <- sum(dDirMult(M=notif_fb_rec,n=notif_fb_rec,Rho=rho)*wts[66:70])
+  (sum(dDirMult(M=V[23:27,],n=notif_fb_rec,Rho=rho)*wts[66:70]) - adj_6)*10
+}
+
 
 #' TREATMENT OUTCOMES 1993-2014
 #' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
