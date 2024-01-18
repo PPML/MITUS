@@ -142,8 +142,8 @@ notif_hr_dist_lLik<-function(V,rho=0.05){
 #'@return likelihood
 notif_fb_rec_lLik <- function(V, rho=0.001) {
   notif_fb_rec   <- cbind(CalibDat[["fb_recent_cases2"]][1:27,2],1-CalibDat[["fb_recent_cases2"]][1:27,2])*CalibDat[["fb_recent_cases2"]][1:27,3]
-  adj_6          <- sum(dDirMult(M=notif_fb_rec,n=notif_fb_rec,Rho=rho)*wts[44:70]*c(rep(1,26),1.5))
-  sum(dDirMult(M=V,n=notif_fb_rec,Rho=rho)*wts[44:70]*c(rep(1,26),1.5)) - adj_6
+  adj_6          <- sum(dDirMult(M=notif_fb_rec,n=notif_fb_rec,Rho=rho)*wts[44:70]*c(rep(.25,26),1))
+  sum(dDirMult(M=V,n=notif_fb_rec,Rho=rho)*wts[44:70]*c(rep(.25,26),1)) - adj_6
 }
 
 #' TREATMENT OUTCOMES 1993-2014
