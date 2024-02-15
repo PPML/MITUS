@@ -101,10 +101,10 @@ adj_param_2020 <- function(rDxt,
 
   # rDxt_trend <- readRDS(file = "~/Documents/COVIDTB Paper/Data/careSeekingTrend.rds")
   # rDxt_trendNorm <- rDxt_trend / rDxt_trend[1]
-  rDxt_lastMonth <- 843+23
-  rDxt_RM <- (rDxt_lastMonth+1):(rDxt_lastMonth + 24)
+  rDxt_lastMonth <- 843+35
+  rDxt_RM <- (rDxt_lastMonth):(rDxt_lastMonth + 10)
   rDxt_postMonth <- last(rDxt_RM) + 1
-  # rDxt_mult <- 1.1
+  # rDxt_mult <- 1
   ### Calculate the rate of diagnosis
 
   # rDxt_trend <- c(seq(par2020["DxtKnot1"],par2020["DxtKnot2"],length.out = 6),
@@ -112,16 +112,24 @@ adj_param_2020 <- function(rDxt,
   #                  seq(par2020["DxtKnot3"],par2020["DxtKnot4"],length.out = 6),
   #                  seq(par2020["DxtKnot4"],par2020["DxtKnot5"],length.out = 6))
 
-  rDxtDF<-data.frame(Month = c(0,3,9,15,21,27),
-                     Value = c(0,par2020["DxtKnot1"], par2020["DxtKnot2"], par2020["DxtKnot2"],
-                               par2020["DxtKnot4"], par2020["DxtKnot5"]))
-
-
-  rDxtfit = lm(Value~bs(Month, knots = c(0,3,9,15,21,27), degree=1), data = rDxtDF)
-
-  rDxt_trend <- predict(rDxtfit, newdata=list(Month=1:24))
+  # rDxtDF<-data.frame(Month = c(0,3,9,15,21,27),
+  #                    Value = c(0,par2020["DxtKnot1"], par2020["DxtKnot2"], par2020["DxtKnot3"],
+  #                              par2020["DxtKnot4"], par2020["DxtKnot5"]))
+  # 
+  # 
+  # rDxtfit = lm(Value~bs(Month, knots = c(0,3,9,15,21,27), degree=1), data = rDxtDF)
+  # 
+  # rDxt_trend <- predict(rDxtfit, newdata=list(Month=3:24))
+  
+  rDxt_trend <-     c(rep(par2020["DxtKnot1"],length.out = 6),
+                      rep(par2020["DxtKnot2"],length.out = 6),
+                      rep(par2020["DxtKnot3"],length.out = 6),
+                      rep(par2020["DxtKnot4"],length.out = 6),
+                      rep(par2020["DxtKnot5"],length.out = 6),
+                      rep(par2020["DxtKnot6"],length.out = 6))
+ 
   # Initial covid effects
-  rDxt[843:rDxt_lastMonth,] <- rDxt[843:rDxt_lastMonth,] - (rDxt[843:rDxt_lastMonth,] * rDxt_trend)
+  rDxt[843:rDxt_lastMonth,] <- rDxt[843:rDxt_lastMonth,] * (1-rDxt_trend)
 
   # Bring up params to X% by end of return months (smoothly)
   for (riskgrp in 1:ncol(rDxt)){
@@ -151,10 +159,9 @@ adj_param_2020 <- function(rDxt,
   # NixTrans_lastMonth <- 843+length(NixTrans_trend)-1
   # NixTrans_postMonth <- NixTrans_lastMonth + 1
 
-  NixTrans_lastMonth <- 843+23
-  NixTrans_RM <- (NixTrans_lastMonth+1):(NixTrans_lastMonth + 24)
+  NixTrans_lastMonth <- 843+35
+  NixTrans_RM <- (NixTrans_lastMonth):(NixTrans_lastMonth + 10)
   NixTrans_postMonth <- last(NixTrans_RM) + 1
-
 
   ### Calculate the trend
   # NixTrans_trend <- c(seq(par2020["TransKnot1"],par2020["TransKnot2"],length.out = 6),
@@ -162,17 +169,24 @@ adj_param_2020 <- function(rDxt,
   #                     seq(par2020["TransKnot3"],par2020["TransKnot4"],length.out = 6),
   #                     seq(par2020["TransKnot4"],par2020["TransKnot5"],length.out = 6))
 
-  NixTransDF<-data.frame(Month = c(0,3,9,15,21,27),
-                         Value = c(0,par2020["TransKnot1"], par2020["TransKnot2"], par2020["TransKnot2"],
-                                   par2020["TransKnot4"], par2020["TransKnot5"]))
+  # NixTransDF<-data.frame(Month = c(0,3,9,15,21,27),
+  #                        Value = c(0,par2020["TransKnot1"], par2020["TransKnot2"], par2020["TransKnot3"],
+  #                                  par2020["TransKnot4"], par2020["TransKnot5"]))
 
 
-  NixTrans_fit = lm(Value~bs(Month, knots = c(0,3,9,15,21,27), degree=1), data = NixTransDF)
+  # NixTrans_fit = lm(Value~bs(Month, knots = c(0,3,9,15,21,27), degree=1), data = NixTransDF)
 
-  NixTrans_trend <- predict(NixTrans_fit, newdata=list(Month=1:24))
+  # NixTrans_trend <- predict(NixTrans_fit, newdata=list(Month=3:24))
+  
+  NixTrans_trend <- c(rep(par2020["TransKnot1"],length.out = 6),
+                      rep(par2020["TransKnot2"],length.out = 6),
+                      rep(par2020["TransKnot3"],length.out = 6),
+                      rep(par2020["TransKnot4"],length.out = 6),
+                      rep(par2020["TransKnot5"],length.out = 6),
+                      rep(par2020["TransKnot6"],length.out = 6))
   # Initial covid effects
   NixTrans[843:NixTrans_lastMonth] <- NixTrans[843:NixTrans_lastMonth] - (NixTrans[843:NixTrans_lastMonth] * NixTrans_trend)
-  NixTrans[NixTrans_RM] <- seq(NixTrans[NixTrans_lastMonth], NixTrans[842]*NixTrans_mult, length.out=length(NixTrans_RM))
+  NixTrans[NixTrans_RM] <- seq(NixTrans[NixTrans_lastMonth], NixTrans[842]*NixTrans_mult, length.out=length(NixTrans_RM+1))
 
 
 
@@ -193,11 +207,11 @@ adj_param_2020 <- function(rDxt,
   # Setup params
   # CaseFat_RM <- return_params[["CaseFat"]][["return_months"]]
   # CaseFat_postMonth <- CaseFat_RM[length(CaseFat_RM)] + 1
-  CaseFat_mult <- return_params[["CaseFat"]][["multiplier"]]
+  CaseFat_mult <- 1;#return_params[["CaseFat"]][["multiplier"]]
   # CaseFat_lastMonth <- CaseFat_RM[1] - 1
 
-  CaseFat_lastMonth <- 843+23
-  CaseFat_RM <- (CaseFat_lastMonth+1):(CaseFat_lastMonth + 24)
+  CaseFat_lastMonth <- 843+35
+  CaseFat_RM <- (CaseFat_lastMonth):(CaseFat_lastMonth + 10)
   CaseFat_postMonth <- last(CaseFat_RM) + 1
 
   ## Calculate the trend
@@ -206,19 +220,26 @@ adj_param_2020 <- function(rDxt,
   #                    seq(par2020["CaseFatKnot3"],par2020["CaseFatKnot4"],length.out = 6),
   #                    seq(par2020["CaseFatKnot4"],par2020["CaseFatKnot5"],length.out = 6))
 
-  CaseFatDF<-data.frame(Month = c(0,3,9,15,21,27),
-                         Value = c(0,par2020["CaseFatKnot1"], par2020["CaseFatKnot2"],
-                                   par2020["CaseFatKnot2"],
-                                   par2020["CaseFatKnot4"], par2020["CaseFatKnot5"]))
-
-
-  CaseFat_fit = lm(Value~bs(Month, knots = c(0,3,9,15,21,27), degree=1), data = CaseFatDF)
-
-  CaseFat_trend <- predict(CaseFat_fit, newdata=list(Month=1:24))
+  # CaseFatDF<-data.frame(Month = c(0,3,9,15,21,27),
+  #                        Value = c(0,par2020["CaseFatKnot1"], par2020["CaseFatKnot2"],
+  #                                  par2020["CaseFatKnot3"],
+  #                                  par2020["CaseFatKnot4"], par2020["CaseFatKnot5"]))
+  # 
+  # 
+  # CaseFat_fit = lm(Value~bs(Month, knots = c(0,3,9,15,21,27), degree=1), data = CaseFatDF)
+  # 
+  # CaseFat_trend <- predict(CaseFat_fit, newdata=list(Month=3:24))
+  
+  CaseFat_trend <- c(rep(par2020["CaseFatKnot1"],length.out = 6),
+                     rep(par2020["CaseFatKnot2"],length.out = 6),
+                     rep(par2020["CaseFatKnot3"],length.out = 6),
+                     rep(par2020["CaseFatKnot4"],length.out = 6),
+                     rep(par2020["CaseFatKnot5"],length.out = 6),
+                     rep(par2020["CaseFatKnot6"],length.out = 6))
 
   RRmuTBPand <- rep(1,1812)
   time_horizon <- 843:888
-  RRmuTBPand[time_horizon[1]:1812] <-c(CaseFat_trend,
+  RRmuTBPand[time_horizon[1]:1812] <-c(CaseFat_trend[-length(CaseFat_trend)],
                                        seq(last(CaseFat_trend), 1*CaseFat_mult, length.out = length(CaseFat_RM)),
                                        # logseq(par2020["CaseFat"], 1*CaseFat_mult, n = length(CaseFat_RM)),
                                        rep(1*CaseFat_mult, length.out = length(CaseFat_postMonth:1812)))
