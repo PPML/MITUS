@@ -165,7 +165,7 @@ Rcpp::List national_cSim(
   double        rDxtN[rDxt.nrow()][rDxt.ncol()];
   double        rLtScrtN[rLtScrt.nrow()][rLtScrt.ncol()];
   double        ttt_samp_distN[ttt_samp_dist.nrow()][ttt_samp_dist.ncol()];
-  long double   ttt_dist[ttt_samp_dist.nrow()][ttt_samp_dist.ncol()];
+  double        ttt_dist[ttt_samp_dist.nrow()][ttt_samp_dist.ncol()];
   double        LtTxParN[LtTxPar.nrow()][LtTxPar.ncol()];
   double        LtDxPar_ltN[LtDxPar_lt.nrow()][LtDxPar_lt.ncol()];
   double        LtDxPar_noltN[LtDxPar_nolt.nrow()][LtDxPar_nolt.ncol()];
@@ -223,6 +223,7 @@ Rcpp::List national_cSim(
   Rcpp::NumericMatrix dist_mat(4,4);
   double        RRmuRFN[4];
   double        mort_dist[4];
+  double temp20 = 0 ; double temp21 = 0; double temp22 = 0; double temp23 = 0;
 
   ///////////////////////////////////////////////////////////////////////////////
   ///////                            INITIALIZE                             /////
@@ -332,7 +333,7 @@ Rcpp::List national_cSim(
                 Vinf[ag][tb][lt][im][nm][rg][na]  = 0;
             }
             VAtemp[ag][im][nm][rg][na] = 0;
-          } } } } }
+          } } } } }}
 
   for(int i=0; i<2; i++) {
     for(int j=0; j<2; j++) {
@@ -1340,8 +1341,12 @@ Rcpp::List national_cSim(
           temp=temp2=temp3=temp4=temp5=temp6=temp7=temp8=base_diag=0;
           ///// calculate the number of rows which are the number of populations screened
           int rows = sizeof(ttt_samp_distN)/sizeof(ttt_samp_distN[0]);
-          int cols = 16;
-          int agi = ttt_ag.size(); int nai = ttt_na.size();
+
+        // if (s == ttt_month.front()){
+        //
+        //   Rcpp::Rcout<< "total rows = " << rows << "\n";}
+          int cols = 352;
+          // int agi = ttt_ag.size(); int nai = ttt_na.size();
 
           // if (V0[ag][2][0][im][nm][rg][na] < 0.0){
           //   Rcpp::Rcout<< "pop is negative = " << V0[ag][2][0][im][nm][rg][na]<<" ag = "<<ag<< "\n";
@@ -1374,18 +1379,26 @@ Rcpp::List national_cSim(
           } else{
             ttt_ltbi_effN=LtTxParN[s][2];
           }
-          temp10 = 0; temp9=0; temp11=0;
+          // temp10 = 0; temp9=0; temp11=0;
+          double tempSum = 0.0;
           ///////////////////////////////////////////////////////////////////////////////
           /////            START TTT EXTRA SCREENING INTERVENTION CODE              /////
           ///////////////////////////////////////////////////////////////////////////////
           ///// open a loop to initiate ttt when the month iterator falls within the
           ///// designated range
           ///////////////////////////////////////////////////////////////////////////////
-          if(std::find(std::begin(ttt_month), std::end(ttt_month), s) != std::end(ttt_month)){
+          // if(std::find(std::begin(ttt_month), std::end(ttt_month), s) != std::end(ttt_month)){
+          if (s == ttt_month.front()){
             ///// increment our ttt month counter used to adjust pop screened below
             // ttt_m = ttt_m + 1.0;
-            ttt_m = 1.0;
-
+            // ttt_m = 1.0;
+            ///// SET THE DISTRIBUTION TO THE INPUT DISTRIBUTION FOR N = ROWSPOPULATIONS
+            for (int l=0; l<rows; l++){
+              for (int c=0; c<cols; c++){
+                ttt_dist[l][c] = ttt_samp_distN[l][c];
+                  // Rcpp::Rcout<< "dist =" <<  ttt_dist[l][c] << "\n";
+              }
+            }
             // Rcpp::Rcout << m << "\n";
             ///////////////////////////////////////////////////////////////////////////////
             ///// start the loop for LTBI screening and treatment
@@ -1396,150 +1409,171 @@ Rcpp::List national_cSim(
                 for(int ag=0; ag<11; ag++) {
                   for(int nm=0; nm<4; nm++) {
                     for(int im=0; im<4; im++) {
-                      temp5=0; temp6=0; temp7=0; temp8=0; temp9=0; temp10=0; temp11=0;  tempHR=1; ttt_frc_scrn = 0.0;
+                      temp5=0; temp6=0; temp7=0; temp8=0; temp9=0; temp10=0;
+                      temp11=0;  tempHR=1; ttt_frc_scrn = 0.0;
                       // Rcpp::Rcout << ttt_m << "\n";
-                      for (int i=0; i<agi; i++){
-                        for (int j=0; j<nai; j++){
-                          if (ag==ttt_ag[i] && na==ttt_na[j]){
-                            ///// SET THE DISTRIBUTION TO THE INPUT DISTRIBUTION FOR N = ROWSPOPULATIONS
-                            for (int l=0; l<rows; l++){
-                              for (int c=0; c<cols; c++){
-                                ttt_dist[l][c]=ttt_samp_distN[l][c];
-                              }
-                            }
-                            ///// SET THE SENSITIVITY OF THE TEST BELOW
-                            // ////////////// ALL US BORN  //////////////////////////
-                            if(na==0) {
-                              rTbP_norm = LtDxPar_ltN[0][s];
-                              rTbN_norm = LtDxPar_noltN[0][s];
-                            }
-                            ////////////// Young NUS (under 5)  /////////////////
-                            if(na > 0 && ag==0) {
-                              rTbP_norm = LtDxPar_ltN[2][s];
-                              rTbN_norm = LtDxPar_noltN[2][s];
-                            }
-                            //////////// NON US BORN  ///////////////////////////
-                            if(na > 0 && ag > 0) {
-                              rTbP_norm = LtDxPar_ltN[3][s];
-                              rTbN_norm = LtDxPar_noltN[3][s];
-                            }
-                            if(ttt_ltbi_sens==1){
-                              rTbP_norm=1;
-                            }
-                            if(ttt_ltbi_spec==1){
-                              rTbN_norm=1;
-                            }
-                            ///////////////////////////////////////////////////////////////////////////////
-                            ///// CREATE OBJECTS TO HOLD THE TESTED AND DIAGNOSED FOR EACH POP
-                            ///// THESE DO NOT NEED TO BE SAVED BETWEEN MODEL STATE COMBOS
-                            ///////////////////////////////////////////////////////////////////////////////
-                            double ttt_test_susc_vec[rows];double ttt_test_PI_vec[rows];
-                            double ttt_test_ls_vec[rows];  double ttt_test_lf_vec[rows];
-                            double ttt_test_act_vec[rows];
-                            double ttt_diag_lf_vec[rows];  double ttt_diag_ls_vec[rows];
-                            double ttt_diag_susc_vec[rows]; double ttt_diag_PI_vec[rows];
-                            double ttt_diag_act_vec[rows];
-                            ///// CREATE OBJECTS TO HOLD THE POPULATION SIZE AT EACH LOOP STEP
-                            double popsize_susc[rows];  double popsize_ls[rows];
-                            double popsize_PI[rows];    double popsize_lf[rows]; double popsize_act[rows];
-                            ///////////////////////////////////////////////////////////////////////////////
-                            ///// DICHOTOMOUS VARIABLE FOR US AND NUS BORN
-                            ///// IGNORES TIME SINCE ENTRY
-                            ///////////////////////////////////////////////////////////////////////////////
-                            if (na < 1){
-                              ni = 0;
-                            } else {
-                              ni = 1;
-                            }
-                            ///////////////////////////////////////////////////////////////////////////////
-                            /////                 CALCULATE THE NUMBER OF EXTRA TESTS                 /////
-                            ///////////////////////////////////////////////////////////////////////////////
-                            ///// second loop that iterates across all the populations being screened
-                            ///// need the VLdx to be the sum of all additional screening, but we can't sum
-                            ///// here because we need the population to change;
-                            ///////////////////////////////////////////////////////////////////////////////
-                            for (int  row=0; row < rows; row++){
-                              rr_ltbi = ttt_ltbi;
-                              ///// set the population size
-                              ///// if it is the first population, the population size is V0 vector
-                              // if (i == 0){
-                              // popsize_susc[row] = std::max(V0[ag][0][0][im][nm][rg][na] - VLtemp[ag][0][0][im][nm][rg][na], 0.0);
-                              // popsize_PI[row]   = std::max(V0[ag][1][0][im][nm][rg][na] - VLtemp[ag][1][0][im][nm][rg][na], 0.0);
-                              // popsize_ls[row]   = std::max(V0[ag][2][0][im][nm][rg][na] - VLtemp[ag][2][0][im][nm][rg][na], 0.0);
-                              // popsize_lf[row]   = std::max(V0[ag][3][0][im][nm][rg][na] - VLtemp[ag][3][0][im][nm][rg][na], 0.0);
-                              popsize_susc[row] = std::max(V0[ag][0][0][im][nm][rg][na] , 0.0L);
-                              popsize_PI[row]   = std::max(V0[ag][1][0][im][nm][rg][na] , 0.0L);
-                              popsize_ls[row]   = std::max(V0[ag][2][0][im][nm][rg][na] , 0.0L);
-                              popsize_lf[row]   = std::max(V0[ag][3][0][im][nm][rg][na] , 0.0L);
-                              popsize_act[row]  = std::max(V0[ag][4][0][im][nm][rg][na] , 0.0L);
+                      ///// SET THE SENSITIVITY OF THE TEST BELOW
+                      // ////////////// ALL US BORN  //////////////////////////
+                      if(na==0) {
+                        rTbP_norm = LtDxPar_ltN[0][s];
+                        rTbN_norm = LtDxPar_noltN[0][s];
+                      }
+                      ////////////// Young NUS (under 5)  /////////////////
+                      if(na > 0 && ag==0) {
+                        rTbP_norm = LtDxPar_ltN[2][s];
+                        rTbN_norm = LtDxPar_noltN[2][s];
+                      }
+                      //////////// NON US BORN  ///////////////////////////
+                      if(na > 0 && ag > 0) {
+                        rTbP_norm = LtDxPar_ltN[3][s];
+                        rTbN_norm = LtDxPar_noltN[3][s];
+                      }
+                      if(ttt_ltbi_sens==1){
+                        rTbP_norm=1;
+                      }
+                      if(ttt_ltbi_spec==1){
+                        rTbN_norm=1;
+                      }
+                      ///////////////////////////////////////////////////////////////////////////////
+                      ///// CREATE OBJECTS TO HOLD THE TESTED AND DIAGNOSED FOR EACH POP
+                      ///// THESE DO NOT NEED TO BE SAVED BETWEEN MODEL STATE COMBOS
+                      ///////////////////////////////////////////////////////////////////////////////
+                      double ttt_test_susc_vec[rows]; double ttt_test_PI_vec[rows];
+                      double ttt_test_ls_vec[rows];  double ttt_test_lf_vec[rows];
+                      double ttt_test_act_vec[rows];
+                      double ttt_diag_lf_vec[rows];  double ttt_diag_ls_vec[rows];
+                      double ttt_diag_susc_vec[rows]; double ttt_diag_PI_vec[rows];
+                      double ttt_diag_act_vec[rows];
+                      ///// CREATE OBJECTS TO HOLD THE POPULATION SIZE AT EACH LOOP STEP
+                      double popsize_susc[rows];  double popsize_ls[rows];
+                      double popsize_PI[rows];    double popsize_lf[rows]; double popsize_act[rows];
+                      ///////////////////////////////////////////////////////////////////////////////
+                      ///// DICHOTOMOUS VARIABLE FOR US AND NUS BORN
+                      ///// IGNORES TIME SINCE ENTRY
+                      ///////////////////////////////////////////////////////////////////////////////
+                      if (na < 1){
+                        ni = 0;
+                      } else {
+                        ni = 1;
+                      }
+                      ///////////////////////////////////////////////////////////////////////////////
+                      /////                 CALCULATE THE NUMBER OF EXTRA TESTS                 /////
+                      ///////////////////////////////////////////////////////////////////////////////
+                      ///// second loop that iterates across all the populations being screened
+                      ///// need the VLdx to be the sum of all additional screening, but we can't sum
+                      ///// here because we need the population to change;
+                      ///////////////////////////////////////////////////////////////////////////////
+                      for (int  row=0; row < rows; row++){
+                        // Rcpp::Rcout<< "row = " << row << "\n";
+                        rr_ltbi = ttt_ltbi[row];
+                        ///// set the population size
+                        ///// if it is the first population, the population size is V0 vector
+                        // if (i == 0){
+                        // popsize_susc[row] = std::max(V0[ag][0][0][im][nm][rg][na] - VLtemp[ag][0][0][im][nm][rg][na], 0.0);
+                        // popsize_PI[row]   = std::max(V0[ag][1][0][im][nm][rg][na] - VLtemp[ag][1][0][im][nm][rg][na], 0.0);
+                        // popsize_ls[row]   = std::max(V0[ag][2][0][im][nm][rg][na] - VLtemp[ag][2][0][im][nm][rg][na], 0.0);
+                        // popsize_lf[row]   = std::max(V0[ag][3][0][im][nm][rg][na] - VLtemp[ag][3][0][im][nm][rg][na], 0.0);
+                        popsize_susc[row] = std::max(V0[ag][0][0][im][nm][rg][na] , 0.0L);
+                        popsize_PI[row]   = std::max(V0[ag][1][0][im][nm][rg][na] , 0.0L);
+                        popsize_ls[row]   = std::max(V0[ag][2][0][im][nm][rg][na] , 0.0L);
+                        popsize_lf[row]   = std::max(V0[ag][3][0][im][nm][rg][na] , 0.0L);
+                        popsize_act[row]  = std::max(V0[ag][4][0][im][nm][rg][na] , 0.0L);
 
-                              // if (popsize_act[row] == 0.0L) { Rcpp::Rcout << "Not enough PopAct in nat = " << na << " ag = " << ag << " rg = " << rg << " im = " << im << " nm = "<< nm << "\n";}
+                        // if (popsize_act[row] == 0.0) { Rcpp::Rcout << "Not enough PopAct in nat = " << na << " ag = " << ag << " rg = " << rg << " im = " << im << " nm = "<< nm << "\n";}
 
-                              // } else {
-                              //   popsize_susc[row]= std::max((popsize_susc[i-1]-(ttt_test_susc_vec[i-1]*(1/ttt_ltbi_acceptN))),0.0L);
-                              //   popsize_PI[row]=   std::max((popsize_PI[i-1]-ttt_test_PI_vec[i-1]*(1/ttt_ltbi_acceptN)),0.0L);
-                              //   popsize_ls[row]=   std::max((popsize_ls[i-1]-ttt_test_ls_vec[i-1]*(1/ttt_ltbi_acceptN)),0.0L);
-                              //   // Rcpp::Rcout<< "2 pop ls = " << popsize_ls[row]<<"i = "<<i<< "\n";
-                              //   popsize_lf[row]=   std::max((popsize_lf[i-1]-ttt_test_lf_vec[i-1]*(1/ttt_ltbi_acceptN)),0.0L);
-                              // Rcpp::Rcout<< "2 pop lf = " << popsize_lf[row]<<"i = "<<i<< "\n";
-                              // }
-                              ///// CALCULATE THE REVISED TESTING RATE FOR THAT TIME STEP
-                              ///// BECAUSE THE POPULATIION IS DIMINISHED OVER TIME, WE FRACTION SCREENED NEEDS TO BE ADJUSTED
-                              ///// UPWARD IN ORDER TO CAPTURE THE ORIGINAL INPUTTED POPULATION SIZE
-                              ttt_frc_scrn = std::min(ttt_dist[row][nm+(im*4)] / (1.0 - ttt_dist[row][nm+(im*4)] * (ttt_m - 1.0)), 1.0L);
+                        // } else {
+                        //   popsize_susc[row]= std::max((popsize_susc[i-1]-(ttt_test_susc_vec[i-1]*(1/ttt_ltbi_acceptN))),0.0);
+                        //   popsize_PI[row]=   std::max((popsize_PI[i-1]-ttt_test_PI_vec[i-1]*(1/ttt_ltbi_acceptN)),0.0);
+                        //   popsize_ls[row]=   std::max((popsize_ls[i-1]-ttt_test_ls_vec[i-1]*(1/ttt_ltbi_acceptN)),0.0);
+                        //   // Rcpp::Rcout<< "2 pop ls = " << popsize_ls[row]<<"i = "<<i<< "\n";
+                        //   popsize_lf[row]=   std::max((popsize_lf[i-1]-ttt_test_lf_vec[i-1]*(1/ttt_ltbi_acceptN)),0.0);
+                        // Rcpp::Rcout<< "2 pop lf = " << popsize_lf[row]<<"i = "<<i<< "\n";
+                        // }
+                        ///// CALCULATE THE REVISED TESTING RATE FOR THAT TIME STEP
+                        ///// BECAUSE THE POPULATIION IS DIMINISHED OVER TIME, WE FRACTION SCREENED NEEDS TO BE ADJUSTED
+                        ///// UPWARD IN ORDER TO CAPTURE THE ORIGINAL INPUTTED POPULATION SIZE
+                        // ttt_frc_scrn = std::min(ttt_dist[row][ag+(ni*11)+(nm*22)+(im*88)], 1.0L);
+                        ttt_frc_scrn = ttt_dist[row][ag+(ni*11)+(nm*22)+(im*88)];
 
-                              ///// CALCULATE THE NUMBER TESTED FOR THAT POPULATION
-                              ttt_test_susc_vec[row] = std::max((ttt_frc_scrn * popsize_susc[row] * ttt_ltbi_acceptN),0.0);
-                              ttt_test_PI_vec[row]   = std::max((ttt_frc_scrn * popsize_PI[row]   * ttt_ltbi_acceptN),0.0);
-                              ttt_test_ls_vec[row]   = std::max((ttt_frc_scrn * popsize_ls[row]   * ttt_ltbi_acceptN),0.0);
-                              ttt_test_lf_vec[row]   = std::max((ttt_frc_scrn * popsize_lf[row]   * ttt_ltbi_acceptN),0.0);
-                              ttt_test_act_vec[row]  = std::max((ttt_frc_scrn * popsize_act[row]  * ttt_ltbi_acceptN),0.0);
+                        // ttt_frc_scrn = std::min(ttt_dist[row][ag+(ni*11)+(nm*22)+(im*88)] / (1.0 - ttt_dist[row][ag+(ni*11)+(nm*22)+(im*88)] * (ttt_m - 1.0)), 1.0L);
+                        ///Rcpp::Rcout<< "ttt_frc_scrn = " << ttt_frc_scrn << "\n";
 
-                              // if (ttt_test_susc_vec[row] == 0.0L) { Rcpp::Rcout << "Not enough susc in nat = " << na << " ag = " << ag << " rg = " << rg << " im = " << im << " nm = " << nm << "\n";}
-                              // if (ttt_test_PI_vec[row] == 0.0L) { Rcpp::Rcout << "Not enough PI in nat = " << na << " ag = " << ag << " rg = " << rg << " im = " << im << " nm = "<< nm << "\n";}
-                              //
-                              // if (ttt_test_ls_vec[row] == 0.0L) { Rcpp::Rcout << "Not enough LS in nat = " << na << " ag = " << ag << " rg = " << rg << " im = " << im << " nm = "<< nm << "\n";}
-                              // if (ttt_test_lf_vec[row] == 0.0L) { Rcpp::Rcout << "Not enough lF in nat = " << na << " ag = " << ag << " rg = " << rg << " im = " << im << " nm = "<< nm << "\n";}
-                              // if (ttt_test_act_vec[row] == 0.0L) { Rcpp::Rcout << "Not enough TestAct in nat = " << na << " ag = " << ag << " rg = " << rg << " im = " << im << " nm = "<< nm << "\n";}
-                              int rrTestHrN;
-                              /////////////////// CALCULATE THE NUMBER OF EXTRA DIAGNOSES
-                              ttt_diag_susc_vec[row] = std::max((std::min((ttt_test_susc_vec[row] * rTbN_norm),ttt_test_susc_vec[row])),0.0);
-                              ttt_diag_PI_vec[row]   = std::max((std::min((ttt_test_PI_vec[row] * rTbN_norm),ttt_test_PI_vec[row])),0.0);
-                              ttt_diag_ls_vec[row]   = std::max((std::min((ttt_test_ls_vec[row] * rTbP_norm * rr_ltbi),ttt_test_ls_vec[row])),0.0);
-                              ttt_diag_lf_vec[row]   = std::max((std::min((ttt_test_lf_vec[row] * rTbP_norm * rr_ltbi),ttt_test_lf_vec[row])),0.0);
-                              if (rg == 1){
-                                rrTestHrN = rrTestHr;
-                              } else {
-                                rrTestHrN = 1;
-                              }
-                              ttt_diag_act_vec[row] = std::max((std::min((ttt_test_act_vec[row]*rTbP_norm/rrTestHrN), ttt_test_act_vec[row])),0.0);
-                              // if (ttt_diag_act_vec[row] == 0.0L) { Rcpp::Rcout << "Not enough DiagAct in nat = " << na << " ag = " << ag << " rg = " << rg << " im = " << im << " nm = "<< nm << "\n";}
+                        ///// CALCULATE THE NUMBER TESTED FOR THAT POPULATION
+                        ttt_test_susc_vec[row] = (ttt_frc_scrn * popsize_susc[row] * ttt_ltbi_acceptN);
+                        tempSum += (ttt_frc_scrn * popsize_susc[row] * ttt_ltbi_acceptN);
+                        ttt_test_PI_vec[row]   = (ttt_frc_scrn * popsize_PI[row]   * ttt_ltbi_acceptN);
+                        tempSum += (ttt_frc_scrn * popsize_PI[row] * ttt_ltbi_acceptN);
+                        ttt_test_ls_vec[row]   = (ttt_frc_scrn * popsize_ls[row]   * ttt_ltbi_acceptN);
+                        tempSum += (ttt_frc_scrn * popsize_ls[row] * ttt_ltbi_acceptN);
 
-                              // this is for understanding the characteristics of the screened population
-                              for (int tb = 0; tb < 5; tb++){
-                                VLtemp[ag][tb][0][im][nm][rg][na] = std::max((ttt_frc_scrn * std::max(V0[ag][tb][0][im][nm][rg][na] , 0.0L) * ttt_ltbi_acceptN),0.0L);
-                              }
+                        ttt_test_lf_vec[row]   = (ttt_frc_scrn * popsize_lf[row]   * ttt_ltbi_acceptN);
+                        tempSum += (ttt_frc_scrn * popsize_lf[row] * ttt_ltbi_acceptN);
 
+                        ttt_test_act_vec[row]  = (ttt_frc_scrn * popsize_act[row]  * ttt_ltbi_acceptN);
+                        tempSum += (ttt_frc_scrn * popsize_act[row] * ttt_ltbi_acceptN);
 
-                            }//END THE POP SCREEN LOOP
-                            for (int k=0; k<rows; k++){
-                              //CALCULATE THE ADDITIONAL NUMBER OF TESTS
-                              VLtest[ag][0][0][im][nm][rg][na] += ttt_test_susc_vec[k];
-                              VLtest[ag][1][0][im][nm][rg][na] += ttt_test_PI_vec[k];
-                              VLtest[ag][2][0][im][nm][rg][na] += ttt_test_ls_vec[k];
-                              VLtest[ag][3][0][im][nm][rg][na] += ttt_test_lf_vec[k];
-                              VLtest[ag][4][0][im][nm][rg][na] += ttt_test_act_vec[k];
+                        // ttt_test_susc_vec[row] = std::max((ttt_frc_scrn * popsize_susc[row] * ttt_ltbi_acceptN), 0.0);
+                        // ttt_test_PI_vec[row]   = std::max((ttt_frc_scrn * popsize_PI[row]   * ttt_ltbi_acceptN), 0.0);
+                        // ttt_test_ls_vec[row]   = std::max((ttt_frc_scrn * popsize_ls[row]   * ttt_ltbi_acceptN), 0.0);
+                        // ttt_test_lf_vec[row]   = std::max((ttt_frc_scrn * popsize_lf[row]   * ttt_ltbi_acceptN), 0.0);
+                        // ttt_test_act_vec[row]  = std::max((ttt_frc_scrn * popsize_act[row]  * ttt_ltbi_acceptN), 0.0);
+                        // if (ni == 0){ Rcpp::Rcout << ttt_test_susc_vec[row] <<" susc in nat = " << na << " ag = " << ag << " rg = " << rg << " im = " << im << " nm = " << nm << "\n";}
+                        // if (ni == 0){Rcpp::Rcout << ttt_test_PI_vec[row] << "PI in nat = " << na << " ag = " << ag << " rg = " << rg << " im = " << im << " nm = "<< nm << "\n";}
+                        // if (ni == 0){Rcpp::Rcout << ttt_test_ls_vec[row] <<" LS in nat = " << na << " ag = " << ag << " rg = " << rg << " im = " << im << " nm = "<< nm << "\n";}
+                        // if (ni == 0){Rcpp::Rcout << ttt_test_lf_vec[row] << " lF in nat = " << na << " ag = " << ag << " rg = " << rg << " im = " << im << " nm = "<< nm << "\n";}
+                        // if (ni == 0){Rcpp::Rcout << ttt_test_act_vec[row] << " TestAct in nat = " << na << " ag = " << ag << " rg = " << rg << " im = " << im << " nm = "<< nm << "\n";}
+                        // if (ttt_test_susc_vec[row] == 0.0) { Rcpp::Rcout << "Not enough susc in nat = " << na << " ag = " << ag << " rg = " << rg << " im = " << im << " nm = " << nm << "\n";}
+                        // if (ttt_test_PI_vec[row] == 0.0) { Rcpp::Rcout << "Not enough PI in nat = " << na << " ag = " << ag << " rg = " << rg << " im = " << im << " nm = "<< nm << "\n";}
+                        //
+                        // if (ttt_test_ls_vec[row] == 0.0) { Rcpp::Rcout << "Not enough LS in nat = " << na << " ag = " << ag << " rg = " << rg << " im = " << im << " nm = "<< nm << "\n";}
+                        // if (ttt_test_lf_vec[row] == 0.0) { Rcpp::Rcout << "Not enough lF in nat = " << na << " ag = " << ag << " rg = " << rg << " im = " << im << " nm = "<< nm << "\n";}
+                        // if (ttt_test_act_vec[row] == 0.0) { Rcpp::Rcout << "Not enough TestAct in nat = " << na << " ag = " << ag << " rg = " << rg << " im = " << im << " nm = "<< nm << "\n";}
+                        int rrTestHrN;
+                        /////////////////// CALCULATE THE NUMBER OF EXTRA DIAGNOSES
+                        ttt_diag_susc_vec[row] = std::max((std::min((ttt_test_susc_vec[row] * rTbN_norm),ttt_test_susc_vec[row])),0.0);
+                        ttt_diag_PI_vec[row]   = std::max((std::min((ttt_test_PI_vec[row] * rTbN_norm),ttt_test_PI_vec[row])),0.0);
+                        ttt_diag_ls_vec[row]   = std::max((std::min((ttt_test_ls_vec[row] * rTbP_norm * rr_ltbi),ttt_test_ls_vec[row])),0.0);
+                        ttt_diag_lf_vec[row]   = std::max((std::min((ttt_test_lf_vec[row] * rTbP_norm * rr_ltbi),ttt_test_lf_vec[row])),0.0);
+                        if (rg == 1){
+                          rrTestHrN = rrTestHr;
+                        } else {
+                          rrTestHrN = 1;
+                        }
+                        ttt_diag_act_vec[row] = std::max((std::min((ttt_test_act_vec[row]*rTbP_norm/rrTestHrN), ttt_test_act_vec[row])),0.0);
+                        // if (ttt_diag_act_vec[row] == 0.0) { Rcpp::Rcout << "Not enough DiagAct in nat = " << na << " ag = " << ag << " rg = " << rg << " im = " << im << " nm = "<< nm << "\n";}
+                        // if (ni == 0){
+                        //   Rcpp::Rcout<< "susc = " << ttt_diag_susc_vec[row] << "\n";
+                        //   Rcpp::Rcout<< "ls = " << ttt_diag_ls_vec[row] << "\n";
+                        //   Rcpp::Rcout<< "lf = " << ttt_diag_lf_vec[row] << "\n";}
+                        // this is for understanding the characteristics of the screened population
+                        for (int tb = 0; tb < 5; tb++){
+                          VLtemp[ag][tb][0][im][nm][rg][na] = std::max((ttt_frc_scrn * std::max(V0[ag][tb][0][im][nm][rg][na] , 0.0L) * ttt_ltbi_acceptN),0.0L);
+                        }
 
-                              temp5 += ttt_diag_ls_vec[k];
-                              temp6 += ttt_diag_lf_vec[k];
-                              temp7 += ttt_diag_susc_vec[k];
-                              temp8 += ttt_diag_PI_vec[k];
-                              temp9 += ttt_diag_act_vec[k];
+                      }//END THE POP SCREEN LOOP
+                      for (int k=0; k<rows; k++){
+                        // Rcpp::Rcout<< "k = " << k << "\n";
+                        //CALCULATE THE ADDITIONAL NUMBER OF TESTS
+                        VLtest[ag][0][0][im][nm][rg][na] += ttt_test_susc_vec[k];
+                        VLtest[ag][1][0][im][nm][rg][na] += ttt_test_PI_vec[k];
+                        VLtest[ag][2][0][im][nm][rg][na] += ttt_test_ls_vec[k];
+                        VLtest[ag][3][0][im][nm][rg][na] += ttt_test_lf_vec[k];
+                        VLtest[ag][4][0][im][nm][rg][na] += ttt_test_act_vec[k];
 
-                              // we need to remove these actives from the available tb cases
-                              VAtemp[ag][im][nm][rg][na] += ttt_diag_act_vec[k];
-                            } ///end the k loop
-                          }}} //close age and nativity loops (3 IN TOTAL)
+                        temp5 += ttt_diag_ls_vec[k];
+                        temp6 += ttt_diag_lf_vec[k];
+                        temp7 += ttt_diag_susc_vec[k];
+                        temp8 += ttt_diag_PI_vec[k];
+                        temp9 += ttt_diag_act_vec[k];
+
+                        temp20 += ttt_test_susc_vec[k] + ttt_test_PI_vec[k] + ttt_test_ls_vec[k] +  ttt_test_lf_vec[k] + ttt_test_act_vec[k];
+                        temp21 += ttt_test_ls_vec[k] +  ttt_test_lf_vec[k];
+                        temp22 += ttt_diag_susc_vec[k] + ttt_diag_PI_vec[k] + ttt_diag_ls_vec[k] +  ttt_diag_lf_vec[k] + ttt_diag_act_vec[k];
+                        temp23 += ttt_diag_ls_vec[k] +  ttt_diag_lf_vec[k];
+                        // we need to remove these actives from the available tb cases
+                        VAtemp[ag][im][nm][rg][na] += ttt_diag_act_vec[k];
+                      } ///end the k loop
+
                       ///////////////////////////////////////////////////////////////////////////////
                       ///// REMOVE THE TREATED POPULATION
                       ///////////////////////////////////////////////////////////////////////////////
@@ -1592,50 +1626,17 @@ Rcpp::List national_cSim(
 
             // Rcpp::Rcout << "At adjustment step " << ttt_m << "and month "<<m<< " susc tests are equal to " << temp9 << " and latent tests are equal to " << temp10 << "\n";
           } //end of ttt MONTHS loop
-          // if (s == (ttt_month.back())){
-          // temp10=temp8+temp9;
-          if (s == ttt_month.front()){
-            Rcpp::Rcout<< "month = " << s << "\n";
-            Rcpp::Rcout<< "total extra screening 1 = " << temp7 << "\n";
 
-            Rcpp::Rcout<< "total extra screening = " << temp8 << "\n";
-            Rcpp::Rcout<< "total extra screening in latent pop = " << temp9 << "\n";
-            Rcpp::Rcout<< "total extra LTBI diagnoses = " << temp10 << "\n";
+          if (s == ttt_month.back()){
+            Rcpp::Rcout<< "month = " << s << "\n";
+            Rcpp::Rcout<< "total extra screening = " << temp20*1e6 << "\n";
+            // Rcpp::Rcout<< "total extra screening 2= " << tempSum*1e6 << "\n";
+
+            Rcpp::Rcout<< "total extra screening in latent pop = " << temp21 *1e6<< "\n";
+            Rcpp::Rcout<< "total extra LTBI diagnoses = " << temp22*1e6 << "\n";
+            Rcpp::Rcout<< "total extra LTBI diagnoses in latent pop = " << temp23*1e6 << "\n";
           }
           temp7=0;temp8=0;temp9=0;temp10=0;
-          // if(std::find(std::begin(ttt_month), std::end(ttt_month), s) != std::end(ttt_month)){
-          //   for(int ag=0; ag<11; ag++) {
-          //     for(int tb=0; tb<6; tb++) {
-          //       for(int lt=0; lt<2; lt++){
-          //         for(int im=0; im<4; im++){
-          //           for(int nm=0; nm<4; nm++){
-          //             for(int rg=0; rg<2; rg++) {
-          //               for(int na=0; na<3; na++) {
-          //                 if (V1[ag][tb][lt][im][nm][rg][na]<0){
-          //                   temp7+=1; }}}}}}}}
-          //   if (temp7 > 0 ){
-          //     Rcpp::Rcout << "The selected characteristics of the screened population cannot be modeled."<< "\n";}
-          //   // Rcpp::Rcout << "s = " << s << "\n";
-          //   // Rcpp::Rcout << "after tltbi pop is negative at ag = " << ag << " tb = "<< tb << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
-          //   // Rcpp::Rcout << "V1 is = "<<  V1[ag][tb][lt][im][nm][rg][na] << "\n";
-          // }
-          // for(int ag=0; ag<11; ag++) {
-          //   for(int tb=2; tb<6; tb++) {
-          //     for(int lt=0; lt<2; lt++){
-          //       for(int im=0; im<4; im++){
-          //         for(int nm=0; nm<4; nm++){
-          //           for(int rg=0; rg<2; rg++) {
-          //             for(int na=0; na<3; na++) {
-          //               if(NixTb[s]==1){
-          //                 if (V0[ag][tb][lt][im][nm][rg][na] > 0){
-          //                   Rcout << "after ltbi screen V0"<<V0[ag][tb][lt][im][nm][rg][na] << "\n";
-          //                 }
-          //                 if (V1[ag][tb][lt][im][nm][rg][na] > 0){
-          //
-          //                   Rcout << "after ltbi screen V1"<<V1[ag][tb][lt][im][nm][rg][na] << "\n";
-          //
-          //                 }}
-          //             } } } } } } }
           ///////////////////// TB DIAGNOSIS AND TX INITIATION  /////////////////////////
           for(int ag=0; ag<11; ag++) {
             for(int lt=0; lt<2; lt++) {

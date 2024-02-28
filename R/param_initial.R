@@ -453,9 +453,11 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,
   ###  if the population & fraction to be screened are non zero update values  ###
   if (ttt_list[[1]][[3]]!=0 & ttt_list[[1]][[4]]!=0){
     ###this is dependent on a basecase run so load in that data
-    load(system.file(paste0(loc, "/", loc, "_results_1.rda"), package = "MITUS"))
-    ttt_params<-create_ttt_mdist(ttt_list = ttt_list,
-                                 results = out[3,,],
+    # load(system.file(paste0(loc, "/", loc, "_results_1.rda"), package = "MITUS"))
+    results0 <- readRDS(system.file(paste0(loc, "/", "tempBaseCaseTest.rds"), package = "MITUS"))
+
+    ttt_params<-create_ttt_mdist(ttt_input = ttt_list,
+                                 results =results0,
                                  PV = PV)
     for (i in 1:length(ttt_params)){
       ttt_sampling_dist[i,]<-as.vector(ttt_params[[i]][,-(ncol(ttt_params[[i]]))])
@@ -803,8 +805,8 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,
   InputParams[["rrTestHr"]] = rrTestHr
   InputParams[["ttt_month"]]<-ttt_month
   InputParams[["ttt_sampling_dist"]]<-ttt_sampling_dist
-  InputParams[["ttt_na"]]<-0
-  InputParams[["ttt_ag"]]<-0
+  InputParams[["ttt_na"]] <-0
+  InputParams[["ttt_ag"]] <-0
   InputParams[["ttt_pop_scrn"]]<-1
   InputParams[["ttt_ltbi"]]<-ttt_ltbi
   InputParams[["rLtScrt"]]   = rLtScrt

@@ -27,7 +27,7 @@
 national_OutputsZint <-  function(samp_i=1,ParMatrix,loc, output_month=11, startyr=1950, endyr=2050,
                                   Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,
                                   Scen1=0,Scen2=0,Scen3=0,Scen4=0,Scen5=0,Scen6=0,
-                                  prg_chng=def_prgchng(Par[1,]), ttt_list=def_ttt(),
+                                  prg_chng=def_prgchng(Par[1,]), ttt_list=list(def_ttt_nat_ag()),
                                   care_cascade = def_care_cascade(),
                                   par2020 = c(0.4232265, 0.3707595, 0.1984619, 1.1158255)) {
   # format parameter vector
