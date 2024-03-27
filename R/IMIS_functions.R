@@ -80,6 +80,22 @@ llikelihoodZ <-  function(samp_i, start_mat, TB=1) {
       colnames(M) <- func_ResNam()
       lLik <- 0
       if(TB==1){
+      #########################################################################
+      # Additional likelihoods for adjustment of the model to better fit 2019 targets
+
+      #' CASES FB RECENT ENTRY DISTRIBUTION 1993-2014 index updated
+      #' recent immigrants column one; long term in column two
+      v0   <- M[70,148:149]+M[70,201:202]
+      addlik <- notif_fb_rec_19_lLik(V=v0); addlik
+      lLik <- lLik + addlik
+
+      #' TOTAL DEATHS WITH TB 1999-2014 - index updated
+      v00  <- M[70, 227:237]
+      addlik <- tb_dth_tot_19_lLik(V=v00); addlik
+      lLik <- lLik + addlik
+
+      #########################################################################
+
       #' TOTAL DIAGNOSED CASES 1953-2016 - index is same
       v1   <- M[4:43,"NOTIF_ALL"]+M[4:43,"NOTIF_MORT_ALL"]
       addlik <- notif_tot_lik(V=v1); addlik
@@ -138,9 +154,9 @@ llikelihoodZ <-  function(samp_i, start_mat, TB=1) {
       lLik <-lLik +addlik
       #' CASES FB RECENT ENTRY DISTRIBUTION 1993-2014 index updated
       #' recent immigrants column one; long term in column two
-      v6   <- M[44:70,148:149]+M[44:70,201:202]
-      addlik <- notif_fb_rec_lLik(V=v6); addlik
-      lLik <- lLik + addlik
+      #' v6   <- M[44:70,148:149]+M[44:70,201:202]
+      #' addlik <- notif_fb_rec_lLik(V=v6); addlik
+      #' lLik <- lLik + addlik
       #' TREATMENT OUTCOMES 1993-2014 - index updated
       v11  <- M[44:65,132:134]
       addlik <- tx_outcomes_lLik(V=v11); addlik
@@ -178,10 +194,10 @@ llikelihoodZ <-  function(samp_i, start_mat, TB=1) {
       addlik <- ltbi_fb_11_lLik(V=v16d); addlik
       lLik <- lLik + addlik
 
-      #' TOTAL DEATHS WITH TB 1999-2014 - index updated
+      #' #' TOTAL DEATHS WITH TB 1999-2014 - index updated
       v19  <- M[50:70,227:237]
-      addlik <- tb_dth_tot_lLik(V=v19); addlik
-      lLik <- lLik + addlik
+      #' addlik <- tb_dth_tot_lLik(V=v19); addlik
+      #' lLik <- lLik + addlik
       #' TOTAL DEATHS 2015-2019  SLOPE - index updated
       addlik <- tb_dth_slp_lLik(V=rowSums(v19[17:21,])); addlik
       lLik <- lLik + addlik

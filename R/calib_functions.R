@@ -4,6 +4,37 @@
 #'These llikelihood functions are called in IMIS_functions.R
 #'takes in the outputs and calibration data and creates likelihood functions
 
+
+###############################################################################
+# Additional likelihoods for adjustment of the model to better fit 2019 targets
+
+#' CASES FB RECENT ENTRY DISTRIBUTION 2019
+#' Motivation: dirichlet-multinomial, multinomial data with additional non-sampling biases
+#'@param V fraction of NUSB notifications for those in the US less than two years
+#'@param rho correlation parameter
+#'@return likelihood
+notif_fb_rec_19_lLik <- function(V, rho=0.01) {
+  notif_fb_rec_frc19   <- 0.2234962
+  notif19 <- 6367
+
+  notif_fb_rec19 <- c(notif_fb_rec_frc19, 1 - notif_fb_rec_frc19) * notif19
+  adj_0    <- sum(dDirMult(M=notif_fb_rec19, n = notif_fb_rec19, Rho = rho))
+  sum(dDirMult(M = V,n = notif_fb_rec19, Rho = rho)) - adj_0
+}
+
+
+#' TOTAL TB DEATHS 1999-2014
+#' Motivation: norm, mean centered with CI = +/- 5% of mean
+#'@param V vector of TB deaths in fraction of millions
+#'@return likelihood
+tb_dth_tot_19_lLik <- function(V) {
+  tb_deaths_tot19   <- sum(CalibDat[["tb_deaths"]][21,-1])/1e6
+  adj_00         <- sum(dnorm(tb_deaths_tot19, tb_deaths_tot19, tb_deaths_tot19*0.05/1.96, log = T))
+  V2 <- sum(V)
+  sum(dnorm(tb_deaths_tot19, V2, tb_deaths_tot19 * 0.05 / 1.96, log = T)) - adj_00}
+
+
+###############################################################################
 #'Total Diagnosed Cases 1953-2016
 #'Motivation: Normal, mean centered with CI = +/- 5% of the mean
 #'@param V vector of total notifications 1953-2014
