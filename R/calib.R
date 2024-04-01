@@ -10,6 +10,8 @@ calib<-function(samp_i,
   } else {
     Par <- as.numeric(optim_mat[samp_i,]);
     names(Par) <- colnames(optim_mat) }  ##previously, the distribution of parameters were transformed to normal distribution in
+
+
   ##to facilitate comparisons. These first two steps convert these parameters back to their
   ##distributions
   # normal to uniform
@@ -26,14 +28,15 @@ calib<-function(samp_i,
   # par2020 = c(0.4232265, 0.3707595, 0.1984619, 1.1158255)
   # names(par2020) <- c("Immig", "Dxt", "Trans", "CaseFat")
   par2020 <-c(99,
-              0,0,0,0,0,
-              0,0,0,0,0,
-              1, 1, 1, 1, 1)
+              0,0,0,0,0,0,
+              0,0,0,0,0, 0,
+              1, 1, 1, 1, 1, 1)
 
-  names(par2020) <- c("Immig",
-                      "DxtKnot1", "DxtKnot2", "DxtKnot3", "DxtKnot4", "DxtKnot5",
-                      "TransKnot1", "TransKnot2", "TransKnot3", "TransKnot4", "TransKnot5",
-                      "CaseFatKnot1", "CaseFatKnot2", "CaseFatKnot3", "CaseFatKnot4", "CaseFatKnot5")
+  names(par2020) <-  c("Immig",
+                       "DxtKnot1", "DxtKnot2", "DxtKnot3", "DxtKnot4", "DxtKnot5", "DxtKnot6",
+                       "TransKnot1", "TransKnot2", "TransKnot3", "TransKnot4", "TransKnot5", "TransKnot6",
+                       "CaseFatKnot1", "CaseFatKnot2", "CaseFatKnot3", "CaseFatKnot4", "CaseFatKnot5", "CaseFatKnot6")
+
   ### CALL THE DEFAULT CARE CASCADE FOR BELOW
   care_cascade <- def_care_cascade()
 
