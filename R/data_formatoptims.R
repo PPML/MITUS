@@ -19,7 +19,7 @@ optim_data <- function(batches, loc, date){
   month<-strsplit(date, "-")[[1]][1]
   day<-strsplit(date, "-")[[1]][2]
   for (i in batches){
-    load(paste("/Users/nis100/Desktop/ModelOpts_011924/","Opt_", loc, "_r7_",i,"_2024-", date, ".rda", sep=""))
+    load(paste("/Users/nis100/Desktop/USOpt_032924/","Opt_", loc, "_r7_",i,"_2024-", date, ".rda", sep=""))
     opt_all[i,1:nrow(ParamInitZ)] <- o7$par
     opt_all[i,nrow(ParamInitZ)+1]<- o7$value
   }
