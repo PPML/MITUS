@@ -24,7 +24,7 @@
 OutputsZint <-  function(samp_i=1,ParMatrix,loc, output_month = 11, startyr=1950, endyr=2050,
                          Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,
                          prg_chng=def_prgchng(Par[4,]), ttt_list=def_ttt(), care_cascade = def_care_cascade(),
-                         par2020 = c(99,rep(0,12),rep(1,6)),
+                         par2020 = c(rep(0,18),rep(1,6)),
                          return_params = def_returnScenario())
 {
   if(min(dim(as.data.frame(ParMatrix)))==1) {
@@ -46,14 +46,14 @@ OutputsZint <-  function(samp_i=1,ParMatrix,loc, output_month = 11, startyr=1950
 
   ### add in the 2020 parameter adjustments
   ### basecase values are c(99, 0, 0, 1)
-  names(par2020) <-  c("Immig",
+  names(par2020) <-  c("ImmigKnot1", "ImmigKnot2", "ImmigKnot3", "ImmigKnot4", "ImmigKnot5", "ImmigKnot6",
                        "DxtKnot1", "DxtKnot2", "DxtKnot3", "DxtKnot4", "DxtKnot5", "DxtKnot6",
                        "TransKnot1", "TransKnot2", "TransKnot3", "TransKnot4", "TransKnot5", "TransKnot6",
                        "CaseFatKnot1", "CaseFatKnot2", "CaseFatKnot3", "CaseFatKnot4", "CaseFatKnot5", "CaseFatKnot6")
 
   prms <- list()
   prms <- param_init(P,loc,Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3,prg_chng,ttt_list,
-                     immig = par2020["Immig"])
+                     immig = par2020[1:6])
                      # return_months = return_params[["Immig"]][["return_months"]],
                      # multiplier = return_params[["Immig"]][["multiplier"]])
 
@@ -130,7 +130,7 @@ OutputsZint <-  function(samp_i=1,ParMatrix,loc, output_month = 11, startyr=1950
 #'@param multiplier
 #'@return out outputs
 #'@export
-OutputsInt <- function(loc,ParMatrix, n_cores=1, output_month = 11, startyr=1950,endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,prg_chng, ttt_list, par2020=c(99,rep(0,12),rep(1,6)), care_cascade = def_care_cascade(),
+OutputsInt <- function(loc,ParMatrix, n_cores=1, output_month = 11, startyr=1950,endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,prg_chng, ttt_list, par2020=c(rep(0,18),rep(1,6)), care_cascade = def_care_cascade(),
                        return_months =  865:888,
                        multiplier = 1) {
   if(min(dim(as.data.frame(ParMatrix)))==1) {

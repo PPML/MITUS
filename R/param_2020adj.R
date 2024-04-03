@@ -1,50 +1,39 @@
 #'@name  adj_immig_2020
 #'@param TotImmAge
-#'@param immig
+#'@param immig2020Vec
 #'@param return_months
 #'@param multiplier
 #'@return TotImmAge
 #'@export
 adj_immig_2020 <- function(TotImmAge,
-                           immig = 99,
-                           effect_months = 843:861,
-                           return_months =  862:888,
+                           immig2020Vec = rep(0,6),
+                           effect_months = 843:878,
+                           return_months =  879:888,
                            multiplier = 1 # Default is from DHS OIS LPR Annual flow
                                              # https://www.dhs.gov/sites/default/files/2023-02/2022_0405_plcy_lawful_permanent_residents_fy2021v2.pdf
 ){
-  if (immig != 99){
+  if (sum(immig2020Vec) > 0){
   # newImmig <- 1 - immig
   #Calculate first month after return_months
   postMonth <- return_months[length(return_months)] + 1
   # Calculate the last month of the initial pandemic effect
   lastMonth <- return_months[1] - 1
-  # Calculate the during pandemic effect
-  # This period represents the period for which we have data
-  # Data shows that immigration decreased through May to ~ 1/3rd of level in 2019
-  # then rebounded to 1.33 time 2019 level by September 2021
-  # TotImmAge[843:846,] <- TotImmAge[843:846,] - (TotImmAge[843:846, ] * min(max(immig,1e-12), .99));
-  immigrationData <- c(74,27,21,28,38,48,47,52,39, 40,40,40,60,59, 59, 66, 80, 96, 111)
-  immigrationTrend <- immigrationData/85
 
-  ### model trend
-  # modelTrend0 <- immig*immigrationData
-  # modelTrend <- modelTrend0/modelTrend0[1]; plot(modelTrend)
-  # TotImmAge[effect_months,] <- TotImmAge[effect_months,] - (TotImmAge[effect_months, ] * immig*immigrationTrend);
+  ### Initial pandemic effect
+  ### Step function
+  immigTrend <-  c(rep(immig2020Vec["ImmigKnot1"], length.out = 6),
+                   rep(immig2020Vec["ImmigKnot2"], length.out = 6),
+                   rep(immig2020Vec["ImmigKnot3"], length.out = 6),
+                   rep(immig2020Vec["ImmigKnot4"], length.out = 6),
+                   rep(immig2020Vec["ImmigKnot5"], length.out = 6),
+                   rep(immig2020Vec["ImmigKnot6"], length.out = 6))
 
-
-  # Return to pre-pandemic rate (1 * 843) by end of 2023
-  # Month of final return rate is 888 (december 2023)
   for (agegrp in 1:ncol(TotImmAge)){
-    # TotImmAge[effect_months,agegrp] <- TotImmAge[843,agegrp] * immig*immigrationTrend;
-    TotImmAge[effect_months,agegrp] <- TotImmAge[843,agegrp] + (TotImmAge[843,agegrp] * (immigrationTrend-1)*immig);
-
-
-    # TotImmAge[846:lastMonth,agegrp] <- seq(TotImmAge[846,agegrp],(TotImmAge[843,agegrp] * 1.3), length.out=length(846:lastMonth));
-
-    # TotImmAge[846:last(effect_months), agegrp] <- logseq(TotImmAge[846,agegrp], (TotImmAge[843,agegrp] * 1.3), n=length(846:last(effect_months)));
-
-    TotImmAge[return_months,agegrp] <- seq(TotImmAge[lastMonth,agegrp],TotImmAge[postMonth,agegrp]*multiplier, length.out=length(return_months))
-    # TotImmAge[return_months,agegrp] <- logseq(TotImmAge[lastMonth,agegrp], TotImmAge[postMonth-1,agegrp] * multiplier, n=length(return_months))
+    # Initial covid effects
+    TotImmAge[effect_months, agegrp] <- TotImmAge[effect_months, agegrp] -
+                                        (TotImmAge[effect_months, agegrp] * immigTrend)
+    ### Return to normal
+    TotImmAge[return_months,agegrp] <- seq(TotImmAge[lastMonth, agegrp],TotImmAge[postMonth,agegrp]*multiplier, length.out=length(return_months))
     # Continue this trend from here to end of model run
     TotImmAge[postMonth:nrow(TotImmAge),agegrp] <- TotImmAge[postMonth:nrow(TotImmAge),agegrp] * multiplier
   }
@@ -115,19 +104,19 @@ adj_param_2020 <- function(rDxt,
   # rDxtDF<-data.frame(Month = c(0,3,9,15,21,27),
   #                    Value = c(0,par2020["DxtKnot1"], par2020["DxtKnot2"], par2020["DxtKnot3"],
   #                              par2020["DxtKnot4"], par2020["DxtKnot5"]))
-  # 
-  # 
+  #
+  #
   # rDxtfit = lm(Value~bs(Month, knots = c(0,3,9,15,21,27), degree=1), data = rDxtDF)
-  # 
+  #
   # rDxt_trend <- predict(rDxtfit, newdata=list(Month=3:24))
-  
+
   rDxt_trend <-     c(rep(par2020["DxtKnot1"],length.out = 6),
                       rep(par2020["DxtKnot2"],length.out = 6),
                       rep(par2020["DxtKnot3"],length.out = 6),
                       rep(par2020["DxtKnot4"],length.out = 6),
                       rep(par2020["DxtKnot5"],length.out = 6),
                       rep(par2020["DxtKnot6"],length.out = 6))
- 
+
   # Initial covid effects
   rDxt[843:rDxt_lastMonth,] <- rDxt[843:rDxt_lastMonth,] * (1-rDxt_trend)
 
@@ -177,7 +166,7 @@ adj_param_2020 <- function(rDxt,
   # NixTrans_fit = lm(Value~bs(Month, knots = c(0,3,9,15,21,27), degree=1), data = NixTransDF)
 
   # NixTrans_trend <- predict(NixTrans_fit, newdata=list(Month=3:24))
-  
+
   NixTrans_trend <- c(rep(par2020["TransKnot1"],length.out = 6),
                       rep(par2020["TransKnot2"],length.out = 6),
                       rep(par2020["TransKnot3"],length.out = 6),
@@ -224,12 +213,12 @@ adj_param_2020 <- function(rDxt,
   #                        Value = c(0,par2020["CaseFatKnot1"], par2020["CaseFatKnot2"],
   #                                  par2020["CaseFatKnot3"],
   #                                  par2020["CaseFatKnot4"], par2020["CaseFatKnot5"]))
-  # 
-  # 
+  #
+  #
   # CaseFat_fit = lm(Value~bs(Month, knots = c(0,3,9,15,21,27), degree=1), data = CaseFatDF)
-  # 
+  #
   # CaseFat_trend <- predict(CaseFat_fit, newdata=list(Month=3:24))
-  
+
   CaseFat_trend <- c(rep(par2020["CaseFatKnot1"],length.out = 6),
                      rep(par2020["CaseFatKnot2"],length.out = 6),
                      rep(par2020["CaseFatKnot3"],length.out = 6),

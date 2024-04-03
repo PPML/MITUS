@@ -18,13 +18,13 @@
 #'@param Scen3 boolean for scenario 3
 #'@param prg_chng vector of program change values
 #'@param ttt_list list of ttt changes
-#'@param immig
+#'@param immig2020Vec
 #'@param return_months
 #'@param multiplier
 #'@return InputParams list
 #'@export
 param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,
-                       prg_chng, ttt_list,delay=0, immig=99, return_months = 865:888, multiplier = 1){
+                       prg_chng, ttt_list,delay=0, immig2020Vec=c(1,1,1,1,1,1), return_months = 865:888, multiplier = 1){
   ################################################################################
   ##### DEFINE VARIABLES THAT WILL DETERMINE HOW LONG THE TIME               #####
   ##### DEPENDENT VARIABLES SHOULD BE                                        #####
@@ -181,9 +181,9 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   for (j in 1:11){
     TotImmAge[,j]        <- SmoCurve(TotImmAge0[,j])
   }
-  if(immig != 99){
+  if(sum(immig2020Vec[1:6]) > 0){
       TotImmAge <- adj_immig_2020(TotImmAge = TotImmAge,
-                                  immig = immig,
+                                  immig2020Vec = immig2020Vec,
                                   # return_months = return_months,
                                   multiplier=multiplier)
   }
