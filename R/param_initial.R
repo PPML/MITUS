@@ -167,7 +167,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
 
   ######################         IMMIGRATION             ########################
   ######################         OVERALL IMM.            ########################
-  TotImmig0       <- (c(Inputs$ImmigInputs[[1]][1:151])+c(rep(0,71),cumsum(rep(PV["ImmigVolFut"],80))))/12*PV["ImmigVol"]
+  TotImmig0       <- (c(ImmigInputs[[1]][1:151])+c(rep(0,71),cumsum(rep(PV["ImmigVolFut"],80))))/12*PV["ImmigVol"]
   if (loc=="ND"){
     TotImmig0[61:71]<-seq(from=TotImmig0[61], to=TotImmig0[61]*3, length.out=11)
   }
@@ -181,12 +181,49 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   for (j in 1:11){
     TotImmAge[,j]        <- SmoCurve(TotImmAge0[,j])
   }
-  if(sum(immig2020Vec[1:6]) > 0){
+
+    #### undo the smoothing for the years of interest and replace with linear trend calculated in other script
+    # newImmigInputs <- readRDS(system.file("US/US_basecase_immig_monthly.rds", package="MITUS"))
+    # for (j in 1:11){
+    #   TotImmAge[843:888,j]        <- newImmigInputs * c(rep((TotImmAge0[71,j] / TotImmig0[71]), 10),
+    #                                                     rep((TotImmAge0[72,j] / TotImmig0[72]), 12),
+    #                                                     rep((TotImmAge0[73,j] / TotImmig0[73]), 12),
+    #                                                     rep((TotImmAge0[74,j] / TotImmig0[74]), 12))
+    #   ### sum 2024 immigration
+    #   newImmigPopTot <- sum(TotImmAge[877:888,j])
+    #   ### push it forward
+    #   revisedProjections <- as.data.frame(read.csv("~/MITUS/inst/extdata/US/netInternalMigrationStratifiedProjections.csv")) %>% filter(SEX == 0, RACE_HISP == 0)
+    #   revisedProjections$ANNUAL_PC <- ((revisedProjections$TOTAL_NIM - lag(revisedProjections$TOTAL_NIM)) / revisedProjections$TOTAL_NIM)
+    #   newImmigPop <- rep(0,length(2024:2100))
+    #   names(newImmigPop) <- 2024:2100
+    #   newImmigPop["2024"] <- newImmigPopTot
+    #   for (i in 2024:2099){
+    #   newImmigPop[(which(names(newImmigPop) == (i+1)))] <- newImmigPop[(which(names(newImmigPop) == i))] * (1 + revisedProjections$ANNUAL_PC[i - 2021])
+    #   }
+    #   SmoCurve(newImmigPop)
+    #
+    #
+    # }
+    #
+    # plot(TotImmAge[840:900,1]); abline(v=which(840:900 == postMonth))
+    #
+    #
+    # newImmigPop["2023"] <- sum(revisedImmigTrend2[34:45])
+    # for (i in 2023:2099){
+    #   print(i)
+    #   print(newImmigPop[(which(names(newImmigPop) == (i+1)))])
+    #   # print(newImmigPop[(which(names(newImmigPop) == i))] * (1 + revisedProjections$ANNUAL_PC[-1]))
+    #   newImmigPop[(which(names(newImmigPop) == (i+1)))] <- newImmigPop[(which(names(newImmigPop) == i))] * (1 + revisedProjections$ANNUAL_PC[i - 2021])
+    # }
+  # TotImmAgeBC <- TotImmAge
+
+    if(sum(immig2020Vec[1:6]) != 6){
       TotImmAge <- adj_immig_2020(TotImmAge = TotImmAge,
                                   immig2020Vec = immig2020Vec,
                                   # return_months = return_months,
                                   multiplier=multiplier)
-  }
+    }
+
   ######################           LTBI IMM.             ########################
   PrevTrend25_340l <- c(ImmigInputs[["PrevTrend25_34"]][1:71]^(exp(PV["TunLtbiTrend"]))*ImmigInputs[["PrevTrend25_34"]][71]^(1-exp(PV["TunLtbiTrend"])),
                         ImmigInputs[["PrevTrend25_34"]][72:151]*(PV["ImmigPrevFutLat"]/0.99)^(1:80))
@@ -197,6 +234,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   ImmLat          <- matrix(NA,length(PrevTrend25_34_ls),11)
 
   for(i in 1:11) ImmLat[,i] <- (1-exp((-(c(2.5,1:9*10,100)/100)[i]^PV["LtbiPar1"])*PrevTrend25_34_ls*PV["LtbiPar2"]))*TotImmAge[,i]
+
   ######################         ACTIVE TB IMM.           ########################
   # PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:69]^exp(PV["TunActTrend"])*ImmigInputs[["PrevTrend25_34"]][69]^exp((1-PV["TunActTrend"])),
 
@@ -208,7 +246,22 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
   ImmAct         <- outer(PrevTrend25_34a*exp(PV["RRtbprev"]),ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*PV["pImmAct"]
   ImmFst         <- outer(PrevTrend25_34a*exp(PV["RRtbprev"]),ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*(1-PV["pImmAct"])
   ImmNon         <- TotImmAge-ImmAct-ImmFst-ImmLat
-  for (i in 1:length(ImmNon)) if (ImmNon[i]<0) ImmNon[i]<-0
+
+  # ImmFstBC          <- matrix(NA,length(PrevTrend25_34_ls),11)
+  # for(i in 1:11) ImmFstBC[,i] <- (1-exp((-(c(2.5,1:9*10,100)/100)[i]^PV["LtbiPar1"])*PrevTrend25_34_ls*PV["LtbiPar2"]))*TotImmAgeBC[,i]
+  #
+  # agegrp <- 1
+  # plot(ImmLat[840:900,agegrp]); abline(v=which(840:900 == postMonth))
+  # lines(ImmLatBC[840:900,agegrp])
+
+  # for (i in 1:length(ImmNon)) if (ImmNon[i]<0) ImmNon[i]<-0
+  #
+  # ImmTotBC         <- ImmNonBC + ImmActBC + ImmFstBC + ImmLatBC
+  # ImmTot         <- ImmNon + ImmAct + ImmFst + ImmLat
+  #
+  # agegrp <- 1
+  # plot(ImmTot[840:900,agegrp]); abline(v=which(840:900 == postMonth)); lines(ImmTotBC[840:900,agegrp])
+
 
   ###################### TRUNCATE THESE VALS
   ImmAct<-ImmAct[1:month,];ImmFst<-ImmFst[1:month,]; ImmLat<-ImmLat[1:month,]; ImmNon<-ImmNon[1:month,]

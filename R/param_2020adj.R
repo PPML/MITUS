@@ -6,13 +6,17 @@
 #'@return TotImmAge
 #'@export
 adj_immig_2020 <- function(TotImmAge,
-                           immig2020Vec = rep(0,6),
+                           immig2020Vec = rep(1,6),
                            effect_months = 843:878,
                            return_months =  879:888,
                            multiplier = 1 # Default is from DHS OIS LPR Annual flow
                                              # https://www.dhs.gov/sites/default/files/2023-02/2022_0405_plcy_lawful_permanent_residents_fy2021v2.pdf
 ){
-  if (sum(immig2020Vec) > 0){
+  # newImmigInputs <- readRDS(system.file("US/US_COVID_basecase.rds", package="MITUS"))
+  # ImmigDiff <- Inputs$ImmigInputs$TotByYear/newImmigInputs
+  # plot(SmoCurve(newImmigInputs))
+  # plot(SmoCurve(ImmigDiff))
+  if (sum(immig2020Vec) != 6){
   # newImmig <- 1 - immig
   #Calculate first month after return_months
   postMonth <- return_months[length(return_months)] + 1
@@ -28,16 +32,36 @@ adj_immig_2020 <- function(TotImmAge,
                    rep(immig2020Vec["ImmigKnot5"], length.out = 6),
                    rep(immig2020Vec["ImmigKnot6"], length.out = 6))
 
+  # endPoint <- 0.01381872
+
+  # tmpEnd <- readRDS(system.file("US/US_basecase_immig_monthly.rds", package="MITUS"))
+
+  TotImmFrc <- (TotImmAge[postMonth,]  / sum(TotImmAge[postMonth,]))
+
   for (agegrp in 1:ncol(TotImmAge)){
     # Initial covid effects
-    TotImmAge[effect_months, agegrp] <- TotImmAge[effect_months, agegrp] -
-                                        (TotImmAge[effect_months, agegrp] * immigTrend)
+    # agegrp <- 1
+    # TotImmAgeBC <- TotImmAge
+    # plot(TotImmAge[840:900,agegrp]); abline(v=which(840:900 == postMonth))
+    TotImmAge[effect_months, agegrp] <- TotImmAge[effect_months, agegrp] * immigTrend
     ### Return to normal
-    TotImmAge[return_months,agegrp] <- seq(TotImmAge[lastMonth, agegrp],TotImmAge[postMonth,agegrp]*multiplier, length.out=length(return_months))
+    # plot(TotImmAge[840:900,agegrp]); abline(v=which(840:900 == postMonth))
+    TotImmAge[return_months,agegrp] <- seq(TotImmAge[lastMonth, agegrp],TotImmAge[postMonth,agegrp] *multiplier, length.out=length(return_months)+2)[c(-1, -12)]
+    # TotImmAge[return_months,agegrp] <- seq(TotImmAge[lastMonth, agegrp],endPoint*TotImmFrc[agegrp]*multiplier,
+    #                                        length.out=length(return_months)+2)[c(-1,-12)]
+
     # Continue this trend from here to end of model run
+    # plot(TotImmAge[840:900,agegrp]); abline(v=which(840:900 == postMonth))
     TotImmAge[postMonth:nrow(TotImmAge),agegrp] <- TotImmAge[postMonth:nrow(TotImmAge),agegrp] * multiplier
+    # plot(TotImmAge[840:900,agegrp]); abline(v=which(840:900 == postMonth))
+    # lines(TotImmAgeBC[840:900,agegrp])
   }
+
   }
+  # else {
+  #
+  # }
+
   # print("Immig: GOOD")
   return(TotImmAge)
 }
@@ -118,7 +142,7 @@ adj_param_2020 <- function(rDxt,
                       rep(par2020["DxtKnot6"],length.out = 6))
 
   # Initial covid effects
-  rDxt[843:rDxt_lastMonth,] <- rDxt[843:rDxt_lastMonth,] * (1-rDxt_trend)
+  rDxt[843:rDxt_lastMonth,] <- rDxt[843:rDxt_lastMonth,] * rDxt_trend
 
   # Bring up params to X% by end of return months (smoothly)
   for (riskgrp in 1:ncol(rDxt)){
@@ -174,7 +198,7 @@ adj_param_2020 <- function(rDxt,
                       rep(par2020["TransKnot5"],length.out = 6),
                       rep(par2020["TransKnot6"],length.out = 6))
   # Initial covid effects
-  NixTrans[843:NixTrans_lastMonth] <- NixTrans[843:NixTrans_lastMonth] - (NixTrans[843:NixTrans_lastMonth] * NixTrans_trend)
+  NixTrans[843:NixTrans_lastMonth] <- NixTrans[843:NixTrans_lastMonth] * NixTrans_trend
   NixTrans[NixTrans_RM] <- seq(NixTrans[NixTrans_lastMonth], NixTrans[842]*NixTrans_mult, length.out=length(NixTrans_RM+1))
 
 
