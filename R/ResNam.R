@@ -1,4 +1,4 @@
-func3_ResNam<-function(){
+func_ResNam<-function(){
   ################################################################################
   ##### CREATE A LIST TO HOLD THE VECTORS FOR AGE CATEGORIES, TB STATES,     #####
   ##### DRUG RESISTANCE, TREATMENT HISTORY, HIV STATUS, AND RISK CATEGORY.   #####
@@ -49,15 +49,22 @@ func3_ResNam<-function(){
               paste("TOTMORT",StatList[[1]],sep="_"),         # total mort, by ag cat
               #### @object 131
               #############################   TX OUTCOMES   ################################
+
               "TBTX_COMPLT","TBTX_DISCONT","TBTX_DIED",       # TB treatment outcomes complete, discontinue, death
               "NOTIF_ALL",                                    # total notif
-              paste("NOTIF",StatList[[1]],sep="_"),           # TB diagnosis/notif by ag cat
-              paste("NOTIF",StatList[[7]],sep="_"),           # TB diagnosis/notif by nat cat
-              paste("NOTIF",StatList[[6]],sep="_"),           # TB diagnosis/notif by rg cat
+              paste("NOTIF",StatList[[1]],sep="_"),           # notif by ag cat
+              paste("NOTIF",StatList[[7]],sep="_"),         # notif by nat cat
+              #            paste("NOTIF_HIV",c("POS","NEG"),sep="_"),      # notif by HIV pos/neg
+              paste("NOTIF",StatList[[6]],sep="_"),           # notif by rg cat
+              #           paste("NOTIF_US_N",StatList[[3]],sep="_"),      # notif, US, N, by dr cat
+              #            paste("NOTIF_US_E",StatList[[3]],sep="_"),      # notif, US, E, by dr cat
+              #           paste("NOTIF_FB_N",StatList[[3]],sep="_"),      # notif, FB, N, by dr cat
+              #           paste("NOTIF_FB_E",StatList[[3]],sep="_"),      # notif, FB, E, by dr cat
               ###########################   TLTBI INITIATION   ##############################
               "TLTBI_INITS",                                  # Initiations on LTBI tx
               "TLTBI_INITS_FB",                               # Initiations on LTBI tx FB
               "TLTBI_INITS_HR",                               # Initiations on LTBI tx HR
+              #            "TLTBI_INITS_HV",                               # Initiations on LTBI tx HV
               "TLTBI_INITS_TP",                               # Initiations on LTBI tx, with LTBI
               ###########################     TB INCIDENCE     ##############################
               "INCID_ALL",                                    # Total incidence
@@ -66,26 +73,27 @@ func3_ResNam<-function(){
               "INCID_ALL_FB",                                 # Total incidence, foreign born
               "INCID_ALL_FB2",                                # Total incidence, foreign born
               "INCID_ALL_HR",                                 # Total incidence, high risk
+              #            "INCID_ALL_HV",                                 # Total incidence, HIV pos
               "INCID_REC",                                    # Total incidence, recent infection
               paste("INCID_REC",StatList[[1]],sep="_"),       # Total incidence by ag cat, recent infection
               "INCID_REC_US",                                 # Total incidence, US born, recent infection
               "INCID_REC_FB",                                 # Total incidence, foreign born, recent infection
               "INCID_REC_FB2",                                # Total incidence, foreign born, recent infection
               "INCID_REC_HR",                                 # Total incidence, high risk, recent infection
+              #            "INCID_REC_HV",                                 # Total incidence, HIV pos, recent infection
               ###########################    NOTIFICATION DEAD      ##############################
               "NOTIF_MORT_ALL",                               # total notif, dead at diagnosis
               paste("NOTIF_MORT",StatList[[1]],sep="_"),      # notif by ag cat, dead at diagnosis
               paste("NOTIF_MORT",StatList[[7]],sep="_"),      # notif by nat cat, dead at diagnosis
+              #            paste("NOTIF_MORT_HIV",c("POS","NEG"),sep="_"), # notif by HIV pos/neg, dead at diagnosis
               paste("NOTIF_MORT",StatList[[6]],sep="_"),      # notif by rg cat, dead at diagnosis
-              ###########################    NOTIFICATION USB      ##############################
               paste("NOTIF_US",StatList[[1]],sep="_"),        # notif by ag cat, US only
               paste("NOTIF_US_MORT",StatList[[1]],sep="_"),   # notif by ag cat, dead at diagnosis US only
-              ###########################   TOTAL MORT WITH TB     ##############################
+              #            paste("NOTIF_MORT_HIV_Neg",StatList[[1]],sep="_"),    # notif by ag cat, dead at diagnosis HIV neg
+              #            paste("TOTMORT_W_HIV",StatList[[1]],sep="_"),   # total mort, by ag cat, have HIV
               paste("TOTMORT_W_TB",StatList[[1]],sep="_"),     # total mort, by ag cat, have active TB
-              ###########################   N BY TB STATUS & NAT   ##############################
               c("N_Ls_US","N_Lf_US","N_Act_US"),
               c("N_Ls_FB","N_Lf_FB","N_Act_FB"),
-              ###########################    FORCE OF INFECTION    ##############################
               c("FOI_LR_US","FOI_HR_US","FOI_LR_FB","FOI_HR_FB" ), #force of infection
               c("TB_INF_LR","TB_INF_HR","TB_INF_US","TB_INF_F1","TB_INF_F2"), # NEW TB INFECTIONS
               c("TBMORT_US","TBMORT_NUS") ,          # tbmortality by nativity
@@ -188,119 +196,98 @@ func3_ResNam<-function(){
               paste("N_newinf_USB",StatList[[1]],sep="_" ),
               paste("N_newinf_NUSB",StatList[[1]],sep="_" ),
 
-              paste("0-4","US","NM1",StatList[[4]],sep="_"),
-              paste("0-4","US","NM2",StatList[[4]],sep="_"),
-              paste("0-4","US","NM3",StatList[[4]],sep="_"),
-              paste("0-4","US","NM4",StatList[[4]],sep="_"),
-
-              paste("5-14","US","NM1",StatList[[4]],sep="_"),
-              paste("5-14","US","NM2",StatList[[4]],sep="_"),
-              paste("5-14","US","NM3",StatList[[4]],sep="_"),
-              paste("5-14","US","NM4",StatList[[4]],sep="_"),
-
-              paste("15-24","US","NM1",StatList[[4]],sep="_"),
-              paste("15-24","US","NM2",StatList[[4]],sep="_"),
-              paste("15-24","US","NM3",StatList[[4]],sep="_"),
-              paste("15-24","US","NM4",StatList[[4]],sep="_"),
-
-              paste("25-34","US","NM1",StatList[[4]],sep="_"),
-              paste("25-34","US","NM2",StatList[[4]],sep="_"),
-              paste("25-34","US","NM3",StatList[[4]],sep="_"),
-              paste("25-34","US","NM4",StatList[[4]],sep="_"),
-
-              paste("35-44","US","NM1",StatList[[4]],sep="_"),
-              paste("35-44","US","NM2",StatList[[4]],sep="_"),
-              paste("35-44","US","NM3",StatList[[4]],sep="_"),
-              paste("35-44","US","NM4",StatList[[4]],sep="_"),
-
-              paste("45-54","US","NM1",StatList[[4]],sep="_"),
-              paste("45-54","US","NM2",StatList[[4]],sep="_"),
-              paste("45-54","US","NM3",StatList[[4]],sep="_"),
-              paste("45-54","US","NM4",StatList[[4]],sep="_"),
-
-              paste("55-64","US","NM1",StatList[[4]],sep="_"),
-              paste("55-64","US","NM2",StatList[[4]],sep="_"),
-              paste("55-64","US","NM3",StatList[[4]],sep="_"),
-              paste("55-64","US","NM4",StatList[[4]],sep="_"),
-
-              paste("65-74","US","NM1",StatList[[4]],sep="_"),
-              paste("65-74","US","NM2",StatList[[4]],sep="_"),
-              paste("65-74","US","NM3",StatList[[4]],sep="_"),
-              paste("65-74","US","NM4",StatList[[4]],sep="_"),
-
-              paste("75-84","US","NM1",StatList[[4]],sep="_"),
-              paste("75-84","US","NM2",StatList[[4]],sep="_"),
-              paste("75-84","US","NM3",StatList[[4]],sep="_"),
-              paste("75-84","US","NM4",StatList[[4]],sep="_"),
-
-              paste("85-94","US","NM1",StatList[[4]],sep="_"),
-              paste("85-94","US","NM2",StatList[[4]],sep="_"),
-              paste("85-94","US","NM3",StatList[[4]],sep="_"),
-              paste("85-94","US","NM4",StatList[[4]],sep="_"),
-
-              paste("95p","US","NM1",StatList[[4]],sep="_"),
-              paste("95p","US","NM2",StatList[[4]],sep="_"),
-              paste("95p","US","NM3",StatList[[4]],sep="_"),
-              paste("95p","US","NM4",StatList[[4]],sep="_"),
-
-              paste("0-4","NUS","NM1",StatList[[4]],sep="_"),
-              paste("0-4","NUS","NM2",StatList[[4]],sep="_"),
-              paste("0-4","NUS","NM3",StatList[[4]],sep="_"),
-              paste("0-4","NUS","NM4",StatList[[4]],sep="_"),
-
-              paste("5-14","NUS","NM1",StatList[[4]],sep="_"),
-              paste("5-14","NUS","NM2",StatList[[4]],sep="_"),
-              paste("5-14","NUS","NM3",StatList[[4]],sep="_"),
-              paste("5-14","NUS","NM4",StatList[[4]],sep="_"),
-
-              paste("15-24","NUS","NM1",StatList[[4]],sep="_"),
-              paste("15-24","NUS","NM2",StatList[[4]],sep="_"),
-              paste("15-24","NUS","NM3",StatList[[4]],sep="_"),
-              paste("15-24","NUS","NM4",StatList[[4]],sep="_"),
-
-              paste("25-34","NUS","NM1",StatList[[4]],sep="_"),
-              paste("25-34","NUS","NM2",StatList[[4]],sep="_"),
-              paste("25-34","NUS","NM3",StatList[[4]],sep="_"),
-              paste("25-34","NUS","NM4",StatList[[4]],sep="_"),
-
-              paste("35-44","NUS","NM1",StatList[[4]],sep="_"),
-              paste("35-44","NUS","NM2",StatList[[4]],sep="_"),
-              paste("35-44","NUS","NM3",StatList[[4]],sep="_"),
-              paste("35-44","NUS","NM4",StatList[[4]],sep="_"),
-
-              paste("45-54","NUS","NM1",StatList[[4]],sep="_"),
-              paste("45-54","NUS","NM2",StatList[[4]],sep="_"),
-              paste("45-54","NUS","NM3",StatList[[4]],sep="_"),
-              paste("45-54","NUS","NM4",StatList[[4]],sep="_"),
-
-              paste("55-64","NUS","NM1",StatList[[4]],sep="_"),
-              paste("55-64","NUS","NM2",StatList[[4]],sep="_"),
-              paste("55-64","NUS","NM3",StatList[[4]],sep="_"),
-              paste("55-64","NUS","NM4",StatList[[4]],sep="_"),
-
-              paste("65-74","NUS","NM1",StatList[[4]],sep="_"),
-              paste("65-74","NUS","NM2",StatList[[4]],sep="_"),
-              paste("65-74","NUS","NM3",StatList[[4]],sep="_"),
-              paste("65-74","NUS","NM4",StatList[[4]],sep="_"),
-
-              paste("75-84","NUS","NM1",StatList[[4]],sep="_"),
-              paste("75-84","NUS","NM2",StatList[[4]],sep="_"),
-              paste("75-84","NUS","NM3",StatList[[4]],sep="_"),
-              paste("75-84","NUS","NM4",StatList[[4]],sep="_"),
-
-              paste("85-94","NUS","NM1",StatList[[4]],sep="_"),
-              paste("85-94","NUS","NM2",StatList[[4]],sep="_"),
-              paste("85-94","NUS","NM3",StatList[[4]],sep="_"),
-              paste("85-94","NUS","NM4",StatList[[4]],sep="_"),
-
-              paste("95p","NUS","NM1",StatList[[4]],sep="_"),
-              paste("95p","NUS","NM2",StatList[[4]],sep="_"),
-              paste("95p","NUS","NM3",StatList[[4]],sep="_"),
-              paste("95p","NUS","NM4",StatList[[4]],sep="_"),
-
-              "TX_NAIVE_TOT",
-              "LTBI_TEST_TP"
+              paste("0-24","US", "NM1",StatList[[4]],sep="_"),
+              paste("0-24","US", "NM2",StatList[[4]],sep="_"),
+              paste("0-24","US", "NM3",StatList[[4]],sep="_"),
+              paste("0-24","US", "NM4",StatList[[4]],sep="_"),
 
 
+              paste("25-64","US","NM1",StatList[[4]],sep="_"),
+              paste("25-64","US","NM2",StatList[[4]],sep="_"),
+              paste("25-64","US","NM3",StatList[[4]],sep="_"),
+              paste("25-64","US","NM4",StatList[[4]],sep="_"),
+
+
+              paste("65+","US","NM1",StatList[[4]],sep="_"),
+              paste("65+","US","NM2",StatList[[4]],sep="_"),
+              paste("65+","US","NM3",StatList[[4]],sep="_"),
+              paste("65+","US","NM4",StatList[[4]],sep="_"),
+
+
+              paste("0-24","NUS", "NM1",StatList[[4]],sep="_"),
+              paste("0-24","NUS", "NM2",StatList[[4]],sep="_"),
+              paste("0-24","NUS", "NM3",StatList[[4]],sep="_"),
+              paste("0-24","NUS", "NM4",StatList[[4]],sep="_"),
+
+
+              paste("25-64","NUS","NM1",StatList[[4]],sep="_"),
+              paste("25-64","NUS","NM2",StatList[[4]],sep="_"),
+              paste("25-64","NUS","NM3",StatList[[4]],sep="_"),
+              paste("25-64","NUS","NM4",StatList[[4]],sep="_"),
+
+
+              paste("65+","NUS","NM1",StatList[[4]],sep="_"),
+              paste("65+","NUS","NM2",StatList[[4]],sep="_"),
+              paste("65+","NUS","NM3",StatList[[4]],sep="_"),
+              paste("65+","NUS","NM4",StatList[[4]],sep="_"),
+
+              paste("N_LtTxNaive"),
+
+              #counts of various services
+              paste("N_LtbiTests_USB",StatList[[1]],sep="_"),
+              paste("N_LtbiTests_NUSB",StatList[[1]],sep="_"),
+
+              paste("N_LtbiTxInits_USB",StatList[[1]],sep="_"),
+              paste("N_LtbiTxInits_NUSB",StatList[[1]],sep="_"),
+
+              paste("N_LtbiTxComps_USB",StatList[[1]],sep="_"),
+              paste("N_LtbiTxComps_NUSB",StatList[[1]],sep="_"),
+
+              paste("N_TBTxInits_USB",StatList[[1]],sep="_"),
+              paste("N_TBTxInits_NUSB",StatList[[1]],sep="_"),
+              paste("N_TBTxComps_USB",StatList[[1]],sep="_"),
+              paste("N_TBTxComps_NUSB",StatList[[1]],sep="_"),
+
+              paste("N_LtbiTests_USB_TP",StatList[[1]],sep="_"),
+              paste("N_LtbiTests_NUSB_TP",StatList[[1]],sep="_"),
+
+              paste("N_LtTxNaive_US"),
+              paste("N_LtTxNaive_F1"),
+              paste("N_LtTxNaive_F2"),
+
+              paste("N_LtbiTests_USB",StatList[[4]],sep="_"),
+              paste("N_LtbiTests_NUSB",StatList[[4]],sep="_"),
+              #
+              paste("N_US_LTBI_LtTxNaive"),
+              paste("N_US_LTBI_LtTxExp"),
+              paste("N_NUS_LTBI_LtTxNaive"),
+              paste("N_NUS_LTBI_LtTxExp"),
+
+
+              paste("0-4",StatList[[6]],sep="_"),
+              paste("5-14",StatList[[6]],sep="_"),
+              paste("15-24",StatList[[6]],sep="_"),
+              paste("25-34",StatList[[6]],sep="_"),
+              paste("35-44",StatList[[6]],sep="_"),
+              paste("45-54",StatList[[6]],sep="_"),
+              paste("55-64",StatList[[6]],sep="_"),
+              paste("65-74",StatList[[6]],sep="_"),
+              paste("75-84",StatList[[6]],sep="_"),
+              paste("85-94",StatList[[6]],sep="_"),
+              paste("95p",StatList[[6]],sep="_"),
+
+              c("N_Susc_US","N_L0_US"),
+              c("N_Susc_FB","N_L0_FB"),
+
+              paste("TLTBI_TP_L0"),
+              paste("LTBI_NUSB_nL0"),
+
+              ### these are crucial outputs for the TTT intervention set up
+              paste("N", "US", StatList[[1]], "Lt", sep="_"),
+              paste("N", "NUS", StatList[[1]],  "Lt", sep="_")
+
+              # These were used for troubleshooting the relationship between incident Mtb infections
+              # and TB notifications. Unnecessary to produce every run
+              # c("FOI_POP_LR_US","FOI_POP_HR_US","FOI_POP_LR_FB","FOI_POP_HR_FB" ) #force of infection pops
   )
 }

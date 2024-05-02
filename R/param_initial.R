@@ -454,7 +454,7 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,
   if (ttt_list[[1]][[3]]!=0 & ttt_list[[1]][[4]]!=0){
     ###this is dependent on a basecase run so load in that data
     # load(system.file(paste0(loc, "/", loc, "_results_1.rda"), package = "MITUS"))
-    results0 <- readRDS(system.file(paste0(loc, "/", "tempBaseCaseTest.rds"), package = "MITUS"))
+    results0 <- readRDS(system.file(paste0(loc, "/", "UStempBaseCaseTest.rds"), package = "MITUS"))
 
     ttt_params<-create_ttt_mdist(ttt_input = ttt_list,
                                  results =results0,

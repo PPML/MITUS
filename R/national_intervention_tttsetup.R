@@ -32,6 +32,7 @@ create_ttt_mdist<-function(ttt_input,
   frc_of_pop<-rep(1,22)
   samp_dist<-matrix(0,22,17)
   x<-matrix(0,22,16)
+  totScreen <- 0
   # frc_of_pop<-rep(1,22)
   # samp_dist<-matrix(1,length(ttt_input),352)
   # x<-matrix(0,22,16)
@@ -44,11 +45,12 @@ for (intv in 1:length(ttt_input)){
   # NUS_dist<-results[start_yr,44:54]
   #get the appropriate distribution outputs from the MITUS simulation in the start year
 ag<-c("0_4", "5_14", "15_24", "25_34", "35_44", "45_54", "55_64", "65_74", "75_84", "85_94", "95p")
-na<-c("US", "FB")
+na<-c("US", "NUS")
 yo<-0
 for (n in 1:2){
   for (a in 1:11){
-  y <- grep(paste("N", na[n], ag[a], sep = "_"), colnames(results))
+  y <- grep(paste("N", na[n], ag[a], "Lt", sep="_"), colnames(results))
+  # y <- grep(paste("N", na[n], ag[a], sep = "_"), colnames(results))
   # print(paste("age is", a))
   # print(paste("nat is", n))
 
@@ -106,6 +108,8 @@ for (n in 1:2){
   #entering the next iteration of the loop
 
   x[((n-1)*11)+a,] <- x[((n-1)*11)+a,] + as.vector(dist *  an_samp_rate)
+
+  totScreen <- totScreen + sum(an_samp_rate * results[start_yr,y])
   # print(paste("samp rate is ", an_samp_rate))
   # yo <- (sum(dist * an_samp_rate))
   # print(intv)
@@ -122,5 +126,6 @@ for (n in 1:2){
 #  print(y)
   all_samp_rates[[intv]] <- samp_dist
 } ##end of population loop
+  print(totScreen*1e6)
   return(all_samp_rates)
 }

@@ -76,7 +76,7 @@ national_OutputsZint <-  function(samp_i=1,ParMatrix,loc, output_month=11, start
   if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
 
   # create a vector of setup parameters
-  setup <- c(endyr-(startyr-1), length(func3_ResNam()), output_month)
+  setup <- c(endyr-(startyr-1), length(func_ResNam()), output_month)
 
   # call the model
   m <- national_cSim( setup_pars = setup               , rDxt         = prms[["rDxt"]]        , TxQualt       = prms[["TxQualt"]]     , InitPop      = prms[["InitPop"]]     , Mpfast   = prms[["Mpfast"]]   ,
@@ -94,7 +94,8 @@ national_OutputsZint <-  function(samp_i=1,ParMatrix,loc, output_month=11, start
                       ttt_ltbi_sens = care_cascade[4]  , ttt_ltbi_spec = care_cascade[5]      , ttt_ltbi_accept = care_cascade[6]     , rRecov       = prms[["rRecov"]]      , pImmScen   = prms[["pImmScen"]],
                       EarlyTrend = prms[["EarlyTrend"]], pReTx        = prms[["pReTx"]]       , ag_den        = prms[["aging_denom"]] , NixTrans     = prms[["NixTrans"]]    , NixTb = prms[["NixTb"]],
                       dist_gen   = prms[["dist_gen"]]  , trans_mat_tot_ages = trans_mat_tot_ages)$Outputs
-  colnames(m) <- func3_ResNam();
+  print(dim(m))
+  colnames(m) <- func_ResNam();
   results<<-as.matrix(m)
 
   return(results)
@@ -126,12 +127,12 @@ national_OutputsInt <- function(loc,ParMatrix,n_cores=1,endyr=2050,Int1=0,Int2=0
   } else {
     out0 <- mclapply(X=1:nrow(ParMatrix),FUN=national_OutputsZint,mc.cores=n_cores,
                      ParMatrix=ParMatrix, loc=loc,endyr=endyr,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3,Scen4=Scen4,Scen5=Scen5,Scen6=Scen6,prg_chng=prg_chng,ttt_list= ttt_list, care_cascade=care_cascade)
-    out <- array(NA,dim=c(length(out0),endyr-(startyr-1),length(func3_ResNam())))
+    out <- array(NA,dim=c(length(out0),endyr-(startyr-1),length(func_ResNam())))
 
     for(i in 1:length(out0)){
       out[i,,] <- as.matrix(out0[[i]])
     }
-    dimnames(out)[[3]]<-func3_ResNam()
+    dimnames(out)[[3]]<-func_ResNam()
   }
   if (sum(Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3)==0) intv<-1;
   if(Int1==1) intv<-2;if(Int2==1) intv<-3; if(Int3==1) intv<-4;
