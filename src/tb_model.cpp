@@ -225,7 +225,10 @@ Rcpp::List cSim(
   Rcpp::NumericMatrix dist_mat(4,4);
   double        RRmuRFN[4];
   double        mort_dist[4];
-
+  // double        newArrivals[2000][11][6][2][4][4][2] = {0};
+  auto newArrivals = new double [1850][11][6][2][4][4][2];
+  memset(newArrivals,0,1850*11*6*2*4*4*2*sizeof(double));
+  // double (*newArrivals)[11][6][2][4][4][2] = malloc(sizeof(double[2000][11][6][2][4][4][2]));
   ///////////////////////////////////////////////////////////////////////////////
   ///////                            INITIALIZE                             /////
   ///////////////////////////////////////////////////////////////////////////////
@@ -863,20 +866,59 @@ Rcpp::List cSim(
       for(int ag=0; ag<11; ag++) {
         for(int im=0; im<4; im++) {
           for(int nm=0; nm<4; nm++){
+            /// NO TB, Low risk  ////////////////////////////////////////////////////
+            // newArrivals[s][ag][0][0][im][nm][0] += ImmNonN[s][ag]*dist_genN[nm][im]*(1-p_HR);
+            // V1[ag][0][0][im][nm][0][1]   += newArrivals[s][ag][0][0][im][nm][0];
+            //
+            // ///// NO TB, High risk  ///////////////////////////////////////////////////
+            // newArrivals[s][ag][0][0][im][nm][1] += ImmNonN[s][ag]*dist_genN[nm][im]*(p_HR);
+            // V1[ag][0][0][im][nm][1][1]   += newArrivals[s][ag][0][0][im][nm][1];
+            //
+            // ///// LATENT SLOW TB, Low risk  ///////////////////////////////////////////
+            // newArrivals[s][ag][2][0][im][nm][0] += ImmLatN[s][ag]*dist_genN[nm][im]*(1-p_HR);
+            // V1[ag][2][0][im][nm][0][1]   += newArrivals[s][ag][2][0][im][nm][0];
+            //
+            // ///// LATENT SLOW TB, High risk  //////////////////////////////////////////
+            // newArrivals[s][ag][2][0][im][nm][1] += ImmLatN[s][ag]*dist_genN[nm][im]*(p_HR);
+            // V1[ag][2][0][im][nm][1][1]   += newArrivals[s][ag][2][0][im][nm][1];
+            //
+            // ///// LATENT FAST TB, Low risk  ///////////////////////////////////////////
+            // newArrivals[s][ag][3][0][im][nm][0] += ImmFstN[s][ag]*dist_genN[nm][im]*(1-p_HR);
+            // V1[ag][3][0][im][nm][0][1]   += newArrivals[s][ag][3][0][im][nm][0];
+            //
+            // ///// LATENT FAST TB, High risk  //////////////////////////////////////////
+            // newArrivals[s][ag][3][0][im][nm][1] += ImmFstN[s][ag]*dist_genN[nm][im]*(p_HR);
+            // V1[ag][3][0][im][nm][1][1]   += newArrivals[s][ag][3][0][im][nm][1];
+            //
+            // ///// ACTIVE TB, Low risk  ////////////////////////////////////////////////
+            // newArrivals[s][ag][4][0][im][nm][0] += ImmActN[s][ag]*dist_genN[nm][im]*(1-p_HR);
+            // V1[ag][4][0][im][nm][0][1]   += newArrivals[s][ag][4][0][im][nm][0];
+            //
+            // ///// ACTIVE TB, High risk  ///////////////////////////////////////////////
+            // newArrivals[s][ag][4][0][im][nm][1] += ImmActN[s][ag]*dist_genN[nm][im]*(p_HR);
+            // V1[ag][4][0][im][nm][1][1]   += newArrivals[s][ag][4][0][im][nm][1];
+
             ///// NO TB, Low risk  ////////////////////////////////////////////////////
             V1[ag][0][0][im][nm][0][1]   += ImmNonN[s][ag]*dist_genN[nm][im]*(1-p_HR);
+
             ///// NO TB, High risk  ///////////////////////////////////////////////////
             V1[ag][0][0][im][nm][1][1]   += ImmNonN[s][ag]*dist_genN[nm][im]*(p_HR);
+
             ///// LATENT SLOW TB, Low risk  ///////////////////////////////////////////
             V1[ag][2][0][im][nm][0][1]   += ImmLatN[s][ag]*dist_genN[nm][im]*(1-p_HR);
+
             ///// LATENT SLOW TB, High risk  //////////////////////////////////////////
             V1[ag][2][0][im][nm][1][1]   += ImmLatN[s][ag]*dist_genN[nm][im]*(p_HR);
+
             ///// LATENT FAST TB, Low risk  ///////////////////////////////////////////
             V1[ag][3][0][im][nm][0][1]   += ImmFstN[s][ag]*dist_genN[nm][im]*(1-p_HR);
+
             ///// LATENT FAST TB, High risk  //////////////////////////////////////////
             V1[ag][3][0][im][nm][1][1]   += ImmFstN[s][ag]*dist_genN[nm][im]*(p_HR);
+
             ///// ACTIVE TB, Low risk  ////////////////////////////////////////////////
             V1[ag][4][0][im][nm][0][1]   += ImmActN[s][ag]*dist_genN[nm][im]*(1-p_HR);
+
             ///// ACTIVE TB, High risk  ///////////////////////////////////////////////
             V1[ag][4][0][im][nm][1][1]   += ImmActN[s][ag]*dist_genN[nm][im]*(p_HR);
           } } }
@@ -964,6 +1006,22 @@ Rcpp::List cSim(
             for(int im=0; im<4; im++) {
               for(int nm=0; nm<4; nm++) {
                 for(int rg=0; rg<2; rg++) {
+                  // if (s == 24){
+                  //   temp = std::min(std::max(newArrivals[0][ag][tb][lt][im][nm][rg], 0.0),
+                  //     V1[ag][tb][lt][im][nm][rg][1]);
+                  //   // temp = std::min(std::max(newArrivals[0][ag][tb][lt][im][nm][rg], 0.0),
+                  //   //   V1[ag][tb][lt][im][nm][rg][1]);
+                  // }
+                  // else if (s >= 25){
+                  //   // temp = std::min(std::max(newArrivals[s - 24][ag][tb][lt][im][nm][rg] -
+                  //   //                          newArrivals[s - 25][ag][tb][lt][im][nm][rg], 0.0),
+                  //   //                 V1[ag][tb][lt][im][nm][rg][1]);
+                  //   temp = std::min(std::max(newArrivals[s - 24][ag][tb][lt][im][nm][rg] -
+                  //          newArrivals[s - 25][ag][tb][lt][im][nm][rg], 0.0),
+                  //          V1[ag][tb][lt][im][nm][rg][1]);
+                  // } else {
+                  //   temp = 0;
+                  // }
                   temp = V0[ag][tb][lt][im][nm][rg][1] / 24;
                   V1[ag][tb][lt][im][nm][rg][1]  -= temp;
                   V1[ag][tb][lt][im][nm][rg][2]  += temp;
@@ -1550,11 +1608,27 @@ Rcpp::List cSim(
                     V1[ag][5][lt][im][nm][rg][na]  += temp;
                   } } } } } }
       }//end of TB loop
+
+            for(int ag=0; ag<11; ag++) {
+        for(int im=0; im<4; im++) {
+          for(int nm=0; nm<4; nm++){
+            for(int rg=0; rg<2; rg++){
+                for(int lt=0; lt<2; lt++){
+                  for(int tb=0; tb<6; tb++) {
+                    for (int na=0; na<3; na++){
+                      V0[ag][tb][lt][im][nm][rg][na] = V1[ag][tb][lt][im][nm][rg][na];
+                      }
+                    // double immig1yr = 0.0;
+                    // if (s != 0){
+                    //   immig1yr = newArrivals[s - 1][ag][tb][lt][im][nm][rg];
+                    // }
+                    // newArrivals[s][ag][tb][lt][im][nm][rg] = V1[ag][tb][lt][im][nm][rg][1];
+      } } } } } }
       /////////////////////////////////////////////////////////////////////////////
       /////                        FILL RESULTS TABLE                         /////
       /////////////////////////////////////////////////////////////////////////////
       //// start with those which can be scaled with the mid-month value     //////
-      if(m == 6) {
+      if(m ==6) {
         /////////////////////////////////// YEAR //////////////////////////////////
         Outputs[y][0]      = y+1950;
         ////////////////    COUNTS BY TOTAL, AGE, TB, RF, AND RG     //////////////
@@ -2133,7 +2207,7 @@ Rcpp::List cSim(
       /////                        FILL RESULTS TABLE                         /////
       /////////////////////////////////////////////////////////////////////////////
       //// start with those which can be scaled with the mid-month value     //////
-      if(m == 6) {
+      if(m == 11) {
         /////////////////////////////////// YEAR //////////////////////////////////
         OutputsInt[y][0]      = y+1950;
         ////////////////    COUNTS BY TOTAL, AGE, TB, RF, AND RG     //////////////
@@ -2721,11 +2795,17 @@ Rcpp::List cSim(
         for(int im=0; im<4; im++) {
           for(int nm=0; nm<4; nm++){
             for(int rg=0; rg<2; rg++){
-              for (int na=0; na<3; na++){
                 for(int lt=0; lt<2; lt++){
                   for(int tb=0; tb<6; tb++) {
-                    V0[ag][tb][lt][im][nm][rg][na] = V1[ag][tb][lt][im][nm][rg][na];
-      } } } } } } }
+                    for (int na=0; na<3; na++){
+                      V0[ag][tb][lt][im][nm][rg][na] = V1[ag][tb][lt][im][nm][rg][na];
+                      }
+                    // double immig1yr = 0.0;
+                    // if (s != 0){
+                    //   immig1yr = newArrivals[s - 1][ag][tb][lt][im][nm][rg];
+                    // }
+                    // newArrivals[s][ag][tb][lt][im][nm][rg] = V1[ag][tb][lt][im][nm][rg][1];
+      } } } } } }
 
     } //// end of month loop!//////////////////////////////////////////////////////////
   } //// end of year loop!///////////////////////////////////////////////////////////
@@ -2773,6 +2853,7 @@ Rcpp::List cSim(
       OutputsI(i,j)  = OutputsInt[i][j];
     }  }
 
+  delete [] newArrivals;
   return
     Rcpp::List::create(
       Rcpp::Named("Outputs") = Outputs2,

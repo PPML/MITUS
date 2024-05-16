@@ -21,10 +21,10 @@
 #'@param return_params
 #'@return results data frame of output
 #'@export
-OutputsZint <-  function(samp_i=1,ParMatrix,loc, output_month = 11, startyr=1950, endyr=2050,
+OutputsZint <-  function(samp_i=4,ParMatrix = Par,loc ="US", output_month = 11, startyr=1950, endyr=2050,
                          Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,
                          prg_chng=def_prgchng(Par[4,]), ttt_list=def_ttt(), care_cascade = def_care_cascade(),
-                         par2020 = c(rep(0,18),rep(1,6)),
+                         par2020 = c(rep(1,18),rep(1,6)),
                          return_params = def_returnScenario())
 {
   if(min(dim(as.data.frame(ParMatrix)))==1) {
@@ -35,14 +35,14 @@ OutputsZint <-  function(samp_i=1,ParMatrix,loc, output_month = 11, startyr=1950
 
   P <- Par1
 
-  Int1 <<- Int1;
-  Int2 <<- Int2;
-  Int3 <<- Int3;
-  Int4 <<- Int4;
-  Int5 <<- Int5;
-  Scen1 <<- Scen1;
-  Scen2 <<- Scen2;
-  Scen3 <<- Scen3;
+  Int1 <<- 0;
+  Int2 <<- 0;
+  Int3 <<- 0;
+  Int4 <<- 0;
+  Int5 <<- 0;
+  Scen1 <<- 0;
+  Scen2 <<- 0;
+  Scen3 <<- 0;
 
   ### add in the 2020 parameter adjustments
   ### basecase values are c(99, 0, 0, 1)
@@ -53,9 +53,25 @@ OutputsZint <-  function(samp_i=1,ParMatrix,loc, output_month = 11, startyr=1950
 
   prms <- list()
   prms <- param_init(P,loc,Int1,Int2,Int3,Int4,Int5,Scen1,Scen2,Scen3,prg_chng,ttt_list,
-                     immig = par2020[1:6])
+                     immig2020Vec = par2020[1:6])
                      # return_months = return_params[["Immig"]][["return_months"]],
                      # multiplier = return_params[["Immig"]][["multiplier"]])
+
+  unadj_prms <- readRDS(system.file("US/basecaseParams.rds", package="MITUS"))
+
+  prms$ImmAct[889:1801,] <- unadj_prms$ImmAct[889:1801,]
+  prms$ImmFst[889:1801,] <- unadj_prms$ImmFst[889:1801,]
+  prms$ImmLat[889:1801,] <- unadj_prms$ImmLat[889:1801,]
+  prms$ImmNon[889:1801,] <- unadj_prms$ImmNon[889:1801,]
+
+  ifelse  ( prms$ImmAct[889:1801,] == unadj_prms$ImmAct[889:1801,], print("Success"), print("Failed"))
+
+  prms$ImmAct[1:842,] <- unadj_prms$ImmAct[1:842,]
+  prms$ImmFst[1:842,] <- unadj_prms$ImmFst[1:842,]
+  prms$ImmLat[1:842,] <- unadj_prms$ImmLat[1:842,]
+  prms$ImmNon[1:842,] <- unadj_prms$ImmNon[1:842,]
+
+  ifelse  ( prms$ImmAct[1:842,] == unadj_prms$ImmAct[1:842,], print("Success"), print("Failed"))
 
   ### adjust parameters for 2020 ###
 
@@ -96,7 +112,7 @@ OutputsZint <-  function(samp_i=1,ParMatrix,loc, output_month = 11, startyr=1950
   colnames(m$Outputs) <- func_ResNam();
 
   results <- as.matrix(m$Outputs)
-
+  saveRDS(results, "~/Desktop/testRes.rds", version =2)
   population <- as.matrix(m$OutputsI)
 
   colnames(m$OutputsI) <-colnames(m$Outputs) <- func_ResNam();

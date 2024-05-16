@@ -35,7 +35,8 @@ adj_immig_2020 <- function(TotImmAge,
   # endPoint <- 0.01381872
 
   # tmpEnd <- readRDS(system.file("US/US_basecase_immig_monthly.rds", package="MITUS"))
-
+  # TotImmAgeGood <- TotImmAge
+  # TotImmAge <- TotImmAgeGood
   TotImmFrc <- (TotImmAge[postMonth,]  / sum(TotImmAge[postMonth,]))
 
   for (agegrp in 1:ncol(TotImmAge)){
@@ -46,13 +47,16 @@ adj_immig_2020 <- function(TotImmAge,
     TotImmAge[effect_months, agegrp] <- TotImmAge[effect_months, agegrp] * immigTrend
     ### Return to normal
     # plot(TotImmAge[840:900,agegrp]); abline(v=which(840:900 == postMonth))
-    TotImmAge[return_months,agegrp] <- seq(TotImmAge[lastMonth, agegrp],TotImmAge[postMonth,agegrp] *multiplier, length.out=length(return_months)+2)[c(-1, -12)]
+    TotImmAge[return_months,agegrp] <- seq(from = TotImmAge[lastMonth, agegrp], to = 0.1651363 * TotImmFrc[agegrp] * multiplier, length.out=length(return_months)+1)[c(-1)]
+    # TotImmAge[return_months,agegrp] <- seq(from = TotImmAge[lastMonth, agegrp], to = 0.01382347 * TotImmFrc[agegrp] * multiplier, length.out=length(return_months)+1)[c(-1)]
+
+    # TotImmAge[return_months,agegrp] <- seq(from = TotImmAge[lastMonth, agegrp], to = TotImmAge[postMonth, agegrp] * multiplier, length.out=length(return_months)+2)[c(-1, -12)]
     # TotImmAge[return_months,agegrp] <- seq(TotImmAge[lastMonth, agegrp],endPoint*TotImmFrc[agegrp]*multiplier,
     #                                        length.out=length(return_months)+2)[c(-1,-12)]
 
     # Continue this trend from here to end of model run
     # plot(TotImmAge[840:900,agegrp]); abline(v=which(840:900 == postMonth))
-    TotImmAge[postMonth:nrow(TotImmAge),agegrp] <- TotImmAge[postMonth:nrow(TotImmAge),agegrp] * multiplier
+    # TotImmAge[postMonth:nrow(TotImmAge),agegrp] <- TotImmAge[postMonth:nrow(TotImmAge),agegrp] * multiplier
     # plot(TotImmAge[840:900,agegrp]); abline(v=which(840:900 == postMonth))
     # lines(TotImmAgeBC[840:900,agegrp])
   }

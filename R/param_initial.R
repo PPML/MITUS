@@ -217,7 +217,7 @@ param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0
     # }
   # TotImmAgeBC <- TotImmAge
 
-    if(sum(immig2020Vec[1:6]) != 6){
+    if(sum(immig2020Vec) != 6){
       TotImmAge <- adj_immig_2020(TotImmAge = TotImmAge,
                                   immig2020Vec = immig2020Vec,
                                   # return_months = return_months,
