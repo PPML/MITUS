@@ -124,8 +124,8 @@ func_ResNam<-function(){
               paste("N_NM3",StatList[[4]],sep="_"),
               paste("N_NM4",StatList[[4]],sep="_"),
 
-              paste("%_0-4","NM1",StatList[[4]],sep="_"),
-              paste("%_0-4","NM2",StatList[[4]],sep="_"),
+              paste("0-4","NM1",StatList[[4]],sep="_"),
+              paste("0-4","NM2",StatList[[4]],sep="_"),
               paste("0-4","NM3",StatList[[4]],sep="_"),
               paste("0-4","NM4",StatList[[4]],sep="_"),
 
@@ -284,7 +284,118 @@ func_ResNam<-function(){
 
               ### these are crucial outputs for the TTT intervention set up
               paste("N", "US", StatList[[1]], "Lt", sep="_"),
-              paste("N", "NUS", StatList[[1]],  "Lt", sep="_")
+              paste("N", "NUS", StatList[[1]],  "Lt", sep="_"),
+
+              paste("N_tttElig_US_0_4","NM1",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_0_4","NM2",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_0_4","NM3",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_0_4","NM4",StatList[[4]],sep="_"),
+
+              paste("N_tttElig_US_5_14","NM1",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_5_14","NM2",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_5_14","NM3",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_5_14","NM4",StatList[[4]],sep="_"),
+
+              paste("N_tttElig_US_15_24","NM1",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_15_24","NM2",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_15_24","NM3",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_15_24","NM4",StatList[[4]],sep="_"),
+
+              paste("N_tttElig_US_25_34","NM1",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_25_34","NM2",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_25_34","NM3",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_25_34","NM4",StatList[[4]],sep="_"),
+
+              paste("N_tttElig_US_35_44","NM1",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_35_44","NM2",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_35_44","NM3",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_35_44","NM4",StatList[[4]],sep="_"),
+
+              paste("N_tttElig_US_45_54","NM1",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_45_54","NM2",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_45_54","NM3",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_45_54","NM4",StatList[[4]],sep="_"),
+
+              paste("N_tttElig_US_55_64","NM1",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_55_64","NM2",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_55_64","NM3",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_55_64","NM4",StatList[[4]],sep="_"),
+
+              paste("N_tttElig_US_65_74","NM1",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_65_74","NM2",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_65_74","NM3",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_65_74","NM4",StatList[[4]],sep="_"),
+
+              paste("N_tttElig_US_75_84","NM1",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_75_84","NM2",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_75_84","NM3",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_75_84","NM4",StatList[[4]],sep="_"),
+
+              paste("N_tttElig_US_85_94","NM1",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_85_94","NM2",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_85_94","NM3",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_85_94","NM4",StatList[[4]],sep="_"),
+
+              paste("N_tttElig_US_95p","NM1",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_95p","NM2",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_95p","NM3",StatList[[4]],sep="_"),
+              paste("N_tttElig_US_95p","NM4",StatList[[4]],sep="_"),
+
+              paste("N_tttElig_NUS_0_4","NM1",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_0_4","NM2",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_0_4","NM3",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_0_4","NM4",StatList[[4]],sep="_"),
+
+              paste("N_tttElig_NUS_5_14","NM1",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_5_14","NM2",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_5_14","NM3",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_5_14","NM4",StatList[[4]],sep="_"),
+
+              paste("N_tttElig_NUS_15_24","NM1",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_15_24","NM2",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_15_24","NM3",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_15_24","NM4",StatList[[4]],sep="_"),
+
+              paste("N_tttElig_NUS_25_34","NM1",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_25_34","NM2",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_25_34","NM3",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_25_34","NM4",StatList[[4]],sep="_"),
+
+              paste("N_tttElig_NUS_35_44","NM1",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_35_44","NM2",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_35_44","NM3",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_35_44","NM4",StatList[[4]],sep="_"),
+
+              paste("N_tttElig_NUS_45_54","NM1",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_45_54","NM2",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_45_54","NM3",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_45_54","NM4",StatList[[4]],sep="_"),
+
+              paste("N_tttElig_NUS_55_64","NM1",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_55_64","NM2",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_55_64","NM3",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_55_64","NM4",StatList[[4]],sep="_"),
+
+              paste("N_tttElig_NUS_65_74","NM1",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_65_74","NM2",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_65_74","NM3",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_65_74","NM4",StatList[[4]],sep="_"),
+
+              paste("N_tttElig_NUS_75_84","NM1",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_75_84","NM2",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_75_84","NM3",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_75_84","NM4",StatList[[4]],sep="_"),
+
+              paste("N_tttElig_NUS_85_94","NM1",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_85_94","NM2",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_85_94","NM3",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_85_94","NM4",StatList[[4]],sep="_"),
+
+              paste("N_tttElig_NUS_95p","NM1",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_95p","NM2",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_95p","NM3",StatList[[4]],sep="_"),
+              paste("N_tttElig_NUS_95p","NM4",StatList[[4]],sep="_")
+
 
               # These were used for troubleshooting the relationship between incident Mtb infections
               # and TB notifications. Unnecessary to produce every run

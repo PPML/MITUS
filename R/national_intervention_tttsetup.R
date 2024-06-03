@@ -49,7 +49,7 @@ na<-c("US", "NUS")
 yo<-0
 for (n in 1:2){
   for (a in 1:11){
-  y <- grep(paste("N", na[n], ag[a], "Lt", sep="_"), colnames(results))
+  y <- grep(paste("N_tttElig", na[n], ag[a], sep="_"), colnames(results))
   # y <- grep(paste("N", na[n], ag[a], sep = "_"), colnames(results))
   # print(paste("age is", a))
   # print(paste("nat is", n))
@@ -126,6 +126,6 @@ for (n in 1:2){
 #  print(y)
   all_samp_rates[[intv]] <- samp_dist
 } ##end of population loop
-  print(totScreen*1e6)
+  print(paste("screen in R = ", totScreen*1e6))
   return(all_samp_rates)
 }
