@@ -84,11 +84,14 @@ for (n in 1:2){
   funcB <- function(par,rrmort_i,rrprog_i,rrprog,rrmort,dist){ # par = 2:3
     rr_samp <- (exp(par[1])^(0:3)) %*% t(exp(par[2])^(0:3))
     dist_i  <- dist * rr_samp / sum(dist * rr_samp) * sum(dist)
-    (sum(colSums(dist_i)*rrprog)/sum(colSums(dist)*rrprog)-rrprog_i)^2 + (sum(rowSums(dist_i)*rrmort)/sum(rowSums(dist)*rrmort)-rrmort_i)^2 + diff(par)^2/100
+
+    (sum(rowSums(dist_i)*rrprog)/sum(rowSums(dist)*rrprog)-rrprog_i)^2 +
+    (sum(colSums(dist_i)*rrmort)/sum(colSums(dist)*rrmort)-rrmort_i)^2 + diff(par)^2/100
   }
   #apply
   if(sum(dist)!=0){
-  fit <- optim(c(1,1),funcB,rrmort_i=rrmort_i,rrprog_i=rrprog_i,rrprog=rrprog,rrmort=rrmort,dist=dist)
+  fit <- optim(c(1,1),funcB,rrmort_i=rrmort_i,rrprog_i=rrprog_i,
+                            rrprog=rrprog,rrmort=rrmort,dist=dist)
   par = fit$par
 
   #5 calc transition rates for TTT
@@ -116,7 +119,7 @@ for (n in 1:2){
   # print(paste("sum is ",yo))
   samp_dist[((n-1)*11)+a,1:16] <- as.vector(an_samp_rate)
   # print(paste(a,n,(ttt_list[["NRiskGrp"]]*ttt_list[["FrcScrn"]]*ifelse(n==1,US_dist[a], NUS_dist[a]))/results[start_yr,(((n-1)*11)+a)+32]))
-  samp_dist[((n-1)*11)+a,17]<-ttt_list[["RRPrev"]]
+  # samp_dist[((n-1)*11)+a,17]<-ttt_list[["RRPrev"]]
 
     ########(ttt_list[["NRiskGrp"]]*ttt_list[["FrcScrn"]]*ifelse(n==1,US_dist[a], NUS_dist[a]))/results[start_yr,(((n-1)*11)+a)+32]
 #this will be the real implementation after the risk group age/nativity distributions are finalized

@@ -459,7 +459,9 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,
     ttt_params<-create_ttt_mdist(ttt_input = ttt_list,
                                  results =results0,
                                  PV = PV)
+    samplingDist <<- as.vector(ttt_params[[1]][,-(ncol(ttt_params[[1]]))])
     for (i in 1:length(ttt_params)){
+      # ttt_sampling_dist <- ttt_params[[i]][,-(ncol(ttt_params[[i]]))]
       ttt_sampling_dist[i,]<-as.vector(ttt_params[[i]][,-(ncol(ttt_params[[i]]))])
       ttt_ltbi[i]<-ttt_list[[i]][[9]]
     }
