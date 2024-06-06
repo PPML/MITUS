@@ -183,7 +183,7 @@ Rcpp::List national_cSim(
   double        pop_scrn;
   double        rr_ltbi;
   double        Outputs[nYrs][nRes];
-      double  	    V0[11][6][2][4][4][2][3];
+  double  	    V0[11][6][2][4][4][2][3];
   double  	    V1[11][6][2][4][4][2][3];
   double  	    VMort[11][6][2][4][4][2][3];
   double       Vdx[11][6][2][4][4][2][3];
@@ -224,7 +224,7 @@ Rcpp::List national_cSim(
   double        RRmuRFN[4];
   double        mort_dist[4];
   double temp20 = 0 ; double temp21 = 0; double temp22 = 0; double temp23 = 0;
-  double temp19 = 0 ; double temp24;
+  double temp19 = 0 ; double temp24 = 0;
   ///////////////////////////////////////////////////////////////////////////////
   ///////                            INITIALIZE                             /////
   ///////////////////////////////////////////////////////////////////////////////
@@ -1004,180 +1004,152 @@ Rcpp::List national_cSim(
       /////                      OPEN TB DYNAMICS LOOP                        /////
       /////////////////////////////////////////////////////////////////////////////
       if (tb_dyn==1){
-        //first check if we're shutting off TB in model
-        if(NixTb[s]==1){
-          for(int ag=0; ag<11; ag++) {
+        ///////////////////////////////////////////////////////////////////////////
+        ///// Step 1 & 2
+        ///// take total population of mixing groups
+        ///// mixing groups are only risk group and nativity
+        ///// we do not need to stratify by age here because we are only allowing
+        ///// the number of contacts of infectious persons to vary as a constant
+        ///// across all mixing groups; no assortative mixing  RRcrAG[ag] by age.
+        ///////////////////////////////////////////////////////////////////////////
+        ////////////////////////////  TRANSMISSION RISK  ////////////////////////////////
+
+        // Step 1 & 2
+        // take total population of mixing groups
+        // mixing groups are only risk group and nativity
+        // we do not need to stratify by age here because we are only allowing the number of contacts
+        // of infectious persons to vary as a constant across all mixing groups; no assortative mixing  RRcrAG[ag]
+        // by age.
+
+        for(int i=0; i<2; i++){
+          for(int j=0; j<2; j++){
+            VNkl[i][j]=0;
+            VGkl[i][j]=0;
+          }
+        }
+        for(int ag=0; ag<11; ag++) {
+          for(int tb=0; tb<6; tb++) {
             for(int lt=0; lt<2; lt++) {
               for(int im=0; im<4; im++) {
                 for(int nm=0; nm<4; nm++) {
-                  for(int rg=0; rg<2; rg++) {
-                    for (int na=0; na<3; na++){
-                      for (int tb=2; tb<6; tb++){
-                        temp=V0[ag][tb][lt][im][nm][rg][na]*NixTb[s];
-                        V0[ag][tb][lt][im][nm][rg][na] -= temp;
-                        V0[ag][1][lt][im][nm][rg][na]  += temp;
-                      }}}}}}}
-          for(int ag=0; ag<11; ag++) {
-            for(int lt=0; lt<2; lt++) {
-              for(int im=0; im<4; im++) {
-                for(int nm=0; nm<4; nm++) {
-                  for(int rg=0; rg<2; rg++) {
-                    for (int na=0; na<3; na++){
-                      for (int tb=1; tb<6; tb++){
-                        V1[ag][tb][lt][im][nm][rg][na] = V0[ag][tb][lt][im][nm][rg][na];
-                        Vdx[ag][tb][lt][im][nm][rg][na]   = 0;
-                      }}}}}}}
-        } else {
-          ///////////////////////////////////////////////////////////////////////////
-          ///// Step 1 & 2
-          ///// take total population of mixing groups
-          ///// mixing groups are only risk group and nativity
-          ///// we do not need to stratify by age here because we are only allowing
-          ///// the number of contacts of infectious persons to vary as a constant
-          ///// across all mixing groups; no assortative mixing  RRcrAG[ag] by age.
-          ///////////////////////////////////////////////////////////////////////////
-          ////////////////////////////  TRANSMISSION RISK  ////////////////////////////////
-
-          // Step 1 & 2
-          // take total population of mixing groups
-          // mixing groups are only risk group and nativity
-          // we do not need to stratify by age here because we are only allowing the number of contacts
-          // of infectious persons to vary as a constant across all mixing groups; no assortative mixing  RRcrAG[ag]
-          // by age.
-
-          for(int i=0; i<2; i++){
-            for(int j=0; j<2; j++){
-              VNkl[i][j]=0;
-              VGkl[i][j]=0;
-            }
-          }
-          for(int ag=0; ag<11; ag++) {
-            for(int tb=0; tb<6; tb++) {
-              for(int lt=0; lt<2; lt++) {
-                for(int im=0; im<4; im++) {
-                  for(int nm=0; nm<4; nm++) {
-                    ///////// LOW RISK US BORN
-                    VNkl[0][0] += V0[ag][tb][lt][im][nm][0][0]
-                    * RRcrAG[ag] * RelInfRg[0];
-                    VGkl[0][0] += V0[ag][tb][lt][im][nm][0][0]
-                    * RRcrAG[ag] * RelInfRg[0] * RelInf[tb];
-                    ///////// HIGH RISK US BORN
-                    VNkl[1][0] += V0[ag][tb][lt][im][nm][1][0]
-                    * RRcrAG[ag] * RelInfRg[1];
-                    VGkl[1][0] += V0[ag][tb][lt][im][nm][1][0]
-                    * RRcrAG[ag] * RelInfRg[1] * RelInf[tb];
-                    ///////// LOW RISK NON US BORN
-                    VNkl[0][1] += (V0[ag][tb][lt][im][nm][0][1] + V0[ag][tb][lt][im][nm][0][2])
-                      * RRcrAG[ag] * RelInfRg[2];
-                    VGkl[0][1] += (V0[ag][tb][lt][im][nm][0][1] + V0[ag][tb][lt][im][nm][0][2])
-                      * RRcrAG[ag] * RelInfRg[2] * RelInf[tb];
-                    ///////// HIGH RISK NON US BORN
-                    VNkl[1][1] += (V0[ag][tb][lt][im][nm][1][1] + V0[ag][tb][lt][im][nm][1][2])
-                      * RRcrAG[ag] * RelInfRg[3];
-                    VGkl[1][1] += (V0[ag][tb][lt][im][nm][1][1] + V0[ag][tb][lt][im][nm][1][2])
-                      * RRcrAG[ag] * RelInfRg[3] * RelInf[tb];
-                  } } } } }
+                  ///////// LOW RISK US BORN
+                  VNkl[0][0] += V0[ag][tb][lt][im][nm][0][0]
+                  * RRcrAG[ag] * RelInfRg[0];
+                  VGkl[0][0] += V0[ag][tb][lt][im][nm][0][0]
+                  * RRcrAG[ag] * RelInfRg[0] * RelInf[tb];
+                  ///////// HIGH RISK US BORN
+                  VNkl[1][0] += V0[ag][tb][lt][im][nm][1][0]
+                  * RRcrAG[ag] * RelInfRg[1];
+                  VGkl[1][0] += V0[ag][tb][lt][im][nm][1][0]
+                  * RRcrAG[ag] * RelInfRg[1] * RelInf[tb];
+                  ///////// LOW RISK NON US BORN
+                  VNkl[0][1] += (V0[ag][tb][lt][im][nm][0][1] + V0[ag][tb][lt][im][nm][0][2])
+                    * RRcrAG[ag] * RelInfRg[2];
+                  VGkl[0][1] += (V0[ag][tb][lt][im][nm][0][1] + V0[ag][tb][lt][im][nm][0][2])
+                    * RRcrAG[ag] * RelInfRg[2] * RelInf[tb];
+                  ///////// HIGH RISK NON US BORN
+                  VNkl[1][1] += (V0[ag][tb][lt][im][nm][1][1] + V0[ag][tb][lt][im][nm][1][2])
+                    * RRcrAG[ag] * RelInfRg[3];
+                  VGkl[1][1] += (V0[ag][tb][lt][im][nm][1][1] + V0[ag][tb][lt][im][nm][1][2])
+                    * RRcrAG[ag] * RelInfRg[3] * RelInf[tb];
+                } } } } }
 
 
-          // Step 3 (Infected/Total)
-          //probability of infection  -- maybe not stratified by age either?
-          //for each mixing group
-          // calculated as the a weighted average based on the number of effective contacts
-          // each nativity and risk group contributes to that mixing group
-          // 0 = common pool; 1 = exclusive nusb, 2 = exclusive hr, 3 = exclusive nusb-hr
+        // Step 3 (Infected/Total)
+        //probability of infection  -- maybe not stratified by age either?
+        //for each mixing group
+        // calculated as the a weighted average based on the number of effective contacts
+        // each nativity and risk group contributes to that mixing group
+        // 0 = common pool; 1 = exclusive nusb, 2 = exclusive hr, 3 = exclusive nusb-hr
 
-          Vjaf[0] = (VGkl[0][0]         + VGkl[1][0]*Vmix[0] +
-            VGkl[0][1]*Vmix[1] + VGkl[1][1]*Vmix[1]*Vmix[0]) /
-              (VNkl[0][0]         + VNkl[1][0]*Vmix[0]+
-                VNkl[0][1]*Vmix[1] + VNkl[1][1]*Vmix[1]*Vmix[0] + 1e-12);
+        Vjaf[0] = (VGkl[0][0]         + VGkl[1][0]*Vmix[0] +
+          VGkl[0][1]*Vmix[1] + VGkl[1][1]*Vmix[1]*Vmix[0]) /
+            (VNkl[0][0]         + VNkl[1][0]*Vmix[0]+
+              VNkl[0][1]*Vmix[1] + VNkl[1][1]*Vmix[1]*Vmix[0] + 1e-12);
 
-          Vjaf[1] = (VGkl[0][1] + VGkl[1][1]*Vmix[0]) /
-            (VNkl[0][1] + VNkl[1][1]*Vmix[0] + 1e-12);
+        Vjaf[1] = (VGkl[0][1] + VGkl[1][1]*Vmix[0]) /
+          (VNkl[0][1] + VNkl[1][1]*Vmix[0] + 1e-12);
 
-          Vjaf[2] = (VGkl[1][0] + VGkl[1][1]*Vmix[1])/
-            (VNkl[1][0] + VNkl[1][1]*Vmix[1] + 1e-12);
+        Vjaf[2] = (VGkl[1][0] + VGkl[1][1]*Vmix[1])/
+          (VNkl[1][0] + VNkl[1][1]*Vmix[1] + 1e-12);
 
-          Vjaf[3] = VGkl[1][1] / (VNkl[1][1] + 1e-12);
+        Vjaf[3] = VGkl[1][1] / (VNkl[1][1] + 1e-12);
 
-          // Step 4
-          // calculate force of infection
-          // the number of contacts you have*probability of infection*mixing
-          for(int ag=0; ag<11; ag++) {
-            /// LOW RISK US BORN
-            VLkla[0 ][0 ][ag]  = RelInfRg[0] * RRcrAG[ag] * Vjaf[0] ;
-            ///////// HIGH RISK US BORN
-            VLkla[1 ][0 ][ag]  = RelInfRg[1] * RRcrAG[ag] * Vjaf[1]*(1-Vmix[0]) +
-              RelInfRg[0] * RRcrAG[ag] *  Vjaf[0]*Vmix[0];
-            ///////// LOW RISK NON US BORN
-            VLkla[0 ][1 ][ag]  = RelInfRg[2] * RRcrAG[ag] * Vjaf[2]*(1-Vmix[1]) +
-              RelInfRg[0] * RRcrAG[ag] * Vjaf[0]*Vmix[1] + ExogInf[s];
-            ///////// HIGH RISK NON US BORN
-            VLkla[1 ][1 ][ag]  =  VLkla[1 ][1 ][ag]  = RelInfRg[3] * RRcrAG[ag] *
-              ((Vjaf[3] * (1-Vmix[0]) * (1-Vmix[1]) +
-              Vjaf[2] *    Vmix[0]  * (1-Vmix[1]) +
-              Vjaf[1] * (1-Vmix[0]) *    Vmix[1]  +
-              Vjaf[0] *    Vmix[0]  *    Vmix[1]))  +
-              ExogInf[s];
-          }
+        // Step 4
+        // calculate force of infection
+        // the number of contacts you have*probability of infection*mixing
+        for(int ag=0; ag<11; ag++) {
+          /// LOW RISK US BORN
+          VLkla[0 ][0 ][ag]  = RelInfRg[0] * RRcrAG[ag] * Vjaf[0] ;
+          ///////// HIGH RISK US BORN
+          VLkla[1 ][0 ][ag]  = RelInfRg[1] * RRcrAG[ag] * Vjaf[1]*(1-Vmix[0]) +
+            RelInfRg[0] * RRcrAG[ag] *  Vjaf[0]*Vmix[0];
+          ///////// LOW RISK NON US BORN
+          VLkla[0 ][1 ][ag]  = RelInfRg[2] * RRcrAG[ag] * Vjaf[2]*(1-Vmix[1]) +
+            RelInfRg[0] * RRcrAG[ag] * Vjaf[0]*Vmix[1] + ExogInf[s];
+          ///////// HIGH RISK NON US BORN
+          VLkla[1 ][1 ][ag]  =  VLkla[1 ][1 ][ag]  = RelInfRg[3] * RRcrAG[ag] *
+            ((Vjaf[3] * (1-Vmix[0]) * (1-Vmix[1]) +
+            Vjaf[2] *    Vmix[0]  * (1-Vmix[1]) +
+            Vjaf[1] * (1-Vmix[0]) *    Vmix[1]  +
+            Vjaf[0] *    Vmix[0]  *    Vmix[1]))  +
+            ExogInf[s];
+        }
 
-          ///////////////////////////////INFECTION///////////////////////////////////////
-          ///////////////////////for all age groups, risk groups/////////////////////////
-          ///////INFECTION IS CALCULATED WITH THE FORCE OF INFECTION BY RISK GROUP///////
-          /////// THE TOTAL NUMBER OF INFECTED THEN ENTER BOTH THE LATENT SLOW &  ///////
-          ///////& LATENT FAST TB STATES DEPENDENT ON PROBABILITY OF FAST LATENCY ///////
-          ///////    PEOPLE ARE REMOVED FROM SUSCEPTIBLE, PARTIALLY IMMUNE &      ///////
-          ///////                   LATENT SLOW STATES                            ///////
-          ///////////////////////////////////////////////////////////////////////////////
-          for(int ag=0; ag<11; ag++) {
-            for (int tb=0; tb<6; tb++){
-              for(int lt=0; lt<2; lt++) {
-                for(int im=0; im<4; im++) {
-                  for(int nm=0; nm<4; nm++) {
-                    for(int rg=0; rg<2; rg++) {
-                      for (int na=0; na<3; na++){
-                        if (na==0){
-                          n2=na;
-                        } else { n2 = 1;}
-                      ///////////////////////////////   SUCEPTIBLE  /////////////////////////////////
-                      temp = V0[ag][0][lt][im][nm][rg][na]*(VLkla[rg][n2][ag])*NixTrans[s];
-                      Vinf[ag][tb][lt][im][nm][rg][na] += V0[ag][0][lt][im][nm][rg][na]*(VLkla[rg][n2][ag])*NixTrans[s];
-                      //////////////////////////// REMOVE FROM SUSCEPTIBLE //////////////////////////
-                      V1[ag][0][lt][im][nm][rg][na]  -= temp;
-                      //////////////////////////////// LATENT TB SLOW ///////////////////////////////
-                      V1[ag][2][lt][im][nm][rg][na]  += temp*MpslowN[ag][im];
-                      //////////////////////////////// LATENT TB FAST ///////////////////////////////
-                      V1[ag][3][lt][im][nm][rg][na]  += temp*MpfastN[ag][im];
-                      ///////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////INFECTION///////////////////////////////////////
+        ///////////////////////for all age groups, risk groups/////////////////////////
+        ///////INFECTION IS CALCULATED WITH THE FORCE OF INFECTION BY RISK GROUP///////
+        /////// THE TOTAL NUMBER OF INFECTED THEN ENTER BOTH THE LATENT SLOW &  ///////
+        ///////& LATENT FAST TB STATES DEPENDENT ON PROBABILITY OF FAST LATENCY ///////
+        ///////    PEOPLE ARE REMOVED FROM SUSCEPTIBLE, PARTIALLY IMMUNE &      ///////
+        ///////                   LATENT SLOW STATES                            ///////
+        ///////////////////////////////////////////////////////////////////////////////
+        for(int ag=0; ag<11; ag++) {
+          for(int lt=0; lt<2; lt++) {
+            for(int im=0; im<4; im++) {
+              for(int nm=0; nm<4; nm++) {
+                for(int rg=0; rg<2; rg++) {
+                  for (int na=0; na<3; na++){
 
-                      /////////////////////////////// SUPER-INFECTION SP ////////////////////////////
-                      temp = V0[ag][1][lt][im][nm][rg][na] * (VLkla[rg][n2][ag]) * NixTrans[s];
-                      Vinf[ag][1][lt][im][nm][rg][na] += V0[ag][1][lt][im][nm][rg][na] *
-                                                         (VLkla[rg][n2][ag]) * NixTrans[s];
+                    if (na==0){
+                      n2=na;
+                    } else {n2=1;}
 
-                      // if((V0[ag][1][lt][im][nm][rg][na]*VLkla[rg][n2][ag]*NixTrans[s]) > V1[ag][1][lt][im][nm][rg][na] ){
-                      //
-                      //   Rcpp::Rcout << "sum is "<<  (V0[ag][1][lt][im][nm][rg][na]*VLkla[rg][n2][ag]*NixTrans[s]) << "at ag = " << ag  << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
-                      //   Rcpp::Rcout << "sum is "<<  V1[ag][1][lt][im][nm][rg][na] << "at ag = " << ag <<  "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
-                      //
-                      //   return
-                      //     Rcpp::List::create(
-                      //       Rcpp::Named("Outputs") = Outputs2
-                      //     );
-                      // }
-                      V1[ag][1][lt][im][nm][rg][na] -= temp;
-                      V1[ag][2][lt][im][nm][rg][na] += temp*MpslowPIN[ag][im];
-                      V1[ag][3][lt][im][nm][rg][na] += temp*MpfastPIN[ag][im];
-                      ///////////////////////////////////////////////////////////////////////////////
+                    ///////////////////////////////   SUCEPTIBLE  /////////////////////////////////
+                    temp = V0[ag][0][lt][im][nm][rg][na]*(VLkla[rg][n2][ag])*NixTrans[s];
+                    Vinf[ag][0][lt][im][nm][rg][na] = (V0[ag][0][lt][im][nm][rg][na]*VLkla[rg][n2][ag]*NixTrans[s]);
+                    //////////////////////////// REMOVE FROM SUSCEPTIBLE //////////////////////////
+                    V1[ag][0][lt][im][nm][rg][na]  -= temp;
+                    //////////////////////////////// LATENT TB SLOW ///////////////////////////////
+                    V1[ag][2][lt][im][nm][rg][na]  += temp*MpslowN[ag][im];
+                    //////////////////////////////// LATENT TB FAST ///////////////////////////////
+                    V1[ag][3][lt][im][nm][rg][na]  += temp*MpfastN[ag][im];
+                    ///////////////////////////////////////////////////////////////////////////////
 
-                      /////////////////////////////// SUPER-INFECTION LS ////////////////////////////
-                      temp = V0[ag][2][lt][im][nm][rg][na] * (VLkla[rg][n2][ag]) * NixTrans[s];
-                      Vinf[ag][2][lt][im][nm][rg][na] += V0[ag][2][lt][im][nm][rg][na]*(VLkla[rg][n2][ag])*NixTrans[s];
+                    /////////////////////////////// SUPER-INFECTION SP ////////////////////////////
+                    temp = V0[ag][1][lt][im][nm][rg][na]*(VLkla[rg][n2][ag])*NixTrans[s];
+                    // if((V0[ag][1][lt][im][nm][rg][na]*VLkla[rg][n2][ag]*NixTrans[s]) > V1[ag][1][lt][im][nm][rg][na] ){
+                    //
+                    //   Rcpp::Rcout << "sum is "<<  (V0[ag][1][lt][im][nm][rg][na]*VLkla[rg][n2][ag]*NixTrans[s]) << "at ag = " << ag  << "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+                    //   Rcpp::Rcout << "sum is "<<  V1[ag][1][lt][im][nm][rg][na] << "at ag = " << ag <<  "lt = "<< lt << " im = " << im << " nm = " << nm << " rg = " << rg << " na = " << na << "/n";
+                    //
+                    //   return
+                    //     Rcpp::List::create(
+                    //       Rcpp::Named("Outputs") = Outputs2
+                    //     );
+                    // }
+                    V1[ag][1][lt][im][nm][rg][na] -= temp;
+                    V1[ag][2][lt][im][nm][rg][na] += temp*MpslowPIN[ag][im];
+                    V1[ag][3][lt][im][nm][rg][na] += temp*MpfastPIN[ag][im];
+                    ///////////////////////////////////////////////////////////////////////////////
 
-                      V1[ag][2][lt][im][nm][rg][na]  -= temp;
-                      V1[ag][2][lt][im][nm][rg][na]  += temp*MpslowPIN[ag][im];
-                      V1[ag][3][lt][im][nm][rg][na]  += temp*MpfastPIN[ag][im];
+                    /////////////////////////////// SUPER-INFECTION LS ////////////////////////////
+                    temp = V0[ag][2][lt][im][nm][rg][na]*(VLkla[rg][n2][ag])*NixTrans[s];
+                    V1[ag][2][lt][im][nm][rg][na]  -= temp;
+                    V1[ag][2][lt][im][nm][rg][na]  += temp*MpslowPIN[ag][im];
+                    V1[ag][3][lt][im][nm][rg][na]  += temp*MpfastPIN[ag][im];
 
-                    } } } } } } }
+                  } } } } } }
           ///////////////////////////////////////////////////////////////////////////////
           /////                             BREAK DOWN                              /////
           ///////////////////////////////////////////////////////////////////////////////
@@ -1461,7 +1433,8 @@ Rcpp::List national_cSim(
                   adj_susceptible_pop[ag][tb][im][nm][rg][na] = V0[ag][tb][0][im][nm][rg][na] + ((1 - rr_ltbi)* (V0[ag][2][0][im][nm][rg][na] + V0[ag][3][0][im][nm][rg][na]) * frcStrata);
                   ttt_test_all_vec[ag][tb][im][nm][rg][na] =  ttt_frc_scrn * adj_susceptible_pop[ag][tb][im][nm][rg][na] * ttt_ltbi_acceptN;
                 }
-
+                ///// Update the test accumulator
+                VLtest[ag][tb][0][im][nm][rg][na] += ttt_test_all_vec[ag][tb][im][nm][rg][na];
                 /////////////////// CALCULATE THE NUMBER OF EXTRA DIAGNOSES
                 ///// DO WE NEED TO ACCOUNT FOR HIGH RISK HERE?
                 double testPerformance = 0;
@@ -1549,13 +1522,12 @@ Rcpp::List national_cSim(
             //           for(int rg=0; rg<2; rg++) {
             //             ttt_frc_scrn = std::min(ttt_samp_distN[0][ag+(ni*11)+(nm*22)+(im*88)], 1.0);
             //           // VLtemp[ag][tb][0][im][nm][rg][na] = std::max((ttt_frc_scrn * std::max(V0[ag][tb][0][im][nm][rg][na] , 0.0) * ttt_ltbi_acceptN),0.0);
-            //         }}}}}
+            //         }}}}}}
 
           } // close the screening month loop
 /// print summary of screening statistics
           if (s == ttt_month.front()){
             Rcpp::Rcout<< "month = " << s << "\n";
-
             // Rcpp::Rcout<< "total population = " << temp19*1e6 << "\n";
             Rcpp::Rcout<< "total extra screening = " << temp20*1e6 << "\n";
             Rcpp::Rcout<< "total extra screening in latent pop = " << temp21 *1e6<< "\n";
@@ -1563,7 +1535,7 @@ Rcpp::List national_cSim(
             Rcpp::Rcout<< "total extra LTBI diagnoses in latent pop = " << temp23*1e6 << "\n";
             Rcpp::Rcout<< "total extra TB diagnoses = " << temp24*1e6 << "\n";
           }
-          temp7=0;temp8=0;temp9=0;temp10=0; temp20=0; temp21=0; temp22=0; temp23=0; temp19=0;
+          temp7=0;temp8=0;temp9=0;temp10=0; temp20=0; temp21=0; temp22=0; temp23=0; temp19=0; temp24=0;
           ///////////////////// TB DIAGNOSIS AND TX INITIATION  /////////////////////////
           temp=0;
           for(int ag=0; ag<11; ag++) {
@@ -1612,8 +1584,6 @@ Rcpp::List national_cSim(
                       V1[ag][5][lt][im][nm][rg][na]  -= temp;
                       V1[ag][5][lt][im][nm][rg][na]  += temp;
                     } } } } } }
-
-        } //end of ifelse loop
       }//end of TB loop
       /////////////////////////////////////////////////////////////////////////////
       /////                        FILL RESULTS TABLE                         /////
@@ -2019,7 +1989,7 @@ Rcpp::List national_cSim(
               for(int nm=0; nm<4; nm++) {
                 for(int rg=0; rg<2; rg++) {
                   for(int na=0; na<3; na++) {
-                    temp2 = (Vinf[0][ag][lt][im][nm][rg][na] + Vinf[1][ag][lt][im][nm][rg][na])*((MpfastN[ag][im]*(1-pow(1-rfast,24.0)) + (1-MpfastN[ag][im])*(1-pow(1-MrslowN[ag][im],24.0))));// Progression from recent infection
+                    temp2 = (Vinf[ag][0][lt][im][nm][rg][na] + Vinf[ag][1][lt][im][nm][rg][na])*((MpfastN[ag][im]*(1-pow(1-rfast,24.0)) + (1-MpfastN[ag][im])*(1-pow(1-MrslowN[ag][im],24.0))));// Progression from recent infection
                     temp =  Vinf[ag][2 ][lt][im][nm][rg][na]*(MrslowN[ag][im]) + V0[ag][3 ][lt][im][nm][rg][na]*rfast; // All progression
                     Outputs[y][155      ] += temp ;   // all incidence
                     Outputs[y][155+16   ] += temp2;   // all incidence, recent infection
