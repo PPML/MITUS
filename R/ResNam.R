@@ -248,8 +248,8 @@ func_ResNam<-function(){
               paste("N_TBTxComps_USB",StatList[[1]],sep="_"),
               paste("N_TBTxComps_NUSB",StatList[[1]],sep="_"),
 
-              paste("N_LtbiTests_USB_TP",StatList[[1]],sep="_"),
-              paste("N_LtbiTests_NUSB_TP",StatList[[1]],sep="_"),
+              paste("N_LtbiTests_TP_USB",StatList[[1]],sep="_"),
+              paste("N_LtbiTests_TP_NUSB",StatList[[1]],sep="_"),
 
               paste("N_LtTxNaive_US"),
               paste("N_LtTxNaive_F1"),
@@ -394,7 +394,13 @@ func_ResNam<-function(){
               paste("N_tttElig_NUS_95p","NM1",StatList[[4]],sep="_"),
               paste("N_tttElig_NUS_95p","NM2",StatList[[4]],sep="_"),
               paste("N_tttElig_NUS_95p","NM3",StatList[[4]],sep="_"),
-              paste("N_tttElig_NUS_95p","NM4",StatList[[4]],sep="_")
+              paste("N_tttElig_NUS_95p","NM4",StatList[[4]],sep="_"),
+
+              paste("N_LtbiTxInits_TP_USB",StatList[[1]],sep="_"),
+              paste("N_LtbiTxInits_TP_NUSB",StatList[[1]],sep="_"),
+
+              paste("N_LtbiTxComps_TP_USB",StatList[[1]],sep="_"),
+              paste("N_LtbiTxComps_TP_NUSB",StatList[[1]],sep="_")
 
 
               # These were used for troubleshooting the relationship between incident Mtb infections

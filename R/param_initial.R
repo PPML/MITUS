@@ -520,7 +520,7 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
 
   #### #### #### INT 1 #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
   pctDoc <- (1-0.28)
-  Int1Test <- Int1Init <- Int1Tx <- matrix(0,101,11)
+  Int1Test <- Int1Init <- Int1Tx <- matrix(0,151,11)
   if(Int1==1) {
     ##### In order to properly cost this intervention, we need to record the number of
     ##### to individuals that transition TB states during this intervention

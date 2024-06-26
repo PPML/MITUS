@@ -224,7 +224,7 @@ Rcpp::List national_cSim(
   double        RRmuRFN[4];
   double        mort_dist[4];
   double temp20 = 0 ; double temp21 = 0; double temp22 = 0; double temp23 = 0;
-  double temp19 = 0 ; double temp24 = 0;
+  double temp19 = 0 ; double temp24 = 0; double temp25 = 0; double temp26 = 0;
   ///////////////////////////////////////////////////////////////////////////////
   ///////                            INITIALIZE                             /////
   ///////////////////////////////////////////////////////////////////////////////
@@ -1305,6 +1305,8 @@ Rcpp::List national_cSim(
                                        V1[ag][1][0][im][nm][rg][na] +
                                        V1[ag][2][0][im][nm][rg][na] +
                                        V1[ag][3][0][im][nm][rg][na];
+
+                    temp25 += VLdx[ag][2][0][im][nm][rg][na] + VLdx[ag][3][0][im][nm][rg][na];
                   } } } } }
 
           ///////////////////////////////////////////////////////////////////////////////
@@ -1382,8 +1384,24 @@ Rcpp::List national_cSim(
                     } else{
                       ni = 1;
                     }
-
                     /// SET THE SENSITIVITY OF THE TEST BELOW
+                    if (ttt_ltbi_acceptN == 1){
+                      // ////////////// ALL US BORN  //////////////////////////
+                      if(ni==0) {
+                        rTbP_norm = 0.78;
+                        rTbN_norm = (1 - 0.98);
+                      }
+                      ////////////// Young NUS (under 5)  /////////////////
+                      if(ni > 0 && ag==0) {
+                        rTbP_norm = 0.79;
+                        rTbN_norm = (1 - 0.99);
+                      }
+                      //////////// NON US BORN  ///////////////////////////
+                      if(ni > 0 && ag > 0) {
+                        rTbP_norm = 0.79;
+                        rTbN_norm = (1 - 0.99);
+                      }
+                    } else{
                       // ////////////// ALL US BORN  //////////////////////////
                       if(ni==0) {
                         rTbP_norm = LtDxPar_ltN[0][s];
@@ -1399,6 +1417,8 @@ Rcpp::List national_cSim(
                         rTbP_norm = LtDxPar_ltN[3][s];
                         rTbN_norm = LtDxPar_noltN[3][s];
                       }
+                    }
+                    ///special care cascade (perfect)
                       if(ttt_ltbi_sens==1){
                         rTbP_norm=1;
                       }
@@ -1408,6 +1428,7 @@ Rcpp::List national_cSim(
                   /// define the fraction screened
 
                   ttt_frc_scrn = std::min(ttt_samp_distN[0][ag+(ni*11)+(nm*22)+(im*88)], 1.0);
+
                   for(int rg=0; rg<2; rg++) {
                     for(int tb=0; tb<5; tb++) {
 
@@ -1438,7 +1459,7 @@ Rcpp::List national_cSim(
                 /////////////////// CALCULATE THE NUMBER OF EXTRA DIAGNOSES
                 ///// DO WE NEED TO ACCOUNT FOR HIGH RISK HERE?
                 double testPerformance = 0;
-                if ((tb == 2) || (tb == 3)){
+                if ((tb == 2) || (tb == 3) || (tb == 4)){
                   testPerformance = rTbP_norm;
                 } else {
                   testPerformance = rTbN_norm;
@@ -1461,14 +1482,14 @@ Rcpp::List national_cSim(
                 /// remove those who test positive who are true LTBI negatives (false positives)
                 /////////////////////////////////////////////////////////////////////////////
                 /// Remove from the TB naive and PI states ////////////////////////
-                V1[ag][0][0][im][nm][rg][na]  -= ttt_test_all_vec[ag][0][im][nm][rg][na];
-                V1[ag][1][0][im][nm][rg][na]  -= ttt_test_all_vec[ag][1][im][nm][rg][na];
+                V1[ag][0][0][im][nm][rg][na]  -= ttt_diag_all_vec[ag][0][im][nm][rg][na];
+                V1[ag][1][0][im][nm][rg][na]  -= ttt_diag_all_vec[ag][1][im][nm][rg][na];
                 ///// Update the number of diagnoses
-                VLdx[ag][0][0][im][nm][rg][na] += ttt_test_all_vec[ag][0][im][nm][rg][na];
-                VLdx[ag][1][0][im][nm][rg][na] += ttt_test_all_vec[ag][1][im][nm][rg][na];
+                VLdx[ag][0][0][im][nm][rg][na] += ttt_diag_all_vec[ag][0][im][nm][rg][na];
+                VLdx[ag][1][0][im][nm][rg][na] += ttt_diag_all_vec[ag][1][im][nm][rg][na];
                 ///// Move to latent tx experienced /////////////////////////////////
-                V1[ag][0][1][im][nm][rg][na]  += ttt_test_all_vec[ag][0][im][nm][rg][na];
-                V1[ag][1][1][im][nm][rg][na]  += ttt_test_all_vec[ag][1][im][nm][rg][na];
+                V1[ag][0][1][im][nm][rg][na]  += ttt_diag_all_vec[ag][0][im][nm][rg][na];
+                V1[ag][1][1][im][nm][rg][na]  += ttt_diag_all_vec[ag][1][im][nm][rg][na];
                 ///////////////////////////////////////////////////////////////////////////////
                 ///// remove those who test positive who are true LTBI positive (true positives)
                 ///////////////////////////////////////////////////////////////////////////////
@@ -1504,7 +1525,7 @@ Rcpp::List national_cSim(
                 // Sum of total diagnosed population among latent for print below
                 temp23 += ttt_diag_all_vec[ag][2][im][nm][rg][na] + ttt_diag_all_vec[ag][3][im][nm][rg][na];
                 // Sum of total TB diagnosed population among latent for print below
-                temp24 += ttt_diag_all_vec[ag][4][im][nm][rg][na];
+                temp24 +=  VLdx[ag][2][0][im][nm][rg][na] + VLdx[ag][3][0][im][nm][rg][na];
 } } } } }
 
 
@@ -1533,7 +1554,8 @@ Rcpp::List national_cSim(
             Rcpp::Rcout<< "total extra screening in latent pop = " << temp21 *1e6<< "\n";
             Rcpp::Rcout<< "total extra LTBI diagnoses = " << temp22*1e6 << "\n";
             Rcpp::Rcout<< "total extra LTBI diagnoses in latent pop = " << temp23*1e6 << "\n";
-            Rcpp::Rcout<< "total extra TB diagnoses = " << temp24*1e6 << "\n";
+            Rcpp::Rcout<< "total vldx diagnoses = " << temp25*1e6 << "\n";
+            Rcpp::Rcout<< "total extra vldx diagnoses = " << temp24*1e6 << "\n";
           }
           temp7=0;temp8=0;temp9=0;temp10=0; temp20=0; temp21=0; temp22=0; temp23=0; temp19=0; temp24=0;
           ///////////////////// TB DIAGNOSIS AND TX INITIATION  /////////////////////////
@@ -1946,25 +1968,41 @@ Rcpp::List national_cSim(
                   Outputs[y][154] += (VLdx[ag][2][0][im][nm][rg][na]+VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0]; // inits with LTBI
                   // Calculate the number of LTBI Tests, Tx Initiations, and Tx Completions
                   if(na==0){
+                    //// LTBI tests
                     Outputs[y][683+ag] +=  VLtest[ag][0][0][im][nm][rg][na]+VLtest[ag][1][0][im][nm][rg][na]+VLtest[ag][2][0][im][nm][rg][na]+VLtest[ag][3][0][im][nm][rg][na];
-                    Outputs[y][793+ag] +=  VLtest[ag][2][0][im][nm][rg][na]+VLtest[ag][3][0][im][nm][rg][na]+(VLtest[ag][1][0][im][nm][rg][na]*(1-pImmScen));
-                    Outputs[y][818+im] +=  VLtest[ag][0][0][im][nm][rg][na]+VLtest[ag][1][0][im][nm][rg][na]+VLtest[ag][2][0][im][nm][rg][na]+VLtest[ag][3][0][im][nm][rg][na];
+                    /// //// LTBI tests among true positive
+                    Outputs[y][793+ag] +=  VLtest[ag][2][0][im][nm][rg][na]+VLtest[ag][3][0][im][nm][rg][na] + (VLtest[ag][1][0][im][nm][rg][na]*(1-pImmScen));
+                    //// LTBI tests by progression risk
+                    Outputs[y][818+im] +=  VLtest[ag][0][0][im][nm][rg][na]+VLtest[ag][1][0][im][nm][rg][na] + VLtest[ag][2][0][im][nm][rg][na] + VLtest[ag][3][0][im][nm][rg][na];
 
-                    ///// TLTBI treatment initiations
+                    ///// LTBI treatment initiations
                     Outputs[y][705+ag] +=  (VLdx[ag][0][0][im][nm][rg][na] + VLdx[ag][1][0][im][nm][rg][na] + VLdx[ag][2][0][im][nm][rg][na] + VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0];
+                    ///// LTBI treatment initiations among true positives
+                    Outputs[y][1232+ag] += ((VLdx[ag][1][0][im][nm][rg][na]*(1-pImmScen)) + VLdx[ag][2][0][im][nm][rg][na] + VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0];
+
+                    ///// LTBI treatment completions
                     Outputs[y][727+ag] +=  (VLdx[ag][0][0][im][nm][rg][na] + VLdx[ag][1][0][im][nm][rg][na] + VLdx[ag][2][0][im][nm][rg][na] + VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0]*(1-LtTxParN[s][1]) ;
+
+                    ///// LTBI treatment completions among true positives
+                    Outputs[y][1254+ag] +=  ((VLdx[ag][1][0][im][nm][rg][na]*(1-pImmScen)) + VLdx[ag][2][0][im][nm][rg][na] + VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0]*(1-LtTxParN[s][1]) ;
                   } else {
                     /// For the non-USB calculations, we need to allow for the addition of tests for the Intervention #1 scenario
                     /// in which every migrant is tested for LTBI prior to entry to the United States
-                    Outputs[y][694+ag] += VLtest[ag][0][0][im][nm][rg][na] + VLtest[ag][1][0][im][nm][rg][na] +
-                      VLtest[ag][2][0][im][nm][rg][na] + VLtest[ag][3][0][im][nm][rg][na];
-
+                    Outputs[y][694+ag] += VLtest[ag][0][0][im][nm][rg][na] + VLtest[ag][1][0][im][nm][rg][na] +VLtest[ag][2][0][im][nm][rg][na] + VLtest[ag][3][0][im][nm][rg][na];
+                    /////// LTBI tests among true positive
                     Outputs[y][804+ag] += VLtest[ag][2][0][im][nm][rg][na] + VLtest[ag][3][0][im][nm][rg][na]+(VLtest[ag][1][0][im][nm][rg][na]*(1-pImmScen));
+
                     Outputs[y][822+im] +=  VLtest[ag][0][0][im][nm][rg][na]+VLtest[ag][1][0][im][nm][rg][na]+VLtest[ag][2][0][im][nm][rg][na]+VLtest[ag][3][0][im][nm][rg][na];
 
+                    ///// LTBI treatment initiations
                     Outputs[y][716+ag] += (VLdx[ag][0][0][im][nm][rg][na] + VLdx[ag][1][0][im][nm][rg][na] + VLdx[ag][2][0][im][nm][rg][na] + VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0];
+                    ///// LTBI treatment initiations among true positives
+                    Outputs[y][1243+ag] += ((VLdx[ag][1][0][im][nm][rg][na]*(1-pImmScen)) + VLdx[ag][2][0][im][nm][rg][na] + VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0];
 
+                    ///// LTBI treatment completions
                     Outputs[y][738+ag] += (VLdx[ag][0][0][im][nm][rg][na] + VLdx[ag][1][0][im][nm][rg][na] + VLdx[ag][2][0][im][nm][rg][na] + VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0]*(1-LtTxParN[s][1]) ;
+                    ///// LTBI treatment completions among true positives
+                    Outputs[y][1265+ag] +=  ((VLdx[ag][1][0][im][nm][rg][na]*(1-pImmScen)) + VLdx[ag][2][0][im][nm][rg][na] + VLdx[ag][3][0][im][nm][rg][na])*LtTxParN[s][0]*(1-LtTxParN[s][1]) ;
                   }
                 } } } }
           // Add in the additional tests for Intervention 1; If Int1 is not active, this adds a zero to every cell

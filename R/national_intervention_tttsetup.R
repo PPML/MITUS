@@ -78,19 +78,19 @@ for (n in 1:2){
   vORpfastRF  <-c(1,1,1,1)
   rrprog  <- (exp((0:3)/3*log(ORpfastRF)))
   #desired RR for the screening groups
-  rrprog_i <- ttt_list[[7]]
-  rrmort_i <- ttt_list[[8]]
+  rrmort_i <- ttt_list[["RRmu"]]
+  rrprog_i <- ttt_list[["RRprg"]]
   #create function for reweighting
-  funcB <- function(par,rrmort_i,rrprog_i,rrprog,rrmort,dist){ # par = 2:3
+  funcB <- function(par,rrprog_i,rrmort_i,rrprog,rrmort,dist){ # par = 2:3
     rr_samp <- (exp(par[1])^(0:3)) %*% t(exp(par[2])^(0:3))
     dist_i  <- dist * rr_samp / sum(dist * rr_samp) * sum(dist)
 
-    (sum(rowSums(dist_i)*rrprog)/sum(rowSums(dist)*rrprog)-rrprog_i)^2 +
-    (sum(colSums(dist_i)*rrmort)/sum(colSums(dist)*rrmort)-rrmort_i)^2 + diff(par)^2/100
+    (sum(rowSums(dist_i)*rrprog)/sum(rowSums(dist)*rrprog)-rrmort_i)^2 +
+    (sum(colSums(dist_i)*rrmort)/sum(colSums(dist)*rrmort)-rrprog_i)^2 + diff(par)^2/100
   }
   #apply
   if(sum(dist)!=0){
-  fit <- optim(c(1,1),funcB,rrmort_i=rrmort_i,rrprog_i=rrprog_i,
+  fit <- optim(c(1,1),funcB,rrprog_i=rrprog_i,rrmort_i=rrmort_i,
                             rrprog=rrprog,rrmort=rrmort,dist=dist)
   par = fit$par
 

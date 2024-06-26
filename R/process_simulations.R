@@ -58,7 +58,7 @@ national_OutputsZint <-  function(samp_i=1,ParMatrix,loc, output_month=11, start
   # call the parameter formatting function
   prms <- list()
 
-  print(par2020[1:6])
+  # print(par2020[1:6])
   prms <- national_param_init(P = P,
                               loc = loc,
                               Int1 = Int1,
@@ -77,14 +77,14 @@ national_OutputsZint <-  function(samp_i=1,ParMatrix,loc, output_month=11, start
   prms$ImmLat[889:1801,] <- unadj_prms$ImmLat[889:1801,]
   prms$ImmNon[889:1801,] <- unadj_prms$ImmNon[889:1801,]
 
-  ifelse  ( prms$ImmAct[889:1801,] == unadj_prms$ImmAct[889:1801,], print("Success"), print("Failed"))
+  # ifelse  ( prms$ImmAct[889:1801,] == unadj_prms$ImmAct[889:1801,], print("Success"), print("Failed"))
 
   prms$ImmAct[1:842,] <- unadj_prms$ImmAct[1:842,]
   prms$ImmFst[1:842,] <- unadj_prms$ImmFst[1:842,]
   prms$ImmLat[1:842,] <- unadj_prms$ImmLat[1:842,]
   prms$ImmNon[1:842,] <- unadj_prms$ImmNon[1:842,]
 
-  ifelse  ( prms$ImmAct[1:842,] == unadj_prms$ImmAct[1:842,], print("Success"), print("Failed"))
+  # ifelse  ( prms$ImmAct[1:842,] == unadj_prms$ImmAct[1:842,], print("Success"), print("Failed"))
 
   ### adjust parameters for 2020 ###
   names(par2020) <-  c("ImmigKnot1", "ImmigKnot2", "ImmigKnot3", "ImmigKnot4", "ImmigKnot5", "ImmigKnot6",
@@ -118,7 +118,7 @@ national_OutputsZint <-  function(samp_i=1,ParMatrix,loc, output_month=11, start
                       ttt_ltbi_sens = care_cascade[4]  , ttt_ltbi_spec = care_cascade[5]      , ttt_ltbi_accept = care_cascade[6]     , rRecov       = prms[["rRecov"]]      , pImmScen   = prms[["pImmScen"]],
                       EarlyTrend = prms[["EarlyTrend"]], pReTx        = prms[["pReTx"]]       , ag_den        = prms[["aging_denom"]] , NixTrans     = prms[["NixTrans"]]    , NixTb = prms[["NixTb"]],
                       dist_gen   = prms[["dist_gen"]]  , trans_mat_tot_ages = trans_mat_tot_ages)$Outputs
-  print(dim(m))
+  # print(dim(m))
   colnames(m) <- func_ResNam();
   results<<-as.matrix(m)
 
