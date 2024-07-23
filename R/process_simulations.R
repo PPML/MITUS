@@ -146,16 +146,26 @@ OutputsZint <-  function(samp_i=4,ParMatrix = Par,loc ="US", output_month = 11, 
 #'@param multiplier
 #'@return out outputs
 #'@export
-OutputsInt <- function(loc,ParMatrix, n_cores=1, output_month = 11, startyr=1950,endyr=2050,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,prg_chng, ttt_list, par2020=c(rep(0,18),rep(1,6)), care_cascade = def_care_cascade(),
-                       return_months =  865:888,
-                       multiplier = 1) {
+OutputsInt <- function(loc, ParMatrix, n_cores=1, output_month = 11,
+                       startyr=1950,endyr=2050,
+                       Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,
+                       prg_chng = def_prgchng(Par[1,]),
+                       ttt_list = def_ttt(),
+                       par2020=rep(1,24),
+                       care_cascade = def_care_cascade()) {
+
   if(min(dim(as.data.frame(ParMatrix)))==1) {
-    out <- OutputsZint(samp_i=1,ParMatrix=ParMatrix,loc=loc, output_month = output_month, endyr=endyr,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3,
-                       prg_chng=prg_chng, ttt_list=ttt_list, par2020 = par2020, care_cascade = care_cascade, return_months = return_months, multiplier = multiplier)
+    out <- OutputsZint(samp_i=1, ParMatrix = ParMatrix, loc = loc, output_month = output_month, startyr=startyr, endyr=endyr,
+                       Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3,
+                       prg_chng=prg_chng, ttt_list=ttt_list, care_cascade = care_cascade,
+                       par2020 = par2020)
   } else {
     out0 <- mclapply(X=1:nrow(ParMatrix),FUN=OutputsZint,mc.cores=n_cores,
-                     ParMatrix=ParMatrix, loc=loc, output_month = output_month, endyr=endyr,Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3,
-                     prg_chng=prg_chng,ttt_list= ttt_list, par2020 = par2020, care_cascade = care_cascade, return_months = return_months, multiplier = multiplier)
+                     ParMatrix = ParMatrix, loc = loc, output_month = output_month, startyr=startyr, endyr=endyr,
+                     Int1=Int1,Int2=Int2,Int3=Int3,Int4=Int4,Int5=Int5,Scen1=Scen1,Scen2=Scen2,Scen3=Scen3,
+                     prg_chng=prg_chng, ttt_list=ttt_list, care_cascade = care_cascade,
+                     par2020 = par2020)
+
     out <- array(NA,dim=c(length(out0),endyr-(startyr-1),length(func_ResNam())))
 
     for(i in 1:length(out0)){
