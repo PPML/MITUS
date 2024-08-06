@@ -112,7 +112,7 @@ OutputsZint <-  function(samp_i=4,ParMatrix = Par,loc ="US", output_month = 11, 
   colnames(m$Outputs) <- func_ResNam();
 
   results <- as.matrix(m$Outputs)
-  saveRDS(results, "~/Desktop/testRes.rds", version =2)
+  # saveRDS(results, "~/Desktop/testRes.rds", version =2)
   population <- as.matrix(m$OutputsI)
 
   colnames(m$OutputsI) <-colnames(m$Outputs) <- func_ResNam();
