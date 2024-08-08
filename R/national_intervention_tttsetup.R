@@ -32,6 +32,7 @@ create_ttt_mdist<-function(ttt_input,
   frc_of_pop<-rep(1,22)
   samp_dist<-matrix(0,22,17)
   x<-matrix(0,22,16)
+  totScreen <- 0
   # frc_of_pop<-rep(1,22)
   # samp_dist<-matrix(1,length(ttt_input),352)
   # x<-matrix(0,22,16)
@@ -44,11 +45,12 @@ for (intv in 1:length(ttt_input)){
   # NUS_dist<-results[start_yr,44:54]
   #get the appropriate distribution outputs from the MITUS simulation in the start year
 ag<-c("0_4", "5_14", "15_24", "25_34", "35_44", "45_54", "55_64", "65_74", "75_84", "85_94", "95p")
-na<-c("US", "FB")
+na<-c("US", "NUS")
 yo<-0
 for (n in 1:2){
   for (a in 1:11){
-  y <- grep(paste("N", na[n], ag[a], sep = "_"), colnames(results))
+  y <- grep(paste("N_tttElig", na[n], ag[a], sep="_"), colnames(results))
+  # y <- grep(paste("N", na[n], ag[a], sep = "_"), colnames(results))
   # print(paste("age is", a))
   # print(paste("nat is", n))
 
@@ -76,17 +78,20 @@ for (n in 1:2){
   vORpfastRF  <-c(1,1,1,1)
   rrprog  <- (exp((0:3)/3*log(ORpfastRF)))
   #desired RR for the screening groups
-  rrprog_i <- ttt_list[[7]]
-  rrmort_i <- ttt_list[[8]]
+  rrmort_i <- ttt_list[["RRmu"]]
+  rrprog_i <- ttt_list[["RRprg"]]
   #create function for reweighting
-  funcB <- function(par,rrmort_i,rrprog_i,rrprog,rrmort,dist){ # par = 2:3
+  funcB <- function(par,rrprog_i,rrmort_i,rrprog,rrmort,dist){ # par = 2:3
     rr_samp <- (exp(par[1])^(0:3)) %*% t(exp(par[2])^(0:3))
     dist_i  <- dist * rr_samp / sum(dist * rr_samp) * sum(dist)
-    (sum(colSums(dist_i)*rrprog)/sum(colSums(dist)*rrprog)-rrprog_i)^2 + (sum(rowSums(dist_i)*rrmort)/sum(rowSums(dist)*rrmort)-rrmort_i)^2 + diff(par)^2/100
+
+    (sum(rowSums(dist_i)*rrprog)/sum(rowSums(dist)*rrprog)-rrmort_i)^2 +
+    (sum(colSums(dist_i)*rrmort)/sum(colSums(dist)*rrmort)-rrprog_i)^2 + diff(par)^2/100
   }
   #apply
   if(sum(dist)!=0){
-  fit <- optim(c(1,1),funcB,rrmort_i=rrmort_i,rrprog_i=rrprog_i,rrprog=rrprog,rrmort=rrmort,dist=dist)
+  fit <- optim(c(1,1),funcB,rrprog_i=rrprog_i,rrmort_i=rrmort_i,
+                            rrprog=rrprog,rrmort=rrmort,dist=dist)
   par = fit$par
 
   #5 calc transition rates for TTT
@@ -106,13 +111,15 @@ for (n in 1:2){
   #entering the next iteration of the loop
 
   x[((n-1)*11)+a,] <- x[((n-1)*11)+a,] + as.vector(dist *  an_samp_rate)
+
+  totScreen <- totScreen + sum(an_samp_rate * results[start_yr,y])
   # print(paste("samp rate is ", an_samp_rate))
   # yo <- (sum(dist * an_samp_rate))
   # print(intv)
   # print(paste("sum is ",yo))
   samp_dist[((n-1)*11)+a,1:16] <- as.vector(an_samp_rate)
   # print(paste(a,n,(ttt_list[["NRiskGrp"]]*ttt_list[["FrcScrn"]]*ifelse(n==1,US_dist[a], NUS_dist[a]))/results[start_yr,(((n-1)*11)+a)+32]))
-  samp_dist[((n-1)*11)+a,17]<-ttt_list[["RRPrev"]]
+  # samp_dist[((n-1)*11)+a,17]<-ttt_list[["RRPrev"]]
 
     ########(ttt_list[["NRiskGrp"]]*ttt_list[["FrcScrn"]]*ifelse(n==1,US_dist[a], NUS_dist[a]))/results[start_yr,(((n-1)*11)+a)+32]
 #this will be the real implementation after the risk group age/nativity distributions are finalized
@@ -122,5 +129,6 @@ for (n in 1:2){
 #  print(y)
   all_samp_rates[[intv]] <- samp_dist
 } ##end of population loop
+  print(paste("screen in R = ", totScreen*1e6))
   return(all_samp_rates)
 }

@@ -112,10 +112,7 @@ library(MITUS)
 loc<-"US"
 #load the model data
 model_load(loc)
-#load in the most recent national optim
-Opt <- readRDS("~/MITUS/inst/US/US_Optim_all_10_1031.rds")
-Par<-gen_par_matrix(Opt[,-59])
-prg_chng<-def_prgchng(Par[3,])
+prg_chng<-def_prgchng(Par[4,])
 #setup the risk population parameters
 ttt_input<-risk_pop_setup()
 intv_yr<-ttt_input[[1]][[5]]

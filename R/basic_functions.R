@@ -38,7 +38,7 @@ invlgt <- function(x) 1/(1+exp(-x))
 LgtCurve <- function(StYr,Endyr,EndVal) {
   z <- log(1/0.005-1)
   zz  <- seq(-z*(1+2*(StYr-1950)/(Endyr-StYr)),
-              z*(1+2*(2051-Endyr)/(Endyr-StYr)),
+              z*(1+2*(2101-Endyr)/(Endyr-StYr)),
              by=(2*z)/(Endyr-StYr)/12)
   zz  <- as.numeric(EndVal)/(1+exp(-zz))
   if(StYr>1950) {

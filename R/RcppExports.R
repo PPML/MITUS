@@ -70,64 +70,6 @@ national_cSim <- function(setup_pars, rDxt, TxQualt, InitPop, Mpfast, ExogInf, M
     .Call('_MITUS_national_cSim', PACKAGE = 'MITUS', setup_pars, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow, rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, RRmuTBPand, Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, SpImmNon, net_mig_usb, net_mig_nusb, mubt, RelInf, RelInfRg, RRcrAG, Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, ttt_samp_dist, ttt_month, ttt_pop_scrn, ttt_ltbi, ttt_ltbi_accept, ttt_ltbi_init, ttt_ltbi_comp, ttt_ltbi_eff, ttt_ltbi_sens, ttt_ltbi_spec, LtTxPar, LtDxPar_lt, LtDxPar_nolt, rrTestLrNoTb, rrTestHr, Int1Test, Int1Init, Int1Tx, RRdxAge, rRecov, pImmScen, EarlyTrend, pReTx, ag_den, NixTrans, NixTb, dist_gen, trans_mat_tot_ages)
 }
 
-#'@name national_cSim_react
-#'@description runs a simulation of the tb model
-#'@param nYrs number of years to run the model.
-#'@param nRes number of results of the model
-#'@param rDxt Rate of active TB diagnosis over time
-#'@param TxQualt active TB treatment over time
-#'@param InitPop Initial Population matrix
-#'@param Mpfast Matrix of the probabilities of fast TB progression (age x TB prog risk group)
-#'@param ExogInf Exogenous infection risk for non-US born population
-#'@param MpfastPI Matrix of the probabilities of fast TB progression w/ partial immunity (age x TB prog risk group)
-#'@param Mrslow matrix of the rates of slow progression (age x TB prog risk group)
-#'@param rrSlowFB rate of fast TB progression
-#'@param RRcurDef Rate Ratio for cure given treatment defaul
-#'@param rSlfCur rate of self cure from active TB
-#'@param p_HR probability of high risk population @ entry into the model
-#'@param vTMort vector of TB mortality rates
-#'@param RRmuRF rate ratio of mortality across mortality risk group
-#'@param RRmuHR rate ratio of mortality across low/high risk dimension
-#'@param Birthst Births over time
-#'@param HrEntEx Matrix of Entry and Exit rates into the High Risk population
-#'@param ImmNon Immigration with no TB
-#'@param ImmLat Immigration with Latent TB
-#'@param ImmAct Immigration with Active TB
-#'@param ImmFst Immigration with Fast Progressing TB
-#'@param net_mig_usb net internal migration usb
-#'@param net_mig_nusb net internal migration nusb
-#'@param mubt background mortality over time
-#'@param RelInf beta
-#'@param RelInfRg beta based off of risk group
-#'@param RRcrAG rate ratio for contact rate by ag
-#'@param Vmix 1-sigma
-#'@param rEmmigFB rate of emmigration in non-US born population
-#'@param TxVec vector of parameters for TB Tx
-#'@param TunTxMort Tuning parameter for mortality on TB Tx
-#'@param rDeft rate of default from TB treatment over time
-#'@param rLtScrt rate of latent screening over time
-#'@param ttt_samp_dist probabilities of screening for ttt intervention
-#'@param ttt_ltbi how much to increase ltbi vector
-#'@param ttt_month when to apply ttt interventions
-#'@param ttt_pop_scrn population size to apply the ltbi prev to
-#'@param LtDxPar_lt matrix of latent diagnosis parameters
-#'@param LtDxPar_nolt matrix of latent diagnosis parameters
-#'@param LtTxPar matrix of latent treatment parameters
-#'@param RRdxAge vector of rate ratios for TB diagnosis by age
-#'@param rRecov rate of recovery from latent slow to safe tb state
-#'@param pImmScen lack of reactivitiy to IGRA for Sp
-#'@param EarlyTrend ramp down of TB in burn-in
-#'@param pReTx probability of re-treatment for TB
-#'@param ag_den denominator used in the aging process
-#'@param NixTrans reduction of transmission over time
-#'@param dist_gen general distribution across tb progression and mort
-#'@param trans_mat_tot_ages
-#'@param test_list
-#'@return Outputs a list of outputs
-national_cSim_react <- function(nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow, rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, net_mig_usb, net_mig_nusb, mubt, RelInf, RelInfRg, RRcrAG, Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, ttt_samp_dist, ttt_month, ttt_pop_scrn, ttt_ltbi, LtTxPar, LtDxPar_lt, LtDxPar_nolt, RRdxAge, rRecov, pImmScen, EarlyTrend, pReTx, ag_den, NixTrans, dist_gen, trans_mat_tot_ages) {
-    .Call('_MITUS_national_cSim_react', PACKAGE = 'MITUS', nYrs, nRes, rDxt, TxQualt, InitPop, Mpfast, ExogInf, MpfastPI, Mrslow, rrSlowFB, rfast, RRcurDef, rSlfCur, p_HR, vTMort, RRmuRF, RRmuHR, Birthst, HrEntEx, ImmNon, ImmLat, ImmAct, ImmFst, net_mig_usb, net_mig_nusb, mubt, RelInf, RelInfRg, RRcrAG, Vmix, rEmmigFB, TxVec, TunTxMort, rDeft, rLtScrt, ttt_samp_dist, ttt_month, ttt_pop_scrn, ttt_ltbi, LtTxPar, LtDxPar_lt, LtDxPar_nolt, RRdxAge, rRecov, pImmScen, EarlyTrend, pReTx, ag_den, NixTrans, dist_gen, trans_mat_tot_ages)
-}
-
 #'@title reblncd
 #'@description this function calculates a matrix of transition probabilities for rebalancing in the model.
 #'@param IP dataframe of formatted parameters
