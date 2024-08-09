@@ -1004,6 +1004,23 @@ Rcpp::List national_cSim(
       /////                      OPEN TB DYNAMICS LOOP                        /////
       /////////////////////////////////////////////////////////////////////////////
       if (tb_dyn==1){
+        //first check if we're shutting off TB in model
+        if(NixTb[s+1] == 1){
+          Rcpp::Rcout << "s = " << s << "\n";
+          for(int ag=0; ag<11; ag++) {
+            for(int lt=0; lt<2; lt++) {
+              for(int im=0; im<4; im++) {
+                for(int nm=0; nm<4; nm++) {
+                  for(int rg=0; rg<2; rg++) {
+                    for (int na=0; na<3; na++){
+                      for (int tb=1; tb<6; tb++){
+                        temp = V0[ag][tb][lt][im][nm][rg][na] * NixTb[s];
+                        V1 [ag][tb][lt][im][nm][rg][na] -= temp;
+                        V1[ag][1 ][lt][im][nm][rg][na] += temp;
+                        Vdx[ag][tb][lt][im][nm][rg][na] = 0;
+                      }}}}}}}
+
+        } else {
         ///////////////////////////////////////////////////////////////////////////
         ///// Step 1 & 2
         ///// take total population of mixing groups
@@ -1606,6 +1623,7 @@ Rcpp::List national_cSim(
                       V1[ag][5][lt][im][nm][rg][na]  -= temp;
                       V1[ag][5][lt][im][nm][rg][na]  += temp;
                     } } } } } }
+          } // end of NixTb loop
       }//end of TB loop
       /////////////////////////////////////////////////////////////////////////////
       /////                        FILL RESULTS TABLE                         /////

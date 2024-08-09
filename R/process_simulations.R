@@ -67,22 +67,23 @@ national_OutputsZint <-  function(samp_i=1,ParMatrix,loc, output_month=11, start
                               Int4 = Int4,
                               Int5 = Int5,
                               Scen1 = Scen1,Scen2 = Scen2,Scen3 = Scen3,
+                              Scen4 = Scen4,Scen5 = Scen5,Scen6 = Scen6,
                               prg_chng = prg_chng, ttt_list = ttt_list, immig2020Vec = par2020[1:6])
 
   ### add in the 2020 parameter adjustments
-  unadj_prms <- readRDS(system.file("US/basecaseParams.rds", package="MITUS"))
-
-  prms$ImmAct[889:1801,] <- unadj_prms$ImmAct[889:1801,]
-  prms$ImmFst[889:1801,] <- unadj_prms$ImmFst[889:1801,]
-  prms$ImmLat[889:1801,] <- unadj_prms$ImmLat[889:1801,]
-  prms$ImmNon[889:1801,] <- unadj_prms$ImmNon[889:1801,]
-
-  # ifelse  ( prms$ImmAct[889:1801,] == unadj_prms$ImmAct[889:1801,], print("Success"), print("Failed"))
-
-  prms$ImmAct[1:842,] <- unadj_prms$ImmAct[1:842,]
-  prms$ImmFst[1:842,] <- unadj_prms$ImmFst[1:842,]
-  prms$ImmLat[1:842,] <- unadj_prms$ImmLat[1:842,]
-  prms$ImmNon[1:842,] <- unadj_prms$ImmNon[1:842,]
+  # unadj_prms <- readRDS(system.file("US/basecaseParams.rds", package="MITUS"))
+  #
+  # prms$ImmAct[889:1801,] <- unadj_prms$ImmAct[889:1801,]
+  # prms$ImmFst[889:1801,] <- unadj_prms$ImmFst[889:1801,]
+  # prms$ImmLat[889:1801,] <- unadj_prms$ImmLat[889:1801,]
+  # prms$ImmNon[889:1801,] <- unadj_prms$ImmNon[889:1801,]
+  #
+  # # ifelse  ( prms$ImmAct[889:1801,] == unadj_prms$ImmAct[889:1801,], print("Success"), print("Failed"))
+  #
+  # prms$ImmAct[1:842,] <- unadj_prms$ImmAct[1:842,]
+  # prms$ImmFst[1:842,] <- unadj_prms$ImmFst[1:842,]
+  # prms$ImmLat[1:842,] <- unadj_prms$ImmLat[1:842,]
+  # prms$ImmNon[1:842,] <- unadj_prms$ImmNon[1:842,]
 
   # ifelse  ( prms$ImmAct[1:842,] == unadj_prms$ImmAct[1:842,], print("Success"), print("Failed"))
 
@@ -91,10 +92,12 @@ national_OutputsZint <-  function(samp_i=1,ParMatrix,loc, output_month=11, start
                        "DxtKnot1", "DxtKnot2", "DxtKnot3", "DxtKnot4", "DxtKnot5", "DxtKnot6",
                        "TransKnot1", "TransKnot2", "TransKnot3", "TransKnot4", "TransKnot5", "TransKnot6",
                        "CaseFatKnot1", "CaseFatKnot2", "CaseFatKnot3", "CaseFatKnot4", "CaseFatKnot5", "CaseFatKnot6")
+
   prms2020 <- adj_param_2020(rDxt = prms$rDxt,
                              NixTrans = prms$NixTrans,
                              par2020 = par2020,
                              return_params = return_params)
+
   # call our rebalancing function
   trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
   if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")

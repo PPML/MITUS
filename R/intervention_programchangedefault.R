@@ -22,13 +22,13 @@ def_prgchng<-function(ParVec){
     "tb_tim2tx_frc", #Duration of Infectiousness
     "tb_txdef_frc" #Fraction Discontinuing/Defaulting from Treatment
   )
-  #default start year will be 2022
-  DefPrgChngVec[1]<-2022
+  #default start year will be 2024
+  DefPrgChngVec[1]<-2024
   #default screening coverage multiplier will always default to 1
   DefPrgChngVec[2]<-1
   #the default IGRA fraction is a constant that is not calibrated or calculated
   #once this is set it should not be changed
-  DefPrgChngVec[3]<-.50
+  DefPrgChngVec[3]<-1
   #Treatment Initiation Fraction is a constant that is not calibrated or calculated
   #once this is set it should not be changed
   DefPrgChngVec[4]<-.773
@@ -37,11 +37,12 @@ def_prgchng<-function(ParVec){
   #LTBI Efficacy
   # DefPrgChngVec[6]<-ParVec["EffLt"]
   #tltbi regimens
-  DefPrgChngVec[5]<-(1/3)
+  # from TBESC study
+  DefPrgChngVec[5]<-0.25
   DefPrgChngVec[6]<-1-ParVec["pDefLt"]
-  DefPrgChngVec[7]<-(1/3)
+  DefPrgChngVec[7]<-0.07
   DefPrgChngVec[8]<-1-ParVec["pDefLt"]
-  DefPrgChngVec[9]<-(1/3)
+  DefPrgChngVec[9]<-0.68
   DefPrgChngVec[10]<-1-ParVec["pDefLt"]
   #Time to Treatment //Duration of Infectiousness Percent of Current Value
   DefPrgChngVec[11]<-100
@@ -51,9 +52,11 @@ def_prgchng<-function(ParVec){
   rDef0[1:30]   <- ParVec["TxDefEarly"]
   rDef0[44:63]  <- ORAdd(TxInputs[[1]][,2],ParVec["TunTxDef"])
   rDef0[64:151] <- rDef0[63]
-  rDef1         <- predict(smooth.spline(x=c(1950:1979,1993:2100),y=rDef0[-(31:43)],spar=0.4),x=1950:2100)$y
+  rDef1         <- predict(smooth.spline(x=c(1950:1979,1993:2100),
+                                         y=rDef0[-(31:43)],spar=0.4),
+                           x=1950:2100)$y
   rDeft         <- SmoCurve(rDef1)/12;
-  rDef<-rDeft[(2022-1950)+1]
+  rDef<-rDeft[(2024-1950)+1]
   DefPrgChngVec[12]<-rDef
 
   return(DefPrgChngVec)

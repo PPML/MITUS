@@ -16,6 +16,9 @@
 #'@param Scen1 boolean for scenario 1
 #'@param Scen2 boolean for scenario 2
 #'@param Scen3 boolean for scenario 3
+#'@param Scen4 boolean for scenario 4
+#'@param Scen5 boolean for scenario 5
+#'@param Scen6 boolean for scenario 6
 #'@param prg_chng vector of program change values
 #'@param ttt_list list of ttt changes
 #'@param immig2020Vec
@@ -23,15 +26,18 @@
 #'@param multiplier
 #'@return InputParams list
 #'@export
-national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,
-                       prg_chng, ttt_list, delay=0, immig2020Vec=c(1,1,1,1,1,1), return_months = 865:888, multiplier = 1){
+national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,
+                                Scen1=0,Scen2=0,Scen3=0,Scen4=0,Scen5=0,Scen6=0,
+                                prg_chng, ttt_list, delay=0,
+                                immig2020Vec=c(1,1,1,1,1,1),
+                                return_months = 865:888, multiplier = 1){
   ################################################################################
   ##### DEFINE VARIABLES THAT WILL DETERMINE HOW LONG THE TIME               #####
   ##### DEPENDENT VARIABLES SHOULD BE                                        #####
   ################################################################################
-  month<-1801;
-  intv_yr<-2022
-  intv_m<-((intv_yr-1949)*12)+1
+  month <- 1801;
+  intv_yr <- 2024
+  intv_m<-((intv_yr-1950)*12)+1
   prg_yr <-prg_chng["start_yr"]
   prg_m  <-((prg_yr-1949)*12)+1
   ttt_month <- seq(((ttt_list[[1]][["StartYr"]] - 1950) * 12) + 6,
@@ -77,7 +83,19 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   Births           <- Inputs[["Births"]]
   ################################################################################
   ImmigInputs      <- Inputs[["ImmigInputs"]]
-  ImmigInputs$PrevTrend25_34<-crude_rate(Inputs,loc)
+
+  #### #### #### SCEN 6 #### #### #### #### #### #### #### #### #### #### ####
+  if(Scen6==1){
+    r_decline=.03
+  } else if (Scen6==2){
+    r_decline=0
+  } else {
+    r_decline=0.015
+  }
+  #### #### #### SCEN 6 #### #### #### #### #### #### #### #### #### #### ####
+
+  ImmigInputs$PrevTrend25_34<-crude_rate(Inputs,loc,r_decline)
+
   if (loc=="ND"){
     ImmigInputs$PrevTrend25_34[61:71]<-seq(from=ImmigInputs$PrevTrend25_34[61],
                                            to=ImmigInputs$PrevTrend25_34[61]*2,
@@ -165,8 +183,24 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
     vTMort[,i] <- vTMort[,i] * RRmuTbAg
   }
 
-  ######################         IMMIGRATION             ########################
-  ######################         OVERALL IMM.            ########################
+  ######################         IMMIGRATION             ######################
+  ######################         OVERALL IMM.            ######################
+
+  #### #### #### SCEN 5 #### #### #### #### #### #### #### #### #### #### ####
+  if(Scen5==0){
+    Inputs$ImmigInputs[["TotByYear"]]<-Inputs$ImmigInputs[["TotByYear"]]
+  } else if(Scen5==1){
+    low_immig<-base_immig<-Inputs$ImmigInputs[["TotByYear"]]
+    low_immig[69:151]<-exp(log(base_immig[69:151])-(log(base_immig[69:151]*1.5)-log(base_immig[69:151])))
+    Inputs$ImmigInputs[["TotByYear"]] <-low_immig
+    #high immigration
+  } else if (Scen5==2){
+    high_immig<-Inputs$ImmigInputs[["TotByYear"]]
+    high_immig[69:151]<-Inputs$ImmigInputs[["TotByYear"]][69:151]*1.5
+    Inputs$ImmigInputs[["TotByYear"]] <-high_immig
+  }
+  #### #### #### SCEN 5 #### #### #### #### #### #### #### #### #### #### ####
+
   TotImmig0       <- (c(ImmigInputs[[1]][1:151])+c(rep(0,71),cumsum(rep(PV["ImmigVolFut"],80))))/12*PV["ImmigVol"]
   if (loc=="ND"){
     TotImmig0[61:71]<-seq(from=TotImmig0[61], to=TotImmig0[61]*3, length.out=11)
@@ -236,8 +270,6 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   for(i in 1:11) ImmLat[,i] <- (1-exp((-(c(2.5,1:9*10,100)/100)[i]^PV["LtbiPar1"])*PrevTrend25_34_ls*PV["LtbiPar2"]))*TotImmAge[,i]
 
   ######################         ACTIVE TB IMM.           ########################
-  # PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:69]^exp(PV["TunActTrend"])*ImmigInputs[["PrevTrend25_34"]][69]^exp((1-PV["TunActTrend"])),
-
   PrevTrend25_340a <- c(ImmigInputs[["PrevTrend25_34"]][1:71]^(exp(PV["TunActTrend"]))*ImmigInputs[["PrevTrend25_34"]][71]^(1-exp(PV["TunActTrend"])),
                         ImmigInputs[["PrevTrend25_34"]][72:151]*(PV["ImmigPrevFutAct"]/0.99)^(1:80))
 
@@ -247,38 +279,23 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   ImmFst         <- outer(PrevTrend25_34a*exp(PV["RRtbprev"]),ImmigInputs[["RR_Active_TB_Age"]])*TotImmAge*(1-PV["pImmAct"])
   ImmNon         <- TotImmAge-ImmAct-ImmFst-ImmLat
 
-  # ImmFstBC          <- matrix(NA,length(PrevTrend25_34_ls),11)
-  # for(i in 1:11) ImmFstBC[,i] <- (1-exp((-(c(2.5,1:9*10,100)/100)[i]^PV["LtbiPar1"])*PrevTrend25_34_ls*PV["LtbiPar2"]))*TotImmAgeBC[,i]
-  #
-  # agegrp <- 1
-  # plot(ImmLat[840:900,agegrp]); abline(v=which(840:900 == postMonth))
-  # lines(ImmLatBC[840:900,agegrp])
-
-  # for (i in 1:length(ImmNon)) if (ImmNon[i]<0) ImmNon[i]<-0
-  #
-  # ImmTotBC         <- ImmNonBC + ImmActBC + ImmFstBC + ImmLatBC
-  # ImmTot         <- ImmNon + ImmAct + ImmFst + ImmLat
-  #
-  # agegrp <- 1
-  # plot(ImmTot[840:900,agegrp]); abline(v=which(840:900 == postMonth)); lines(ImmTotBC[840:900,agegrp])
-
-
-  ###################### TRUNCATE THESE VALS
+  ### TRUNCATE THESE VALS
   ImmAct<-ImmAct[1:month,];ImmFst<-ImmFst[1:month,]; ImmLat<-ImmLat[1:month,]; ImmNon<-ImmNon[1:month,]
   SpImmNon       <- matrix(0,month, 11)
 
   #### #### #### SCEN 2 #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
   if(Scen2==1) {
-    baseline_ImmNon<-ImmNon
+    baseline_ImmNon <- ImmNon
     for(i in 1:11) ImmLat[,i] <- ImmLat[,i]*(1-LgtCurve(intv_yr,intv_yr+1,1))
     for(i in 1:11) ImmAct[,i] <- ImmAct[,i]*(1-LgtCurve(intv_yr,intv_yr+1,1))
     for(i in 1:11) ImmFst[,i] <- ImmFst[,i]*(1-LgtCurve(intv_yr,intv_yr+1,1))
     ImmNon        <- TotImmAge[1:month,]-ImmAct-ImmFst-ImmLat
-    SpImmNon<-baseline_ImmNon-ImmNon
+    SpImmNon <- baseline_ImmNon-ImmNon
   }
+
   #no immigration immediately at 2020
   if(Scen2==2) {
-    baseline_ImmNon<-ImmNon
+    baseline_ImmNon <- ImmNon
     vec.change<-c(rep(1,intv_m), rep(0,month-intv_m))
     for(i in 1:11) ImmLat[,i] <- ImmLat[,i]*vec.change
     for(i in 1:11) ImmAct[,i] <- ImmAct[,i]*vec.change
@@ -718,8 +735,8 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
   names(TxVec) <- c("TxCompRate","TxEff")
   TxVec[1]       <-  d1st
   TxVec[2]       <-  pCurPs
-  NixTrans<- rep(1,month)
-  NixTb<- rep(0,month)
+  NixTrans <- rep(1,month)
+  NixTb    <- rep(0,month)
   #### #### #### INT 4 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
   if(Int4==1) {  rDeftH <- rDeftH*(1-LgtCurve(intv_yr,intv_yr+5,0.5))
@@ -748,14 +765,19 @@ national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=
     for (i in 1:length(TxQualt)) if (TxQualt[i] > 1) TxQualt[i] <-1
   }
 
-  #### #### #### INT 4 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
+  #### #### #### INT 4  #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
   #### #### #### SCEN 1 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
-
-  # NixTrans <- 1-LgtCurve(intv_yr,intv_yr+1,1)
-  # if(Scen1==0) {  NixTrans[] <- 1     }
-
+  NixTrans <- 1-LgtCurve(intv_yr, intv_yr+1, 1)
+  if(Scen1==0) { NixTrans[] <- 1     }
+  if(Scen1==2) { Nixtrans<-c(rep(1,intv_m),rep(0,month-(intv_m)))}
   #### #### #### SCEN 1 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
+
+  #### #### #### SCEN 4 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
+  if (Scen4 == 1){
+    NixTb <- c(rep(0,intv_m), rep(1,12), rep(0, month-intv_m-12))
+  }
+  #### #### #### SCEN 4 #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####
 
   ## Retreatment
   pReTx   <- LgtCurve(1985,2000,PV["pReTx"])   	# Probability Tx failure identified, patient initiated on tx experienced reg (may be same)
