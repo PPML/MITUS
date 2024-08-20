@@ -26,9 +26,8 @@ def_prgchng<-function(ParVec){
   DefPrgChngVec[1]<-2022
   #default screening coverage multiplier will always default to 1
   DefPrgChngVec[2]<-1
-  #the default IGRA fraction is a constant that is not calibrated or calculated
-  #once this is set it should not be changed
-  DefPrgChngVec[3]<-.50
+  #In this analysis, we assume 100% IGRA testing
+  DefPrgChngVec[3]<-1
   #Treatment Initiation Fraction is a constant that is not calibrated or calculated
   #once this is set it should not be changed
   DefPrgChngVec[4]<-.773
@@ -37,11 +36,11 @@ def_prgchng<-function(ParVec){
   #LTBI Efficacy
   # DefPrgChngVec[6]<-ParVec["EffLt"]
   #tltbi regimens
-  DefPrgChngVec[5]<-(1/3)
+  DefPrgChngVec[5]<-0.25
   DefPrgChngVec[6]<-1-ParVec["pDefLt"]
-  DefPrgChngVec[7]<-(1/3)
+  DefPrgChngVec[7]<-0.07
   DefPrgChngVec[8]<-1-ParVec["pDefLt"]
-  DefPrgChngVec[9]<-(1/3)
+  DefPrgChngVec[9]<-0.68
   DefPrgChngVec[10]<-1-ParVec["pDefLt"]
   #Time to Treatment //Duration of Infectiousness Percent of Current Value
   DefPrgChngVec[11]<-100
