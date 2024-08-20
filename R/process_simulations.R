@@ -93,8 +93,7 @@ national_OutputsZint <-  function(samp_i=1,ParMatrix,loc, output_month=11, start
                        "CaseFatKnot1", "CaseFatKnot2", "CaseFatKnot3", "CaseFatKnot4", "CaseFatKnot5", "CaseFatKnot6")
   prms2020 <- adj_param_2020(rDxt = prms$rDxt,
                              NixTrans = prms$NixTrans,
-                             par2020 = par2020,
-                             return_params = return_params)
+                             par2020 = par2020)
   # call our rebalancing function
   trans_mat_tot_ages<<-reblncd(mubt = prms$mubt,can_go = can_go,RRmuHR = prms$RRmuHR[2], RRmuRF = prms$RRmuRF, HRdist = HRdist, dist_gen_v=dist_gen_v, adj_fact=prms[["adj_fact"]])
   if(any(trans_mat_tot_ages>1)) print("transition probabilities are too high")
