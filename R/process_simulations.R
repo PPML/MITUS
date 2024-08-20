@@ -29,7 +29,7 @@ national_OutputsZint <-  function(samp_i=1,ParMatrix,loc, output_month=11, start
                                   Scen1=0,Scen2=0,Scen3=0,Scen4=0,Scen5=0,Scen6=0,
                                   prg_chng=def_prgchng(Par[1,]), ttt_list=list(def_ttt_nat_ag()),
                                   care_cascade = def_care_cascade(),
-                                  par2020 = rep(1,24),
+                                  par2020 = parCOVID,
                                   return_params = def_returnScenario()
                                   ) {
   # format parameter vector

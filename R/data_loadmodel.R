@@ -22,6 +22,7 @@ model_load<-function(loc="US"){
     Inputs<<-readRDS(system.file("US/US_Inputs_08-31-20.rds", package="MITUS"))
     Opt <<- readRDS(system.file("US/US_Optim_all_25_0329.rds", package="MITUS"))
     Par <<- readRDS(system.file("US/US_Param_all_25_0329.rds", package="MITUS"))
+    parCOVID <<- readRDS(system.file("US/ParamAllCovid.rds", package="MITUS"))
   } else {
     CalibDat<<-CalibDatState<<-readRDS(system.file("ST/ST_CalibDat_04-20-22.rds", package="MITUS"))
     ParamInit_st<<-ParamInit<<-readRDS(system.file("ST/ST_ParamInit_2022-07-08.rds", package="MITUS"))
