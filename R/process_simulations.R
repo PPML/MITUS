@@ -21,7 +21,8 @@
 #'@param prg_chng vector of program change values
 #'@param ttt_list list of targeted testing and treatment values
 #'@param par2020 vector of 2020 adjustment parameters
-#'@param care_cascade
+#'@param care_cascade list of parameters for changes to LTBI care cascade
+#'@param return_params list of parameters to govern the transition to post-COVID param levels
 #'@return results data frame of output
 #'@export
 national_OutputsZint <-  function(samp_i=1,ParMatrix,loc, output_month=11, startyr=1950, endyr=2050,

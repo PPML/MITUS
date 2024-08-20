@@ -18,9 +18,9 @@
 #'@param Scen3 boolean for scenario 3
 #'@param prg_chng vector of program change values
 #'@param ttt_list list of ttt changes
-#'@param immig2020Vec
-#'@param return_months
-#'@param multiplier
+#'@param immig2020Vec vector of immigration adjustment parameters
+#'@param return_months vector of months to transition to post COVID-19 level
+#'@param multiplier scalar multiplier for return immigration
 #'@return InputParams list
 #'@export
 national_param_init <- function(PV,loc,Int1=0,Int2=0,Int3=0,Int4=0,Int5=0,Scen1=0,Scen2=0,Scen3=0,

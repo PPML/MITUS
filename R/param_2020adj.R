@@ -1,8 +1,9 @@
 #'@name  adj_immig_2020
-#'@param TotImmAge
-#'@param immig2020Vec
-#'@param return_months
-#'@param multiplier
+#'@param TotImmAge matrix of immigration by age and month
+#'@param immig2020Vec vector of immigration adjustment parameters
+#'@param effect_months vector of months which adjustment parameters affect
+#'@param return_months vector of months to transition to post COVID-19 level
+#'@param multiplier scalar multiplier for return immigration
 #'@return TotImmAge
 #'@export
 adj_immig_2020 <- function(TotImmAge,
@@ -92,15 +93,14 @@ adj_immig_2020 <- function(TotImmAge,
 
 
 #'@name  adj_param_2020
-#'@param rDxt
-#'@param NixTrans
-#'@param return_params
+#'@param rDxt matrix of rate of diagnosis by risk group and month
+#'@param NixTrans vector to adjust the transmission of TB in the model
+#'@param par2020 vector of parameters to adjust for COVID-19 impact
 #'@return param_list
 #'@export
 adj_param_2020 <- function(rDxt,
                            NixTrans,
-                           par2020,
-                           return_params = def_returnScenario()
+                           par2020
 ){
 
   ###
@@ -111,10 +111,7 @@ adj_param_2020 <- function(rDxt,
 
   if (par2020["DxtKnot1"] != 0){
     # Setup params
-    # rDxt_RM <- return_params[["rDxt"]][["return_months"]]
-    # rDxt_postMonth <- rDxt_RM[length(rDxt_RM)] + 1
-    # rDxt_lastMonth <- rDxt_RM[1] - 1
-    rDxt_mult <- return_params[["rDxt"]][["multiplier"]]
+    rDxt_mult <- 1
 
     # rDxt_trend <- readRDS(file = "~/Documents/COVIDTB Paper/Data/careSeekingTrend.rds")
     # rDxt_trendNorm <- rDxt_trend / rDxt_trend[1]
@@ -166,10 +163,7 @@ adj_param_2020 <- function(rDxt,
   #############################################################################
   if (par2020["TransKnot1"] != 0){
     # Setup params
-    # NixTrans_RM <- return_params[["Trans"]][["return_months"]]
-    # NixTrans_postMonth <- NixTrans_RM[length(NixTrans_RM)] + 1
-    NixTrans_mult <- return_params[["Trans"]][["multiplier"]]
-    # NixTrans_lastMonth <- NixTrans_RM[1] - 1
+    NixTrans_mult <- 1
 
     # NixTrans_trend <- readRDS(file = "~/Documents/COVIDTB Paper/Data/contactRateTrend.rds")
     # NixTrans_trendNorm <- NixTrans_trend/NixTrans_trend[1]
@@ -222,11 +216,7 @@ adj_param_2020 <- function(rDxt,
   if (par2020["CaseFatKnot1"] != 1){
 
     # Setup params
-    # CaseFat_RM <- return_params[["CaseFat"]][["return_months"]]
-    # CaseFat_postMonth <- CaseFat_RM[length(CaseFat_RM)] + 1
-    CaseFat_mult <- 1;#return_params[["CaseFat"]][["multiplier"]]
-    # CaseFat_lastMonth <- CaseFat_RM[1] - 1
-
+    CaseFat_mult <- 1
     CaseFat_lastMonth <- 843+35
     CaseFat_RM <- (CaseFat_lastMonth):(CaseFat_lastMonth + 10)
     CaseFat_postMonth <- last(CaseFat_RM) + 1

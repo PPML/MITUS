@@ -65,7 +65,7 @@ using namespace Rcpp;
 //'@param NixTrans reduction of transmission over time
 //'@param NixTb reduction of all TB over time
 //'@param dist_gen general distribution across tb progression and mort
-//'@param trans_mat_tot_ages
+//'@param trans_mat_tot_ages transition matrix for rebalancing population
 //'@return Outputs a list of outputs
 //[[Rcpp::export]]
 
