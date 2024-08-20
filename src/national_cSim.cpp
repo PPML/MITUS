@@ -110,12 +110,12 @@ Rcpp::List national_cSim(
     std::vector<int>    ttt_month,
     double              ttt_pop_scrn,
     std::vector<double> ttt_ltbi,
-    int                 ttt_ltbi_accept,
-    int                 ttt_ltbi_init,
-    int                 ttt_ltbi_comp,
-    int                 ttt_ltbi_eff,
-    int                 ttt_ltbi_sens,
-    int                 ttt_ltbi_spec,
+    double              ttt_ltbi_accept,
+    double              ttt_ltbi_init,
+    double              ttt_ltbi_comp,
+    double              ttt_ltbi_eff,
+    std::vector<double> ttt_ltbi_sens,
+    std::vector<double> ttt_ltbi_spec,
     Rcpp::NumericMatrix LtTxPar,
     Rcpp::NumericMatrix LtDxPar_lt,
     Rcpp::NumericMatrix LtDxPar_nolt,
@@ -207,8 +207,8 @@ Rcpp::List national_cSim(
   double        ttt_test_PI;
   double        ttt_test_lf;
   double        ttt_test_ls;
-  double        ttt_ltbi_sensN;
-  double        ttt_ltbi_specN;
+  double        ttt_ltbi_sensN[2];
+  double        ttt_ltbi_specN[2];
   double        ttt_ltbi_initN;
   double        ttt_ltbi_acceptN;
   double        ttt_ltbi_compN;
@@ -384,7 +384,7 @@ Rcpp::List national_cSim(
         vTMortN[ag][tb] =0;
       } }
   }
-  ttt_ltbi_sensN=0; ttt_ltbi_specN=0; ttt_ltbi_acceptN=0;
+  ttt_ltbi_acceptN=0;
   ttt_ltbi_initN=0; ttt_ltbi_compN=0; ttt_ltbi_effN=0;
   rTbN_norm=0; rTbP_norm=0;;
   ///// CREATE A COUNTER FOR THE TTT INTERVENTION; THIS IS INTIALIZED TO ZERO /////
@@ -1336,20 +1336,20 @@ Rcpp::List national_cSim(
           ///// PROBABILITY OF LTBI TESTING ACCEPTANCE
           ttt_ltbi_acceptN=1;
           ///// PROBABILITY OF LTBI TREATMENT INITIATION
-          if (ttt_ltbi_init==1){
-            ttt_ltbi_initN=1;
+          if (ttt_ltbi_init != 0){
+            ttt_ltbi_initN = ttt_ltbi_init;
           } else{
             ttt_ltbi_initN = LtTxParN[s][0];
           }
           ///// PROBABILITY OF LTBI TREATMENT COMPLETION
-          if (ttt_ltbi_comp==1){
-            ttt_ltbi_compN=1;
+          if (ttt_ltbi_comp != 0){
+            ttt_ltbi_compN = ttt_ltbi_comp;
           } else{
             ttt_ltbi_compN=(1-LtTxParN[s][1]);
           }
           ///// PROBABILITY OF LTBI TREATMENT EFFECTIVENESS
-          if (ttt_ltbi_eff==1){
-            ttt_ltbi_effN=1;
+          if (ttt_ltbi_eff != 0){
+            ttt_ltbi_effN = ttt_ltbi_eff;
           } else{
             ttt_ltbi_effN=LtTxParN[s][2];
           }
@@ -1366,6 +1366,8 @@ Rcpp::List national_cSim(
           ///// designated range
           ///////////////////////////////////////////////////////////////////////////////
           if (s == ttt_month.front()){
+            // Rcpp::Rcout << "ttt_ltbi_sens = " <<  ttt_ltbi_sens[0] << ttt_ltbi_sens[1] << "\n";
+
             ///////////////////////////////////////////////////////////////////////////////
             ///// CREATE OBJECTS TO HOLD THE TESTED AND DIAGNOSED FOR EACH POP
             ///// THESE DO NOT NEED TO BE SAVED BETWEEN MODEL STATE COMBOS
@@ -1384,6 +1386,7 @@ Rcpp::List national_cSim(
                     } else{
                       ni = 1;
                     }
+
                     /// SET THE SENSITIVITY OF THE TEST BELOW
                     if (ttt_ltbi_acceptN == 1){
                       // ////////////// ALL US BORN  //////////////////////////
@@ -1418,15 +1421,23 @@ Rcpp::List national_cSim(
                         rTbN_norm = LtDxPar_noltN[3][s];
                       }
                     }
-                    ///special care cascade (perfect)
-                      if(ttt_ltbi_sens==1){
-                        rTbP_norm=1;
-                      }
-                      if(ttt_ltbi_spec==1){
-                        rTbN_norm=1;
-                   }
-                  /// define the fraction screened
 
+                    /// special care cascade
+                    if((ttt_ltbi_sens[0] + ttt_ltbi_sens[1])!= 0){
+                      // Rcpp::Rcout << "sum is " << (ttt_ltbi_sens[0] + ttt_ltbi_sens[1]) << "\n";
+
+                      rTbP_norm=ttt_ltbi_sens[ni];
+
+                      // Rcpp::Rcout << "rTbP_norm " << rTbP_norm << "\n";
+
+                    }
+                    if((ttt_ltbi_spec[0] + ttt_ltbi_spec[1])!= 0){
+                      rTbN_norm=ttt_ltbi_spec[ni];
+
+                      Rcpp::Rcout << "rTbN_norm " << rTbN_norm << "\n";
+
+                    }
+                  /// define the fraction screened
                   ttt_frc_scrn = std::min(ttt_samp_distN[0][ag+(ni*11)+(nm*22)+(im*88)], 1.0);
 
                   for(int rg=0; rg<2; rg++) {

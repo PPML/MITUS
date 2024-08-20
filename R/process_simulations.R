@@ -31,7 +31,6 @@ national_OutputsZint <-  function(samp_i=1,ParMatrix,loc, output_month=11, start
                                   care_cascade = def_care_cascade(),
                                   par2020 = rep(1,24),
                                   return_params = def_returnScenario()
-                                  # par2020 = c(0.4232265, 0.3707595, 0.1984619, 1.1158255)
                                   ) {
   # format parameter vector
   if(min(dim(as.data.frame(ParMatrix)))==1) {
@@ -114,8 +113,8 @@ national_OutputsZint <-  function(samp_i=1,ParMatrix,loc, output_month=11, start
                       #ttt_ag     = prms[["ttt_ag"]]    , ttt_na       = prms[["ttt_na"]]      ,
                       ttt_month     = prms[["ttt_month"]]   , ttt_pop_scrn = prms[["ttt_pop_scrn"]], ttt_ltbi      = prms[["ttt_ltbi"]],
                       LtTxPar    = prms[["LtTxPar"]]   , LtDxPar_lt   = prms[["LtDxPar_lt"]]  , LtDxPar_nolt  = prms[["LtDxPar_nolt"]], rrTestLrNoTb = prms[["rrTestLrNoTb"]], rrTestHr = prms[["rrTestHr"]],
-                      rLtScrt    = prms[["rLtScrt"]]   , RRdxAge      = prms[["RRdxAge"]]     , ttt_ltbi_init = care_cascade[1]       , ttt_ltbi_comp = care_cascade[2]      , ttt_ltbi_eff  = care_cascade[3],
-                      ttt_ltbi_sens = care_cascade[4]  , ttt_ltbi_spec = care_cascade[5]      , ttt_ltbi_accept = care_cascade[6]     , rRecov       = prms[["rRecov"]]      , pImmScen   = prms[["pImmScen"]],
+                      rLtScrt    = prms[["rLtScrt"]]   , RRdxAge      = prms[["RRdxAge"]]     , ttt_ltbi_init = as.numeric(care_cascade["ttt_ltbi_init"])       , ttt_ltbi_comp = as.numeric(care_cascade["ttt_ltbi_comp"]), ttt_ltbi_eff  = as.numeric(care_cascade["ttt_ltbi_eff"]),
+                      ttt_ltbi_sens = as.vector(unlist(care_cascade["ttt_ltbi_sens"]))  , ttt_ltbi_spec = as.vector(unlist(care_cascade["ttt_ltbi_spec"]))      , ttt_ltbi_accept = as.numeric(care_cascade["ttt_ltbi_accept"])     , rRecov       = prms[["rRecov"]]      , pImmScen   = prms[["pImmScen"]],
                       EarlyTrend = prms[["EarlyTrend"]], pReTx        = prms[["pReTx"]]       , ag_den        = prms[["aging_denom"]] , NixTrans     = prms[["NixTrans"]]    , NixTb = prms[["NixTb"]],
                       dist_gen   = prms[["dist_gen"]]  , trans_mat_tot_ages = trans_mat_tot_ages)$Outputs
   # print(dim(m))
