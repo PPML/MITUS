@@ -37,11 +37,11 @@ def_prgchng<-function(ParVec){
   # DefPrgChngVec[6]<-ParVec["EffLt"]
   #tltbi regimens
   DefPrgChngVec[5]<-0.25
-  DefPrgChngVec[6]<-1-ParVec["pDefLt"]
+  DefPrgChngVec[6]<-0.76
   DefPrgChngVec[7]<-0.07
-  DefPrgChngVec[8]<-1-ParVec["pDefLt"]
+  DefPrgChngVec[8]<-0.76
   DefPrgChngVec[9]<-0.68
-  DefPrgChngVec[10]<-1-ParVec["pDefLt"]
+  DefPrgChngVec[10]<-0.76
   #Time to Treatment //Duration of Infectiousness Percent of Current Value
   DefPrgChngVec[11]<-100
   #Fraction Discontinuing/Defaulting from Treatment
