@@ -39,15 +39,15 @@ def_prgchng<-function(ParVec){
   #tltbi regimens
   # from TBESC study
   DefPrgChngVec[5]<-0.25
-  DefPrgChngVec[6]<-1-ParVec["pDefLt"]
+  DefPrgChngVec[6]<-0.76
   DefPrgChngVec[7]<-0.07
-  DefPrgChngVec[8]<-1-ParVec["pDefLt"]
+  DefPrgChngVec[8]<-0.76
   DefPrgChngVec[9]<-0.68
-  DefPrgChngVec[10]<-1-ParVec["pDefLt"]
+  DefPrgChngVec[10]<-0.76
   #Time to Treatment //Duration of Infectiousness Percent of Current Value
   DefPrgChngVec[11]<-100
   #Fraction Discontinuing/Defaulting from Treatment
-  TxInputs         <- Inputs[["TxInputs"]]
+  TxInputs      <- Inputs[["TxInputs"]]
   rDef0         <- rep(NA,151)
   rDef0[1:30]   <- ParVec["TxDefEarly"]
   rDef0[44:63]  <- ORAdd(TxInputs[[1]][,2],ParVec["TunTxDef"])
