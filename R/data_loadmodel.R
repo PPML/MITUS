@@ -26,6 +26,9 @@ if (loc=="US"){
   ParamInit_st<<-ParamInit<<-readRDS(system.file("ST/ST_ParamInit_2022-07-08.rds", package="MITUS"))
   StartVal_st<<-StartVal<<-readRDS(system.file("ST/ST_StartVal_2022-07-08.rds", package="MITUS"))
   Inputs<<-readRDS(system.file(paste0(loc,"/",loc,"_ModelInputs_11-12-21.rds"), package="MITUS"))
+  if (loc == "CA"){
+    Par <<- readRDS(system.file(paste0(loc,"/",loc,"_Param_all_15_0708.rds"), package="MITUS"))
+  }
   #last input change was to update the RR active TB by age in immigrants
 }
 if (loc=="US"){
