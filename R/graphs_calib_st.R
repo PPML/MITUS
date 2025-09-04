@@ -513,29 +513,29 @@ calib_graphs_st <- function(df,loc, Par_list,pdf=TRUE, cex.size=.7){
 
     ################################################################################
     #Average Age of TB Cases
-    age_case   <- df[,136:146]+df[,189:199]
-    ages<-c(2,9.5,19.5,29.5,39.5,49.5,
-            59.5,69.5,79.5,89.5,99.5)
-    avg_age<-rep(0,nrow(age_case))
-    for (i in 1:nrow(age_case)){
-      if (sum(age_case[i,]) == 0){
-        avg_age[i] = 0
-      } else{
-        avg_age[i]<-sum(age_case[i,]*ages)/sum(age_case[i,])
-      }
-    }
-
-    #format the plot
-    plot(0,0,ylim=c(0,max(avg_age[2:length(avg_age)])+5),xlim=c(1951,2020),xlab="",ylab="",axes=F)
-    axis(1);axis(2,las=2);box()
-    abline(h=axTicks(2),col="grey85")
-
-    #plot the model data
-    lines(1950:2020,avg_age[2:length(avg_age)],lwd=2,col="blue")    #0-24 yrs
-
-    #plot text
-    mtext(paste("Average Age of Notified TB Case in",loc,", 1950-2020", sep = " "),3,.3,font=2,cex=cex.size)
-    mtext("Year",1,2.5,cex=cex.size)
+    # age_case   <- df[,136:146]+df[,189:199]
+    # ages<-c(2,9.5,19.5,29.5,39.5,49.5,
+    #         59.5,69.5,79.5,89.5,99.5)
+    # avg_age<-rep(0,nrow(age_case))
+    # for (i in 1:nrow(age_case)){
+    #   if (sum(age_case[i,]) == 0){
+    #     avg_age[i] = 0
+    #   } else{
+    #     avg_age[i]<-sum(age_case[i,]*ages)/sum(age_case[i,])
+    #   }
+    # }
+    #
+    # #format the plot
+    # plot(0,0,ylim=c(0,max(avg_age[2:length(avg_age)])+5),xlim=c(1951,2020),xlab="",ylab="",axes=F)
+    # axis(1);axis(2,las=2);box()
+    # abline(h=axTicks(2),col="grey85")
+    #
+    # #plot the model data
+    # lines(1950:2020,avg_age[2:length(avg_age)],lwd=2,col="blue")    #0-24 yrs
+    #
+    # #plot text
+    # mtext(paste("Average Age of Notified TB Case in",loc,", 1950-2020", sep = " "),3,.3,font=2,cex=cex.size)
+    # mtext("Year",1,2.5,cex=cex.size)
 
     ################################################################################
     ### ### ### CASES HR DISTRIBUTION 1993-2013  ### ### ### ### ### ###
